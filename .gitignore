@@ -23,6 +23,8 @@ secrets/
 *credentials*
 *secret*
 *password*
+*PassKey*
+*passkey*
 
 # Environment and API keys
 .env
