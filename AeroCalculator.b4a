@@ -1,0 +1,4515 @@
+﻿Build1=Default,flightdyn.aerocalculator
+File1=android-3-dot-menu.png
+File10=icon_error.png
+File11=icon_flat_green_white.png
+File12=icon_flat_transp_green.png
+File13=icon_flat_transp_white.png
+File14=icon_flat_white_green.png
+File15=icon_minus.png
+File16=icon_plus.png
+File17=icon_plus_white.png
+File18=icon_question.png
+File19=icon_right_arrow.png
+File2=ic_action_accept.png
+File20=icon_warning.png
+File21=Xenara-Bold.ttf
+File3=ic_action_cancel.png
+File4=icon_bezel_green_white.png
+File5=icon_bezel_transp_green.png
+File6=icon_bezel_transp_white.png
+File7=icon_delete.png
+File8=icon_duplicate.png
+File9=icon_edit.png
+FileGroup1=Default Group
+FileGroup10=Default Group
+FileGroup11=Default Group
+FileGroup12=Default Group
+FileGroup13=Default Group
+FileGroup14=Default Group
+FileGroup15=Default Group
+FileGroup16=Default Group
+FileGroup17=Default Group
+FileGroup18=Default Group
+FileGroup19=Default Group
+FileGroup2=Default Group
+FileGroup20=Default Group
+FileGroup21=Default Group
+FileGroup3=Default Group
+FileGroup4=Default Group
+FileGroup5=Default Group
+FileGroup6=Default Group
+FileGroup7=Default Group
+FileGroup8=Default Group
+FileGroup9=Default Group
+Group=Default Group
+Library1=ahviewpager
+Library10=rspopupmenu
+Library11=runtimepermissions
+Library2=animation
+Library3=core
+Library4=gps
+Library5=ime
+Library6=phone
+Library7=preferenceactivity
+Library8=reflection
+Library9=richstring
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'SetApplicationAttribute(android:theme, "@style/Theme.Sphinx")~\n~'SetApplicationAttribute(android:theme, "@android:style/Theme.Material.Light")~\n~'SetApplicationAttribute(android:theme, "@android:style/Theme.Holo.Light")~\n~SetActivityAttribute(Main,  android:windowSoftInputMode, "stateHidden|adjustPan")~\n~SetActivityAttribute(Airp,  android:windowSoftInputMode, "stateHidden|adjustPan")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddManifestText(<uses-permission~\n~android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~android:maxSdkVersion="18" />)~\n~RemovePermission (android.permission.WRITE_EXTERNAL_STORAGE)~\n~'End of default text.~\n~~\n~
+Module1=Airp
+Module2=ClsCheckList
+Module3=ClsExplorer
+NumberOfFiles=21
+NumberOfLibraries=11
+NumberOfModules=3
+Version=13
+@EndOfDesignText@
+ #Region  Project Attributes 
+	#ApplicationLabel: AeroCalculator
+	'remembre to set 'Package Name' into 'Project menu'!!!
+	#VersionCode: 26
+	#VersionName: 3.21
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: unspecified
+	#CanInstallToExternalStorage: True
+#End Region
+
+#Region  Activity Attributes 
+	#FullScreen: False
+	#IncludeTitle: False
+#End Region
+
+#Region  Module Attributes 
+'#IgnoreWarnings: 1, 2, 3, 4, 5, 6
+	'List of warnings that will be ignored in this module.
+'#ExcludeFromDebugger: False
+	'Whether to exclude this module from the debugger.
+	'Debug information will not be added to this module.
+	'Values: True or False
+'#ExcludeFromLibrary: False
+	'Whether to exclude this module during library compilation.
+	'Values: True or False
+#End Region
+
+Sub Process_Globals
+	
+	'Sensors
+	Dim Gps1 As GPS
+	Dim Ready As Boolean
+	Dim GpsCheck As Int
+	Dim GpsCheck2 As Int
+	Dim GpsStatus As Boolean
+	Dim PressureSensor As Double
+	Dim TempSensor As Double
+	
+	' Preferences
+	Dim screen As PreferenceScreen
+	Dim manager As PreferenceManager
+	
+	'Indice do tipo de input
+	Dim indAltType As Int
+	Dim indSpdType As Int
+	Dim indTempType As Int
+	Dim indWeightType As Int
+	Dim indCLmaxType As Int
+	Dim indNzType As Int
+	Dim indAngle1Type As Int 
+	Dim indAngle2Type As Int
+	Dim indWindType As Int
+	
+	' Tema de cores
+	Dim ColorBut1 As Int
+	Dim ColorBut2 As Int
+	Dim ColorBut3 As Int
+	Dim ColorBut4 As Int
+	Dim ColorButText1 As Int
+	Dim ColorButText2 As Int
+	Dim ColorButText3 As Int
+	Dim ColorTitleText As Int
+	Dim ColorEdt As Int
+	Dim ColorEdtText As Int
+	Dim ColorEdtHint As Int
+	Dim ColorPnlInput1 As Int
+	Dim ColorPnlInput2 As Int
+	Dim ColorPnlInput3 As Int
+	Dim ColorPnlInput4 As Int
+	Dim ColorPnlInput5 As Int
+	Dim ColorPnlLine As Int
+	Dim ColorPnlLine2 As Int
+	Dim ColorPnlLine3 As Int
+'	Dim ColorPnlDown As Int
+	Dim ColorPnlTitle As Int
+	
+	'Escala
+	Dim sc As Double
+	Dim ld As Int
+	Dim xx As Double
+	
+	'Variaveis de airplanes
+	Dim a As Map
+	Dim ID_edt As Int
+	
+	'Pager
+	Dim CurrentPage As Int : CurrentPage = 1
+	
+	'Timer for animation
+	Dim Timer1 As Timer
+	
+	'Timer for Select Edit Texts
+	Dim TimerT1 As Timer
+	Dim TimerT2 As Timer
+	Dim TimerT3 As Timer
+	Dim TimerT4 As Timer
+	Dim TimerT5 As Timer
+	Dim TimerT6 As Timer
+	Dim TimerT7 As Timer
+	Dim TimerT8 As Timer
+	Dim TimerT9 As Timer
+	Dim TimerT10 As Timer
+	Dim TimerT11 As Timer
+	Dim TimerT12 As Timer
+	Dim TimerT13 As Timer
+	Dim TimerT14 As Timer
+		
+	'Files Access
+	Private rp As RuntimePermissions
+
+End Sub
+	
+Sub Globals
+	 
+	'The container and the ViewPager objects
+	Dim container As AHPageContainer
+	Dim pager As AHViewPager
+	Dim line As Panel
+	
+	'Botoes na barra ation bar
+	Dim img2 As ImageView
+	Dim pnlTransparent As Panel
+	Dim img3 As ImageView
+	Dim pnlTransparent1 As Panel
+	
+	' Paineis de fundo
+	Dim pnlBack0 As Panel
+	Dim pnlBack1 As Panel
+	Dim pnlBack2 As Panel
+	
+	' Botoes da parte superior
+	Dim btnAirp As Button
+	Dim btnCalc As Button
+	Dim btnBack As Button      
+	
+	'Botoes do tipos dos inputs
+	Dim btnAirplane As Button
+	Dim btnAltType As Button
+	Dim btnTempType As Button
+	Dim btnSpdType As Button
+	Dim btnSpdDelta As Button
+	Dim btnWeight As Button
+	Dim btnSref As Button
+	Dim btncref As Button
+	Dim btnCLmax As Button
+	Dim btnNzType As Button
+	Dim btnAngle1Type As Button
+	Dim btnAngle2Type As Button
+	Dim btnCrossWind As Button
+	Dim btnHeadWind As Button
+	Dim btnWindRefAngle As Button
+	
+	'Botoes da unidade dos inputs
+	Dim btnAltUnit As Button
+	Dim btnSpdUnit As Button
+	Dim btnTempUnit As Button 
+	Dim btnWeightUnit As Button
+	Dim btnSrefUnit As Button
+	Dim btncrefUnit As Button
+	Dim btnNzUnit As Button
+	Dim btnAngle1Unit As Button
+	Dim btnAngle2Unit As Button
+	Dim btnCrossWindUnit As Button
+	Dim btnHeadWindUnit As Button
+	Dim btnWindRefAngleUnit As Button
+	
+	'Text de edicao dos inputs
+	Dim edtAlt As EditText
+	Dim edtSpd As EditText
+	Dim edtSpdDelta As EditText
+	Dim edtTemp As EditText
+	Dim edtWeight As EditText
+	Dim edtSref As EditText
+	Dim edtcref As EditText
+	Dim edtCLmax As EditText
+	Dim edtNz As EditText
+	Dim edtAngle1 As EditText
+	Dim edtAngle2 As EditText
+	Dim edtCrossWind As EditText
+	Dim edtHeadWind As EditText
+	Dim edtWindRefAngle As EditText
+	
+	'Indice das unidades
+	Dim indAltUnit As Int
+	Dim indTempUnit As Int
+	Dim indSpdUnit As Int
+	Dim indWeightUnit As Int
+	Dim indSrefUnit As Int
+	Dim indcrefUnit As Int
+	Dim indAngle1Unit As Int
+	Dim indAngle2Unit As Int
+	Dim indHeadWindUnit As Int
+	Dim indCrossWindUnit As Int
+	Dim indWindRefAngleUnit As Int
+	
+	'Transformacao de unidades
+	Dim kAlt As Double	
+	Dim kPres As Double
+	Dim kPres2 As Double	
+	Dim kTemp As Double
+	Dim cTemp As Double
+	Dim kTemp2 As Double
+	Dim cTemp2 As Double
+	Dim kSpd As Double
+	Dim kWeight As Double
+	Dim kSref As Double
+	Dim kcref As Double
+	Dim kSpd1 As Double
+	Dim kSpd2 As Double
+	Dim KAngle1 As Double
+	Dim KAngle2 As Double
+	Dim KAngle3 As Double
+	
+	'Sensores
+	Dim pa As PhoneSensors
+	Dim tmp As PhoneSensors
+	Dim GPSspeed As Double
+	Dim GPSalt As Double
+	
+	'Variaveis
+	Dim weight, Sref, cref, CLmax, AltValue, TempValue, SpdValue, SpdDelta, NzValue, Nz, Bank As Double
+	Dim Angle1Value, Angle2Value, Headwind, CrossWind, WindRefAngle As Double
+	Dim Hp,Hp_ft,H,Hd,Htemp,Hgeop,Hgeom,P,P_P0,Rho,Rho_Rho0,T_degC,T_T0,isa,Vsound,mu As Double
+	Dim tas,cas,eas,gs,mach,CL,re,VsFact,Qc,Qd,Ptot,Ttot,Ttot_degC As Double
+	Dim e,Rho0,P0,Vsound0,mu0,Thp,exp As Double
+	Dim Hgeop_m, T_std, T_kelvin, Vs_tas, Vs_mach, Vs_cas As Double
+	Dim Psi, Beta, Track, Drift, Headwind, CrossWind, WindRefAngle, WS, WD, HW, CW As Double
+	Dim u_airsp_inert, v_airsp_inert, u_wind_inert, v_wind_inert, u_inert, v_inert As Double
+	
+	'Variaveis globais de Airplanes
+	Dim scvMain0 As ScrollView
+	Dim lst As ClsCheckList
+	Dim ID_use As Int
+	Dim ID_inp As Int
+	Dim ID_rem As Int
+	Dim ID_add As Int
+
+	'Variaveis globais de Inputs
+	Dim scvMain1 As ScrollView
+	Dim spnAirp As Spinner
+	Dim pnlInput As Panel
+	Dim pnlline As Panel
+	Dim ib,tb As Double
+	Dim WeightS As List
+	Dim CLmaxS As List
+	Dim spinnerPos As Int
+	
+	'Variaveis globais de outputs
+	Dim scvMain2 As ScrollView
+	Dim PanelNb1 As Int            
+	Dim PanelHeight1 As Int 
+	Dim lblVar As Label
+	Dim lblRes As Label
+	Dim i As Int
+	
+	'File Explorer
+	Dim dlgFileExpl As ClsExplorer
+	
+	'Popup Menu
+	Dim PopupMenu As RSPopupMenu
+	
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+			
+	' Criando screen de settings e iniciando GPS
+    If FirstTime Then
+		CreatePreferenceScreen
+		Gps1.Initialize("GPS")
+		If manager.GetAll.Size = 0 Then SetDefaults
+	Else			
+	End If
+	GpsCheck = 1
+	GpsCheck2 = 1
+	GpsStatus = False
+	
+	'Iniciando container com as paginas
+	container.Initialize
+	
+	' Condicoes iniciais	
+	kAlt = 0.3048
+	kPres = 100
+	kPres2 = 1
+	kTemp = 1
+	cTemp = 273.15
+	kTemp2 = 1
+	cTemp2 = 0
+	kSpd = 1852 / 3600
+	kWeight = 1
+	kSref = 1
+	kcref = 1
+	indAltUnit = 0
+ 	indTempUnit = 0 
+ 	indSpdUnit = 0 
+ 	indWeightUnit = 0 
+ 	indSrefUnit = 0 
+	indcrefUnit = 0
+	indAngle1Unit = 0
+	indAngle2Unit = 0
+	indWindRefAngleUnit = 0
+ 	indAltType = 0
+ 	indTempType = 1 
+	indSpdType = 1
+	indWindType = 0
+	kSpd1 = 1852 / 3600
+	kSpd2 = 1852 / 3600
+	KAngle1 = 3.14159265358979323846 / 180
+	KAngle2 = 3.14159265358979323846 / 180
+	KAngle3 = 3.14159265358979323846 / 180
+	
+	'Themes
+	If manager.GetString("theme").CompareTo("Ancient Brown")=0 Then	
+		ColorPnlTitle =  Colors.RGB(62,41,30)
+		ColorTitleText = Colors.White
+		'ColorPnlDown =   ColorPnlTitle
+		ColorPnlLine =   Colors.White
+		ColorPnlLine2 =  Colors.DarkGray
+		ColorPnlLine3 =  ColorPnlTitle
+		ColorBut3 =      Colors.Transparent
+		ColorBut4 = 	 Colors.Transparent
+		ColorButText2 =  Colors.RGB(236, 236, 236)
+		ColorButText3 =  Colors.White
+		ColorBut1 = 	 Colors.RGB(220,210,193)
+		ColorBut2 =      Colors.RGB(243,237,210)
+		ColorButText1 =  Colors.Black
+		ColorEdt =       Colors.RGB(243,237,210)
+		ColorEdtText =   Colors.Black
+		ColorEdtHint =   Colors.Gray
+		ColorPnlInput1 = Colors.RGB(228, 210, 180)	
+		ColorPnlInput2 = Colors.RGB(228, 210, 180)
+		ColorPnlInput3 = Colors.White	
+		ColorPnlInput4 = Colors.RGB(243,237,210)
+		ColorPnlInput5 = Colors.RGB(243,237,210)
+'	Else If manager.GetString("theme").CompareTo("Green Peace")=0 Then
+'			ColorPnlTitle =  Colors.RGB(0, 150, 136)
+'			ColorTitleText = Colors.White
+'			'ColorPnlDown =   ColorPnlTitle
+'			ColorPnlLine =   Colors.White
+'			ColorPnlLine2 =  Colors.DarkGray
+'			ColorPnlLine3 =  ColorPnlTitle
+'			ColorBut3 =      Colors.Transparent
+'			ColorBut4 = 	 Colors.Transparent
+'			ColorButText2 =  Colors.RGB(236, 236, 236)
+'			ColorButText3 =  Colors.White
+'			ColorBut1 = 	 Colors.ARGB(255,218,253,249)
+'			ColorBut2 =      Colors.White
+'			ColorButText1 =  Colors.Black
+'			ColorEdt =       Colors.White
+'			ColorEdtText =   Colors.Black
+'			ColorEdtHint =   Colors.Gray
+'			ColorPnlInput1 = Colors.RGB(222, 242, 241)
+'			ColorPnlInput2 = Colors.RGB(222, 242, 241)
+'			ColorPnlInput3 = Colors.White
+'			ColorPnlInput4 = Colors.RGB(222, 242, 241)
+'			ColorPnlInput5 = Colors.RGB(222, 242, 241)
+	Else If manager.GetString("theme").CompareTo("Green Peace")=0 Then
+		ColorPnlTitle =  Colors.RGB(0, 145, 131)
+		ColorTitleText = Colors.White
+		ColorPnlLine =   Colors.White
+		ColorPnlLine2 =  Colors.DarkGray
+		ColorPnlLine3 =  ColorPnlTitle
+		ColorBut3 =      Colors.Transparent
+		ColorBut4 = 	 Colors.Transparent
+		ColorButText2 =  Colors.RGB(239, 239, 239)
+		ColorButText3 =  Colors.RGB(255, 255, 255)
+		ColorBut1 = 	 Colors.ARGB(255,228,255,251)
+		ColorBut2 =      Colors.RGB(250, 255, 253)
+		ColorButText1 =  Colors.Black	
+		ColorEdt =       Colors.RGB(252, 255, 254)
+		ColorEdtText =   Colors.Black
+		ColorEdtHint =   Colors.Gray
+		ColorPnlInput1 = Colors.RGB(233, 242, 241)	
+		ColorPnlInput2 = Colors.RGB(233, 242, 241)
+		ColorPnlInput3 = Colors.RGB(252, 255, 254)
+		ColorPnlInput4 = Colors.RGB(233, 242, 241)
+		ColorPnlInput5 = Colors.RGB(233, 242, 241)	
+	Else If manager.GetString("theme").CompareTo("Dark Shadows")=0 Then
+		ColorPnlTitle =  Colors.Black
+		ColorTitleText = Colors.White
+		'ColorPnlDown =   ColorPnlTitle
+		ColorPnlLine =   Colors.RGB(249, 249, 249)
+		ColorPnlLine2 =  Colors.DarkGray
+		ColorPnlLine3 =  ColorPnlTitle
+		ColorBut3 =      Colors.Transparent
+		ColorBut4 = 	 Colors.Transparent
+		ColorButText2 =  Colors.RGB(236, 236, 236)
+		ColorButText3 =  Colors.White
+		ColorBut1 = 	 Colors.LightGray
+		ColorBut2 =      Colors.RGB(243,243,245)
+		ColorButText1 =  Colors.Black	
+		ColorEdt =       Colors.RGB(243,243,243)	
+		ColorEdtText =   Colors.Black
+		ColorEdtHint =   Colors.Gray
+		ColorPnlInput1 = Colors.White		
+		ColorPnlInput2 = Colors.White
+		ColorPnlInput3 = Colors.White	
+		ColorPnlInput4 = Colors.RGB(243, 243, 243)
+		ColorPnlInput5 = Colors.White
+	Else If manager.GetString("theme").CompareTo("Blue Sky")=0 Then
+		ColorPnlTitle =  Colors.RGB(26,35,126)
+		ColorTitleText = Colors.White
+		'ColorPnlDown =   ColorPnlTitle
+		ColorPnlLine =   Colors.RGB(242, 242, 248)
+		ColorPnlLine2 =  Colors.DarkGray
+		ColorPnlLine3 =  ColorPnlTitle
+		ColorBut3 =      Colors.Transparent
+		ColorBut4 = 	 Colors.Transparent
+		ColorButText2 =  Colors.RGB(236, 236, 236)
+		ColorButText3 =  Colors.White
+		ColorBut1 = 	 Colors.RGB(212, 214, 228)
+		ColorBut2 =      Colors.RGB(232, 234, 248)
+		ColorButText1 =  Colors.Black	
+		ColorEdt =       Colors.RGB(232, 234, 248)	
+		ColorEdtText =   Colors.Black
+		ColorEdtHint =   Colors.Gray
+		ColorPnlInput1 = Colors.White		
+		ColorPnlInput2 = Colors.White
+		ColorPnlInput3 = Colors.White	
+		ColorPnlInput4 = Colors.RGB(232, 234, 248)
+		ColorPnlInput5 = Colors.White
+	Else If manager.GetString("theme").CompareTo("Red Alert")=0 Then
+		ColorPnlTitle =  Colors.RGB(176, 18, 10)
+		ColorTitleText = Colors.White
+		'ColorPnlDown =   ColorPnlTitle
+		ColorPnlLine =   Colors.White
+		ColorPnlLine2 =  Colors.DarkGray
+		ColorPnlLine3 =  ColorPnlTitle
+		ColorBut3 =      Colors.Transparent
+		ColorBut4 = 	 Colors.Transparent
+		ColorButText2 =  Colors.RGB(236, 236, 236)
+		ColorButText3 =  Colors.White
+		ColorBut1 = 	 Colors.RGB(255, 199, 197)
+		ColorBut2 =      Colors.RGB(253, 224, 220)
+		ColorButText1 =  Colors.Black		
+		ColorEdt =       Colors.RGB(253, 224, 220)
+		ColorEdtText =   Colors.Black
+		ColorEdtHint =   Colors.Gray
+		ColorPnlInput1 = Colors.RGB(249, 189, 187)	
+		ColorPnlInput2 = Colors.RGB(249, 189, 187)
+		ColorPnlInput3 = Colors.RGB(249, 189, 187)	
+		ColorPnlInput4 = Colors.RGB(253, 224, 220)
+		ColorPnlInput5 = Colors.RGB(249, 189, 187)
+	Else If manager.GetString("theme").CompareTo("Orange Juice")=0 Then
+		ColorPnlTitle =  Colors.RGB(230,98, 0)
+		ColorTitleText = Colors.White
+		'ColorPnlDown =   ColorPnlTitle
+		ColorPnlLine =   Colors.White
+		ColorPnlLine2 =  Colors.DarkGray
+		ColorPnlLine3 =  ColorPnlTitle
+		ColorBut3 =      Colors.Transparent
+		ColorBut4 = 	 Colors.Transparent
+		ColorButText2 =  Colors.RGB(236, 236, 236)
+		ColorButText3 =  Colors.White
+		ColorBut1 = 	 Colors.ARGB(240,255,253,170)
+		ColorBut2 =      Colors.ARGB(249,255,236,179)
+		ColorButText1 =  Colors.Black	
+		ColorEdt =       Colors.ARGB(249,255,246,175)
+		ColorEdtText =   Colors.Black
+		ColorEdtHint =   Colors.Gray
+		ColorPnlInput1 = Colors.RGB(255, 224, 148)	
+		ColorPnlInput2 = Colors.RGB(255, 224, 148)
+		ColorPnlInput3 = Colors.ARGB(249,255,246,175)	
+		ColorPnlInput4 = Colors.RGB(255, 224, 148)
+		ColorPnlInput5 = Colors.RGB(255, 224, 148)
+	End If
+	
+	'Criando pagina de Airplanes
+	pnlBack0.Initialize("")
+	pnlBack0.Color = ColorPnlInput5
+    scvMain0.Initialize(3000)
+	pnlBack0.AddView(scvMain0, 0, 0, 100%x, 100%y-100dip)
+	lst.Initialize(Me, scvMain0, "", "", "lst_LongClick", 1dip)
+	lst.DividerColor = ColorPnlLine3
+	container.AddPage(pnlBack0,"Airplanes")
+	
+	' Inicializando variaveis para definir se vamos editar ou adicionar um aviao.
+	ID_edt = 0
+	Airp.add = 0
+	
+	' Criando pagina de inputs
+	pnlBack1.Initialize("")
+	pnlBack1.Color = Colors.White
+    scvMain1.Initialize(100%y)
+	pnlBack1.AddView(scvMain1, 0, 0, 100%x, 100%y-100dip)
+ 
+	' Tamanho e numero de paineis de inputs
+	ib = 8dip
+	tb = 40dip	
+	Dim PanelNb As Int  
+	PanelNb = 14
+	
+	' Escalonamento com tamanho do celular
+	Dim hh, yy As Double
+	hh = 99dip + PanelNb * (ib * 2 + tb) + PanelNb * 1dip + 1dip
+	yy = Activity.Height
+	xx = Activity.Width
+	
+	sc = yy / hh
+	If sc<1 Then
+		sc=1
+	End If
+	If Activity.Width > Activity.Height Then
+		ld = 1
+	Else
+		ld = 0
+	End If
+
+	' Criando tela de inputs
+	Dim j As Int
+	For j=0 To PanelNb-1
+		pnlInput.Initialize("pnlInput")
+		pnlline.Initialize("pnlline")
+		If j=0 Then
+			scvMain1.Panel.AddView(pnlInput, 0, 0, 100%x, (ib*2+tb)*sc)
+			scvMain1.Panel.AddView(pnlline, 0%x, (PanelNb * (ib * 2 + tb) + (PanelNb) * 1dip) * sc-1dip, 100%x, 1dip * sc)
+		Else
+			scvMain1.Panel.AddView(pnlInput, 0%x, (j * (ib*2+tb)+j*1dip)*sc, 100%x, (ib*2+tb)*sc)
+			scvMain1.Panel.AddView(pnlline, 0%x, (j * (ib*2+tb)+j*1dip-1dip)*sc, 100%x,1dip*sc)
+		End If
+		
+	    pnlInput.Tag=j
+	    If (j Mod 2)=1 Then
+			pnlInput.Color = ColorPnlInput1		
+	    Else
+	        pnlInput.Color = ColorPnlInput2
+		End If
+		pnlline.Color = ColorPnlLine3
+		
+		Dim filter As IME
+		filter.Initialize("")	
+		
+		Select j
+		Case 0
+			btnAirplane.Initialize("btnAirplane")
+			pnlInput.AddView(btnAirplane, 3%x, ib*sc, 30%x, tb*sc)
+			btnAirplane.Text = "Airplane"
+			btnAirplane.TextSize = 15*sc
+			btnAirplane.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			Dim panelspn As Panel
+			panelspn.Initialize("panelspn")
+			pnlInput.AddView(panelspn, 37%x, ib * sc, 60%x, tb * sc)
+			panelspn.Background=ButtonGradient(Array As Int(ColorEdt, ColorEdt),Array As Int(ColorBut1, ColorPnlTitle))
+			spnAirp.Initialize("spnAirp")
+			spnAirp.TextSize = 14*sc
+			SpinnerCreate
+			'SetNinePatchDrawable(spnAirp, "spinner_ab_default_holo_light_am")
+		Case 1
+		    btnAltType.Initialize("btnAltType")
+			pnlInput.AddView(btnAltType, 3%x, ib*sc, 30%x, tb*sc)
+			btnAltType.Text = "Hp"
+			btnAltType.TextSize = 15*sc
+			btnAltType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtAlt.Initialize("edtAlt")
+		    pnlInput.AddView(edtAlt,37%x, ib*sc, 36%x, tb*sc)
+			edtAlt.Hint="Altitude"
+			edtAlt.InputType = edtAlt.INPUT_TYPE_DECIMAL_NUMBERS
+			edtAlt.ForceDoneButton = True
+			edtAlt.TextSize = 13*sc
+			filter.SetCustomFilter(edtAlt, edtAlt.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+			btnAltUnit.Initialize("btnAltUnit")
+			btnAltUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnAltUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnAltUnit.Text="ft"
+			btnAltUnit.TextSize = 15*sc
+			edtAlt.TextColor = ColorEdtText
+			edtAlt.Color = ColorEdt
+			edtAlt.HintColor = ColorEdtHint
+			btnAltType.TextColor = ColorButText1
+			btnAltUnit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtAlt, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 2
+		    btnTempType.Initialize("btnTempType")
+		    pnlInput.AddView(btnTempType,3%x, ib*sc, 30%x, tb*sc)
+			btnTempType.Text="Δ ISA"
+			btnTempType.TextSize = 15*sc
+			btnTempType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtTemp.Initialize("edtTemp")
+		    pnlInput.AddView(edtTemp,37%x, ib*sc, 36%x, tb*sc)
+			edtTemp.Hint="Temperature"
+			edtTemp.InputType = edtTemp.INPUT_TYPE_DECIMAL_NUMBERS
+			edtTemp.ForceDoneButton = True
+			edtTemp.TextSize = 13*sc
+			filter.SetCustomFilter(edtTemp, edtTemp.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+			btnTempUnit.Initialize("btnTempUnit")
+			btnTempUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnTempUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnTempUnit.Text="°C"
+			btnTempUnit.TextSize = 15*sc
+			edtTemp.TextColor = ColorEdtText
+			edtTemp.Color = ColorEdt
+			edtTemp.HintColor = ColorEdtHint
+			btnTempType.TextColor = ColorButText1
+			btnTempUnit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtTemp, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 3
+		    btnSpdType.Initialize("btnSpdType")
+		    pnlInput.AddView(btnSpdType,3%x, ib*sc, 30%x, tb*sc)
+			btnSpdType.Text="TAS"
+			btnSpdType.TextSize = 15*sc
+			btnSpdType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtSpd.Initialize("edtSpd")
+		    pnlInput.AddView(edtSpd,37%x, ib*sc, 36%x, tb*sc)
+			edtSpd.Hint="Speed"
+			edtSpd.TextSize = 13*sc
+			edtSpd.InputType = edtSpd.INPUT_TYPE_DECIMAL_NUMBERS
+			edtSpd.ForceDoneButton = True
+			filter.SetCustomFilter(edtSpd, edtSpd.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
+			btnSpdUnit.Initialize("btnSpdUnit")
+			btnSpdUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnSpdUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnSpdUnit.Text="kt"
+			btnSpdUnit.TextSize = 15*sc
+			btnSpdDelta.Initialize("btnSpdDelta")
+		    pnlInput.AddView(btnSpdDelta,58%x, ib*sc, 15%x, tb*sc)
+			btnSpdDelta.Text = "+ Δ"
+			If sc > 1 Or ld = 1 Then
+			Dim rs4 As RichString
+				rs4.Initialize("+ΔV{T}S{T}")
+				rs4.RelativeSize2(.7,"{T}")
+				btnSpdDelta.Text = rs4
+			End If
+			btnSpdDelta.TextSize = 15*sc
+			btnSpdDelta.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnSpdDelta.Visible = False
+			edtSpdDelta.Initialize("edtSpdDelta")
+		    pnlInput.AddView(edtSpdDelta,77%x, ib*sc, 20%x, tb*sc)
+			edtSpdDelta.Hint = "kt"
+			If sc > 1 Or ld = 1 Or xx>300dip Then
+				edtSpdDelta.Hint = "+ Δkt"	
+			End If
+			edtSpdDelta.TextSize = 13*sc
+			edtSpdDelta.InputType = edtSpdDelta.INPUT_TYPE_DECIMAL_NUMBERS
+			edtSpdDelta.ForceDoneButton = True
+			filter.SetCustomFilter(edtSpdDelta, edtSpdDelta.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+			edtSpd.TextColor = ColorEdtText
+			edtSpd.Color = ColorEdt
+			edtSpd.HintColor = ColorEdtHint
+			edtSpdDelta.TextColor = ColorEdtText
+			edtSpdDelta.Color = ColorEdt
+			edtSpdDelta.HintColor = ColorEdtHint
+			edtSpdDelta.Visible = False
+			btnSpdType.TextColor = ColorButText1
+			btnSpdUnit.TextColor = ColorButText1
+			btnSpdDelta.TextColor = ColorButText1
+			'SetNinePatchButton2(edtSpd, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+			'SetNinePatchButton2(edtSpdDelta, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 4
+		    btnWeight.Initialize("btnWeight")
+		    pnlInput.AddView(btnWeight,3%x, ib*sc, 30%x, tb*sc)
+			btnWeight.Text="Weight"
+			btnWeight.TextSize = 15*sc
+			btnWeight.Background =ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtWeight.Initialize("edtWeight")
+		    pnlInput.AddView(edtWeight,37%x, ib*sc, 36%x, tb*sc)
+			edtWeight.Hint="Weight"
+			edtWeight.TextSize = 13*sc
+			edtWeight.InputType = edtWeight.INPUT_TYPE_DECIMAL_NUMBERS
+			edtWeight.ForceDoneButton = True
+			filter.SetCustomFilter(edtWeight, edtWeight.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
+			btnWeightUnit.Initialize("btnWeightUnit")
+			btnWeightUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnWeightUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnWeightUnit.Text="kg"
+			btnWeightUnit.TextSize = 15*sc
+			edtWeight.TextColor = ColorEdtText
+			edtWeight.Color = ColorEdt
+			edtWeight.HintColor = ColorEdtHint
+			btnWeight.TextColor = ColorButText1
+			btnWeightUnit.TextColor = ColorButText1
+			WeightS.Initialize
+			WeightS.Add("Custom Weight")
+			'SetNinePatchButton2(edtWeight, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 5
+		    Dim rs1 As RichString
+			rs1.Initialize("S{T} _ref_wing{T}")
+			'rs1.Subscript2("{S}")
+			rs1.RelativeSize2(.7,"{T}")
+			btnSref.Initialize("btnSref")
+		    pnlInput.AddView(btnSref,3%x, ib*sc, 30%x, tb*sc)
+			btnSref.Text=rs1
+			btnSref.TextSize = 15*sc
+			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtSref.Initialize("edtSref")
+		    pnlInput.AddView(edtSref,37%x, ib*sc, 36%x, tb*sc)
+			edtSref.Hint = "Ref. Area"
+			If sc > 1 Or ld = 1 Or xx>300dip Then
+			edtSref.Hint = "Reference Area"	
+			End If
+			edtSref.TextSize = 13*sc
+			edtSref.InputType = edtSref.INPUT_TYPE_DECIMAL_NUMBERS
+			edtSref.ForceDoneButton = True
+			filter.SetCustomFilter(edtSref, edtSref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
+			btnSrefUnit.Initialize("btnSrefUnit")
+			btnSrefUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnSrefUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnSrefUnit.Text="m²"
+			btnSrefUnit.TextSize = 15*sc
+			edtSref.TextColor = ColorEdtText
+			edtSref.Color = ColorEdt
+			edtSref.HintColor = ColorEdtHint
+			btnSref.TextColor = ColorButText1
+			btnSrefUnit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtSref, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 6
+		    Dim rs2 As RichString
+			rs2.Initialize("c{T} _ref_wing{T}")
+			'rs2.Subscript2("{S}")
+			rs2.RelativeSize2(.7,"{T}")
+			btncref.Initialize("btncref")
+		    pnlInput.AddView(btncref,3%x, ib*sc, 30%x, tb*sc)
+			btncref.Text=rs2
+			btncref.TextSize = 15*sc
+			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtcref.Initialize("edtcref")
+		    pnlInput.AddView(edtcref,37%x, ib*sc, 36%x, tb*sc)
+			edtcref.Hint = "Ref. Chord"
+			If sc > 1 Or ld = 1 Or xx>320dip Then
+			edtcref.Hint = "Reference Chord"	
+			End If
+			edtcref.TextSize = 13*sc
+			edtcref.InputType = edtcref.INPUT_TYPE_DECIMAL_NUMBERS
+			edtcref.ForceDoneButton = True
+			filter.SetCustomFilter(edtcref, edtcref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
+			btncrefUnit.Initialize("btncrefUnit")
+			btncrefUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btncrefUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btncrefUnit.Text="m"
+			btncrefUnit.TextSize = 15*sc
+			edtcref.TextColor = ColorEdtText
+			edtcref.Color = ColorEdt
+			edtcref.HintColor = ColorEdtHint
+			btncref.TextColor = ColorButText1
+			btncrefUnit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtcref, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 7
+		    Dim rs3 As RichString
+			rs3.Initialize("CL{T}MAX{T}")
+			rs3.RelativeSize2(.7,"{T}")
+			btnCLmax.Initialize("btnCLmax")
+		    pnlInput.AddView(btnCLmax,3%x, ib*sc, 30%x, tb*sc)
+			btnCLmax.Text=rs3
+			btnCLmax.TextSize = 15*sc
+			btnCLmax.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtCLmax.Initialize("edtCLmax")
+		    pnlInput.AddView(edtCLmax,37%x, ib*sc, 36%x, tb*sc)
+			edtCLmax.Hint="CLmax"
+			edtCLmax.TextSize = 13*sc
+			edtCLmax.InputType = edtCLmax.INPUT_TYPE_DECIMAL_NUMBERS
+			edtCLmax.ForceDoneButton = True
+			filter.SetCustomFilter(edtCLmax, edtCLmax.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
+			edtCLmax.TextColor = ColorEdtText
+			edtCLmax.Color = ColorEdt
+			edtCLmax.HintColor = ColorEdtHint
+			btnCLmax.TextColor = ColorButText1
+			CLmaxS.Initialize
+			CLmaxS.Add("Custom CLmax")
+			'SetNinePatchButton2(edtCLmax, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 8
+		    btnNzType.Initialize("btnNzType")
+		    pnlInput.AddView(btnNzType,3%x, ib*sc, 30%x, tb*sc)
+			btnNzType.Text = "Nz"
+			If sc > 1 Or ld = 1 Then
+				btnNzType.Text = "Load Factor"	
+			End If
+			btnNzType.TextSize = 15*sc
+			btnNzType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtNz.Initialize("edtNz")
+		    pnlInput.AddView(edtNz,37%x, ib*sc, 36%x, tb*sc)
+			edtNz.Hint = "Nz"
+			If sc > 1 Or ld = 1 Or xx>300dip Then
+				edtNz.Hint = "Pull-up Nz"	
+			End If
+			edtNz.TextSize = 13*sc
+			edtNz.InputType = edtNz.INPUT_TYPE_DECIMAL_NUMBERS
+			edtNz.ForceDoneButton = True
+			filter.SetCustomFilter(edtNz, edtNz.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+			btnNzUnit.Initialize("btnNzUnit")
+			btnNzUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnNzUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnNzUnit.Text="g"
+			btnNzUnit.TextSize = 15*sc
+			edtNz.TextColor = ColorEdtText
+			edtNz.Color = ColorEdt
+			edtNz.HintColor = ColorEdtHint
+			btnNzType.TextColor = ColorButText1
+			btnNzUnit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtNz, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 9
+		    btnAngle1Type.Initialize("btnAngle1Type")
+			pnlInput.AddView(btnAngle1Type, 3%x, ib*sc, 30%x, tb*sc)
+		    btnAngle1Type.Text="Track"
+			btnAngle1Type.TextSize = 15
+			btnAngle1Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtAngle1.Initialize("edtAngle1")
+		    pnlInput.AddView(edtAngle1,37%x, ib*sc, 36%x, tb*sc)
+			edtAngle1.Hint = "Track"
+			If sc > 1 Or ld = 1 Or xx>300dip Then
+				edtAngle1.Hint = "Track Angle"
+			End If
+			edtAngle1.TextSize = 13*sc
+			edtAngle1.InputType = edtAngle1.INPUT_TYPE_DECIMAL_NUMBERS
+			edtAngle1.ForceDoneButton = True
+			filter.SetCustomFilter(edtAngle1, edtAngle1.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+			btnAngle1Unit.Initialize("btnAngle1Unit")
+			btnAngle1Unit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnAngle1Unit,77%x, ib*sc, 20%x, tb*sc)
+		    btnAngle1Unit.Text="deg"
+			btnAngle1Unit.TextSize = 15*sc
+			edtAngle1.TextColor = ColorEdtText
+			edtAngle1.Color = ColorEdt
+			edtAngle1.HintColor = ColorEdtHint
+			btnAngle1Type.TextColor = ColorButText1
+			btnAngle1Unit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtAngle1, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 10
+		    btnAngle2Type.Initialize("btnAngle2Type")
+			pnlInput.AddView(btnAngle2Type, 3%x, ib*sc, 30%x, tb*sc)
+		    btnAngle2Type.Text="Sideslip"
+			btnAngle2Type.TextSize = 15*sc
+			btnAngle2Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtAngle2.Initialize("edtAngle2")
+		    pnlInput.AddView(edtAngle2,37%x, ib*sc, 36%x, tb*sc)
+			edtAngle2.Hint = "Sideslip"
+			If sc > 1 Or ld = 1 Or xx>300dip Then
+				edtAngle2.Hint = "Sideslip Angle"	
+			End If
+			edtAngle2.TextSize = 13*sc
+			edtAngle2.InputType = edtAngle2.INPUT_TYPE_DECIMAL_NUMBERS
+			edtAngle2.ForceDoneButton = True
+			filter.SetCustomFilter(edtAngle2, edtAngle2.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+			btnAngle2Unit.Initialize("btnAngle2Unit")
+			btnAngle2Unit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnAngle2Unit,77%x, ib*sc, 20%x, tb*sc)
+		    btnAngle2Unit.Text="deg"
+			btnAngle2Unit.TextSize = 15*sc
+			edtAngle2.TextColor = ColorEdtText
+			edtAngle2.Color = ColorEdt
+			edtAngle2.HintColor = ColorEdtHint
+			btnAngle2Type.TextColor = ColorButText1
+			btnAngle2Unit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtAngle2, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 11
+		    btnHeadWind.Initialize("btnHeadWind")
+		    pnlInput.AddView(btnHeadWind,3%x, ib*sc, 30%x, tb*sc)
+			btnHeadWind.Text = "HeadWnd"
+			If sc > 1 Or ld = 1 Or xx>300dip Then
+				btnHeadWind.Text = "HeadWind"
+			End If
+			btnHeadWind.TextSize = 15*sc
+			btnHeadWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtHeadWind.Initialize("edtHeadWind")
+		    pnlInput.AddView(edtHeadWind,37%x, ib*sc, 36%x, tb*sc)
+			edtHeadWind.Hint = "HeadWind"
+			If sc > 1 Or ld = 1 Or xx>340dip Then
+				edtHeadWind.Hint = "HeadWind Speed"	
+			End If
+			edtHeadWind.TextSize = 13*sc
+			edtHeadWind.InputType = edtHeadWind.INPUT_TYPE_DECIMAL_NUMBERS
+			edtHeadWind.ForceDoneButton = True
+			filter.SetCustomFilter(edtHeadWind, edtHeadWind.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+	        btnHeadWindUnit.Initialize("btnHeadWindUnit")
+			btnHeadWindUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnHeadWindUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnHeadWindUnit.Text="kt"
+			btnHeadWindUnit.TextSize = 15*sc
+			edtHeadWind.TextColor = ColorEdtText
+			edtHeadWind.Color = ColorEdt
+			edtHeadWind.HintColor = ColorEdtHint
+			btnHeadWind.TextColor = ColorButText1
+			btnHeadWindUnit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtHeadWind, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		Case 12	
+			btnCrossWind.Initialize("btnCrossWind")
+		    pnlInput.AddView(btnCrossWind,3%x, ib*sc, 30%x, tb*sc)
+			btnCrossWind.Text = "CrossWnd"
+			If sc > 1 Or ld = 1 Or xx>300dip Then
+				btnCrossWind.Text = "CrossWind"
+			End If
+			btnCrossWind.TextSize = 15*sc
+			btnCrossWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtCrossWind.Initialize("edtCrossWind")
+		    pnlInput.AddView(edtCrossWind,37%x, ib*sc, 36%x, tb*sc)
+			edtCrossWind.Hint = "CrossWind"
+			If sc > 1 Or ld = 1 Or xx>340dip Then
+				edtCrossWind.Hint = "CrossWind Speed"	
+			End If
+			edtCrossWind.TextSize = 13*sc
+			edtCrossWind.InputType = edtCrossWind.INPUT_TYPE_DECIMAL_NUMBERS
+			edtCrossWind.ForceDoneButton = True
+			filter.SetCustomFilter(edtCrossWind, edtCrossWind.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+	        btnCrossWindUnit.Initialize("btnCrossWindUnit")
+			btnCrossWindUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnCrossWindUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnCrossWindUnit.Text="kt"
+			btnCrossWindUnit.TextSize = 15*sc
+			edtCrossWind.TextColor = ColorEdtText
+			edtCrossWind.Color = ColorEdt
+			edtCrossWind.HintColor = ColorEdtHint
+			btnCrossWind.TextColor = ColorButText1
+			btnCrossWindUnit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtCrossWind, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+	    Case 13
+		    btnWindRefAngle.Initialize("btnWindRefAngle")
+		    pnlInput.AddView(btnWindRefAngle,3%x, ib*sc, 30%x, tb*sc)
+			btnWindRefAngle.Text="Rwy Angle"
+			If sc > 1 Or ld = 1 Or xx > 400dip Then
+				btnWindRefAngle.Text="Runway Angle"	
+			End If
+			btnWindRefAngle.TextSize = 15*sc
+			btnWindRefAngle.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			edtWindRefAngle.Initialize("edtWindRefAngle")
+		    pnlInput.AddView(edtWindRefAngle,37%x, ib*sc, 36%x, tb*sc)
+			edtWindRefAngle.Hint="Reference Dir"
+			If sc > 1 Or ld = 1 Or xx>400dip Then
+				edtWindRefAngle.Hint="Reference Direction"	
+			End If
+			edtWindRefAngle.TextSize = 13*sc
+			edtWindRefAngle.InputType = edtWindRefAngle.INPUT_TYPE_DECIMAL_NUMBERS
+			edtWindRefAngle.ForceDoneButton = True
+			filter.SetCustomFilter(edtWindRefAngle, edtWindRefAngle.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
+	        btnWindRefAngleUnit.Initialize("btnWindRefAngleUnit")
+			btnWindRefAngleUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+		    pnlInput.AddView(btnWindRefAngleUnit,77%x, ib*sc, 20%x, tb*sc)
+		    btnWindRefAngleUnit.Text="deg"
+			btnWindRefAngleUnit.TextSize = 15*sc
+			edtWindRefAngle.TextColor = ColorEdtText
+			edtWindRefAngle.Color = ColorEdt
+			edtWindRefAngle.HintColor = ColorEdtHint
+			btnWindRefAngle.TextColor = ColorButText1
+			btnWindRefAngleUnit.TextColor = ColorButText1
+			'SetNinePatchButton2(edtWindRefAngle, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
+		End Select
+	Next
+
+	scvMain1.Panel.Height = (PanelNb * (ib*2+tb) + PanelNb* 1dip + 3dip)*sc
+	container.AddPage(pnlBack1,"Inputs")
+
+' Criando pagina de outputs
+	PanelNb1 = 42
+	PanelHeight1 = 40dip
+
+	pnlBack2.Initialize("")
+	pnlBack2.Color = Colors.White
+	scvMain2.Initialize(500)
+    pnlBack2.AddView(scvMain2, 0, 0, 100%x, 100%y-100dip*sc)
+	scvMain2.Panel.Height = PanelNb1 * PanelHeight1 + 3dip
+
+	container.AddPage(pnlBack2, "Outputs")
+
+' Criando painel superior e botoes
+	Dim pnltitle As Panel 
+	pnltitle.Initialize("pnltitle")
+	Activity.AddView(pnltitle, 0, 0, 100%x, 102dip*sc)
+	pnltitle.Color = ColorPnlTitle
+
+	Dim img1 As ImageView
+	Dim bmpImage1 As Bitmap
+	Dim bmpImage2 As Bitmap
+	Dim bmpImage3 As Bitmap
+	bmpImage1.Initialize(File.DirAssets,"icon_bezel_transp_white.png")
+	img1.Initialize("img1")
+	img1.Bitmap = bmpImage1
+	img1.Gravity=Gravity.FILL
+	pnltitle.AddView(img1, 4%x, 9dip*sc, 38dip*sc, 38dip*sc)
+	
+	pnlTransparent.Initialize("pnlTransparent")
+	pnlTransparent.Color =  Colors.Transparent
+	pnltitle.AddView(pnlTransparent,  100%x-3%x-(32dip*sc), 0, 3%x + (32dip*sc), 55dip * sc)
+	bmpImage2.Initialize(File.DirAssets,"android-3-dot-menu.png")
+	img2.Initialize("img2")
+	img2.Bitmap = bmpImage2
+	pnlTransparent.AddView(img2, 0, 15dip * sc, 22dip * sc, 22dip * sc)
+	img2.Gravity = Gravity.FILL
+	img2.Left = (pnlTransparent.Width-img2.Width) / 2
+
+	Dim lbl1 As Label
+	lbl1.Initialize("lbl1")
+	lbl1.TextSize=21*sc
+	If sc > 1 Or ld = 1 Or xx>360dip Then
+		If sc>1.2 Then
+		sc=1.2
+		End If
+		lbl1.TextSize=23*sc
+	End If
+	lbl1.TextColor = ColorTitleText
+	lbl1.Gravity = Gravity.CENTER_VERTICAL
+	lbl1.Text = "AeroCalculator"
+	lbl1.Typeface = Typeface.LoadFromAssets("Xenara-Bold.ttf")
+	pnltitle.AddView(lbl1, 5%x+37dip*sc, 8dip*sc, 80%x, 43dip*sc)
+	pnlTransparent.BringToFront
+	
+	pnlTransparent1.Initialize("pnlTransparent1")
+	pnlTransparent1.Color =  Colors.Transparent
+	pnltitle.AddView(pnlTransparent1, pnlTransparent.Left-pnlTransparent.Width, 0, pnlTransparent.Width, 50dip * sc)
+	bmpImage3.Initialize(File.DirAssets,"icon_plus_white.png")
+	img3.Initialize("img3")
+	img3.Bitmap = bmpImage3
+	pnlTransparent1.AddView(img3, 0, 15dip * sc, 22dip * sc, 22dip * sc)
+	img3.Gravity = Gravity.FILL
+	img3.Left=(pnlTransparent1.Width-img3.Width)/2
+	pnlTransparent1.BringToFront
+
+	btnAirp.Initialize("btnAirp")
+	pnltitle.AddView(btnAirp, 0, 57dip*sc, 33.33333333%x, 45dip*sc)
+	btnAirp.Text="AIRPLANES"
+	btnAirp.TextSize = 13*sc
+	btnAirp.Typeface = Typeface.DEFAULT_BOLD
+	btnAirp.Background = ButtonGradient2(Array As Int(ColorBut3, ColorBut4))
+	btnAirp.TextColor = ColorButText2
+	btnAirp.Gravity = Gravity.CENTER
+	btnAirp.Padding = Array As Int (0, 0, 0, 7dip*sc)
+	btnAirp.SendToBack
+
+	btnBack.Initialize("btnBack")
+	pnltitle.AddView(btnBack, 33.33333333%x, 57dip*sc, 33.33334%x, 45dip*sc)
+	btnBack.Text="INPUTS"
+	btnBack.TextSize = 13*sc
+	btnBack.Typeface = Typeface.DEFAULT_BOLD
+    btnBack.Background = ButtonGradient2(Array As Int(ColorBut3, ColorBut4))
+	btnBack.TextColor = ColorButText2
+	btnBack.Gravity = Gravity.CENTER
+	btnBack.Padding = Array As Int (0, 0, 0, 7dip*sc)
+	btnBack.SendToBack
+
+	btnCalc.Initialize("btnCalc")
+	pnltitle.AddView(btnCalc, 66.666666666%x, 57dip*sc, 33.33333333%x, 45dip*sc)
+	btnCalc.Text="CALCULATE"
+	btnCalc.TextSize = 13*sc
+	btnCalc.Typeface = Typeface.DEFAULT_BOLD
+	btnCalc.Background = ButtonGradient2(Array As Int(ColorBut3, ColorBut4))
+	btnCalc.TextColor = ColorButText2
+	btnCalc.Gravity = Gravity.CENTER
+	btnCalc.Padding = Array As Int (0, 0, 0, 7dip*sc)
+	btnCalc.SendToBack
+	
+	'Linha divisoria de titulo para o scrollview
+	Dim line2 As Panel
+	line2.Initialize("line2")
+	pnltitle.AddView(line2, 0%x, (102dip-1dip)*sc, 100%x, 1dip*sc)
+	line2.Color = ColorPnlLine2
+	line2.Elevation = 5dip
+
+	'Now we have a container with our panels just add it to the pager object
+	pager.Initialize2(container,"pager")
+	
+	' Criando linha marcadora de pagina
+	line.Initialize("line")
+	pnltitle.AddView(line, 0%x, (101dip-4dip)*sc, 33.33333333%x, 4dip*sc)
+	line.Color = ColorPnlLine
+	line.Elevation = 5dip
+
+	'Now we can add the pager to the activity
+	Activity.AddView(pager, 0, 102dip*sc, Activity.Width, Activity.Height-98dip*sc)
+	
+	'Adicionando menus
+	Dim pnlT As Panel
+	pnlT.Initialize("pnlT")
+	pnlT.Color =  Colors.Transparent
+	Activity.AddView(pnlT, 90%x, 0, 9%x, 34dip*sc)
+	PopupMenu.Initialize("PopupMenu", pnlT)
+	AddMenus
+
+End Sub
+
+Sub Activity_Resume
+	
+	If manager.GetUpdatedKeys.Size>0 Then
+		Dim phn As Phone
+		phn.SetScreenOrientation(0)
+		phn.SetScreenOrientation(1)
+		phn.SetScreenOrientation(-1)
+	End If
+	
+	pnlTransparent1.Color =  Colors.Transparent
+	
+	' Recupera variaveis do arquivo interno lastmod.txt
+	Dim m As Map
+	m.Initialize
+	If File.Exists(File.DirInternal, "lastmod.txt") Then
+		m = File.ReadMap(File.DirInternal,"lastmod.txt")
+		edtAlt.Text = m.GetDefault("var0","")
+		edtTemp.Text = m.GetDefault("var1","")
+		edtSpd.Text = m.GetDefault("var2","")
+		edtWeight.Text = m.GetDefault("var3","")
+		edtSref.Text = m.GetDefault("var4","")
+		edtcref.Text = m.GetDefault("var5","")
+		edtCLmax.Text = m.GetDefault("var6","")
+		edtNz.Text = m.GetDefault("var7","")
+		edtAngle1.Text = m.GetDefault("var8","")
+		edtAngle2.Text = m.GetDefault("var9","")
+		edtHeadWind.Text = m.GetDefault("var10","")
+		edtCrossWind.Text = m.GetDefault("var11","")
+		edtWindRefAngle.Text = m.GetDefault("var12","")
+		indAltType = m.GetDefault("var13",0)
+		indAltUnit = m.GetDefault("var14",0)
+		indTempType = m.GetDefault("var15",0)
+		indAltUnit = m.GetDefault("var16",0)
+		indSpdType = m.GetDefault("var17",0)
+	 	indSpdUnit = m.GetDefault("var18",0)
+		indWeightUnit = m.GetDefault("var19",0)
+	 	indSrefUnit = m.GetDefault("var20",0)
+		indcrefUnit = m.GetDefault("var21",0)
+		indNzType = m.GetDefault("var22",0)
+		indAngle1Type = m.GetDefault("var23",0)
+		indAngle1Unit = m.GetDefault("var24",0)
+		indAngle2Type = m.GetDefault("var25",0)
+		indAngle2Unit = m.GetDefault("var26",0)		
+		indHeadWindUnit = m.GetDefault("var27",0)
+		indCrossWindUnit = m.GetDefault("var28",0)
+		indWindRefAngleUnit = m.GetDefault("var29",0)
+		edtSpdDelta.Text = m.GetDefault("var30","")
+		indWindType = m.GetDefault("var31",0)
+		spinnerPos = m.GetDefault("var32", 0)
+		indWeightType = m.GetDefault("var33", 0)
+		indCLmaxType = m.GetDefault("var34", 0)
+		' Inicializacoes
+		AltType_Click
+		AltUnit_Click
+		TempType_Click
+		TempUnit_Click
+		SpdType_Click
+	 	SpdUnit_Click
+		WeightUnit_Click
+	 	SrefUnit_Click
+		crefUnit_Click
+		NzType_Click
+		Angle1Type_Click
+		Angle1Unit_Click
+		Angle2Type_Click
+		Angle2Unit_Click
+		WindType
+		HeadWindUnit_Click
+		CrossWindUnit_Click
+		WindRefAngleUnit_Click
+	End If	
+
+	'Go to default page
+	If Airp.add=1 Or ID_edt>0 Then
+	pager.GotoPage(0, False)
+	Else
+	pager.GotoPage(CurrentPage, False)
+	End If
+	
+	' Descobrir se estamos em modo Landscape ou Portrait
+	If Activity.Width > Activity.Height Then
+		ld = 1
+	Else
+		ld = 0
+	End If
+	
+	' Populando lista de avioes
+	Dim N As Int
+	a.Initialize
+	If File.Exists(rp.GetSafeDirDefaultExternal(""), "airplanes.txt") Then
+		a = File.ReadMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt")
+		N = a.GetDefault("N",0)
+	Else
+		N = 0
+	End If
+	
+	Dim ListAirp As List
+	ListAirp.Initialize
+	Dim He, ID, ii, init As Int
+	If (Airp.add=0 And ID_edt = 0) And lst.NumberOfItems=0 Then
+		If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
+			ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
+			If ListAirp.Size = N Then
+				'Inicializar e criar lista de avioes na aba Airplanes
+				For ii= 1 To N
+					ID = ListAirp.Get(ii-1)
+					He = 50dip
+					lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
+				Next
+				lst.ResizePanel
+			Else
+				ToastMessageShow("Recreating ID List.", False)
+				For ii= 1 To N
+					ID = ii
+					He = 50dip
+					lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
+				Next
+				lst.ResizePanel	
+			End If	
+		Else
+			For ii= 1 To N
+				ID = ii
+				He = 50dip
+				lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
+			Next
+			lst.ResizePanel
+		End If	
+	Else If Airp.add=1 And ID_edt = 0 Then
+		init=lst.NumberOfItems
+		For ii= init+1 To N
+			ID = ii
+			He = 50dip
+			lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
+		Next
+		lst.ResizePanel
+		Dim ListAirp As List
+		ListAirp.Initialize
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+		File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt",ListAirp)
+		Airp.add=0
+	End If
+	If ID_edt > 0 Then
+		Dim pp As Panel
+		Dim ll As Label
+		pp=lst.FindPanelWithID(ID_edt)
+		ll = pp.GetView(0)
+		ll.Text=a.GetDefault(ID_edt & "_Name","")
+		ID_edt=0
+	End If
+	
+	'Popular spinner com avioes
+	spnAirp.Clear
+	spnAirp.Add("Custom Airplane")
+	If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
+		ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
+		For ii = 0 To ListAirp.Size-1
+			spnAirp.Add(a.Get(ListAirp.Get(ii) & "_Name"))
+		Next
+	Else
+		If N<>0 Then
+			For ii = 1 To N
+				spnAirp.Add(a.Get(ii & "_Name"))
+			Next
+		End If
+	End If
+	
+	If spinnerPos<=N Then
+		spnAirp.SelectedIndex=spinnerPos
+		spnAirp_ItemClick(spinnerPos,spnAirp)
+	End If	
+		
+	'Variaveis Weight e CLmax do arquivo airplanes.txt
+	If (File.Exists(rp.GetSafeDirDefaultExternal(""), "airplanes.txt")) And (File.Exists(File.DirInternal, "lastmod.txt")) Then
+	indWeightType = m.GetDefault("var33", 0)
+	indCLmaxType = m.GetDefault("var34", 0)
+	Weight_Click
+	CLmax_Click
+	edtWeight.Text = m.GetDefault("var3", "")
+	edtCLmax.Text = m.GetDefault("var6","")
+	End If
+
+	lst.DividerColor = ColorPnlLine3
+		
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+	' Stop sensors
+	pa.StopListening
+	tmp.StopListening
+	Gps1.Stop
+	Ready = False
+	
+	' Escreve variaveis no arquivo interno lastmod.txt
+	Dim m As Map
+	m.Initialize
+	DefaultInputs
+	m.Put("var0", edtAlt.Text)
+	m.Put("var1", edtTemp.Text)
+	m.Put("var2", edtSpd.Text)
+	m.Put("var3", edtWeight.Text)
+	m.Put("var4", edtSref.Text)
+	m.Put("var5", edtcref.Text)
+	m.Put("var6", edtCLmax.Text)
+	m.Put("var7", edtNz.Text)
+	m.Put("var8", edtAngle1.Text)
+	m.Put("var9", edtAngle2.Text)
+	m.Put("var10", edtHeadWind.Text)
+	m.Put("var11", edtCrossWind.Text)
+	m.Put("var12", edtWindRefAngle.Text)
+	m.Put("var13", indAltType)
+	m.Put("var14", indAltUnit)
+	m.Put("var15", indTempType)
+	m.Put("var16", indAltUnit)
+	m.Put("var17", indSpdType)
+	m.Put("var18", indSpdUnit)
+	m.Put("var19", indWeightUnit)
+	m.Put("var20", indSrefUnit)
+	m.Put("var21", indcrefUnit)
+	m.Put("var22", indNzType)
+	m.Put("var23", indAngle1Type)
+	m.Put("var24", indAngle1Unit)
+	m.Put("var25", indAngle2Type)
+	m.Put("var26", indAngle2Unit)
+	m.Put("var27", indHeadWindUnit)
+	m.Put("var28", indCrossWindUnit)
+	m.Put("var29", indWindRefAngleUnit)
+	m.Put("var30", edtSpdDelta.Text)
+	m.Put("var31", indWindType)
+	m.Put("var32", spinnerPos)
+	m.Put("var33", indWeightType)
+	m.Put("var34", indCLmaxType)
+	File.WriteMap(File.DirInternal, "lastmod.txt", m)
+	
+	' Escreve ordem dos avioes da aba AIRPLANES no arquivo taglist.txt
+	Dim ListAirp As List
+	ListAirp.Initialize
+	ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+	File.WriteList(rp.GetSafeDirDefaultExternal(""),"taglist.txt",ListAirp)
+	
+	'Grava para inicializacao
+	Airp.add = 0
+	
+End Sub
+
+Sub Pager_PageChanged (Position As Int)
+	CurrentPage = Position
+	
+	' Fazer calculos se pagina de Outputs for selecionada e setar  painel marcador
+	If CurrentPage = 2 Then
+		Dim HideK As IME
+		HideK.HideKeyboard
+		line.SetLayoutAnimated(150,66.6666666666%x, (101dip-4dip)*sc, 33.33333333%x, 4dip*sc)
+		btnAirp.TextColor = ColorButText2
+		btnBack.TextColor = ColorButText2
+		btnCalc.TextColor = ColorButText3
+		Calculate
+	Else If CurrentPage = 1 Then
+		line.SetLayoutAnimated(150,33.33333333%x, (101dip-4dip)*sc, 33.33333333%x, 4dip*sc)
+		btnAirp.TextColor = ColorButText2
+		btnBack.TextColor = ColorButText3
+		btnCalc.TextColor = ColorButText2
+		Dim ListAirp As List
+		ListAirp.Initialize
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+		spnAirp.Clear
+		spnAirp.Add("Custom Airplane")
+		For ii = 0 To ListAirp.Size-1
+			spnAirp.Add(a.Get(ListAirp.Get(ii) & "_Name"))
+		Next
+	Else If CurrentPage = 0 Then
+		Dim HideK As IME
+		HideK.Initialize("")
+		HideK.HideKeyboard
+		line.SetLayoutAnimated(150,0%x, (101dip-4dip)*sc, 33.33333333%x, 4dip*sc)
+		btnAirp.TextColor = ColorButText3
+		btnBack.TextColor = ColorButText2
+		btnCalc.TextColor = ColorButText2
+	End If
+	
+End Sub
+
+Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
+	
+	'Criar panels e labes com nomes dos avioes
+	Dim pnl As Panel: pnl.Initialize("")
+	Dim lbl1 As Label: lbl1.Initialize("")
+	lbl1.Gravity = Gravity.CENTER_VERTICAL
+	lbl1.Tag = ID 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
+	lbl1.Text = a.Get(ID & "_Name")
+	lbl1.TextColor = Colors.Black
+	lbl1.TextSize = 15
+	lbl1.Typeface = Typeface.DEFAULT
+	pnl.AddView(lbl1, 5dip, 10dip, 100%x, 30dip)
+	pnl.Color = ColorPnlInput5
+
+	'Criar paineis transparentes para botoes de cada aviao
+	Dim pnlTransp1 As Panel
+	Dim pnlTransp2 As Panel
+	Dim pnlTransp3 As Panel
+	Dim pnlTransp4 As Panel
+	pnlTransp1.Initialize("pnlTransp1")
+	pnlTransp1.Color = Colors.Transparent
+	pnlTransp2.Initialize("pnlTransp2")
+	pnlTransp2.Color = Colors.Transparent
+	pnlTransp3.Initialize("pnlTransp3")
+	pnlTransp3.Color = Colors.Transparent
+	pnlTransp4.Initialize("pnlTransp4")
+	pnlTransp4.Color = Colors.Transparent
+	pnl.AddView(pnlTransp1,  Activity.Width-1.0*He, 0, 1.0*He, He)
+	pnl.AddView(pnlTransp2,  Activity.Width-1.0*He*2, 0, 1.0*He, He)
+	pnl.AddView(pnlTransp3,  Activity.Width-1.0*He*3, 0, 1.0*He, He)
+	pnl.AddView(pnlTransp4,  Activity.Width-1.0*He*4, 0, 1.0*He, He)
+	
+	Dim im1 As ImageView
+	Dim im2 As ImageView
+	Dim im3 As ImageView
+	Dim im4 As ImageView
+	Dim bmpImage1 As Bitmap
+	Dim bmpImage2 As Bitmap
+	Dim bmpImage3 As Bitmap
+	Dim bmpImage4 As Bitmap
+	bmpImage1.Initialize(File.DirAssets,"icon_right_arrow.png")
+	im1.Initialize("im1")
+	im1.Bitmap = bmpImage1
+	im1.Gravity=Gravity.FILL
+	bmpImage2.Initialize(File.DirAssets,"icon_delete.png")
+	im2.Initialize("im2")
+	im2.Bitmap = bmpImage2
+	im2.Gravity = Gravity.FILL
+	bmpImage3.Initialize(File.DirAssets,"icon_edit.png")
+	im3.Initialize("im3")
+	im3.Bitmap = bmpImage3
+	im3.Gravity = Gravity.FILL
+	bmpImage4.Initialize(File.DirAssets,"icon_duplicate.png")
+	im4.Initialize("im4")
+	im4.Bitmap = bmpImage4
+	im4.Gravity = Gravity.FILL
+	pnlTransp1.AddView(im1, (pnlTransp1.Width-(He-18dip))/2, 9dip, He-18dip, He-18dip)
+	pnlTransp2.AddView(im2, (pnlTransp2.Width-(He-26dip))/2, 13dip, He-26dip, He-26dip)
+	pnlTransp3.AddView(im3, (pnlTransp3.Width-(He-18dip))/2, 9dip, He-18dip, He-18dip)
+	pnlTransp4.AddView(im4, (pnlTransp4.Width-(He-26dip))/2, 13dip, He-26dip, He-26dip)
+	pnlTransp1.Tag = ID
+	pnlTransp2.Tag = ID
+	pnlTransp3.Tag = ID
+	pnlTransp4.Tag = ID
+	
+	'Criar separador de botoes
+	Dim pnlSep1 As Panel
+	Dim pnlSep2 As Panel
+	Dim pnlSep3 As Panel
+	Dim pnlSep4 As Panel
+	pnlSep1.Initialize("")
+	pnlSep1.Color = Colors.LightGray
+	pnlSep2.Initialize("")
+	pnlSep2.Color = Colors.LightGray
+	pnlSep3.Initialize("")
+	pnlSep3.Color = Colors.LightGray
+	pnlSep4.Initialize("")
+	pnlSep4.Color =  Colors.LightGray
+	pnl.AddView(pnlSep1,  pnlTransp1.Left, 4dip, 1dip, He-8dip)
+	pnl.AddView(pnlSep2,  pnlTransp2.Left, 4dip, 1dip, He-8dip)
+	pnl.AddView(pnlSep3,  pnlTransp3.Left, 4dip, 1dip, He-8dip)
+	pnl.AddView(pnlSep4,  pnlTransp4.Left, 4dip, 1dip, He-8dip)
+	
+	Return pnl
+End Sub
+
+Sub pnlTransp1_Touch (Action As Int, X As Float, Y As Float) As Boolean	
+	Dim pp As Panel
+	pp = Sender
+	ID_use = pp.Tag
+	Select Action
+	Case Activity.ACTION_DOWN
+		pp.Color = Colors.White
+		pager.GotoPage(1, True)		
+		Dim ListAirp As List
+		Dim position As Int
+		ListAirp.Initialize
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+		position = ListAirp.IndexOf(ID_use)
+		spnAirp.SelectedIndex=position+1
+		spnAirp_ItemClick(position+1,spnAirp)
+	Case Activity.ACTION_UP
+		pp.Color = Colors.Transparent
+	End Select
+	Return True
+End Sub
+
+Sub pnlTransp2_Touch (Action As Int, X As Float, Y As Float) As Boolean
+	Dim pp As Panel
+	pp = Sender
+	
+	ID_rem = pp.Tag	
+	Select Action
+	Case Activity.ACTION_DOWN
+		pp.Color = Colors.White
+	Case Activity.ACTION_UP
+		pp.Color = Colors.Transparent
+		Dim N As Int
+		N=a.Get("N")
+		Dim confirm As Int
+		confirm=Msgbox2("Are you sure you want to delete this airplane?","Warning","Confirm","Cancel","",LoadBitmap(File.DirAssets,"icon_warning.png"))
+		'Wait For Msgbox_Result (confirm As Int)
+		If confirm=DialogResponse.POSITIVE Then
+			If ID_rem<>N Then
+				For ii=ID_rem To N-1 	
+					a.Put(ii & "_Name", a.Get((ii+1) & "_Name"))
+					a.Put(ii & "_S", a.GetDefault((ii+1)& "_S",""))
+					a.Put(ii & "_c", a.GetDefault((ii+1) & "_c",""))
+					a.Put(ii & "_W1", a.GetDefault((ii+1) & "_W1",""))
+					a.Put(ii & "_W2", a.GetDefault((ii+1) & "_W2",""))
+					a.Put(ii & "_W3", a.GetDefault((ii+1) & "_W3",""))
+					a.Put(ii & "_W4", a.GetDefault((ii+1) & "_W4",""))
+					a.Put(ii & "_W5", a.GetDefault((ii+1) & "_W5",""))
+					a.Put(ii & "_W6", a.GetDefault((ii+1) & "_W6",""))
+					a.Put(ii & "_F0", a.GetDefault((ii+1) & "_F0",""))
+					a.Put(ii & "_F1", a.GetDefault((ii+1) & "_F1",""))
+					a.Put(ii & "_F2", a.GetDefault((ii+1) & "_F2",""))
+					a.Put(ii & "_F3", a.GetDefault((ii+1) & "_F3",""))
+					a.Put(ii & "_F4", a.GetDefault((ii+1) & "_F4",""))
+					a.Put(ii & "_F5", a.GetDefault((ii+1) & "_F5",""))
+					a.Put(ii & "_F6", a.GetDefault((ii+1) & "_F6",""))
+					a.Put(ii & "_F7", a.GetDefault((ii+1) & "_F7",""))
+					a.Put(ii & "_F8", a.GetDefault((ii+1) & "_F8",""))
+					a.Put(ii & "_F9", a.GetDefault((ii + 1) & "_F9",""))
+					a.Put(ii & "_F10", a.GetDefault((ii + 1) & "_F10",""))
+					a.Put(ii & "_F11", a.GetDefault((ii + 1) & "_F11",""))
+					a.Put(ii & "_F12", a.GetDefault((ii + 1) & "_F12",""))
+					a.Put(ii & "_F13", a.GetDefault((ii + 1) & "_F13",""))
+					a.Put(ii & "_Sunit", a.GetDefault((ii+1) & "_Sunit",0))
+					a.Put(ii & "_cunit", a.GetDefault((ii+1) & "_cunit",0))
+					a.Put(ii & "_Wunit", a.GetDefault((ii + 1) & "_Wunit",0))
+				Next
+			End If
+			
+			Dim pnlanim As Panel
+			pnlanim=lst.FindPanelWithID(ID_rem)
+			Dim a1 As Animation
+			a1.InitializeAlpha("a1",1,0)
+			a1.Duration = 325
+			a1.Start(pnlanim)
+			
+			Timer1.Initialize("Timer1", 325)
+			Timer1.Enabled = True
+			
+		End If
+	End Select
+	Return True
+End Sub
+
+Sub Timer1_tick
+	Timer1.Enabled = False
+	
+	Dim N As Int
+	N=a.Get("N")
+	
+	Dim ListAirp As List
+	ListAirp.Initialize
+	ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+
+	For ii=1 To N
+		lst.RemoveItemID(ii)
+	Next			
+	lst.ResizePanel
+
+	Dim He, ID As Int
+	Dim NewList As List
+	Dim positiondel As Int
+	positiondel = ListAirp.IndexOf(ID_rem)
+	
+	NewList.Initialize
+	NewList=ListAirp
+	NewList.RemoveAt(positiondel)
+	For ii=0 To NewList.Size-1
+		If NewList.Get(ii)>ID_rem Then
+			NewList.Set(ii,(NewList.Get(ii)-1))
+		End If
+	Next
+	For ii = 0 To NewList.Size-1
+			ID = NewList.Get(ii)
+			He = 50dip
+			lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
+	Next	
+	lst.ResizePanel
+	a.Remove(a.Get("N") & "_Name")
+	a.Remove(a.Get("N") & "_S")
+	a.Remove(a.Get("N") & "_c")
+	a.Remove(a.Get("N") & "_W1")
+	a.Remove(a.Get("N") & "_W2")
+	a.Remove(a.Get("N") & "_W3")
+	a.Remove(a.Get("N") & "_W4")
+	a.Remove(a.Get("N") & "_W5")
+	a.Remove(a.Get("N") & "_W6")
+	a.Remove(a.Get("N") & "_F0")
+	a.Remove(a.Get("N") & "_F1")
+	a.Remove(a.Get("N") & "_F2")
+	a.Remove(a.Get("N") & "_F3")
+	a.Remove(a.Get("N") & "_F4")
+	a.Remove(a.Get("N") & "_F5")
+	a.Remove(a.Get("N") & "_F6")
+	a.Remove(a.Get("N") & "_F7")
+	a.Remove(a.Get("N") & "_F8")
+	a.Remove(a.Get("N") & "_F9")
+	a.Remove(a.Get("N") & "_F10")
+	a.Remove(a.Get("N") & "_F11")
+	a.Remove(a.Get("N") & "_F12")
+	a.Remove(a.Get("N") & "_F13")
+	a.Remove(a.Get("N") & "_Sunit")
+	a.Remove(a.Get("N") & "_cunit")
+	a.Remove(a.Get("N") & "_Wunit")
+	a.Put("N", (N-1))
+	File.WriteMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt", a)
+	ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+	File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", ListAirp)
+	lst.DividerColor = ColorPnlLine3
+
+End Sub
+
+Sub pnlTransp3_Touch (Action As Int, X As Float, Y As Float) As Boolean
+	Dim pp As Panel
+	pp = Sender
+	ID_edt = pp.Tag
+	Select Action
+	Case Activity.ACTION_DOWN
+		pp.Color = Colors.White
+		pp.Color = Colors.Transparent
+		StartActivity("Airp")
+	Case Activity.ACTION_UP
+	End Select
+	Return True
+End Sub
+
+Sub pnlTransp4_Touch (Action As Int, X As Float, Y As Float) As Boolean
+	Dim pp As Panel
+	pp = Sender
+	ID_add = pp.Tag	
+	Select Action
+	Case Activity.ACTION_DOWN
+		pp.Color = Colors.White
+	Case Activity.ACTION_UP
+		pp.Color = Colors.Transparent
+	
+		Dim ii As Int
+		Dim N As Int
+		Dim He As Int		
+		He = 50dip
+		N = a.Get("N")
+		ii = N + 1
+		
+		a.Put(ii & "_Name", a.Get((ID_add) & "_Name"))
+		a.Put(ii & "_S", a.GetDefault((ID_add)& "_S",""))
+		a.Put(ii & "_c", a.GetDefault((ID_add) & "_c",""))
+		a.Put(ii & "_W1", a.GetDefault((ID_add) & "_W1",""))
+		a.Put(ii & "_W2", a.GetDefault((ID_add)& "_W2",""))
+		a.Put(ii & "_W3", a.GetDefault((ID_add) & "_W3",""))
+		a.Put(ii & "_W4", a.GetDefault((ID_add) & "_W4",""))
+		a.Put(ii & "_W5", a.GetDefault((ID_add) & "_W5",""))
+		a.Put(ii & "_W6", a.GetDefault((ID_add) & "_W6",""))
+		a.Put(ii & "_F0", a.GetDefault((ID_add) & "_F0",""))
+		a.Put(ii & "_F1", a.GetDefault((ID_add) & "_F1",""))
+		a.Put(ii & "_F2", a.GetDefault((ID_add) & "_F2",""))
+		a.Put(ii & "_F3", a.GetDefault((ID_add) & "_F3",""))
+		a.Put(ii & "_F4", a.GetDefault((ID_add) & "_F4",""))
+		a.Put(ii & "_F5", a.GetDefault((ID_add) & "_F5",""))
+		a.Put(ii & "_F6", a.GetDefault((ID_add) & "_F6",""))
+		a.Put(ii & "_F7", a.GetDefault((ID_add) & "_F7",""))
+		a.Put(ii & "_F8", a.GetDefault((ID_add) & "_F8",""))
+		a.Put(ii & "_F9", a.GetDefault((ID_add) & "_F9",""))
+		a.Put(ii & "_F10", a.GetDefault((ID_add) & "_F10",""))
+		a.Put(ii & "_F11", a.GetDefault((ID_add) & "_F11",""))
+		a.Put(ii & "_F12", a.GetDefault((ID_add) & "_F12",""))
+		a.Put(ii & "_F13", a.GetDefault((ID_add) & "_F13",""))
+		a.Put(ii & "_Sunit", a.Get((ID_add) & "_Sunit"))
+		a.Put(ii & "_cunit", a.Get((ID_add) & "_cunit"))
+		a.Put(ii & "_Wunit", a.Get((ID_add) & "_Wunit"))
+		a.Put("N", (N + 1))
+		lst.AddCustomItem(ii, CreateItem(ii, He, ii), He)
+		lst.ResizePanel
+		File.WriteMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt", a)
+		spnAirp.Add(a.Get(ii & "_Name"))
+		Dim ListAirp As List
+		ListAirp.Initialize
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+		File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", ListAirp)
+		lst.DividerColor = ColorPnlLine3
+		
+		Dim pnlanim As Panel
+		pnlanim=lst.FindPanelWithID(ii)
+		Dim a2 As Animation
+		a2.InitializeAlpha("a2",0,1)
+		a2.Duration = 900
+		a2.Start(pnlanim)
+		
+	End Select
+	Return True
+End Sub
+
+Sub lst_LongClick(pnl As Panel, ID As Object)
+	lst.StartDragAndDrop(pnl, "lst_AfterDrop")
+End Sub
+
+Sub lst_AfterDrop(StartPosition As Int, EndPosition As Int)
+
+End Sub
+
+Sub SpinnerCreate
+	pnlInput.AddView(spnAirp, 37%x+8dip, ib * sc, 60%x-8dip, tb * sc)
+	spnAirp.DropdownTextColor = Colors.Transparent
+	
+End Sub
+
+Sub spnAirp_ItemClick (Position As Int, Value As Object)
+	
+	Dim ListAirp As List
+	ListAirp.Initialize
+	ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+	
+	If spinnerPos<>Position Then
+	indWeightType = 0
+	indCLmaxType = 0
+	Weight_Click
+	CLmax_Click
+	End If
+	
+	spinnerPos = Position
+	
+	If Position = 0 Then
+	Else
+		ID_inp = ListAirp.Get(Position-1)
+		edtSref.Text = a.Get(ID_inp & "_S")
+		edtcref.Text = a.Get(ID_inp & "_c")
+	
+		WeightS.Clear
+		WeightS.Add("Custom Mass")
+		Dim w1, w2, w3, w4, w5, w6 As String
+		w1 = a.GetDefault(ID_inp & "_W1","")
+		w2 = a.GetDefault(ID_inp & "_W2","")
+		w3 = a.GetDefault(ID_inp & "_W3","")
+		w4 = a.GetDefault(ID_inp & "_W4","")
+		w5 = a.GetDefault(ID_inp & "_W5","")
+		w6 = a.GetDefault(ID_inp & "_W6","")
+		If w1.CompareTo("")<>0 Then
+			WeightS.Add("MTOW")
+		End If
+		If w2.CompareTo("")<>0 Then
+			WeightS.Add("MLW")
+		End If
+		If w3.CompareTo("")<>0 Then
+			WeightS.Add("MZFW")
+		End If
+		If w4.CompareTo("")<>0 Then
+			WeightS.Add("BOW")
+		End If
+		If w5.CompareTo("")<>0 Then
+			WeightS.Add("Heavy")
+		End If
+		If w6.CompareTo("")<>0 Then
+			WeightS.Add("Light")
+		End If
+		
+		CLmaxS.Clear
+		CLmaxS.Add("Custom CLmax")
+		Dim f0,f1, f2, f3, f4,f5,f6,f7,f8,f9,f10,f11,f12,f13 As String
+		f0 = a.GetDefault(ID_inp & "_F0","")
+		f1 = a.GetDefault(ID_inp & "_F1","")
+		f2 = a.GetDefault(ID_inp & "_F2","")
+		f3 = a.GetDefault(ID_inp & "_F3","")
+		f4 = a.GetDefault(ID_inp & "_F4","")
+		f5 = a.GetDefault(ID_inp & "_F5","")
+		f6 = a.GetDefault(ID_inp & "_F6","")
+		f7 = a.GetDefault(ID_inp & "_F7","")
+		f8 = a.GetDefault(ID_inp & "_F8","")
+		f9 = a.GetDefault(ID_inp & "_F9","")
+		f10 = a.GetDefault(ID_inp & "_F10","")
+		f11 = a.GetDefault(ID_inp & "_F11","")
+		f12 = a.GetDefault(ID_inp & "_F12","")
+		f13 = a.GetDefault(ID_inp & "_F13","")
+
+		If f0.CompareTo("")<>0 And f0.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 0")
+		End If
+		If f1.CompareTo("")<>0 And f1.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 1")
+		End If
+		If f2.CompareTo("")<>0 And f2.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 2")
+		End If
+		If f3.CompareTo("")<>0 And f3.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 3")
+		End If
+		If f4.CompareTo("")<>0 And f4.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 4")
+		End If
+		If f5.CompareTo("")<>0 And f5.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 5")
+		End If
+		If f6.CompareTo("")<>0 And f6.CompareTo("null")<>0  Then
+			CLmaxS.Add("Flap 6")
+		End If
+		If f7.CompareTo("")<>0 And f7.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 7")
+		End If
+		If f8.CompareTo("")<>0 And f8.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 8")
+		End If
+		If f9.CompareTo("")<>0 And f9.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 9")
+		End If
+		If f10.CompareTo("")<>0 And f10.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 10")
+		End If
+		If f11.CompareTo("")<>0 And f11.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 11")
+		End If
+		If f12.CompareTo("")<>0 And f12.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 12")
+		End If
+		If f13.CompareTo("")<>0 And f13.CompareTo("null")<>0 Then
+			CLmaxS.Add("Flap 13")
+		End If
+		
+		indSrefUnit = a.Get(ID_inp & "_Sunit")
+		indcrefUnit = a.Get(ID_inp & "_cunit")
+		indWeightUnit = a.Get(ID_inp & "_Wunit")
+		SrefUnit_Click
+		crefUnit_Click
+		WeightUnit_Click
+	End If
+
+End Sub
+
+Sub btnAltType_Click
+	Dim Alts() As String
+	Alts = Array As String("Pressure Altitude","Geometric Altitude","Altitude from GPS","Pressure","Pressure from Sensor")
+	Dim record As Int = indAltType
+	InputListAsync(Alts, "Choose the Type of Altitude", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indAltType = record
+	Else
+		indAltType = Index
+	End If
+	If indAltType <> record Then
+		edtAlt.Text=""
+	End If
+AltType_Click
+End Sub
+
+Sub btnAltUnit_Click
+	Dim AltUnits() As String
+	If indAltType=0 Or indAltType=1 Or indAltType=2 Then
+		AltUnits = Array As String("ft", "m", "km", "nm", "mi", "in")
+		InputListAsync(AltUnits, "Choose the Unit of Altitude", indAltUnit,True)
+		Wait For InputList_Result (Index As Int)
+		If Index <> DialogResponse.CANCEL Then
+			indAltUnit = Index
+		End If
+	Else If indAltType=3 Or indAltType=4 Then
+		AltUnits = Array As String("mbar", "Pa", "hPa", "atm", "mmHg", "psi")
+		InputListAsync(AltUnits, "Choose the Unit of Pressure", indAltUnit,True)
+		Wait For InputList_Result (Index As Int)
+		If Index <> DialogResponse.CANCEL Then
+			indAltUnit = Index
+		End If
+	End If
+AltUnit_Click
+End Sub
+
+Sub btnTempType_Click
+	Dim Temps() As String
+	Temps = Array As String("Delta ISA", "Outside Air Temperature", "Temperature from Sensor")
+	Dim record As Int = indTempType
+	InputListAsync(Temps, "Choose the Type of Temperature", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indTempType = record
+	Else
+		indTempType = Index
+	End If
+	If indTempType <> record Then
+		edtTemp.Text=""
+	End If
+	TempType_Click
+End Sub
+
+Sub btnTempUnit_Click
+	Dim TempUnits() As String
+	TempUnits = Array As String("°C", "°F", "K")
+	Dim record As Int = indTempUnit
+	InputListAsync(TempUnits, "Choose the Unit of Temperature", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indTempUnit = record
+	Else
+		indTempUnit = Index
+	End If
+TempUnit_Click
+End Sub
+
+Sub btnSpdType_Click
+	Dim Speeds() As String
+	Speeds = Array As String("True Airspeed", "Calibrated Airspeed", "Equivalent Airspeed", "Mach", "Lift Coefficient CL", "Vs Factor", "Ground Speed", "GroundSpeed from GPS", "Dynamic Pressure", "Impact Pressure")
+	Dim record As Int = indSpdType
+	InputListAsync(Speeds, "Choose the Type of Speed", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indSpdType = record
+	Else
+		indSpdType = Index
+	End If
+	If indSpdType <> record Then
+		edtSpd.Text = ""
+		edtSpdDelta.Text=""
+	End If
+SpdType_Click
+End Sub
+
+Sub btnSpdUnit_Click
+	Dim SpeedUnits() As String
+	If indSpdType<8 Then
+		SpeedUnits = Array As String("kt", "m/s", "km/h", "mph", "ft/s")
+		Dim record As Int = indSpdUnit
+		InputListAsync(SpeedUnits, "Choose the Unit of Speed", record,True)
+		Wait For InputList_Result (Index As Int)
+		If Index=DialogResponse.Cancel Then
+			indSpdUnit = record
+		Else
+			indSpdUnit = Index
+		End If
+	Else
+		SpeedUnits = Array As String("mbar", "Pa", "hPa", "atm", "mmHg", "psi")
+		Dim record As Int = indSpdUnit
+		indSpdUnit = InputListAsync(SpeedUnits, "Choose the Unit of Pressure", record,True)
+		Wait For InputList_Result (Index As Int)
+		If Index=DialogResponse.Cancel Then
+			indSpdUnit = record
+		Else
+			indSpdUnit = Index
+		End If
+	End If
+SpdUnit_Click
+End Sub
+
+Sub btnSpdDelta_Click
+	Dim SpeedDelta() As String
+	SpeedDelta = Array As String("Set delta speed in relation to the VsFactor speed [kt]")
+	InputListAsync(SpeedDelta, "Delta VsFactor", 0,True)
+	Wait For InputList_Result (Index As Int)
+	Return
+End Sub
+
+Sub btnWeight_Click
+	Dim record As Int = indWeightType
+	InputListAsync(WeightS, "Set airplane Mass", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indWeightType = record
+	Else
+		indWeightType = Index
+	End If
+Weight_Click	
+End Sub
+
+Sub btnWeightUnit_Click
+	Dim WeightUnits() As String
+	WeightUnits = Array As String("kg", "lb", "ton", "slug", "oz")
+	Dim record As Int = indWeightUnit
+	InputListAsync(WeightUnits, "Choose the Unit of Mass", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indWeightUnit = record
+	Else
+		indWeightUnit = Index
+	End If
+WeightUnit_Click
+End Sub
+
+Sub btnSref_Click
+	Dim SrefS() As String
+	SrefS = Array As String("Set Wing Reference Area")
+	InputListAsync(SrefS, "Reference Area", 0,True)
+	Wait For InputList_Result (Index As Int)
+	Return
+End Sub
+
+Sub btnSrefUnit_Click
+	Dim SrefUnits() As String
+	SrefUnits = Array As String("m²", "ft²", "in²", "cm²", "mm²")
+	Dim record As Int = indSrefUnit
+	InputListAsync(SrefUnits, "Choose the Unit of Wing Area", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indSrefUnit = record
+	Else
+		indSrefUnit = Index
+	End If
+SrefUnit_Click
+End Sub
+
+Sub btncref_Click
+	Dim crefS() As String
+	crefS = Array As String("Set reference Wing Mean Aerodynamic Chord")
+	InputListAsync(crefS, "Reference Chord", 0,True)
+	Wait For InputList_Result (Index As Int)
+	Return
+End Sub
+
+Sub btncrefUnit_Click
+	Dim crefUnits() As String
+	crefUnits = Array As String("m", "ft", "in", "cm", "mm")
+	Dim record As Int = indcrefUnit
+	InputListAsync(crefUnits, "Choose the Unit of Wing chord Lenght", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indcrefUnit = record
+	Else
+		indcrefUnit = Index
+	End If
+crefUnit_Click
+End Sub
+
+Sub btnCLmax_Click
+	Dim record As Int = indCLmaxType
+	InputListAsync(CLmaxS, "Set Maximum Lift Coefficient", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indCLmaxType = record
+	Else
+		indCLmaxType = Index
+	End If
+CLmax_Click
+End Sub
+
+Sub btnNzType_Click
+	Dim Nzs() As String
+	Nzs = Array As String("Load Factor Nz (Pull-up)", "Load Factor Nz (Wind-up Turn)", "Bank Angle (Wind-up Turn)")
+	Dim record As Int = indNzType
+	InputListAsync (Nzs, "Choose Maneuver Type and Variable", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indNzType = record
+	Else
+		indNzType = Index
+	End If
+	If indNzType <> record Then
+		edtNz.Text=""
+	End If
+NzType_Click
+End Sub
+
+Sub btnAngle1Type_Click
+	Dim Angle1s() As String
+	Angle1s = Array As String("Track Angle (Course)", "Heading Angle")
+	Dim record As Int = indAngle1Type
+	InputListAsync(Angle1s, "Choose Which Angle to Input", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indAngle1Type = record
+	Else
+		indAngle1Type = Index
+	End If
+	If indAngle1Type <> record Then
+		edtAngle1.Text=""
+	End If
+Angle1Type_Click
+End Sub
+
+Sub btnAngle1Unit_Click
+	Dim Angle1Units() As String
+	Angle1Units = Array As String("deg", "rad")
+	Dim record As Int = indAngle1Unit
+	InputListAsync(Angle1Units, "Choose the Unit of Angle", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indAngle1Unit = record
+	Else
+		indAngle1Unit = Index
+	End If
+Angle1Unit_Click
+End Sub
+
+Sub btnAngle2Type_Click
+	Dim Angle2s() As String
+	Angle2s = Array As String("Sideslip Angle", "Drift Angle")
+	Dim record As Int = indAngle2Type
+	InputListAsync(Angle2s, "Choose Which Angle to Input", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indAngle2Type = record
+	Else
+		indAngle2Type = Index
+	End If
+	If indAngle2Type <> record Then
+		edtAngle2.Text=""
+	End If
+Angle2Type_Click
+End Sub
+
+Sub btnAngle2Unit_Click
+	Dim Angle2Units() As String
+	Angle2Units = Array As String("deg", "rad")
+	Dim record As Int = indAngle2Unit
+	InputListAsync(Angle2Units, "Choose the Unit of Angle", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indAngle2Unit = record
+	Else
+		indAngle2Unit = Index
+	End If
+Angle2Unit_Click
+End Sub
+
+Sub btnHeadWind_Click
+	Dim HeadWindS() As String
+	Dim record As Int = indWindType
+	HeadWindS = Array As String("Headwind / Crosswind","WindSpeed / WindDirection")
+	InputListAsync(HeadWindS, "Choose Type of Wind Input", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indWindType = record
+	Else
+		indWindType = Index
+	End If
+	If indWindType <> record Then
+		edtHeadWind.Text = ""
+		edtCrossWind.Text = ""
+		edtWindRefAngle.Text = ""
+	End If
+	WindType
+End Sub
+
+Sub btnCrossWind_Click
+	Dim CrossWindS() As String
+	Dim record As Int = indWindType
+	CrossWindS = Array As String("Headwind / Crosswind","WindSpeed / WindDirection")
+	InputListAsync(CrossWindS, "Choose Type of Wind Input", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indWindType = record
+	Else
+		indWindType = Index
+	End If
+		If indWindType <> record Then
+		edtHeadWind.Text = ""
+		edtCrossWind.Text = ""
+		edtWindRefAngle.Text = ""
+	End If
+	WindType
+End Sub
+
+Sub btnWindRefAngle_Click
+	Dim WindRefAngleS() As String
+	If indWindType = 0 Then
+		WindRefAngleS = Array As String("Set Runway Angle (as reference to Headwind and Crosswind inputs)")
+		InputListAsync(WindRefAngleS, "Runway Angle", 0,True)
+		Wait For InputList_Result (Index As Int)
+		Return
+	Else
+		WindRefAngleS = Array As String("Set Wind Direction")
+		InputListAsync(WindRefAngleS, "Runway Angle", 0,True)
+		Wait For InputList_Result (Index As Int)
+		Return
+	End If
+End Sub
+
+Sub btnWindRefAngleUnit_Click
+	Dim WindRefAngleUnits() As String
+	WindRefAngleUnits = Array As String("deg", "rad")
+	Dim record As Int = indWindRefAngleUnit
+	InputListAsync(WindRefAngleUnits, "Choose the Unit of Wind Reference Angle", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indWindRefAngleUnit = record
+	Else
+		indWindRefAngleUnit = Index
+	End If
+WindRefAngleUnit_Click
+End Sub
+
+Sub btnHeadWindUnit_Click
+	Dim HeadWindUnits() As String
+	HeadWindUnits = Array As String("kt", "m/s", "km/h", "mph", "ft/s")
+	Dim record As Int = indHeadWindUnit
+	InputListAsync(HeadWindUnits, "Choose the Unit of HeadWind Speed", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indHeadWindUnit = record
+	Else
+		indHeadWindUnit = Index
+	End If
+	HeadWindUnit_Click
+End Sub
+
+Sub btnCrossWindUnit_Click
+	Dim CrossWindUnits() As String
+	CrossWindUnits = Array As String("kt", "m/s", "km/h", "mph", "ft/s")
+	Dim record As Int = indCrossWindUnit
+	InputListAsync(CrossWindUnits, "Choose the Unit of CrossWind Speed", record,True)
+	Wait For InputList_Result (Index As Int)
+	If Index=DialogResponse.Cancel Then
+		indCrossWindUnit = record
+	Else
+		indCrossWindUnit = Index
+	End If
+	CrossWindUnit_Click
+End Sub
+
+Sub AltType_Click
+	If indAltType<>2 And indSpdType<>7 Then
+		Gps1.Stop
+		Ready = False
+		GpsCheck = 1
+	Else If indAltType=2 Then
+		If GpsCheck2 = 1 Then
+			rp.CheckAndRequest(rp.PERMISSION_ACCESS_FINE_LOCATION)
+			Wait For Activity_PermissionResult (Permission As String, Result1 As Boolean)
+			GpsCheck2 = 0
+			GpsStatus = Result1
+		End If
+		If GpsStatus Then
+		    If Gps1.GPSEnabled = False And GpsCheck=1 Then
+	            ToastMessageShow("Please enable the GPS device.", True)
+		    	StartActivity(Gps1.LocationSettingsIntent) 'Will open the relevant settings screen.
+		    	GpsCheck = 0
+		    Else If Gps1.GPSEnabled = False And GpsCheck=0 Then
+		    	ToastMessageShow("GPS not enabled.", True)
+	        End If
+		    If Not(Ready) Then
+		    	Gps1.Start(100,1)
+		    	Ready = True
+		    End If
+		Else
+			ToastMessageShow("Denied location access", True)
+		End If
+	End If
+	If indAltType < 0 Then
+	Else If indAltType=0 Or indAltType=1 Or indAltType=2 Then
+		If indAltType=0 Then
+			btnAltType.Text = "Hp"
+		Else If indAltType=1 Then
+			btnAltType.Text = "Hg"
+		Else If indAltType=2 Then
+			btnAltType.Text = "Hg"	
+		End If
+		edtAlt.Hint = "Altitude"
+		pa.StopListening
+		If indAltUnit < 0 Then
+		Else If indAltUnit = 0 Then
+			btnAltUnit.Text = "ft"
+			kAlt = 0.3048
+		Else If indAltUnit = 1 Then
+			btnAltUnit.Text = "m"
+			kAlt = 1
+		Else If indAltUnit = 2 Then
+			btnAltUnit.Text = "km"
+			kAlt = 1000
+		Else If indAltUnit = 3 Then
+			btnAltUnit.Text = "nm"
+			kAlt = 1852
+		Else If indAltUnit = 4 Then
+			btnAltUnit.Text = "mi"
+			kAlt = 1609.344
+		Else If indAltUnit = 5 Then
+			btnAltUnit.Text = "in"
+			kAlt = 0.0254
+		End If
+		If indAltType = 2 Then
+			edtAlt.Text = NumberFormat2(GPSalt / kAlt,1,1,1,False)
+		End If	
+	Else If indAltType = 3 Then
+		btnAltType.Text = "P"
+		edtAlt.Hint = "Pressure"
+		pa.StopListening
+		If indAltUnit < 0 Then
+		Else If indAltUnit = 0 Then
+			btnAltUnit.Text = "mbar"
+			kPres = 100
+		Else If indAltUnit = 1 Then
+			btnAltUnit.Text = "Pa"
+			kPres = 1
+		Else If indAltUnit = 2 Then
+			btnAltUnit.Text = "hPa"
+			kPres = 100
+		Else If indAltUnit = 3 Then
+			btnAltUnit.Text = "atm"
+			kPres = 101325
+		Else If indAltUnit = 4 Then
+			btnAltUnit.Text = "mmHg"
+			kPres = 133.3223684
+		Else If indAltUnit = 5 Then
+			btnAltUnit.Text = "psi"
+			kPres = 6894.75729
+		End If
+	Else If indAltType = 4 Then
+		pa.Initialize2(pa.TYPE_PRESSURE,3)
+		Dim listen As Boolean
+		listen=pa.StartListening("Sensor1")
+		If listen = False Then
+		Msgbox2Async("Pressure Sensor is not supported in this device.", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+		Wait For Msbox_Result (Idx98 As Int)
+		End If
+		btnAltType.Text = "P"
+		btnAltUnit.Text = "mbar"
+		kPres = 100
+		If indAltUnit < 0 Then
+		Else If indAltUnit = 0 Then
+			btnAltUnit.Text = "mbar"
+			kPres2 = 1
+		Else If indAltUnit = 1 Then
+			btnAltUnit.Text = "Pa"
+			kPres2 = 1*100
+		Else If indAltUnit = 2 Then
+			btnAltUnit.Text = "hPa"
+			kPres2 = 0.01*100
+		Else If indAltUnit = 3 Then
+			btnAltUnit.Text = "atm"
+			kPres2 = 1/101325*100
+		Else If indAltUnit = 4 Then
+			btnAltUnit.Text = "mmHg"
+			kPres2 = 0.007500616827042*100
+		Else If indAltUnit = 5 Then
+			btnAltUnit.Text = "psi"
+			kPres2 = 0.0001450378911491*100
+		End If
+		edtAlt.Text = NumberFormat2(PressureSensor*kPres2,1,2,2,False)
+	End If	
+End Sub
+
+Sub AltUnit_Click
+	If indAltType=0 Or indAltType=1 Or indAltType=2 Then
+		If indAltUnit < 0 Then
+		Else If indAltUnit = 0 Then
+			btnAltUnit.Text = "ft"
+			kAlt = 0.3048
+		Else If indAltUnit = 1 Then
+			btnAltUnit.Text = "m"
+			kAlt = 1
+		Else If indAltUnit = 2 Then
+			btnAltUnit.Text = "km"
+			kAlt = 1000
+		Else If indAltUnit = 3 Then
+			btnAltUnit.Text = "nm"
+			kAlt = 1852
+		Else If indAltUnit = 4 Then
+			btnAltUnit.Text = "mi"
+			kAlt = 1609.344
+		Else If indAltUnit = 5 Then
+			btnAltUnit.Text = "in"
+			kAlt = 0.0254
+		End If
+	Else If indAltType=3 Then
+		If indAltUnit < 0 Then
+		Else If indAltUnit = 0 Then
+			btnAltUnit.Text = "mbar"
+			kPres = 100
+		Else If indAltUnit = 1 Then
+			btnAltUnit.Text = "Pa"
+			kPres = 1
+		Else If indAltUnit = 2 Then
+			btnAltUnit.Text = "hPa"
+			kPres = 100
+		Else If indAltUnit = 3 Then
+			btnAltUnit.Text = "atm"
+			kPres = 101325
+		Else If indAltUnit = 4 Then
+			btnAltUnit.Text = "mmHg"
+			kPres = 133.3223684
+		Else If indAltUnit = 5 Then
+			btnAltUnit.Text = "psi"
+			kPres = 6894.75729
+		End If
+	Else If indAltType=4 Then	
+		kPres = 100
+		If indAltUnit < 0 Then
+		Else If indAltUnit = 0 Then
+			btnAltUnit.Text = "mbar"
+			kPres2 = 1
+		Else If indAltUnit = 1 Then
+			btnAltUnit.Text = "Pa"
+			kPres2 = 1*100
+		Else If indAltUnit = 2 Then
+			btnAltUnit.Text = "hPa"
+			kPres2 = 1
+		Else If indAltUnit = 3 Then
+			btnAltUnit.Text = "atm"
+			kPres2 = 1/101325*100
+		Else If indAltUnit = 4 Then
+			btnAltUnit.Text = "mmHg"
+			kPres2 = 0.007500616827042*100
+		Else If indAltUnit = 5 Then
+			btnAltUnit.Text = "psi"
+			kPres2 = 0.0001450378911491*100
+		End If
+	End If
+	If indAltType = 2 Or indAltType = 4 Then
+		AltType_Click
+	End If
+End Sub
+
+Sub TempType_Click
+	If indTempType < 0 Then
+	Else If indTempType = 0 Then
+		btnTempType.Text = "Δ ISA"
+		tmp.StopListening
+	Else If indTempType = 1 Then
+		btnTempType.Text = "OAT"
+		tmp.StopListening
+	Else If indTempType = 2 Then
+		btnTempType.Text = "OAT"
+		tmp.Initialize(tmp.TYPE_TEMPERATURE)
+		Dim listen As Boolean
+		listen=tmp.StartListening("Sensor2")
+		If listen = False Then
+			Msgbox2Async("Temperature Sensor is not supported in this device.", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+			Wait For Msbox_Result (Idx101 As Int)
+		End If
+		edtTemp.Text = NumberFormat2(TempSensor*kTemp2+cTemp2,1,2,2,False)
+	End If
+End Sub
+
+Sub TempUnit_Click
+	If indTempUnit < 0 Then
+	Else If indTempUnit = 0 Then
+		btnTempUnit.Text = "°C"
+		kTemp = 1
+		cTemp = 273.15
+		kTemp2 = 1
+		cTemp2= 0
+	Else If indTempUnit = 1 Then
+		btnTempUnit.Text = "°F"
+		kTemp = 5/9
+		cTemp = -32 * 5/9 + 273.15
+		kTemp2 = 1
+		cTemp2 = 273.15
+	Else If indTempUnit = 2 Then
+		btnTempUnit.Text = "K"
+		kTemp = 1
+		cTemp = 0
+		kTemp2 = 1
+		cTemp2 = 273.15
+	End If	
+End Sub
+
+Sub SpdType_Click
+	If indAltType<>2 And indSpdType<>7 Then
+		Gps1.Stop
+		Ready = False
+		GpsCheck = 1
+	Else If indSpdType=7 Then
+		If GpsCheck2 = 1 Then
+			rp.CheckAndRequest(rp.PERMISSION_ACCESS_FINE_LOCATION)
+			Wait For Activity_PermissionResult (Permission As String, Result As Boolean)
+			GpsCheck2 = 0
+			GpsStatus=Result
+		End If
+		If GpsStatus Then
+		    If Gps1.GPSEnabled = False And GpsCheck=1 Then
+	            ToastMessageShow("Please enable the GPS device.", True)
+		    	StartActivity(Gps1.LocationSettingsIntent) 'Will open the relevant settings screen.
+		    	GpsCheck = 0
+		    Else If Gps1.GPSEnabled = False And GpsCheck=0 Then
+		    	ToastMessageShow("GPS not enabled.", True)
+	        End If
+		    If Not(Ready) Then
+		    	Gps1.Start(100,1)
+		    	Ready = True
+		    End If
+		Else
+			ToastMessageShow("Denied location access", True)
+		End If
+	End If
+	If indSpdType < 0 Then
+	Else If indSpdType = 0 Then
+		btnSpdType.Text = "TAS"
+		edtSpd.Hint = "Speed"
+		btnSpdUnit.Visible = True
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x 
+		edtSpdDelta.Visible = False
+	Else If indSpdType = 1 Then
+		btnSpdType.Text = "CAS"
+		edtSpd.Hint = "Speed"
+		btnSpdUnit.Visible = True
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x
+		edtSpdDelta.Visible = False
+	Else If indSpdType = 2 Then
+		btnSpdType.Text = "EAS"
+		edtSpd.Hint = "Speed"
+		btnSpdUnit.Visible = True
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x
+		edtSpdDelta.Visible = False
+	Else If indSpdType = 3 Then
+		btnSpdType.Text = "Mach"
+		If sc > 1 Or ld = 1 Or xx>300dip Then
+			edtSpd.Hint = "Mach Number"
+		Else
+			edtSpd.Hint = "Mach"
+		End If
+		btnSpdUnit.Visible = False
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x
+		edtSpdDelta.Visible = False
+	Else If indSpdType = 4 Then
+		edtSpd.Hint = "CL"
+		btnSpdType.Text = "CL"
+		btnSpdUnit.Visible = False
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x
+		edtSpdDelta.Visible = False
+	Else If indSpdType = 5 Then
+		btnSpdType.Text = "VsFact"
+		edtSpd.Hint = "Fact"
+		If sc > 1 Or ld = 1 Then
+			btnSpdType.Text = "Vs Factor"
+			edtSpd.Hint = "Factor"
+		End If
+		btnSpdUnit.Visible = False
+		btnSpdDelta.Visible = True
+		edtSpd.Width = 17%x
+		edtSpdDelta.Visible = True
+	Else If indSpdType = 6 Then
+		btnSpdType.Text = "GrSpd"
+		edtSpd.Hint = "Speed"
+		If xx > 300dip Then
+			btnSpdType.Text = "Grd Spd"
+		End If
+		If sc > 1 Or ld = 1 Then
+			btnSpdType.Text = "Ground Speed"
+		End If
+		btnSpdUnit.Visible = True
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x
+		edtSpdDelta.Visible = False
+	Else If indSpdType = 7 Then
+		btnSpdType.Text = "GrSpd"
+		If xx > 300dip Then
+			btnSpdType.Text = "Grd Spd"
+		End If
+		If sc > 1 Or ld = 1 Then
+			btnSpdType.Text = "Ground Speed"
+		End If
+		btnSpdUnit.Visible = True
+		edtSpd.Text = NumberFormat2(GPSspeed / kSpd, 1, 1, 1, False)
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x
+		edtSpdDelta.Visible = False
+	Else If indSpdType = 8 Then
+		If sc > 1 Or ld = 1 Or xx>300dip Then
+			edtSpd.Hint = "Dyn. Pressure"
+		Else
+			edtSpd.Hint = "Qdyn"
+		End If
+		btnSpdType.Text = "Qdyn"
+		btnSpdUnit.Visible = True
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x
+		edtSpdDelta.Visible = False
+	Else If indSpdType = 9 Then
+		If sc > 1 Or ld = 1 Or xx>300dip Then
+			edtSpd.Hint = "Imp. Pressure"
+		Else
+			edtSpd.Hint = "Qc"
+		End If
+		btnSpdType.Text = "Qc"
+		btnSpdUnit.Visible = True
+		btnSpdDelta.Visible = False
+		edtSpd.Width = 36%x
+		edtSpdDelta.Visible = False
+	End If
+	SpdUnit_Click
+End Sub
+
+Sub SpdUnit_Click
+	If indSpdType < 8 Then
+		If indSpdUnit < 0 Then
+		Else If indSpdUnit = 0 Then
+			btnSpdUnit.Text = "kt"
+			kSpd = 1852/3600
+		Else If indSpdUnit = 1 Then
+			btnSpdUnit.Text = "m/s"
+			kSpd = 1
+		Else If indSpdUnit = 2 Then
+			btnSpdUnit.Text = "km/h"
+			kSpd = 1/3.6
+		Else If indSpdUnit = 3 Then
+			btnSpdUnit.Text = "mph"
+			kSpd = 0.44704
+		Else If indSpdUnit = 4 Then
+			btnSpdUnit.Text = "ft/s"
+			kSpd = 0.3048
+		End If
+	Else
+		If indSpdUnit < 0 Then
+		Else If indSpdUnit = 0 Then
+			btnSpdUnit.Text = "mbar"
+			kSpd = 100
+		Else If indSpdUnit = 1 Then
+			btnSpdUnit.Text = "Pa"
+			kSpd = 1
+		Else If indSpdUnit = 2 Then
+			btnSpdUnit.Text = "hPa"
+			kSpd = 100
+		Else If indSpdUnit = 3 Then
+			btnSpdUnit.Text = "atm"
+			kSpd = 101325
+		Else If indSpdUnit = 4 Then
+			btnSpdUnit.Text = "mmHg"
+			kSpd = 133.3223684
+		Else If indSpdUnit = 5 Then
+			btnSpdUnit.Text = "psi"
+			kSpd = 6894.75729
+		End If
+	End If
+	If indSpdType=7 Then
+		edtSpd.Text = NumberFormat2(GPSspeed / kSpd, 1, 1, 1, False)
+	End If
+	
+End Sub
+
+Sub Weight_Click
+	Dim w As String
+	Dim count As Int: count=0
+	Dim ii As Int
+	If indWeightType = 0 Then
+		btnWeight.Text = "Weight"
+		edtWeight.Text = ""
+	Else
+		For ii=1 To 6
+			w = a.GetDefault(ID_inp & "_W" & ii,"")
+			If w.CompareTo("") <> 0 Then
+			count = count + 1
+			End If
+			If count=indWeightType Then Exit
+		Next
+		If ii = 1 Then
+			btnWeight.Text  = "MTOW"
+		Else If ii = 2 Then
+			btnWeight.Text  = "MLW"
+		Else If ii = 3 Then
+			btnWeight.Text  = "MZFW"
+		Else If ii = 4 Then
+			btnWeight.Text  = "BOW"
+		Else If ii = 5 Then
+			btnWeight.Text  = "Heavy"
+		Else If ii = 6 Then
+			btnWeight.Text  = "Light"
+		End If
+		edtWeight.Text = a.GetDefault(ID_inp & "_W" & ii,"")
+		indWeightUnit = a.Get(ID_inp & "_Wunit")
+		WeightUnit_Click
+	End If
+End Sub
+
+Sub WeightUnit_Click
+	If indWeightUnit < 0 Then
+	Else If indWeightUnit = 0 Then
+		btnWeightUnit.Text = "kg"
+		kWeight = 1
+	Else If indWeightUnit = 1 Then
+		btnWeightUnit.Text = "lb"
+		kWeight = 0.45359237
+	Else If indWeightUnit = 2 Then
+		btnWeightUnit.Text = "ton"
+		kWeight = 1000
+	Else If indWeightUnit = 3 Then
+		btnWeightUnit.Text = "slug"
+		kWeight =  14.5939029
+	Else If indWeightUnit = 4 Then
+		btnWeightUnit.Text = "oz"
+		kWeight =  0.028349523125
+	End If
+End Sub
+
+Sub CLmax_Click
+	Dim w As String
+	Dim count As Int: count=0
+	Dim ii As Int
+	If indCLmaxType = 0 Then
+		Dim rs3 As RichString
+		rs3.Initialize("CL{T}MAX{T}")
+		rs3.RelativeSize2(.7,"{T}")
+		btnCLmax.Text = rs3
+		edtCLmax.Text = ""
+	Else
+		For ii=1 To 14
+			w = a.GetDefault(ID_inp & "_F" & (ii-1),"")
+			If w.CompareTo("") <> 0 Then
+			count = count + 1
+			End If
+			If count=indCLmaxType Then Exit
+		Next
+		Dim rs3 As RichString
+		rs3.Initialize("CL{T}MAX{T} F" & (ii-1))
+		rs3.RelativeSize2(.7,"{T}")
+		btnCLmax.Text = rs3
+		If sc > 1 Or ld = 1 Or xx>350dip Then
+			Dim rs4 As RichString
+			rs4.Initialize("CL{T}MAX{T} - F" & (ii-1))
+			rs4.RelativeSize2(.7,"{T}")
+			btnCLmax.Text = rs4
+		End If
+		edtCLmax.Text = a.GetDefault(ID_inp & "_F" & (ii-1),"")
+	End If
+End Sub
+
+Sub SrefUnit_Click
+	If indSrefUnit < 0 Then
+	Else If indSrefUnit = 0 Then
+		btnSrefUnit.Text = "m²"
+		kSref = 1
+	Else If indSrefUnit = 1 Then
+		btnSrefUnit.Text = "ft²"
+		kSref = 0.3048 * 0.3048
+	Else If indSrefUnit = 2 Then
+		btnSrefUnit.Text = "in²"
+		kSref = 0.0254*0.0254
+	Else If indSrefUnit = 3 Then
+		btnSrefUnit.Text = "cm²"
+		kSref = 0.01 * 0.01
+	Else If indSrefUnit = 4 Then
+		btnSrefUnit.Text = "mm²"
+		kSref = 0.001 * 0.001
+	End If
+End Sub
+
+Sub crefUnit_Click
+	If indcrefUnit < 0 Then
+	Else If indcrefUnit = 0 Then
+		btncrefUnit.Text = "m"
+		kcref = 1
+	Else If indcrefUnit = 1 Then
+		btncrefUnit.Text = "ft"
+		kcref = 0.3048
+	Else If indcrefUnit = 2 Then
+		btncrefUnit.Text = "in"
+		kcref = 0.0254
+	Else If indcrefUnit = 3 Then
+		btncrefUnit.Text = "cm"
+		kcref = 0.01
+	Else If indcrefUnit = 4 Then
+		btncrefUnit.Text = "mm"
+		kcref = 0.001
+	End If
+End Sub
+
+Sub NzType_Click
+	If indNzType < 0 Then
+	Else 
+		If indNzType=0 Then
+			btnNzType.Text = "Nz"
+			edtNz.Hint = "Nz (Pull-up)"
+			If xx > 340dip Then
+				btnNzType.Text = "Nz (Pull-up)"
+				edtNz.Hint = "Nz (Pull-up)"	
+			End If
+			If sc > 1 Or ld = 1 Then
+				btnNzType.Text = "Nz (Pull-up)"
+				edtNz.Hint = "Load Factor (Pull-up)"
+			End If
+			btnNzUnit.Text = "g"
+		Else If indNzType=1 Then
+			btnNzType.Text = "Nz"
+			edtNz.Hint = "Nz (Turn)"
+			If xx > 340dip Then
+				btnNzType.Text = "Nz (Turn)"
+				edtNz.Hint = "Nz (Turn)"
+			End If
+			If sc > 1 Or ld = 1 Then
+				btnNzType.Text = "Nz (Turn)"
+				edtNz.Hint = "Load Factor (Turn)"
+			End If
+			btnNzUnit.Text = "g"
+		Else If indNzType=2 Then
+			btnNzType.Text = "Bank"
+			edtNz.Hint = "Bank"
+			If sc > 1 Or ld = 1 Or xx>340dip Then
+				edtNz.Hint = "Bank Angle (Turn)"
+				btnNzType.Text = "Bank (Turn)"
+			End If
+			btnNzUnit.Text = "deg"
+		End If
+	End If
+End Sub
+
+Sub Angle1Type_Click
+	If indAngle1Type < 0 Then
+	Else If indAngle1Type=0 Or indAngle1Type=1 Then
+		If indAngle1Type=0 Then
+			btnAngle1Type.Text = "Track"
+			edtAngle1.Hint = "Track"
+			If sc > 1 Or ld = 1 Or xx>340dip Then
+				edtAngle1.Hint = "Track Angle"
+			End If
+		Else If indAngle1Type=1 Then
+			btnAngle1Type.Text = "Heading"
+			edtAngle1.Hint = "Heading"
+			If sc > 1 Or ld = 1 Or xx>340dip Then
+				edtAngle1.Hint = "Heading Angle"
+			End If
+		End If
+	End If	
+End Sub
+
+Sub Angle1Unit_Click
+	If indAngle1Unit < 0 Then
+	Else If indAngle1Unit = 0 Then
+		btnAngle1Unit.Text = "deg"
+		KAngle1 = 3.14159265358979 / 180
+	Else If indAngle1Unit = 1 Then
+		btnAngle1Unit.Text = "rad"
+		KAngle1 = 1
+	End If
+End Sub
+
+Sub Angle2Type_Click
+	If indAngle2Type < 0 Then
+	Else If indAngle2Type=0 Or indAngle2Type=1 Then
+		If indAngle2Type=0 Then
+			btnAngle2Type.Text = "Sideslip"
+			edtAngle2.Hint = "Sideslip"
+			If sc > 1 Or ld = 1 Or xx>340dip Then
+			edtAngle2.Hint = "Sideslip Angle"	
+			End If
+		Else If indAngle2Type=1 Then
+			btnAngle2Type.Text = "Drift"
+			edtAngle2.Hint = "Drift"
+			If sc > 1 Or ld = 1 Or xx>340dip Then
+			edtAngle2.Hint = "Drift Angle"	
+			End If
+		End If
+	End If
+End Sub
+
+Sub Angle2Unit_Click
+	If indAngle2Unit < 0 Then
+	Else If indAngle2Unit = 0 Then
+		btnAngle2Unit.Text = "deg"
+		KAngle2 = 3.14159265358979 / 180
+	Else If indAngle2Unit = 1 Then
+		btnAngle2Unit.Text = "rad"
+		KAngle2 = 1
+	End If
+End Sub
+
+Sub WindType
+	Dim pnlv1,pnlv2 As Panel
+	If indWindType < 0 Then
+	Else If indWindType=0 Or indWindType=1 Then
+		If indWindType=0 Then
+			scvMain1.Panel.Height = (14 * (ib * 2 + tb) +14dip+3dip)*sc
+			pnlv1 = scvMain1.Panel.GetView (24)
+			pnlv1.Visible=True
+			pnlv2 = scvMain1.Panel.GetView (26)
+			pnlv2.Visible=True
+			btnHeadWind.Text = "HeadWnd"
+			edtHeadWind.Hint = "HeadWind"
+			edtWindRefAngle.Hint="Reference Dir."
+			btnWindRefAngle.Text = "RwyAngle"
+			If xx > 300dip Then
+				btnHeadWind.Text = "HeadWind"
+			End If
+			If xx > 400dip Then
+				btnWindRefAngle.Text = "RunwayAngle"
+				edtHeadWind.Hint = "HeadWind Speed"
+				edtWindRefAngle.Hint="Reference Direction"
+			End If
+			If sc > 1 Or ld = 1 Then
+				btnHeadWind.Text = "HeadWind"
+				edtHeadWind.Hint = "HeadWind Speed"
+				edtWindRefAngle.Hint="Reference Direction"
+				btnWindRefAngle.Text = "Runway Angle"
+			End If
+			pnlv2.Top =( 13 * (ib*2+tb) + 13*1dip) *sc
+			pnlv2.Height = (ib*2+tb) *sc
+		Else If indWindType=1 Then
+			scvMain1.Panel.Height = (13 * (ib * 2 + tb) + 13dip+3dip)	*sc	
+			pnlv1 = scvMain1.Panel.GetView (24)
+			pnlv1.Visible=False
+			pnlv2 = scvMain1.Panel.GetView (26)
+			'pnlv2.Visible = True
+			btnHeadWind.Text = "WindSpd"
+			edtHeadWind.Hint = "Speed"
+			edtWindRefAngle.Hint="Direction"
+			btnWindRefAngle.Text = "WindDir"
+			If xx > 340dip Then
+				btnHeadWind.Text = "Wind Spd"
+				edtHeadWind.Hint = "Wind Speed"
+				btnWindRefAngle.Text = "Wind Dir"
+				edtWindRefAngle.Hint= "Wind Direction"
+			End If
+			If sc > 1 Or ld = 1 Then
+				btnHeadWind.Text = "Wind Speed"
+				edtHeadWind.Hint = "Wind Speed"
+				edtWindRefAngle.Hint="Wind Direction"
+				btnWindRefAngle.Text = "Wind Direction"
+			End If
+			pnlv2.Top = (12 * (ib*2+tb) + 12*1dip) *sc
+			pnlv2.Height = (ib * 2 + tb) *sc
+		End If
+	End If
+End Sub
+
+Sub HeadWindUnit_Click
+	If indHeadWindUnit < 0 Then
+	Else If indHeadWindUnit = 0 Then
+		btnHeadWindUnit.Text = "kt"
+		kSpd1 = 1852/3600
+	Else If indHeadWindUnit = 1 Then
+		btnHeadWindUnit.Text = "m/s"
+		kSpd1 = 1
+	Else If indHeadWindUnit = 2 Then
+		btnHeadWindUnit.Text = "km/h"
+		kSpd1 = 1/3.6
+	Else If indHeadWindUnit = 3 Then
+		btnHeadWindUnit.Text = "mph"
+		kSpd1 = 0.44704
+	Else If indHeadWindUnit = 4 Then
+		btnHeadWindUnit.Text = "ft/s"
+		kSpd1 = 0.3048
+	End If
+End Sub
+
+Sub CrossWindUnit_Click
+	If indCrossWindUnit < 0 Then
+	Else If indCrossWindUnit = 0 Then
+		btnCrossWindUnit.Text = "kt"
+		kSpd2 = 1852/3600
+	Else If indCrossWindUnit = 1 Then
+		btnCrossWindUnit.Text = "m/s"
+		kSpd2 = 1
+	Else If indCrossWindUnit = 2 Then
+		btnCrossWindUnit.Text = "km/h"
+		kSpd2 = 1/3.6
+	Else If indCrossWindUnit = 3 Then
+		btnCrossWindUnit.Text = "mph"
+		kSpd2 = 0.44704
+	Else If indCrossWindUnit = 4 Then
+		btnCrossWindUnit.Text = "ft/s"
+		kSpd2 = 0.3048
+	End If
+End Sub
+
+Sub WindRefAngleUnit_Click
+	If indWindRefAngleUnit < 0 Then
+	Else If indWindRefAngleUnit = 0 Then
+		btnWindRefAngleUnit.Text = "deg"
+		KAngle3 = 3.14159265358979 / 180
+	Else If indWindRefAngleUnit = 1 Then
+		btnWindRefAngleUnit.Text = "rad"
+		KAngle3 = 1
+	End If
+End Sub
+
+Sub btnAirp_Click
+	' Vibrar e fechar teclado
+	Dim phoneV As PhoneVibrate
+	Dim HideK As IME
+	HideK.Initialize("")
+	phoneV.Vibrate(30)
+	HideK.HideKeyboard
+	
+	' Ir para pagina de Inputs
+	pager.GotoPage(0,True)
+	
+End Sub
+
+Sub btnBack_Click
+	' Vibrar e fechar teclado
+	Dim phoneV As PhoneVibrate
+	Dim HideK As IME
+	HideK.Initialize("")	
+	phoneV.Vibrate(30)
+	HideK.HideKeyboard
+	
+	' Ir para pagina de Inputs
+	pager.GotoPage(1,True)
+	
+End Sub
+
+Sub btnCalc_Click
+	' Vibrar e fechar teclado
+	Dim phoneV As PhoneVibrate
+	Dim HideK As IME
+	HideK.Initialize("")	
+    phoneV.Vibrate(30)
+	HideK.HideKeyboard
+	
+	' Ir para pagina de Outputs e fazer Calculos
+	pager.GotoPage(2,True)
+	Calculate
+End Sub
+
+Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
+    ' Tecla voltar vai para a pagina de Inputs
+	If KeyCode = KeyCodes.KEYCODE_BACK And CurrentPage = 2 Then
+		pager.GotoPage(1, True)
+		Return True 
+	Else
+	   Return False
+	End If
+End Sub
+
+Sub Calculate
+	
+	'Set default units and inputs
+	DefaultInputs
+	
+	'Constantes da Atmosfera Padrao
+	Thp=11000
+	e=4.2558797  
+	Rho0=1.225
+	P0=101325
+	Vsound0=340.294  
+	mu0=0.000017894
+	exp=2.71828182846
+	
+	' Usuario escolheu Altitude Geometrica como Input
+	Dim Hgeom_input_m,Hp_input_m,Error,perturb,deriv,relax As Double
+	Dim cont As Int
+	If indAltType = 1 Or  indAltType = 2 Then
+		Hgeom_input_m = AltValue
+		Hgeop_m = (6356766/(6356766+Hgeom_input_m))*Hgeom_input_m
+		Hgeom = Hgeom_input_m/0.3048
+		Error=1
+		perturb = 0.001
+		relax = 1
+		Hp_input_m = Hgeop_m
+		deriv = 0
+		cont=0
+		Do While cont<100 And Abs(Error)>0.001
+			Hp_input_m = Hp_input_m - deriv * Error * relax
+			deriv = (-CalcError(Hgeop_m,Hp_input_m) + CalcError(Hgeop_m,Hp_input_m+perturb)) / perturb
+			Error = CalcError(Hgeop_m,Hp_input_m)
+			cont = cont+1	
+		Loop	
+	End If
+	
+	' Usuario escolheu Altitude Pressao como Input
+	If indAltType = 0 Then
+		Hp = AltValue
+	Else If indAltType = 1 Or indAltType = 2 Then
+		Hp = Hp_input_m
+	End If
+	
+	' Usuario escolheu Altitude Pressao ou Geometrica como Input
+	If indAltType = 0 Or indAltType = 1 Or indAltType = 2 Then
+		H=Hp/Thp
+		If H<1 Then
+		  T_std=288.15-71.5*H
+		  P_P0=Power((1.0-0.248135*H),(e+1))
+		 ' Rho_Rho0=Power((1.0-0.248135*H),e)
+		Else If H<20/11 Then
+		  T_std=216.65
+		  P_P0=Power(exp,(-1.73457*H))*1.26567
+		  'Rho_Rho0=Power(exp,(-1.73457*H))*1.68338
+		Else If H<32/11 Then
+			T_std=310.65+1*(Hp-20000)/1000
+			P_P0=Power((0.988626+Hp/0.3048/652600),(-34.16320))
+		Else If H<47/11 Then
+			T_std=322.65+2.8*(Hp-32000)/1000
+			P_P0=Power((0.8983096+Hp/0.3048/181373),(-12.20114))
+		Else If H<51/11 Then
+			T_std=364.65
+			P_P0=Power(exp,(-Hp/0.3048+154199)/25992)*0.00109456
+		Else If H<71/11 Then
+			T_std=364.65-2.8*(Hp-51000)/1000
+			P_P0=Power((0.838263+Hp/0.3048/577922),(12.20144))
+		Else 
+			T_std=308.65-2*(Hp-71000)/1000
+			P_P0=Power((0.917131+Hp/0.3048/637919),(17.08160))
+		End If
+		P = P_P0 * P0
+	' Usuario escolheu Pressao Atmosferica como Input
+	Else If indAltType = 3 Or indAltType = 4 Then
+		If indAltType = 3 Then
+			P = AltValue
+		Else If  indAltType = 4 Then
+			P = PressureSensor * kPres
+		End If
+		P_P0=P/P0
+		If P_P0>0.2233603 Then
+			Hp = (1 - Power(P/101325,1/(e+1)) ) / 0.248135 * 11000
+			H=Hp/Thp
+			T_std=288.15-71.5*H
+			'Rho_Rho0=Power((1.0-0.248135*H),e)
+		Else If P_P0>0.0540330 Then
+			Hp = Logarithm(P/101325/1.26567,exp) / -1.73457 * 11000
+			H=Hp/Thp
+			T_std=216.65
+			'Rho_Rho0=Power(exp,(-1.73457*H))*1.68338
+		Else If P_P0>0.00856668 Then
+			Hp = (-0.988626 + Power(P/101325,1/(-34.16320))) * 652600 * 0.3048
+			H=Hp/Thp
+			T_std=310.65+1*(Hp-20000)/1000
+		Else If P_P0>0.00109456 Then
+			Hp = (-0.8983096 + Power(P/101325,1/(-12.20114))) * 181373 * 0.3048
+			H=Hp/Thp
+			T_std=322.65+2.8*(Hp-32000)/1000
+		Else If P_P0>0.000660635 Then
+			P_P0=Power(exp,(-Hp/0.3048+154199)/25992)*0.00109456
+			Hp = -(Logarithm(P/101325/0.00109456,exp)*25992-154199)*0.3048
+			H=Hp/Thp
+			T_std=364.65
+		Else If P_P0>0.0000390468 Then
+			Hp = (0.838263 + Power(P/101325,1/(12.20144))) * 577922 * 0.3048
+			H=Hp/Thp
+			T_std=364.65-2.8*(Hp-51000)/1000
+		Else 
+			Hp = (0.917131 + Power(P/101325,1/(17.08160))) * 637919 * 0.3048
+			H=Hp/Thp
+			T_std=308.65-2*(Hp-71000)/1000
+		End If
+	 End If
+	 
+	' Usuario escolheu Delta ISA
+	If indTempType = 0 Then
+		isa = TempValue*kTemp
+		T_kelvin = T_std + isa
+	' Usuario escolheu OAT
+	Else
+		T_kelvin = TempValue*kTemp + cTemp
+		isa = T_kelvin - T_std
+	End If
+	T_degC = T_kelvin-273.15
+	T_T0 = T_kelvin/288.15
+	'DhpDh = T_std/(T_std+isa)
+	Vsound = Sqrt(T_T0)*Vsound0
+	'Rho_std = Rho_Rho0*Rho0
+	'Rho = Rho_std/(1+isa/T_std)
+	Rho_Rho0=P_P0/T_T0
+	Rho=Rho_Rho0*Rho0
+	mu = mu0*(Power(T_kelvin,1.5)/(T_kelvin+120)/11.984)
+	Hd = 145442.156 * (1-Power((P_P0/T_T0),0.234969))
+	
+	If indAltType = 0 Or indAltType = 3 Or indAltType = 4 Then
+	Hgeop_m = Hp - 29.271247 * isa* Logarithm(P_P0,exp)
+	Hgeom = 6356766 * Hgeop_m / (6356766 - Hgeop_m) / 0.3048
+	End If
+	Hgeop = Hgeop_m/0.3048
+	Hp_ft = Hp / 0.3048
+	
+	If T_kelvin>216.65 Then
+		Htemp=11000/0.3048*(288.15-T_kelvin)/71.5
+	Else
+		Htemp=11000/0.3048
+	End If
+	
+	' Usuario Escolheu Nz como Input
+	If indNzType=0 Then
+		Nz = NzValue
+		Bank = 0
+	Else If indNzType = 1 Then
+		Nz = NzValue
+		Bank = ACos(1/Nz)
+	' Usuario Escolheu bank como Input
+	Else If indNzType = 2 Then
+		Nz = 1 / Cos(NzValue * 3.14159265358979 / 180)
+		Bank = NzValue * 3.14159265358979 / 180
+	End If
+	
+	'Calculo de Vs
+	Vs_tas = Sqrt(2*weight*9.80665/Rho0/Sref/CLmax)/Sqrt(Rho/Rho0)
+	Vs_mach = Vs_tas / Vsound
+	Vs_cas = Vsound0*Sqrt(5*(Power(((P_P0*(Power((((Vs_mach*Vs_mach)/5)+1),3.5)-1))+1),(1/3.5))-1))
+	
+	' Usuario escolheu TAS como Input
+	If indSpdType = 0 Then
+		tas = SpdValue
+		mach = tas / Vsound
+		eas = tas * Sqrt(Rho/Rho0)
+		CL = weight*Nz*9.80665/0.5/1.225/Sref/(eas*eas)
+		cas = Vsound0*Sqrt(5*(Power(((P_P0*(Power((((mach*mach)/5)+1),3.5)-1))+1),(1/3.5))-1))
+		VsFact = cas / Vs_cas
+	' Usuario escolheu Mach como Input
+	Else If indSpdType = 3 Then
+		mach = SpdValue
+		tas = mach * Vsound
+		eas = tas * Sqrt(Rho/Rho0)
+		CL = weight*Nz*9.80665/0.5/1.225/Sref/(eas*eas)
+		cas = Vsound0*Sqrt(5*(Power(((P_P0*(Power((((mach*mach)/5)+1),3.5)-1))+1),(1/3.5))-1))
+		VsFact = cas / Vs_cas 
+	' Usuario escolheu EAS como Input
+	Else If indSpdType = 2 Then
+		eas = SpdValue
+		tas = eas / Sqrt(Rho/Rho0)
+		mach = tas / Vsound
+		CL = weight*Nz*9.80665/0.5/1.225/Sref/(eas*eas)
+		cas = Vsound0*Sqrt(5*(Power(((P_P0*(Power((((mach*mach)/5)+1),3.5)-1))+1),(1/3.5))-1))
+		VsFact = cas / Vs_cas
+	' Usuario escolheu CL como Input
+	Else If indSpdType = 4 Then
+		CL = SpdValue
+		eas = Sqrt(2*weight*Nz*9.80665/1.225/Sref/CL)
+		tas = eas / Sqrt(Rho/Rho0)
+		mach = tas / Vsound
+		cas = Vsound0*Sqrt(5*(Power(((P_P0*(Power((((mach*mach)/5)+1),3.5)-1))+1),(1/3.5))-1))
+		VsFact = cas / Vs_cas
+	' Usuario escolheu CAS como Input
+	Else If indSpdType = 1 Then
+		cas = SpdValue
+		mach = Sqrt(5*(Power((((Power((((Power((cas/Vsound0),2))/5)+1),3.5)-1)/P_P0)+1),(1/3.5))-1))
+		tas = mach * Vsound
+		eas = tas * Sqrt(Rho/Rho0)
+		CL = weight*Nz*9.80665/0.5/1.225/Sref/(eas*eas)
+		VsFact = cas / Vs_cas
+	' Usuario escolheu VS Factor como Input
+	Else If indSpdType = 5 Then
+		cas = (SpdValue * Vs_cas) + (SpdDelta)
+		mach = Sqrt(5*(Power((((Power((((Power((cas/Vsound0),2))/5)+1),3.5)-1)/P_P0)+1),(1/3.5))-1))
+		tas = mach * Vsound
+		eas = tas * Sqrt(Rho/Rho0)
+		CL = weight * Nz * 9.80665 / 0.5 / 1.225 / Sref / (eas * eas)
+		VsFact = cas / Vs_cas
+	' Usuario escolheu Ground Speed do GPS como Input
+	Else If indSpdType = 6 Or indSpdType = 7 Then
+		gs = SpdValue
+		WindCalc
+		mach = tas / Vsound
+		eas = tas * Sqrt(Rho/Rho0)
+		CL = weight*Nz*9.80665/0.5/1.225/Sref/(eas*eas)
+		cas = Vsound0*Sqrt(5*(Power(((P_P0*(Power((((mach*mach)/5)+1),3.5)-1))+1),(1/3.5))-1))
+		VsFact = cas / Vs_cas
+	' Usuario escolheu Pressao Dinamica como Input	
+	Else If indSpdType = 8  Then
+		Qd = SpdValue
+		tas = Sqrt(Qd/0.5/Rho)
+		mach = tas / Vsound
+		eas = tas * Sqrt(Rho/Rho0)
+		CL = weight*Nz*9.80665/0.5/1.225/Sref/(eas*eas)
+		cas = Vsound0*Sqrt(5*(Power(((P_P0*(Power((((mach*mach)/5)+1),3.5)-1))+1),(1/3.5))-1))
+		VsFact = cas / Vs_cas
+	'Usuario Escolheu Pressao de Impacto como Input	
+	Else If indSpdType = 9  Then
+		Qc = SpdValue
+		mach = 5*(Power(((Qc/P)+1),(1/3.5)) - 1)
+		tas = mach * Vsound
+		eas = tas * Sqrt(Rho/Rho0)
+		CL = weight*Nz*9.80665/0.5/1.225/Sref/(eas*eas)
+		cas = Vsound0*Sqrt(5*(Power(((P_P0*(Power((((mach*mach)/5)+1),3.5)-1))+1),(1/3.5))-1))
+		VsFact = cas / Vs_cas 
+	End If
+	
+	' Outputs Adicionais
+	re = Rho * tas * cref / mu
+	Qd = 0.5* Rho * tas * tas
+	Qc = P * (Power((1+0.2*mach*mach),3.5) -1 )
+	Ptot = Qc + P
+	Ttot = T_kelvin * (1+0.2*mach*mach)
+	Ttot_degC = Ttot - 273.15
+	
+	' Validade dos Calculos
+	If Hp_ft>(86000/0.3048) Then
+		Msgbox2Async("Watch out! This app only models the atmosphere up to 86 kilometers", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+		Wait For Msbox_Result (Idx103 As Int)
+	End If
+	
+	If indSpdType <> 6 And indSpdType <> 7 Then
+		WindCalc
+	End If
+	
+	' Criando Panels de Outputs
+	For i=0 To PanelNb1-1
+		Dim pnltest As Panel
+		Dim pnlline As Panel
+		pnltest.Initialize("pnlTest")
+		pnlline.Initialize("pnlline")
+		scvMain2.Panel.AddView(pnltest, 0, i*PanelHeight1, 100%x, PanelHeight1)
+		scvMain2.Panel.AddView(pnlline, 0,(i+1)*PanelHeight1-1dip, 100%x, 1dip)
+		pnlline.Color = ColorPnlLine3
+	    pnltest.Tag=i
+	    If (i Mod 2)=1 Then
+	        pnltest.Color=ColorPnlInput3	
+	    Else
+	        pnltest.Color=ColorPnlInput4	
+	    End If	    
+		lblVar.Initialize("lblVar")
+	    pnltest.AddView(lblVar,5dip, 0dip, 54%x-5dip, PanelHeight1)
+	    lblVar.Tag=i
+	    lblVar.TextSize=15
+		lblVar.TextColor = ColorEdtText
+		lblVar.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
+	    lblRes.Initialize("lblRes")
+	    pnltest.AddView(lblRes,55%x, 0dip, 45%x,PanelHeight1)
+	    lblRes.Tag=i
+	    lblRes.TextSize=15
+		lblRes.TextColor = ColorEdtText
+		lblRes.Gravity =  Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
+		WriteText
+	Next
+
+End Sub
+
+Sub DefaultInputs
+		' Setar default caso usuario nao preencha campos
+	If edtAlt.Text.CompareTo("")=0 Then
+		edtAlt.Text = 0
+	End If
+	If edtTemp.Text.CompareTo("")=0 Then
+		edtTemp.Text = 0
+	End If
+	If edtSpd.Text.CompareTo("")=0 Then
+		edtSpd.Text = 0
+	End If
+	If edtSpdDelta.Text.CompareTo("")=0 Then
+		edtSpdDelta.Text = 0
+	End If
+	If edtWeight.Text.CompareTo("")=0 Then
+		edtWeight.Text =  1
+	End If
+	If edtSref.Text.CompareTo("")=0 Then
+		edtSref.Text =  1
+	End If
+	If edtcref.Text.CompareTo("")=0 Then
+		edtcref.Text =  1
+	End If
+	If edtCLmax.Text.CompareTo("")=0 Then
+		edtCLmax.Text =  1 
+	End If
+	If edtNz.Text.CompareTo("") = 0 Then
+		If indNzType=0 Or indNzType=1 Then
+			edtNz.Text = 1
+		Else If indNzType = 2 Then
+			edtNz.Text = 0
+		End If
+	End If
+	If edtAngle1.Text.CompareTo("") = 0 Then
+		edtAngle1.Text = 0
+	End If
+	If edtAngle2.Text.CompareTo("") = 0 Then
+		edtAngle2.Text = 0
+	End If
+	If edtHeadWind.Text.CompareTo("") = 0 Then
+		edtHeadWind.Text = 0
+	End If
+	If edtCrossWind.Text.CompareTo("") = 0 Or indWindType=1 Then
+		edtCrossWind.Text = 0
+	End If
+	If edtWindRefAngle.Text.CompareTo("") = 0 Then
+		edtWindRefAngle.Text = 0
+	End If
+	
+	' Transformar para unidades SI
+	weight = edtWeight.Text * kWeight
+	Sref = edtSref.Text * kSref
+	cref = edtcref.Text * kcref
+	CLmax = edtCLmax.Text
+	If indAltType=0 Or indAltType=1 Or indAltType=2 Then 
+		AltValue = edtAlt.Text * kAlt
+	Else
+		AltValue = edtAlt.Text * kPres
+	End If
+	TempValue = edtTemp.Text
+	If indSpdType=0 Or indSpdType=1 Or indSpdType=2 Or indSpdType=6 Or indSpdType=7 Or indSpdType=8 Or indSpdType=9 Then 
+		SpdValue = edtSpd.Text * kSpd
+	Else
+		SpdValue = edtSpd.Text * 1
+	End If
+	SpdDelta = edtSpdDelta.Text * 0.51444444
+	NzValue = edtNz.Text
+	Angle1Value = edtAngle1.Text * KAngle1
+	Angle2Value = edtAngle2.Text * KAngle2
+	Headwind = edtHeadWind.Text * kSpd1
+	CrossWind = edtCrossWind.Text  * kSpd2
+	WindRefAngle = edtWindRefAngle.Text  * KAngle3
+End Sub
+
+Sub WindCalc
+u_wind_inert = -Headwind*Cos(WindRefAngle)+ CrossWind*Sin(WindRefAngle)
+v_wind_inert = -CrossWind * Cos(WindRefAngle)  - Headwind * Sin(WindRefAngle)
+WS = Sqrt(Headwind * Headwind + CrossWind * CrossWind)
+WD = ATan2(v_wind_inert, u_wind_inert)+ 3.14159265358979 
+	
+If indSpdType = 6 Or indSpdType = 7 Then
+	If indAngle1Type = 0 Then
+		Track = Angle1Value
+		If indAngle2Type = 0 Then
+			Beta = Angle2Value 
+			u_inert = gs * Cos(Track) 
+			v_inert = gs * Sin(Track)
+			u_airsp_inert = u_inert - u_wind_inert
+			v_airsp_inert = v_inert - v_wind_inert
+			Psi = ATan2(v_airsp_inert, u_airsp_inert) - Beta
+		Else If indAngle2Type = 1 Then
+			Drift = Angle2Value 
+			Psi = Track + Drift
+			Beta = Track - Psi + ASin(Sin(2 * 3.14159265358979 - WD + 3.14159265358979 - Psi) * WS / gs)	
+		End If
+	Else If indAngle1Type = 1 Then
+		Psi = Angle1Value
+		If indAngle2Type = 0 Then
+			Beta = Angle2Value 
+			Track = Psi + Beta-ASin(Sin(2 * 3.14159265358979 - WD + 3.14159265358979 - Psi) * WS / gs)
+		Else If indAngle2Type = 1 Then
+			Drift = Angle2Value
+			Track = Psi - Drift
+			u_inert = gs * Cos(Track) 
+			v_inert = gs * Sin(Track)
+			u_airsp_inert = u_inert - u_wind_inert
+			v_airsp_inert = v_inert - v_wind_inert
+			Beta = ATan2(v_airsp_inert, u_airsp_inert) - Psi
+		End If
+	End If
+	tas = (gs + WS * Cos(WD-Track)) / Cos(Psi + Beta-Track)
+Else 		
+	' Usuario Escolheu Psi como Output
+	If indAngle1Type = 1 Then
+		Psi = Angle1Value 
+		If indAngle2Type = 0 Then
+			Beta = Angle2Value 
+			u_airsp_inert = tas*Cos(Psi+Beta) 
+			v_airsp_inert = tas*Sin(Psi+Beta)	
+			u_inert = u_airsp_inert + u_wind_inert
+			v_inert = v_airsp_inert + v_wind_inert
+			Track = ATan2(v_inert, u_inert) 
+		Else If indAngle2Type = 1 Then
+			Drift = Angle2Value 
+			Track = Psi - Drift
+			If ((WS / tas) * Sin(WD-Track)) > 1 Then
+				MsgboxAsync("Heading Cannot be flown. Wind too strong!", "Error")
+			End If
+			Beta = -Drift + ASin((WS / tas) * Sin(WD-Track))
+		End If
+	' Usuario Escolheu Track como Output
+	Else If indAngle1Type = 0 Then
+		Track = Angle1Value
+		If indAngle2Type = 0 Then
+			Beta = Angle2Value
+			Psi = Track-Beta + ASin((WS / tas) * Sin(WD-Track))
+		Else If indAngle2Type = 1 Then
+			Drift = Angle2Value 
+			Beta = -Drift + ASin((WS / tas) * Sin(WD-Track))
+			Psi = Drift + Track
+		End If
+	End If
+	gs = tas*Cos(Psi+Beta-Track) - WS*Cos(WD-Track)
+End If
+		
+	Drift = Psi - Track
+		
+	HW = WS * Cos(WD-Track)
+	CW = WS * Sin(WD-Track)
+	
+	If Abs(Drift) < 0.000001 Then Drift = 0
+	If Abs(Track) < 0.000001 Then Track = 0
+	If Abs(Beta) < 0.000001 Then Beta = 0
+	If Abs(Psi) < 0.000001 Then Psi = 0
+	If Abs(WS) < 0.000001 Then WS = 0
+	If Abs(WD) < 0.000001 Then WD = 0
+	If Abs(HW) < 0.000001 Then HW = 0
+	If Abs(CW) < 0.000001 Then CW = 0
+
+	Select manager.GetString("angleformat")
+	Case "0/360 (0/π)"
+		If Track < 0 Then
+			Track = 2 * 3.14159265358979323846 + Track
+		Else If Track >= (2 * 3.14159265358979323846) Then
+			Track = Track - 2 * 3.14159265358979323846 
+		End If
+		If Psi < 0 Then
+			Psi = 2 * 3.14159265358979323846 + Psi
+		Else If Psi >= (2 * 3.14159265358979323846) Then
+			Psi = Psi - 2 * 3.14159265358979323846
+		End If
+		If WD < 0 Then
+			WD = 2 * 3.14159265358979323846 + WD
+		Else If WD >= (2 * 3.14159265358979323846) Then
+			WD = WD - 2 * 3.14159265358979323846 
+		End If		
+	Case "-180/180 (-π/π)"
+		If Track < -3.14159265358979323846 Then
+			Track = 2 * 3.14159265358979323846 + Track
+		Else If Track > 3.14159265358979323846 Then
+			Track = Track - 2 * 3.14159265358979323846 
+		End If
+		If Psi < -3.14159265358979323846 Then
+			Psi = 2 * 3.14159265358979323846 + Psi
+		Else If Psi > 3.14159265358979323846 Then
+			Psi = Psi - 2 * 3.14159265358979323846
+		End If
+		If WD < -3.14159265358979323846 Then
+			WD = 2 * 3.14159265358979323846 + WD
+		Else If WD > 3.14159265358979323846 Then
+			WD = WD - 2 * 3.14159265358979323846 
+		End If
+	End Select
+		
+End Sub
+
+Sub CalcError (Hgeop_input_m As Double, Hp_input_m As Double) As Double
+	Dim Error As Double
+	If Hp_input_m<11000 Then
+	 	  T_std=288.15-71.5*Hp_input_m/11000
+		  P_P0=Power((1.0-0.248135*Hp_input_m/11000),(e+1))
+	Else
+		  T_std=216.65
+		  P_P0=Power(exp,(-1.73457*Hp_input_m/11000))*1.26567
+	End If
+	If indTempType = 0 Then
+		isa = TempValue*kTemp
+		T_kelvin = T_std + isa
+	Else
+		T_kelvin = TempValue*kTemp + cTemp
+		isa = T_kelvin - T_std
+	End If
+	Error = Hp_input_m - Hgeop_input_m - 29.271247 * isa* Logarithm(P_P0,exp)
+	Error = Abs (Error)
+	Return Error
+End Sub
+
+Sub WriteText
+	
+	' Capturar Unidades dos Outputs
+	Dim k2alt As Double
+	Dim k2pres As Double
+	Dim k2spd As Double
+	Dim k2temp As Double
+	Dim c2temp As Double
+	Dim k2angle As Double
+	
+	Select manager.GetString("altitude")
+	Case "ft"
+	k2alt = 1
+	Case "m"
+	k2alt = 0.3048
+	Case "km" 
+	k2alt = 0.3048 / 1000
+	Case "nm" 
+	k2alt = 0.3048 / 1852
+	Case "mi" 
+	k2alt = 0.3048 / 1609.344
+	Case "in" 
+	k2alt = 0.3048 / 0.0254
+	End Select
+	
+	Select manager.GetString("pressure")
+	Case "mbar"
+	k2pres = 1/100
+	Case "Pa"
+	k2pres = 1
+	Case "hPa" 
+	k2pres = 1/100
+	Case "atm" 
+	k2pres = 1/101325
+	Case "mmHg" 
+	k2pres = 0.007500616827042
+	Case "psi" 
+	k2pres = 0.0001450378911491
+	End Select
+	
+	
+	Select manager.GetString("temperature")
+	Case "°C"
+	k2temp = 1
+	c2temp = 0
+	Case "°F"
+	k2temp = 9/5
+	c2temp = 32
+	Case "K" 
+	k2temp = 1
+	c2temp = 273.15
+	End Select
+	
+	Select manager.GetString("speed") 
+	Case "kt"
+	k2spd = 3600/1852
+	Case "m/s"
+	k2spd = 1
+	Case "km/h" 
+	k2spd = 3.6
+	Case "mph" 
+	k2spd = 2.236936
+	Case "ft/s" 
+	k2spd = 1/0.3048
+	End Select
+
+	Select manager.GetString("angle") 
+	Case "deg"
+	k2angle = 180/3.14159265358979
+	Case "rad"
+	k2angle = 1
+	End Select
+
+	' Aumentar em uma casa decimal os outputs
+	If manager.GetBoolean("outputformat") = True Then
+	Dim d As Int
+	d = 1
+	Else
+	d = 0
+	End If
+
+	' Escrever Outputs nos Paineis
+	Select i
+	Case 0
+		lblVar.Text = "Pressure Altitude"
+		lblRes.Text = NumberFormat2(Hp_ft * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
+		If IsNan(Hp_ft) Or IsInf(Hp_ft) Then
+			lblRes.Text = "----"
+		End If
+	Case 1
+		lblVar.Text = "Geometric Altitude"
+		lblRes.Text = NumberFormat2(Hgeom * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
+		If IsNan(Hgeom) Or IsInf(Hgeom) Then
+			lblRes.Text = "----"
+		End If
+	Case 2
+		lblVar.Text = "Geopotencial Altitude"
+		lblRes.Text = NumberFormat2(Hgeop * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
+		If IsNan(Hgeop) Or IsInf(Hgeop) Then
+			lblRes.Text = "----"
+		End If
+	Case 3
+		lblVar.Text = "Density Altitude"
+		lblRes.Text = NumberFormat2(Hd * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
+		If IsNan(Hd) Or IsInf(Hd) Then
+			lblRes.Text = "----"
+		End If
+	Case 4
+		lblVar.Text = "Temperature Altitude"
+		lblRes.Text = NumberFormat2(Htemp * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
+		If IsNan(Htemp) Or IsInf(Htemp) Then
+			lblRes.Text = "----"
+		End If	
+	Case 5
+		lblVar.Text = "Pressure"
+		lblRes.Text = NumberFormat2(P * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
+		If IsNan(P) Or IsInf(P) Then
+			lblRes.Text = "----"
+		End If
+	Case 6
+		lblVar.Text = "Density"
+		lblRes.Text = NumberFormat2(Rho, 1, 3 + d, 3 + d, False) & " kg/m³"
+		If IsNan(Rho) Or IsInf(Rho) Then
+			lblRes.Text = "----"
+		End If
+	Case 7
+		lblVar.Text = "Temperature"
+		lblRes.Text = NumberFormat2(T_degC * k2temp + c2temp, 1, 2 + d, 2 + d, False) & " " & manager.GetString("temperature")
+		If IsNan(T_degC) Or IsInf(T_degC) Then
+			lblRes.Text = "----"
+		End If
+	Case 8	
+		lblVar.Text = "Delta ISA"
+		lblRes.Text = NumberFormat2(isa * k2temp, 1, 2 + d, 2 + d, False) & " " & manager.GetString("temperature")
+		If IsNan(isa) Or IsInf(isa) Then
+			lblRes.Text = "----"
+		End If
+	Case 9
+		lblVar.Text = "Total Temperature"
+		lblRes.Text = NumberFormat2(Ttot_degC * k2temp + c2temp, 1, 2 + d, 2 + d, False) & " " & manager.GetString("temperature")
+		If IsNan(Ttot_degC) Or IsInf(Ttot_degC) Then
+			lblRes.Text = "----"
+		End If
+	Case 10
+		Dim rs As RichString
+		rs.Initialize(NumberFormat2(mu * 100000, 1, 3 + d, 3 + d, False) & " × 10{T}{S}-5{S}{T} kg/m/s")
+		rs.Superscript2("{S}")
+		rs.RelativeSize2(.7,"{T}")
+		lblVar.Text = "Viscosity"
+		lblRes.Text = rs
+		If IsNan(mu) Or IsInf(mu) Then
+			lblRes.Text = "----"
+		End If
+	Case 11
+		lblVar.Text = "Sound Speed"
+		lblRes.Text = NumberFormat2(Vsound * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(Vsound) Or IsInf(Vsound) Then
+			lblRes.Text = "----"
+		End If
+	Case 12
+		lblVar.Text = "True Airspeed"
+		lblRes.Text = NumberFormat2(tas * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(tas) Or IsInf(tas) Then
+			lblRes.Text = "----"
+		End If
+	Case 13
+		lblVar.Text = "Calibrated Airspeed"
+		lblRes.Text = NumberFormat2(cas * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(cas) Or IsInf(cas) Then
+			lblRes.Text = "----"
+	End If
+	Case 14
+		lblVar.Text = "Equivalent Airspeed"
+		lblRes.Text = NumberFormat2(eas * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(eas) Or IsInf(eas) Then
+			lblRes.Text = "----"
+		End If
+	Case 15
+		lblVar.Text = "Ground Speed"
+		lblRes.Text = NumberFormat2(gs * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(gs) Or IsInf(gs) Then
+			lblRes.Text = "----"
+		End If
+	Case 16
+		lblVar.Text = "Stall Speed Vs"
+		lblRes.Text = NumberFormat2(Vs_cas * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(Vs_cas) Or IsInf(Vs_cas) Then
+			lblRes.Text = "----"
+		End If
+	Case 17
+		lblVar.Text = "Vs Factor"
+		lblRes.Text = NumberFormat2(VsFact, 1, 3 + d, 3 + d, False)
+		If IsNan(VsFact) Or IsInf(VsFact) Then
+			lblRes.Text = "----"
+		End If
+	Case 18
+		lblVar.Text = "Lift Coefficient CL"
+		lblRes.Text = NumberFormat2(CL, 1, 3 + d, 3 + d, False)
+		If IsNan(CL) Or IsInf(CL) Then
+			lblRes.Text = "----"
+		End If
+	Case 19
+		lblVar.Text = "Mach"
+		lblRes.Text = NumberFormat2(mach, 1, 3 + d, 3 + d, False)
+		If IsNan(mach) Or IsInf(mach) Then
+			lblRes.Text = "----"
+		End If
+	Case 20
+		Dim rs1 As RichString
+		rs1.Initialize(NumberFormat2(re / 1000000, 1, 2 + d, 2 + d, False) & " × 10{T}{S}6{T}{S}")
+		rs1.Superscript2("{S}")
+		rs1.RelativeSize2(.7,"{T}")
+		lblVar.Text = "Reynolds"
+		lblRes.Text = rs1
+		If IsNan(re) Or IsInf(re) Then
+			lblRes.Text = "----"
+		End If
+	Case 21
+		lblVar.Text = "Pressure Ratio δ"
+		lblRes.Text = NumberFormat2(P_P0, 1, 3 + d, 3 + d, False)
+		If IsNan(P_P0) Or IsInf(P_P0) Then
+			lblRes.Text = "----"
+		End If
+	Case 22
+		lblVar.Text = "Density Ratio σ"
+		lblRes.Text = NumberFormat2(Rho_Rho0, 1, 3 + d, 3 + d, False)
+		If IsNan(Rho_Rho0) Or IsInf(Rho_Rho0) Then
+			lblRes.Text = "----"
+		End If
+	Case 23
+		lblVar.Text = "Temperature Ratio θ"
+		lblRes.Text = NumberFormat2(T_T0, 1, 3 + d, 3 + d, False)
+		If IsNan(T_T0) Or IsInf(T_T0) Then
+			lblRes.Text = "----"
+		End If
+	Case 24
+		lblVar.Text = "Dynamic Pressure"
+		lblRes.Text = NumberFormat2(Qd * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
+		If IsNan(Qd) Or IsInf(Qd) Then
+			lblRes.Text = "----"
+		End If
+	Case 25
+		lblVar.Text = "Impact Pressure"
+		lblRes.Text = NumberFormat2(Qc * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
+		If IsNan(Qc) Or IsInf(Qc) Then
+			lblRes.Text = "----"
+		End If
+	Case 26
+		lblVar.Text = "Total Pressure"
+		lblRes.Text = NumberFormat2(Ptot * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
+		If IsNan(Ptot) Or IsInf(Ptot) Then
+			lblRes.Text = "----"
+		End If
+	Case 27
+		lblVar.Text = "DynPressure * S / g"
+		lblRes.Text = NumberFormat2(Qd * Sref / 9.80665, 1, 1 + d, 1 + d, False) & " kgf"
+		If IsNan(Qd * Sref / 9.80665) Or IsInf(Qd * Sref / 9.80665) Then
+			lblRes.Text = "----"
+		End If
+	Case 28
+		lblVar.Text = "Lift Force"
+		lblRes.Text = NumberFormat2(CL * Qd * Sref / 9.80665, 1, 1 + d, 1 + d, False) & " kgf"
+		If IsNan(CL * Qd * Sref / 9.80665) Or IsInf(CL * Qd * Sref / 9.80665) Then
+			lblRes.Text = "----"
+		End If
+	Case 29
+		lblVar.Text = "Weight/Delta W/δ"
+		lblRes.Text = NumberFormat2(weight / P_P0, 1, 1 + d, 1 + d, False) & " kgf"
+		If IsNan(weight / P_P0) Or IsInf(weight / P_P0) Then
+			lblRes.Text = "----"
+		End If
+	Case 30
+		lblVar.Text = "Load Factor Nz"
+		lblRes.Text = NumberFormat2(Nz, 1, 2 + d, 2 + d, False) & " g"
+		If IsNan(Nz) Or IsInf(Nz) Then
+			lblRes.Text = "----"
+	End If
+	Case 31
+		lblVar.Text = "Bank Angle φ"
+		lblRes.Text = NumberFormat2(Bank * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle")
+		If IsNan(Bank) Or IsInf(Bank) Then
+			lblRes.Text = "----"
+		End If
+	Case 32
+		lblVar.Text = "Turn Radius"
+		lblRes.Text = NumberFormat2(gs*gs/(9.80665*Tan(Bank)*1000), 1, 3 + d, 3 + d, False) & " Km"
+		If IsNan(gs*gs/(9.80665*Tan(Bank)*1000)) Or IsInf(gs*gs/(9.80665*Tan(Bank)*1000)) Then
+			lblRes.Text = "----"
+		End If
+	Case 33
+		lblVar.Text = "Turn Rate"
+		lblRes.Text = NumberFormat2((9.80665*Tan(Bank))/gs * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle") & "/s"
+		If IsNan(9.80665*Tan(Bank)/gs) Or IsInf(9.80665*Tan(Bank)/gs) Then
+			lblRes.Text = "----"
+		End If
+	Case 34
+		lblVar.Text = "Track Angle"
+		lblRes.Text = NumberFormat2(Track * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle")
+		If IsNan(Track) Or IsInf(Track) Then
+			lblRes.Text = "----"
+		End If
+	Case 35
+		lblVar.Text = "Heading Angle Ψ"
+		lblRes.Text = NumberFormat2(Psi * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle")
+		If IsNan(Psi) Or IsInf(Psi) Then
+			lblRes.Text = "----"
+		End If
+	Case 36
+		lblVar.Text = "Drift Angle"
+		lblRes.Text = NumberFormat2((Drift) * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle")
+		If IsNan(Drift) Or IsInf(Drift) Then
+			lblRes.Text = "----"
+		End If
+	Case 37
+		lblVar.Text = "Sideslip Angle β"
+		lblRes.Text = NumberFormat2(Beta * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle")
+		If IsNan(Beta) Or IsInf(Beta) Then
+			lblRes.Text = "----"
+		End If
+	Case 38
+		lblVar.Text = "Wind Speed"
+		lblRes.Text = NumberFormat2(WS * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(WS) Or IsInf(WS) Then
+			lblRes.Text = "----"
+		End If
+	Case 39
+		lblVar.Text = "Wind Direction"
+		lblRes.Text = NumberFormat2(WD * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle")
+		If IsNan(WD) Or IsInf(WD) Then
+			lblRes.Text = "----"
+		End If
+	Case 40
+		lblVar.Text = "AlongTrack Headwind"
+		lblRes.Text = NumberFormat2(HW * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(HW) Or IsInf(HW) Then
+			lblRes.Text = "----"
+		End If
+	Case 41
+		lblVar.Text = "AlongTrack Crosswind"
+		lblRes.Text = NumberFormat2(CW * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
+		If IsNan(CW) Or IsInf(CW) Then
+			lblRes.Text = "----"
+		End If
+		End Select
+End Sub
+
+Sub IsNan(d As Double) As Boolean
+   Return d <> d
+End Sub
+
+Sub IsInf(d As Double) As Boolean	
+	Dim S As String
+	S = d
+	If S = "Infinity" Then
+	Return True
+Else
+	Return False
+End If
+End Sub
+	
+Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable
+    ' Define a GradientDrawable for Enabled state
+    Dim gdwEnabled As GradientDrawable
+    gdwEnabled.Initialize("TOP_BOTTOM",ColorList)
+    gdwEnabled.CornerRadius = 4
+    ' Define a GradientDrawable for Pressed state
+    Dim gdwPressed As GradientDrawable
+    gdwPressed.Initialize("BOTTOM_TOP",ColorList2)
+    gdwPressed.CornerRadius = 6
+    ' Define a GradientDrawable for Disabled state
+    Dim gdwDisabled As GradientDrawable
+    gdwDisabled.Initialize("TOP_BOTTOM", Array As Int(Colors.LightGray, Colors.DarkGray))
+    gdwDisabled.CornerRadius = 4
+    ' Define a StateListDrawable
+    Dim stdGradient As StateListDrawable
+    stdGradient.Initialize
+    stdGradient.AddState2(Array As Int(stdGradient.State_enabled, -stdGradient.State_Pressed), gdwEnabled)
+    stdGradient.AddState(stdGradient.State_Pressed, gdwPressed)
+    stdGradient.AddState(stdGradient.State_Disabled, gdwDisabled)
+    Return stdGradient
+End Sub
+
+Sub ButtonGradient2(ColorList() As Int) As StateListDrawable
+    ' Define a GradientDrawable for Enabled state
+    Dim gdwEnabled As GradientDrawable
+    gdwEnabled.Initialize("TOP_BOTTOM",ColorList)
+    gdwEnabled.CornerRadius = 4
+    ' Define a GradientDrawable for Pressed state
+    Dim gdwPressed As GradientDrawable
+    gdwPressed.Initialize("TOP_BOTTOM",ColorList)
+    gdwPressed.CornerRadius = 12
+    ' Define a GradientDrawable for Disabled state
+    Dim gdwDisabled As GradientDrawable
+    gdwDisabled.Initialize("TOP_BOTTOM", Array As Int(Colors.LightGray, Colors.DarkGray))
+    gdwDisabled.CornerRadius = 4
+    ' Define a StateListDrawable
+    Dim stdGradient As StateListDrawable
+    stdGradient.Initialize
+    stdGradient.AddState2(Array As Int(stdGradient.State_enabled, -stdGradient.State_Pressed), gdwEnabled)
+    stdGradient.AddState(stdGradient.State_Pressed, gdwPressed)
+    stdGradient.AddState(stdGradient.State_Disabled, gdwDisabled)
+    Return stdGradient
+End Sub
+
+Sub Sensor1_SensorChanged(Values() As Float)
+	'Dim pa As PhoneSensors
+	pa = Sender
+	PressureSensor = Values(0)
+	If indAltType = 4 Then
+		edtAlt.Text = NumberFormat2(PressureSensor*kPres2,1,3,3,False)
+	End If
+End Sub
+
+Sub Sensor2_SensorChanged(Values() As Float)
+	tmp = Sender
+	TempSensor = Values(0)
+	If indTempType = 2 Then
+		edtTemp.Text = NumberFormat2(TempSensor*kTemp2+cTemp2,1,2,2,False)
+	End If
+End Sub
+
+Sub GPS_LocationChanged (Location1 As Location)
+    GPSspeed =  Location1.Speed
+	GPSalt = Location1.Altitude
+	If indSpdType = 7 Then
+		edtSpd.Text = NumberFormat2(GPSspeed / kSpd,1,1,1,False)
+	End If
+	If indAltType = 2 Then
+		edtAlt.Text = NumberFormat2(GPSalt / kAlt,1,1,1,False)
+	End If
+End Sub
+
+Sub GPS_UserEnabled (Enabled As Boolean)
+    If Enabled = True Then
+	ToastMessageShow("GPS enabled.", True)
+	End If
+End Sub
+
+Sub pnlTransparent_Touch(Action As Int, X As Float, Y As Float) As Boolean	
+	Select Action
+	Case Activity.ACTION_DOWN
+		pnlTransparent.Color = ColorPnlInput2
+	Case Activity.ACTION_UP
+		pnlTransparent.Color = Colors.Transparent
+	End Select
+	PopupMenu.Show
+	Return True
+End Sub
+
+Sub pnlTransparent1_Touch(Action As Int, X As Float, Y As Float) As Boolean
+	Dim phoneV As PhoneVibrate
+	Dim HideK As IME
+	HideK.Initialize("")
+    phoneV.Vibrate(30)
+	HideK.HideKeyboard
+	
+	StartActivity("Airp")
+	Select Action
+	Case Activity.ACTION_DOWN
+		pnlTransparent1.Color = ColorPnlInput2
+	Case Activity.ACTION_UP
+		pnlTransparent1.Color = Colors.Transparent
+	End Select
+	Return True
+End Sub
+
+Sub AddMenus
+    Activity.AddMenuItem("Clear Inputs", "Menu")
+	Activity.AddMenuItem("Import Airplanes", "Menu")
+	Activity.AddMenuItem("Export Airplanes", "Menu")
+	Activity.AddMenuItem("Settings", "Menu")
+	Activity.AddMenuItem("Send Feedback", "Menu")
+	Activity.AddMenuItem("About", "Menu")
+    PopupMenu.AddMenuItem(2, 0, "Clear Inputs")
+    PopupMenu.AddMenuItem(3, 1, "Import Airplanes")
+    PopupMenu.AddMenuItem(4, 2, "Export Airplanes")
+    PopupMenu.AddMenuItem(0, 3, "Settings")
+	PopupMenu.AddMenuItem(5, 4, "Send Feedback")
+    PopupMenu.AddMenuItem(1, 5, "About")
+End Sub
+
+Sub Menu_Click
+    Dim menuclicked As String
+	Dim MenuItem As Int
+    menuclicked = Sender   
+    Select menuclicked
+    Case "Settings"
+		MenuItem=0
+	Case "About"
+		MenuItem=1
+	Case "Clear Inputs"
+		MenuItem=2
+	Case "Import Airplanes"
+		MenuItem=3
+	Case "Export Airplanes"
+		MenuItem=4
+	Case "Send Feedback"
+		MenuItem=5
+	End Select
+	MenuCall (MenuItem)
+End Sub
+
+Sub PopupMenu_MenuItemClick(ItemId As Int) As Boolean
+    MenuCall (ItemId)
+	Return False
+End Sub	
+
+Sub MenuCall (MenuItem As Int)  
+    Select MenuItem
+    Case 0
+		StartActivity(screen.CreateIntent)
+	Case 1
+		Dim pm As PackageManager
+			Msgbox2Async(CRLF & "AeroCalculator" & CRLF & CRLF & "2025 / version " & pm.GetVersionName("flightdyn.aerocalculator") & CRLF & CRLF & "Gustavo José Zambrano" & CRLF & CRLF & "flightdyn@gmail.com" & CRLF, "    About","","","",LoadBitmap(File.DirAssets,"icon_bezel_transp_green.png"),True)
+	    Wait For Msgbox_Result (Idx88 As Int)
+		Return
+	Case 2
+		Msgbox2Async("Are you sure you want to clear the inputs?","Warning","Confirm","Cancel","",LoadBitmap(File.DirAssets,"icon_warning.png"),True)
+		Wait For Msgbox_Result (confirmclear As Int)
+		If confirmclear=DialogResponse.POSITIVE Then
+			edtAlt.Text = ""
+			edtTemp.Text = ""
+			edtSpd.Text = ""
+			edtSpdDelta.Text = ""
+			edtWeight.Text =  ""
+			edtSref.Text =  ""
+			edtcref.Text =  ""
+			edtCLmax.Text =  "" 
+			edtNz.Text = ""
+			edtAngle1.Text = ""
+			edtAngle2.Text = ""
+			edtHeadWind.Text = ""
+			edtCrossWind.Text = ""
+			edtWindRefAngle.Text = ""
+			Dim phoneV As PhoneVibrate
+			phoneV.Vibrate(80)
+		Else
+			Return
+		End If
+
+	
+	Case 3
+		Activity.CloseMenu
+		PopupMenu.Dismiss
+		Dim cc As ContentChooser
+		cc.Initialize("cc")
+		cc.Show("text/*", "Choose text file")
+		Wait For CC_Result (Success As Boolean, Dir As String, FileName As String)
+		'dlgFileExpl.Initialize(Activity, File.DirRootExternal, ".txt", False, False, "OK")
+		'dlgFileExpl.Explorer2(False)
+		Dim N As Int
+		'If Not(dlgFileExpl.Selection.Canceled Or dlgFileExpl.Selection.ChosenFile = "") Then
+		If Success Then
+			Dim a1 As Map
+			Dim N1 As Int
+			'a1 = File.ReadMap(dlgFileExpl.Selection.ChosenPath,dlgFileExpl.Selection.ChosenFile)
+			a1 = File.ReadMap(Dir,FileName)
+			N1 = a1.GetDefault("N",0)
+			Try
+				'If N1<>0 And (dlgFileExpl.Selection.ChosenPath<>rp.GetSafeDirDefaultExternal("") Or dlgFileExpl.Selection.ChosenFile<>"airplanes.txt") Then
+				If N1<>0 Then
+					If lst.NumberOfItems>0 Then
+						 Msgbox2Async("Add " & N1 & " airplanes to your database?","Importing","Confirm","Cancel","",LoadBitmap(File.DirAssets,"icon_question.png"),True)
+						 Wait For Msgbox_Result (cfmover As Int)
+					Else
+						Dim cfmover As Int
+						cfmover=DialogResponse.POSITIVE
+					End If
+					If cfmover=DialogResponse.POSITIVE Then
+						Dim ii,N,He As Int
+						He = 50dip
+						N = a.GetDefault("N",0)
+						For ii= 1 To N1
+							a.Put((N+ii) & "_Name", a1.GetDefault((ii) & "_Name",""))
+							a.Put((N+ii) & "_S", a1.GetDefault((ii)& "_S",""))
+							a.Put((N+ii) & "_c", a1.GetDefault((ii) & "_c",""))
+							a.Put((N+ii) & "_W1", a1.GetDefault((ii) & "_W1",""))
+							a.Put((N+ii) & "_W2", a1.GetDefault((ii)& "_W2",""))
+							a.Put((N+ii) & "_W3", a1.GetDefault((ii) & "_W3",""))
+							a.Put((N+ii) & "_W4", a1.GetDefault((ii) & "_W4",""))
+							a.Put((N+ii) & "_F0", a1.GetDefault((ii) & "_F0",""))
+							a.Put((N+ii) & "_F1", a1.GetDefault((ii) & "_F1",""))
+							a.Put((N+ii) & "_F2", a1.GetDefault((ii) & "_F2",""))
+							a.Put((N+ii) & "_F3", a1.GetDefault((ii) & "_F3",""))
+							a.Put((N+ii) & "_F4", a1.GetDefault((ii) & "_F4",""))
+							a.Put((N+ii) & "_F5", a1.GetDefault((ii) & "_F5",""))
+							a.Put((N+ii) & "_F6", a1.GetDefault((ii) & "_F6",""))
+							a.Put((N+ii) & "_F7", a1.GetDefault((ii) & "_F7",""))
+							a.Put((N+ii) & "_F8", a1.GetDefault((ii) & "_F8",""))
+							a.Put((N+ii) & "_F9", a1.GetDefault((ii) & "_F9",""))
+							a.Put((N+ii) & "_Sunit", a1.GetDefault((ii) & "_Sunit",0))
+							a.Put((N+ii) & "_cunit", a1.GetDefault((ii) & "_cunit",0))
+							a.Put((N+ii) & "_Wunit", a1.GetDefault((ii) & "_Wunit",0))
+							a.Put("N", (N + N1))
+							lst.AddCustomItem((N+ii), CreateItem((N+ii), He, (N+ii)), He)
+							lst.ResizePanel
+							File.WriteMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt", a)
+							spnAirp.Add(a.Get((N+ii) & "_Name"))
+							Dim ListAirp As List
+							ListAirp.Initialize
+							ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+							File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", ListAirp)
+							ToastMessageShow(N1 & " Imported Airplanes.", True)
+						Next
+					End If
+				Else
+					Msgbox2Async("File importing not successfull", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+					Wait For Msgbox_Result (Idx90 As Int)
+					Return
+				End If
+			Catch
+				Msgbox2Async("File importing not successfull", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+				Wait For Msgbox_Result (Idx91 As Int)
+				Return
+			End Try
+		End If
+	
+	Case 4
+		Activity.CloseMenu
+		PopupMenu.Dismiss
+		dlgFileExpl.Initialize(Activity, File.DirRootExternal, "", False, False, "OK")			
+		dlgFileExpl.Explorer2(False)
+		If Not(dlgFileExpl.Selection.Canceled Or dlgFileExpl.Selection.ChosenPath = "")  Then
+			Try
+				Dim inputstring, outputstring As String
+				inputstring = dlgFileExpl.Selection.ChosenFile
+				If dlgFileExpl.Selection.ChosenFile="" Or dlgFileExpl.Selection.ChosenFile=Null Then
+					outputstring = "airplanes.txt"
+				Else If inputstring.Contains(".txt") Then
+					outputstring = inputstring
+				Else
+					outputstring = inputstring & ".txt"
+				End If
+				If File.Exists(rp.GetSafeDirDefaultExternal(""),"airplanes.txt") Then
+					File.Copy(rp.GetSafeDirDefaultExternal(""),"airplanes.txt",dlgFileExpl.Selection.ChosenPath,outputstring)
+					ToastMessageShow("Exported database to " & outputstring & " file", True)
+				Else
+					Msgbox2Async("The aircraft database is empty", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+					Wait For Msgbox_Result (Idx92 As Int)
+					Return
+				End If
+				Catch
+					Msgbox2Async("File exporting not successfull", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+					Wait For Msgbox_Result (Idx93 As Int)
+					Return
+				End Try
+			End If
+	
+	Case 5
+		Try
+	        Msgbox2Async(CRLF & "Choose the means to send feedback:" & CRLF, "Feedback and Bug Report", "Rate app at Playstore","","Feedback by E-mail",LoadBitmap(File.DirAssets,"icon_question.png"),True)
+			Wait For Msgbox_Result (opt As Int)
+			If opt =DialogResponse.POSITIVE Then
+				Dim market As Intent, uri As String
+				uri="market://details?id=flightdyn.aerocalculator"
+				market.Initialize(market.ACTION_VIEW,uri)
+				StartActivity(market)
+				ToastMessageShow("Thank you for rating this app!",True)
+			End If
+			If opt =DialogResponse.NEGATIVE Then
+				Dim mailapp As Email
+				Dim pm As PackageManager
+				Dim ph As Phone 
+		   		mailapp.To.Add("flightdyn@gmail.com")
+		   		mailapp.Subject = "Feedback - Aerospace Calculator " & pm.GetVersionName("flightdyn.aerocalculator")
+		   		mailapp.Body = "App version: " & pm.GetVersionName("flightdyn.aerocalculator") & _
+				CRLF & "Phone: " & ph.Manufacturer & " " & ph.Model & _
+				CRLF & "Android SDK Version: " & ph.SdkVersion & CRLF & CRLF
+				StartActivity(mailapp.GetIntent)
+			End If
+		Catch
+			If opt =DialogResponse.POSITIVE Then
+				Msgbox2Async("Could not open Playstore app", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+				Wait For Msgbox_Result (Idx94 As Int)
+				Return
+			End If
+			If opt =DialogResponse.NEGATIVE Then
+				Msgbox2Async("Could not open E-mail app", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+				Wait For Msgbox_Result (Idx95 As Int)
+				Return
+			End If
+		End Try
+	End Select
+
+End Sub
+
+
+Sub SetDefaults
+    'defaults are only set on the first run.
+    manager.SetString("altitude", "ft")
+	manager.SetString("pressure", "mbar")
+	manager.SetString("temperature", "°C")
+	manager.SetString("speed", "kt")
+	manager.SetString("angle", "rad")
+	manager.SetString("angleformat", "0/360 (0/2π)")
+	manager.SetBoolean("outputformat",False)
+	manager.SetString("theme", "Green Peace") 
+End Sub
+
+Sub CreatePreferenceScreen
+    screen.Initialize("Settings", "")
+    'create  categories
+    Dim cat1, cat3 As PreferenceCategory
+    cat1.Initialize("Output Units and Format")
+	cat1.AddList("altitude", "Altitude Unit", "Set desired unit for altitude in outputs", "ft", _
+        Array As String("ft", "m", "km", "nm", "mi", "in"))
+	cat1.AddList("pressure", "Pressure Unit", "Set desired unit for pressure in outputs", "mbar", _
+        Array As String("mbar", "Pa", "hPa", "atm", "mmHg", "psi"))
+	cat1.AddList("temperature", "Temperature Unit", "Set desired unit for temperature in outputs", "°C", _
+        Array As String("°C", "°F", "K"))	
+	cat1.AddList("speed", "Speed Unit", "Set desired unit for speed in outputs", "kt", _
+	Array As String("kt", "m/s", "km/h", "mph", "ft/s"))
+	cat1.AddList("angle", "Angle Unit", "Set desired unit for angle in outputs", "deg", _
+	Array As String("deg", "rad"))
+		cat1.AddList("angleformat", "Angle Interval Definition", "Set desired format for angle in outputs", "0/360 (0/2π)", _
+	Array As String("0/360 (0/2π)", "-180/180 (-π/π)"))
+	cat1.AddCheckBox("outputformat","Output Format","Increase one decimal place",False)
+
+	cat3.Initialize("Interface Options")
+	cat3.AddList("theme", "Theme", "Set desired theme", "Green Peace", _
+		Array As String("Green Peace", "Ancient Brown", "Dark Shadows","Blue Sky","Red Alert", "Orange Juice"))
+    'add the categories to the main screen
+    screen.AddPreferenceCategory(cat3)
+	screen.AddPreferenceCategory(cat1)
+End Sub
+
+Sub edtWeight_TextChanged (Old As String, New As String)
+	Dim text As String
+	If btnWeight.text.CompareTo("MTOW")=0 Then text = a.GetDefault(ID_inp & "_W1","")
+	If btnWeight.text.CompareTo("MLW")=0  Then text = a.GetDefault(ID_inp & "_W2","")
+	If btnWeight.text.CompareTo("MZFW")=0  Then text = a.GetDefault(ID_inp & "_W3","")
+	If btnWeight.text.CompareTo("BOW")=0  Then text=a.GetDefault(ID_inp & "_W4","")
+	If btnWeight.text.CompareTo("Heavy")=0  Then text=a.GetDefault(ID_inp & "_W5","")
+	If btnWeight.text.CompareTo("Light")=0  Then text=a.GetDefault(ID_inp & "_W6","")
+
+	If New.CompareTo(text)<>0 Then
+		indWeightType = 0
+		btnWeight.text  = "Weight"
+	End If
+End Sub
+
+Sub edtCLmax_TextChanged (Old As String, New As String)
+	Dim text As String
+	For ii=0 To 13
+		If (btnCLmax.text.CompareTo("CLMAX - " & "F" & ii)=0 Or btnCLmax.text.CompareTo("CLMAX " & "F" & ii)=0) Then text = a.GetDefault(ID_inp & "_F" & ii,"")
+	Next
+	If New.CompareTo(text)<>0 Then
+		indCLmaxType = 0
+		Dim rs3 As RichString
+		rs3.Initialize("CL{T}MAX{T}")
+		rs3.RelativeSize2(.7,"{T}")
+		btnCLmax.text  = rs3
+	End If
+End Sub
+
+'Sub SetNinePatchDrawable(Control As View, ImageName As String)
+'   Dim r As Reflector
+'   Dim package As String
+'   Dim id As Int
+'   package = r.GetStaticField("anywheresoftware.b4a.BA", "packageName")
+'   id = r.GetStaticField(package & ".R$drawable", ImageName)
+'   r.Target = r.GetContext
+'   r.Target = r.RunMethod("getResources")
+'   Control.Background = r.RunMethod2("getDrawable", id, "java.lang.int")
+'End Sub
+
+
+'Sub SetNinePatchButton(Btn As View, DefaultImage As String, PressedImage As String)
+'  Dim r As Reflector
+'  Dim package As String
+'  Dim idDefault, idPressed As Int
+'  package = r.GetStaticField("anywheresoftware.b4a.BA", "packageName")
+'  idDefault = r.GetStaticField(package & ".R$drawable", DefaultImage)
+'  idPressed = r.GetStaticField(package & ".R$drawable", PressedImage)
+'  r.Target = r.GetContext
+'  r.Target = r.RunMethod("getResources")
+'  Dim sd As StateListDrawable
+'  sd.Initialize
+'  sd.AddState(sd.State_Pressed, r.RunMethod2("getDrawable", idPressed, "java.lang.int"))
+'  sd.AddCatchAllState( r.RunMethod2("getDrawable", idDefault, "java.lang.int"))
+'  Btn.Background = sd
+'End Sub
+
+'Sub SetNinePatchButton2(Btn As View, DefaultImage As String, PressedImage As String, _
+'   DisabledImage As String, FocusedImage As String, FocusedDisabledImage As String)
+'
+'   Dim r As Reflector
+'   Dim package As String
+'   package = r.GetStaticField("anywheresoftware.b4a.BA", "packageName")
+'   
+'   r.Target = r.GetContext
+'   r.Target = r.RunMethod("getResources")
+'   Dim sd As StateListDrawable
+'   sd.Initialize
+'   
+'   Dim idDefault, idPressed, idFocused, idDisabled, idFocusedDisabled As Int
+'   
+'   If FocusedDisabledImage.Length > 0 Then
+'      idFocusedDisabled = r.GetStaticField(package & ".R$drawable", FocusedDisabledImage)
+'      sd.AddState2(Array As Int (sd.State_Disabled, 0x0101009c), r.RunMethod2("getDrawable", idFocusedDisabled, "java.lang.int"))
+'   End If
+'   If DisabledImage.Length > 0 Then
+'      idDisabled = r.GetStaticField(package & ".R$drawable", DisabledImage)
+'      sd.AddState(sd.State_Disabled, r.RunMethod2("getDrawable", idDisabled, "java.lang.int"))
+'   End If
+'   If PressedImage.Length > 0 Then
+'      idPressed = r.GetStaticField(package & ".R$drawable", PressedImage)
+'      sd.AddState(sd.State_Pressed, r.RunMethod2("getDrawable", idPressed, "java.lang.int"))
+'   End If
+'   If FocusedImage.Length > 0 Then
+'      idFocused = r.GetStaticField(package & ".R$drawable", FocusedImage)
+'      sd.AddState(0x0101009c, r.RunMethod2("getDrawable", idFocused, "java.lang.int"))
+'   End If
+'   If DefaultImage.Length > 0 Then
+'      idDefault = r.GetStaticField(package & ".R$drawable", DefaultImage)
+'      sd.AddCatchAllState( r.RunMethod2("getDrawable", idDefault, "java.lang.int"))
+'   End If
+'   
+'   Btn.Background = sd
+'End Sub
+
+Sub edtAlt_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtAlt.SelectAll
+		TimerT1.Initialize("TimerT1", 50)
+		TimerT1.Enabled = True
+	End If
+End Sub
+Sub edtSpd_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtSpd.SelectAll
+		TimerT2.Initialize("TimerT2", 50)
+		TimerT2.Enabled = True
+	End If
+End Sub
+Sub edtSpdDelta_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtSpdDelta.SelectAll
+		TimerT3.Initialize("TimerT3", 50)
+		TimerT3.Enabled = True
+	End If
+End Sub
+Sub edtTemp_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtTemp.SelectAll
+		TimerT4.Initialize("TimerT4", 50)
+		TimerT4.Enabled = True
+	End If
+End Sub
+Sub edtWeight_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtWeight.SelectAll
+		TimerT5.Initialize("TimerT5", 50)
+		TimerT5.Enabled = True
+	End If
+End Sub
+Sub edtCLmax_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtCLmax.SelectAll
+		TimerT6.Initialize("TimerT6", 50)
+		TimerT6.Enabled = True
+	End If
+End Sub
+Sub edtSref_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtSref.SelectAll
+		TimerT7.Initialize("TimerT7", 50)
+		TimerT7.Enabled = True
+	End If
+End Sub
+Sub edtcref_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtcref.SelectAll
+		TimerT8.Initialize("TimerT8", 50)
+		TimerT8.Enabled = True
+	End If
+End Sub
+Sub edtNz_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtNz.SelectAll
+		TimerT9.Initialize("TimerT9", 50)
+		TimerT9.Enabled = True
+	End If
+End Sub
+Sub edtAngle1_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtAngle1.SelectAll
+		TimerT10.Initialize("TimerT10", 50)
+		TimerT10.Enabled = True
+	End If
+End Sub
+Sub edtAngle2_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtAngle2.SelectAll
+		TimerT11.Initialize("TimerT11", 50)
+		TimerT11.Enabled = True
+	End If
+End Sub
+Sub edtCrossWind_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtCrossWind.SelectAll
+		TimerT12.Initialize("TimerT12", 50)
+		TimerT12.Enabled = True
+	End If
+End Sub
+Sub edtHeadWind_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtHeadWind.SelectAll
+		TimerT13.Initialize("TimerT13", 50)
+		TimerT13.Enabled = True
+	End If
+End Sub
+Sub edtWindRefAngle_FocusChanged(HasFocus As Boolean)
+	If HasFocus = True  Then
+		edtWindRefAngle.SelectAll
+		TimerT14.Initialize("TimerT14", 50)
+		TimerT14.Enabled = True
+	End If
+End Sub
+Sub TimerT1_Tick
+	edtAlt.SelectAll
+	TimerT1.Enabled = False
+End Sub
+Sub TimerT2_Tick
+	edtSpd.SelectAll
+	TimerT2.Enabled = False
+End Sub
+Sub TimerT3_Tick
+	edtSpdDelta.SelectAll
+	TimerT3.Enabled = False
+End Sub
+Sub TimerT4_Tick
+	edtTemp.SelectAll
+	TimerT4.Enabled = False
+End Sub
+Sub TimerT5_Tick
+	edtWeight.SelectAll
+	TimerT5.Enabled = False
+End Sub
+Sub TimerT6_Tick
+	edtCLmax.SelectAll
+	TimerT6.Enabled = False
+End Sub
+Sub TimerT7_Tick
+	edtSref.SelectAll
+	TimerT7.Enabled = False
+End Sub
+Sub TimerT8_Tick
+	edtcref.SelectAll
+	TimerT8.Enabled = False
+End Sub
+Sub TimerT9_Tick
+	edtNz.SelectAll
+	TimerT9.Enabled = False
+End Sub
+Sub TimerT10_Tick
+	edtAngle1.SelectAll
+	TimerT10.Enabled = False
+End Sub
+Sub TimerT11_Tick
+	edtAngle2.SelectAll
+	TimerT11.Enabled = False
+End Sub
+Sub TimerT12_Tick
+	edtCrossWind.SelectAll
+	TimerT12.Enabled = False
+End Sub
+Sub TimerT13_Tick
+	edtHeadWind.SelectAll
+	TimerT13.Enabled = False
+End Sub
+Sub TimerT14_Tick
+	edtWindRefAngle.SelectAll
+	TimerT14.Enabled = False
+End Sub
+

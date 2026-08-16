@@ -1,0 +1,73 @@
+# ==============================================================================
+# Security, Signing Keys & Credentials (Must NEVER be public)
+# ==============================================================================
+# Keystores, certificates and private keys
+Key/
+key/
+keys/
+secrets/
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.pem
+*.key
+*.pk8
+*.pepk
+*.der
+*.crt
+*.cer
+
+# Password, secret and command-line helper files with credentials
+*pepk_commandline*.txt
+*credentials*
+*secret*
+*password*
+
+# Environment and API keys
+.env
+.env.*
+*.env
+*.token
+*.keyfile
+service-account*.json
+google-services.json
+
+# ==============================================================================
+# Basic4android (B4A) Generated Files & Build Artifacts
+# ==============================================================================
+# Compiled binaries, DEX, resources and intermediate source code
+Objects/
+bin/
+gen/
+dexed/
+*.apk
+*.aab
+*.dex
+
+# B4A IDE layout & automatic backups
+AutoBackups/
+*.meta
+
+# ==============================================================================
+# Operating System & IDE Files
+# ==============================================================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDEs / Editors
+.idea/
+.vscode/
+*.swp
+*~
