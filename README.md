@@ -2,6 +2,8 @@
 
 **AeroCalculator** is a comprehensive aeronautics and flight dynamics calculator for Android built with **Basic4android (B4A)**. Designed for aerospace engineers, pilots, and aviation enthusiasts, it provides high-precision atmospheric modeling, airspeed conversions, aerodynamic analysis, and aircraft profile management.
 
+*Developed by Gustavo José Zambrano*
+
 [![Get it on Google Play](https://img.shields.io/badge/Google_Play-AeroCalculator-green?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=flightdyn.aerocalculator)
 
 👉 **Google Play Store:** [Download AeroCalculator on Google Play](https://play.google.com/store/apps/details?id=flightdyn.aerocalculator)
