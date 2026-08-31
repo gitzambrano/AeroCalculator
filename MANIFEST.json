@@ -1,0 +1,189 @@
+{
+  "files": [
+    {
+      "path": ".agents/skills/writing-rules/SKILL.md",
+      "bytes": 1989,
+      "sha256": "8d349c72b33e2c068693967ff98927aa8b845c89cce5f6e8f2369e67c78e07d3"
+    },
+    {
+      "path": ".claude/skills/writing-rules/SKILL.md",
+      "bytes": 1989,
+      "sha256": "8d349c72b33e2c068693967ff98927aa8b845c89cce5f6e8f2369e67c78e07d3"
+    },
+    {
+      "path": ".github/workflows/quality.yml",
+      "bytes": 829,
+      "sha256": "b6a9bbb96ac56eb2f8a16fe9125fa249e642a864e32105318c333d14dafc0314"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 2950,
+      "sha256": "8e78c701e0a3bbdc04eec3041f7ea13d9552c02737367d18284f870eb5f0c4d2"
+    },
+    {
+      "path": "APPLY.md",
+      "bytes": 1950,
+      "sha256": "99654fcfd1559d1502867c6ab5c694e147e38e29a1ef5b4f61ec13b5f18185f8"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 919,
+      "sha256": "cd15b46e3efbd8b12be78d0b2b3d434d47dd99938cc159c9fee3bc6505b12018"
+    },
+    {
+      "path": "CODEX_TASK.md",
+      "bytes": 5226,
+      "sha256": "0d7e4a4797f58e130c0e0466a231a2ae2b3a81b2828cf1f9365059df4a04727c"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4824,
+      "sha256": "fc905c741b276a7cccafd9f54ebcd21d2909638cdeff21b017aac1be9b8ca20e"
+    },
+    {
+      "path": "TEST_RESULTS.md",
+      "bytes": 1677,
+      "sha256": "ff047421c0015df412b16c401bad26288bd0cbbac9a055008fddbee65d36270d"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 551,
+      "sha256": "598cdd629b016b1cbdda2afd2059662b4cc90b48a35c5f1c1e7e86cb162e33f2"
+    },
+    {
+      "path": "docs/architecture.md",
+      "bytes": 2455,
+      "sha256": "b62ea388ac3fa37019e4ae4982c2ff08bddf34a9e6ce3e0fc8d217bbc11472ed"
+    },
+    {
+      "path": "docs/calculations.md",
+      "bytes": 4805,
+      "sha256": "73f19569881fca8f866e5c13c55a8bad93afea7b284e1d0c478329f5c6fca352"
+    },
+    {
+      "path": "docs/current_behavior.md",
+      "bytes": 2665,
+      "sha256": "eae372b344a16ebb88a25d9d63c068586e85f1eb8139aa0c6277084ed0759870"
+    },
+    {
+      "path": "docs/dependencies.md",
+      "bytes": 1517,
+      "sha256": "9f84abe40a6544f9262ad0e3e5f67e5552056c06dfb1c659935c354b7750589b"
+    },
+    {
+      "path": "docs/release_checklist.md",
+      "bytes": 2131,
+      "sha256": "9a9bea6b376122ab4282eb5c9329ad9dfd55658d63f15386e7ad03fda0c027ec"
+    },
+    {
+      "path": "docs/software_requirements.md",
+      "bytes": 5619,
+      "sha256": "110328fd40563750b0ba1c2b883761d3ddf7508d0828149c8b8092323cb6afde"
+    },
+    {
+      "path": "docs/units_and_conventions.md",
+      "bytes": 2718,
+      "sha256": "d66f500e1b8543d123a3d99e37169da16d8c21d54bad762d6c5edc9cb10c4be5"
+    },
+    {
+      "path": "docs/user_guide.md",
+      "bytes": 2647,
+      "sha256": "c64c2ece8d00b5838944251e736cf7314458aa50ce4ea7fb1ffd6ab406065221"
+    },
+    {
+      "path": "docs/verification.md",
+      "bytes": 2541,
+      "sha256": "ef88b73988e59c8d1c11e53d8eac272babe02f1c249594c83a835a80085a61a8"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 269,
+      "sha256": "966fc4eb7bb66d916e4e0e4b7c97d82ddf3103585a16059a50cc881453826c91"
+    },
+    {
+      "path": "tests/data/characterization_cases.json",
+      "bytes": 487,
+      "sha256": "cf5351a52447e3c24be080aa8d4bf2bd8cb1ca2434cf8a435a8d228fa0703c99"
+    },
+    {
+      "path": "tests/data/reference_cases.json",
+      "bytes": 938,
+      "sha256": "0e9fd4a6ebd083895646c73f74b118b60e6b66c6eb60f55a5784373a06ddffc1"
+    },
+    {
+      "path": "tests/run_all_tests.py",
+      "bytes": 520,
+      "sha256": "a7ea058095f0b537c40fd8a3c636ccc40afc3ce01075f4bf651efe97b37bc16a"
+    },
+    {
+      "path": "tests/test_airspeed_reference.py",
+      "bytes": 871,
+      "sha256": "a620cf7f7d11bebe248e2ed554f50f87a37aa401dba8dbe34a8e5f0dd2ec8252"
+    },
+    {
+      "path": "tests/test_atmosphere_reference.py",
+      "bytes": 2466,
+      "sha256": "7a932c2b351cb12821bde1b14272dc7b68d0f35b399e858640f56f70f9d56ba2"
+    },
+    {
+      "path": "tests/test_documentation.py",
+      "bytes": 1733,
+      "sha256": "54b8df428aeb638328e57003ccc9d5ba1b8088b48c0717aacad7b15efb393949"
+    },
+    {
+      "path": "tests/test_flight_mechanics_reference.py",
+      "bytes": 894,
+      "sha256": "f4e5194f46e62be3bdc7b7e48388225253e9f3b47634f27ff2342b260f4a1325"
+    },
+    {
+      "path": "tests/test_repo_sanity.py",
+      "bytes": 485,
+      "sha256": "446428404b2dfc997db4504516853157f2c618f70af39dd7d55abd72d40c5a07"
+    },
+    {
+      "path": "tests/test_requirements.py",
+      "bytes": 788,
+      "sha256": "70468ef2148b29e2e2fd0db87c8ea7677d764d9d9e4b32a08d59a92490c417dc"
+    },
+    {
+      "path": "tests/test_source_characterization.py",
+      "bytes": 1082,
+      "sha256": "794f3d69c3559fd6a970aafe548d29e32025d73ca526f55be8eb5472b36dd5c1"
+    },
+    {
+      "path": "tests/test_units.py",
+      "bytes": 898,
+      "sha256": "6b88a4a185fa7cf1b47bbafd9dbe2eb64713287854a0ab659b726088b2a30df9"
+    },
+    {
+      "path": "tests/test_wind_reference.py",
+      "bytes": 729,
+      "sha256": "f5b88bb82b45b5686ef361e0f0f79162e529ff588883b5e20c5dee4baa2d5bdf"
+    },
+    {
+      "path": "tools/b4a_build.ps1",
+      "bytes": 759,
+      "sha256": "c8b90b3bfae8c60402aa1c6d80f785f52b00d89978ab72adbd018a36f278a94e"
+    },
+    {
+      "path": "tools/check_repo.py",
+      "bytes": 4919,
+      "sha256": "65ed876bcebac7ba619a3e6d67c4606705abe9c610bff1eaa63566661bbfb1cb"
+    },
+    {
+      "path": "tools/golden_snapshot.py",
+      "bytes": 1620,
+      "sha256": "5dd382a91727e4c461609497200c91188c3efbc03e2d23345e4088ff75756fc9"
+    },
+    {
+      "path": "tools/reference_physics.py",
+      "bytes": 6530,
+      "sha256": "d62184d83ac1a0e40228bf5d35073a6a8e895ffb05b7600e3008b4175318958d"
+    },
+    {
+      "path": "tools/source_inventory.py",
+      "bytes": 1372,
+      "sha256": "fc6203f425fa3c8aa9f798053d22e4295524f3ea1ea3f927d7bf39c97ecd3c7d"
+    }
+  ]
+}

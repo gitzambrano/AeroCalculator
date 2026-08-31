@@ -3074,31 +3074,7 @@ Sub Calculate
 	
 	' Usuario escolheu Altitude Pressao ou Geometrica como Input
 	If indAltType = 0 Or indAltType = 1 Or indAltType = 2 Then
-		H=Hp/Thp
-		If H<1 Then
-		  T_std=288.15-71.5*H
-		  P_P0=Power((1.0-0.248135*H),(e+1))
-		 ' Rho_Rho0=Power((1.0-0.248135*H),e)
-		Else If H<20/11 Then
-		  T_std=216.65
-		  P_P0=Power(exp,(-1.73457*H))*1.26567
-		  'Rho_Rho0=Power(exp,(-1.73457*H))*1.68338
-		Else If H<32/11 Then
-			T_std=310.65+1*(Hp-20000)/1000
-			P_P0=Power((0.988626+Hp/0.3048/652600),(-34.16320))
-		Else If H<47/11 Then
-			T_std=322.65+2.8*(Hp-32000)/1000
-			P_P0=Power((0.8983096+Hp/0.3048/181373),(-12.20114))
-		Else If H<51/11 Then
-			T_std=364.65
-			P_P0=Power(exp,(-Hp/0.3048+154199)/25992)*0.00109456
-		Else If H<71/11 Then
-			T_std=364.65-2.8*(Hp-51000)/1000
-			P_P0=Power((0.838263+Hp/0.3048/577922),(12.20144))
-		Else 
-			T_std=308.65-2*(Hp-71000)/1000
-			P_P0=Power((0.917131+Hp/0.3048/637919),(17.08160))
-		End If
+		SetStandardAtmosphereFromPressureAltitude(Hp)
 		P = P_P0 * P0
 	' Usuario escolheu Pressao Atmosferica como Input
 	Else If indAltType = 3 Or indAltType = 4 Then
@@ -3107,39 +3083,8 @@ Sub Calculate
 		Else If  indAltType = 4 Then
 			P = PressureSensor * kPres
 		End If
-		P_P0=P/P0
-		If P_P0>0.2233603 Then
-			Hp = (1 - Power(P/101325,1/(e+1)) ) / 0.248135 * 11000
-			H=Hp/Thp
-			T_std=288.15-71.5*H
-			'Rho_Rho0=Power((1.0-0.248135*H),e)
-		Else If P_P0>0.0540330 Then
-			Hp = Logarithm(P/101325/1.26567,exp) / -1.73457 * 11000
-			H=Hp/Thp
-			T_std=216.65
-			'Rho_Rho0=Power(exp,(-1.73457*H))*1.68338
-		Else If P_P0>0.00856668 Then
-			Hp = (-0.988626 + Power(P/101325,1/(-34.16320))) * 652600 * 0.3048
-			H=Hp/Thp
-			T_std=310.65+1*(Hp-20000)/1000
-		Else If P_P0>0.00109456 Then
-			Hp = (-0.8983096 + Power(P/101325,1/(-12.20114))) * 181373 * 0.3048
-			H=Hp/Thp
-			T_std=322.65+2.8*(Hp-32000)/1000
-		Else If P_P0>0.000660635 Then
-			P_P0=Power(exp,(-Hp/0.3048+154199)/25992)*0.00109456
-			Hp = -(Logarithm(P/101325/0.00109456,exp)*25992-154199)*0.3048
-			H=Hp/Thp
-			T_std=364.65
-		Else If P_P0>0.0000390468 Then
-			Hp = (0.838263 + Power(P/101325,1/(12.20144))) * 577922 * 0.3048
-			H=Hp/Thp
-			T_std=364.65-2.8*(Hp-51000)/1000
-		Else 
-			Hp = (0.917131 + Power(P/101325,1/(17.08160))) * 637919 * 0.3048
-			H=Hp/Thp
-			T_std=308.65-2*(Hp-71000)/1000
-		End If
+		Hp = PressureAltitudeFromStaticPressure(P)
+		SetStandardAtmosphereFromPressureAltitude(Hp)
 	 End If
 	 
 	' Usuario escolheu Delta ISA
@@ -3279,8 +3224,8 @@ Sub Calculate
 	Ttot_degC = Ttot - 273.15
 	
 	' Validade dos Calculos
-	If Hp_ft>(86000/0.3048) Then
-		Msgbox2Async("Watch out! This app only models the atmosphere up to 86 kilometers", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
+	If Hp_ft>(84852/0.3048) Then
+		Msgbox2Async("Watch out! This app only models the atmosphere up to 84.852 kilometers", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
 		Wait For Msbox_Result (Idx103 As Int)
 	End If
 	
@@ -3518,13 +3463,7 @@ End Sub
 
 Sub CalcError (Hgeop_input_m As Double, Hp_input_m As Double) As Double
 	Dim Error As Double
-	If Hp_input_m<11000 Then
-	 	  T_std=288.15-71.5*Hp_input_m/11000
-		  P_P0=Power((1.0-0.248135*Hp_input_m/11000),(e+1))
-	Else
-		  T_std=216.65
-		  P_P0=Power(exp,(-1.73457*Hp_input_m/11000))*1.26567
-	End If
+	SetStandardAtmosphereFromPressureAltitude(Hp_input_m)
 	If indTempType = 0 Then
 		isa = TempValue*kTemp
 		T_kelvin = T_std + isa
@@ -3535,6 +3474,57 @@ Sub CalcError (Hgeop_input_m As Double, Hp_input_m As Double) As Double
 	Error = Hp_input_m - Hgeop_input_m - 29.271247 * isa* Logarithm(P_P0,exp)
 	Error = Abs (Error)
 	Return Error
+End Sub
+
+Sub SetStandardAtmosphereFromPressureAltitude (AltitudeM As Double)
+	If AltitudeM<11000 Then
+		T_std=288.15-0.0065*AltitudeM
+		P_P0=Power(T_std/288.15,5.2558797)
+	Else If AltitudeM<20000 Then
+		T_std=216.65
+		P_P0=0.223360869430*Power(exp,-9.80665*(AltitudeM-11000)/(287.05287*216.65))
+	Else If AltitudeM<32000 Then
+		T_std=216.65+0.001*(AltitudeM-20000)
+		P_P0=0.054032839124*Power(216.65/T_std,34.16320)
+	Else If AltitudeM<47000 Then
+		T_std=228.65+0.0028*(AltitudeM-32000)
+		P_P0=0.008566649658*Power(228.65/T_std,12.20114)
+	Else If AltitudeM<51000 Then
+		T_std=270.65
+		P_P0=0.001094554881*Power(exp,-9.80665*(AltitudeM-47000)/(287.05287*270.65))
+	Else If AltitudeM<71000 Then
+		T_std=270.65-0.0028*(AltitudeM-51000)
+		P_P0=0.000660631908*Power(T_std/270.65,12.20114)
+	Else
+		T_std=214.65-0.002*(AltitudeM-71000)
+		P_P0=0.000039046555*Power(T_std/214.65,17.08160)
+	End If
+End Sub
+
+Sub PressureAltitudeFromStaticPressure (PressurePa As Double) As Double
+	Dim PressureRatio As Double
+	Dim LayerTemperature As Double
+	PressureRatio=PressurePa/P0
+	If PressureRatio>0.223360869430 Then
+		LayerTemperature=288.15*Power(PressureRatio,1/5.2558797)
+		PressureAltitudeFromStaticPressure=(288.15-LayerTemperature)/0.0065
+	Else If PressureRatio>0.054032839124 Then
+		PressureAltitudeFromStaticPressure=11000-287.05287*216.65/9.80665*Logarithm(PressureRatio/0.223360869430,exp)
+	Else If PressureRatio>0.008566649658 Then
+		LayerTemperature=216.65*Power(PressureRatio/0.054032839124,-1/34.16320)
+		PressureAltitudeFromStaticPressure=20000+(LayerTemperature-216.65)/0.001
+	Else If PressureRatio>0.001094554881 Then
+		LayerTemperature=228.65*Power(PressureRatio/0.008566649658,-1/12.20114)
+		PressureAltitudeFromStaticPressure=32000+(LayerTemperature-228.65)/0.0028
+	Else If PressureRatio>0.000660631908 Then
+		PressureAltitudeFromStaticPressure=47000-287.05287*270.65/9.80665*Logarithm(PressureRatio/0.001094554881,exp)
+	Else If PressureRatio>0.000039046555 Then
+		LayerTemperature=270.65*Power(PressureRatio/0.000660631908,1/12.20114)
+		PressureAltitudeFromStaticPressure = 51000+(LayerTemperature-270.65)/-0.0028
+	Else
+		LayerTemperature=214.65*Power(PressureRatio/0.000039046555,1/17.08160)
+		PressureAltitudeFromStaticPressure = 71000+(LayerTemperature-214.65)/-0.002
+	End If
 End Sub
 
 Sub WriteText

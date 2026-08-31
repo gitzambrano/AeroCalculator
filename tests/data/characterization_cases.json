@@ -1,0 +1,25 @@
+{
+  "kind": "source-characterization",
+  "authority": "historical-structure-only",
+  "declared_modules": ["Airp", "ClsCheckList", "ClsExplorer"],
+  "declared_libraries": [
+    "ahviewpager",
+    "rspopupmenu",
+    "runtimepermissions",
+    "animation",
+    "core",
+    "gps",
+    "ime",
+    "phone",
+    "preferenceactivity",
+    "reflection",
+    "richstring"
+  ],
+  "required_subs": [
+    "Activity_Create",
+    "btnCalc_Click",
+    "Calculate",
+    "CalcError",
+    "WriteText"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "independent-reference",
+  "notes": "Values are based on the equations documented in docs/calculations.md and are not copied from AeroCalculator output.",
+  "cases": [
+    {
+      "id": "ATM-SEA-LEVEL",
+      "requirement": "PH-1",
+      "input": {"H_m": 0.0},
+      "expected": {"T_K": 288.15, "p_Pa": 101325.0, "rho_kg_m3": 1.225},
+      "tolerance": {"rho_abs": 0.0001}
+    },
+    {
+      "id": "ATM-11KM",
+      "requirement": "PH-2",
+      "input": {"H_m": 11000.0},
+      "expected": {"T_K": 216.65}
+    },
+    {
+      "id": "ATM-20KM",
+      "requirement": "PH-2",
+      "input": {"H_m": 20000.0},
+      "expected": {"T_K": 216.65}
+    },
+    {
+      "id": "ATM-32KM",
+      "requirement": "PH-2",
+      "input": {"H_m": 32000.0},
+      "expected": {"T_K": 228.65}
+    },
+    {
+      "id": "TURN-60DEG",
+      "requirement": "PH-7",
+      "input": {"bank_deg": 60.0},
+      "expected": {"load_factor": 2.0}
+    }
+  ]
+}

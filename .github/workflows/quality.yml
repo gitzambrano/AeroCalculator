@@ -1,0 +1,36 @@
+name: quality
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  portable-verification:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run verification suite
+        run: python tests/run_all_tests.py
+
+      - name: Run repository sanity
+        run: python tools/check_repo.py
+
+      - name: Print source inventory
+        run: python tools/source_inventory.py > source-inventory.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-inventory-py${{ matrix.python-version }}
+          path: source-inventory.json

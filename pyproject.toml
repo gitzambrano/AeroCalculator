@@ -1,0 +1,10 @@
+[project]
+name = "aerocalculator-verification"
+version = "0.1.0"
+description = "Portable verification tooling for the B4A AeroCalculator project"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
