@@ -7,13 +7,15 @@ import argparse
 import hashlib
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = ROOT / "AeroCalculator.b4a"
 
-FORBIDDEN_SUFFIXES = {".keystore", ".jks", ".p12", ".pfx", ".pem", ".key", ".pk8", ".pepk", ".apk", ".aab"}
+FORBIDDEN_SUFFIXES = {
+    ".keystore", ".jks", ".p12", ".pfx", ".pem", ".key",
+    ".pk8", ".pepk", ".apk", ".aab",
+}
 FORBIDDEN_NAMES = {"google-services.json"}
 REQUIRED_DOCS = {
     "docs/software_requirements.md",
@@ -25,17 +27,36 @@ REQUIRED_DOCS = {
     "docs/user_guide.md",
     "docs/release_checklist.md",
 }
+REQUIRED_VENDORED = {
+    "Install/AHViewPager3_00.zip",
+    "Install/RSPopupMenu.zip",
+}
 
 
 def parse_project(text: str) -> tuple[list[str], list[str], list[str]]:
-    modules = [m.group(1).strip() for m in re.finditer(r"^Module\d+=(.+)$", text, re.MULTILINE)]
-    assets = [m.group(1).strip() for m in re.finditer(r"^File\d+=(.+)$", text, re.MULTILINE)]
-    libraries = [m.group(1).strip() for m in re.finditer(r"^Library\d+=(.+)$", text, re.MULTILINE)]
+    modules = [
+        m.group(1).strip()
+        for m in re.finditer(r"^Module\d+=(.+)$", text, re.MULTILINE)
+    ]
+    assets = [
+        m.group(1).strip()
+        for m in re.finditer(r"^File\d+=(.+)$", text, re.MULTILINE)
+    ]
+    libraries = [
+        m.group(1).strip()
+        for m in re.finditer(r"^Library\d+=(.+)$", text, re.MULTILINE)
+    ]
     return modules, assets, libraries
 
 
 def check_required_files(errors: list[str]) -> None:
-    required = {"AGENTS.md", "README.md", "LICENSE.txt", "CHANGELOG.md", "THIRD_PARTY_NOTICES.md"} | REQUIRED_DOCS
+    required = {
+        "AGENTS.md",
+        "README.md",
+        "LICENSE.txt",
+        "CHANGELOG.md",
+        "THIRD_PARTY_NOTICES.md",
+    } | REQUIRED_DOCS | REQUIRED_VENDORED
     for rel in sorted(required):
         if not (ROOT / rel).is_file():
             errors.append(f"missing required file: {rel}")
@@ -54,7 +75,12 @@ def check_project(errors: list[str], warnings: list[str]) -> None:
         if not path.is_file():
             errors.append(f"declared B4A module is missing: {path.name}")
 
-    asset_names = {p.name.lower() for p in (ROOT / "Files").iterdir() if p.is_file()} if (ROOT / "Files").is_dir() else set()
+    files_dir = ROOT / "Files"
+    asset_names = (
+        {p.name.lower() for p in files_dir.iterdir() if p.is_file()}
+        if files_dir.is_dir()
+        else set()
+    )
     for asset in assets:
         if asset.lower() not in asset_names:
             errors.append(f"declared B4A asset is missing from Files/: {asset}")
@@ -66,12 +92,20 @@ def check_project(errors: list[str], warnings: list[str]) -> None:
     if len(libraries) != len(set(l.lower() for l in libraries)):
         errors.append("duplicate B4A library declarations")
 
-    if "targetSdkVersion=\"34\"" not in text:
-        warnings.append("project targetSdkVersion is not 34; review README/build documentation")
+    target_match = re.search(r'targetSdkVersion=[^0-9]*(\d+)', text)
+    if target_match is None:
+        warnings.append("could not determine targetSdkVersion from B4A manifest metadata")
+    elif int(target_match.group(1)) < 36:
+        warnings.append(
+            f"targetSdkVersion is {target_match.group(1)}; Google Play requires "
+            "API 36 for ordinary mobile app updates from 2026-08-31. Upgrade "
+            "with B4A 13.7+ and verify edge-to-edge behavior before release."
+        )
 
-    # Known-risk audit: do not silently normalize suspect historical constants.
     if "T_std=310.65+1*(Hp-20000)/1000" in text:
-        warnings.append("atmosphere audit: current production source contains the historical 20-32 km temperature expression; verify before treating high-altitude output as reference")
+        errors.append(
+            "historical invalid 20-32 km atmosphere temperature expression reappeared"
+        )
 
 
 def check_security(errors: list[str]) -> None:
@@ -87,8 +121,14 @@ def check_security(errors: list[str]) -> None:
         path = ROOT / raw_path.decode("utf-8", errors="surrogateescape")
         if not path.is_file():
             continue
-        if path.suffix.lower() in FORBIDDEN_SUFFIXES or path.name.lower() in FORBIDDEN_NAMES:
-            errors.append(f"forbidden generated/credential-like file is tracked: {path.relative_to(ROOT)}")
+        if (
+            path.suffix.lower() in FORBIDDEN_SUFFIXES
+            or path.name.lower() in FORBIDDEN_NAMES
+        ):
+            errors.append(
+                "forbidden generated/credential-like file is tracked: "
+                f"{path.relative_to(ROOT)}"
+            )
 
 
 def check_skill_mirrors(errors: list[str]) -> None:
@@ -109,7 +149,10 @@ def check_duplicate_assets(warnings: list[str]) -> None:
                 continue
             digest = hashlib.sha256(p.read_bytes()).hexdigest()
             if digest in seen and seen[digest].name.lower() != p.name.lower():
-                warnings.append(f"duplicate asset content: {seen[digest].relative_to(ROOT)} and {p.relative_to(ROOT)}")
+                warnings.append(
+                    "duplicate asset content: "
+                    f"{seen[digest].relative_to(ROOT)} and {p.relative_to(ROOT)}"
+                )
             else:
                 seen[digest] = p
 

@@ -1,7 +1,7 @@
 """Independent numerical reference functions for AeroCalculator verification.
 
-This module is an executable specification. The Android application does not
-import it. Keep the formulas independent from the production B4A code.
+The Android application does not import this module. Keep these formulas
+independent from the production B4A implementation.
 """
 
 from __future__ import annotations
@@ -17,8 +17,16 @@ P0 = 101325.0
 RHO0 = 1.225
 EARTH_RADIUS_M = 6_356_766.0
 
-# 1976 US Standard Atmosphere geopotential layers through 84.852 km.
-_LAYER_BASES_M = (0.0, 11_000.0, 20_000.0, 32_000.0, 47_000.0, 51_000.0, 71_000.0, 84_852.0)
+_LAYER_BASES_M = (
+    0.0,
+    11_000.0,
+    20_000.0,
+    32_000.0,
+    47_000.0,
+    51_000.0,
+    71_000.0,
+    84_852.0,
+)
 _LAYER_LAPSE_K_PER_M = (-0.0065, 0.0, 0.0010, 0.0028, 0.0, -0.0028, -0.0020)
 
 
@@ -44,7 +52,7 @@ def geopotential_to_geometric(H_m: float) -> float:
 
 
 def _layer_bases() -> tuple[tuple[float, float, float, float], ...]:
-    values: list[tuple[float, float, float, float]] = [(0.0, T0, P0, _LAYER_LAPSE_K_PER_M[0])]
+    values = [(0.0, T0, P0, _LAYER_LAPSE_K_PER_M[0])]
     T_b = T0
     p_b = P0
     for i in range(1, len(_LAYER_BASES_M) - 1):
@@ -91,12 +99,11 @@ def pressure_to_geopotential_altitude(p_pa: float) -> float:
     if p_pa <= 0:
         raise ValueError("pressure must be positive")
 
-    bases = LAYER_BASES
-    # Pressure decreases monotonically with altitude.
-    if p_pa > P0 or p_pa < standard_atmosphere(_LAYER_BASES_M[-1]).pressure_pa:
+    lower_pressure = standard_atmosphere(_LAYER_BASES_M[-1]).pressure_pa
+    if p_pa > P0 or p_pa < lower_pressure:
         raise ValueError("pressure is outside the supported atmosphere range")
 
-    for i, (H_b, T_b, p_b, L_b) in enumerate(bases):
+    for i, (H_b, T_b, p_b, L_b) in enumerate(LAYER_BASES):
         H_top = _LAYER_BASES_M[i + 1]
         p_top = standard_atmosphere(H_top).pressure_pa
         if p_top <= p_pa <= p_b:
@@ -130,22 +137,34 @@ def tas_to_eas(tas_m_s: float, density_kg_m3: float) -> float:
 def impact_pressure_subsonic(mach: float, static_pressure_pa: float) -> float:
     if not 0.0 <= mach < 1.0:
         raise ValueError("subsonic impact-pressure relation requires 0 <= M < 1")
-    return static_pressure_pa * ((1.0 + 0.5 * (GAMMA - 1.0) * mach**2) ** (GAMMA / (GAMMA - 1.0)) - 1.0)
+    if static_pressure_pa <= 0:
+        raise ValueError("static pressure must be positive")
+    return static_pressure_pa * (
+        (1.0 + 0.5 * (GAMMA - 1.0) * mach**2) ** (GAMMA / (GAMMA - 1.0)) - 1.0
+    )
+
+
+def impact_pressure_to_mach(qc_pa: float, static_pressure_pa: float) -> float:
+    """Invert the subsonic isentropic impact-pressure relation."""
+    if qc_pa < 0:
+        raise ValueError("impact pressure cannot be negative")
+    if static_pressure_pa <= 0:
+        raise ValueError("static pressure must be positive")
+    return math.sqrt(
+        2.0 / (GAMMA - 1.0)
+        * ((qc_pa / static_pressure_pa + 1.0) ** ((GAMMA - 1.0) / GAMMA) - 1.0)
+    )
 
 
 def impact_pressure_to_cas(qc_pa: float) -> float:
-    if qc_pa < 0:
-        raise ValueError("impact pressure cannot be negative")
     a0 = math.sqrt(GAMMA * R_AIR * T0)
-    return a0 * math.sqrt(
-        2.0 / (GAMMA - 1.0)
-        * ((qc_pa / P0 + 1.0) ** ((GAMMA - 1.0) / GAMMA) - 1.0)
-    )
+    return a0 * impact_pressure_to_mach(qc_pa, P0)
 
 
 def tas_to_cas(tas_m_s: float, atmosphere: Atmosphere) -> float:
     M = tas_to_mach(tas_m_s, atmosphere.temperature_k)
-    return impact_pressure_to_cas(impact_pressure_subsonic(M, atmosphere.pressure_pa))
+    qc = impact_pressure_subsonic(M, atmosphere.pressure_pa)
+    return impact_pressure_to_cas(qc)
 
 
 def dynamic_pressure(tas_m_s: float, density_kg_m3: float) -> float:
@@ -158,10 +177,18 @@ def lift_coefficient(mass_kg: float, load_factor: float, q_pa: float, sref_m2: f
     return mass_kg * G0 * load_factor / (q_pa * sref_m2)
 
 
-def stall_speed_tas(mass_kg: float, load_factor: float, density_kg_m3: float, sref_m2: float, cl_max: float) -> float:
+def stall_speed_tas(
+    mass_kg: float,
+    load_factor: float,
+    density_kg_m3: float,
+    sref_m2: float,
+    cl_max: float,
+) -> float:
     if min(mass_kg, load_factor, density_kg_m3, sref_m2, cl_max) <= 0:
         raise ValueError("stall inputs must be positive")
-    return math.sqrt(2.0 * mass_kg * G0 * load_factor / (density_kg_m3 * sref_m2 * cl_max))
+    return math.sqrt(
+        2.0 * mass_kg * G0 * load_factor / (density_kg_m3 * sref_m2 * cl_max)
+    )
 
 
 def load_factor_from_bank(bank_rad: float) -> float:
@@ -177,12 +204,11 @@ def bank_from_load_factor(load_factor: float) -> float:
     return math.acos(1.0 / load_factor)
 
 
-def wind_components(wind_speed: float, wind_to_rad: float, reference_track_rad: float) -> tuple[float, float]:
-    """Return signed headwind and crosswind using the current source convention.
-
-    Positive headwind is wind velocity projected along the reference track
-    after the source's wind-vector conversion. Crosswind is positive for the
-    positive normal component.
-    """
-    rel = wind_to_rad - reference_track_rad
+def wind_components(
+    wind_speed: float,
+    wind_from_rad: float,
+    reference_track_rad: float,
+) -> tuple[float, float]:
+    """Return signed headwind and crosswind with the production convention."""
+    rel = wind_from_rad - reference_track_rad
     return wind_speed * math.cos(rel), wind_speed * math.sin(rel)

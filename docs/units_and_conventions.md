@@ -68,13 +68,23 @@ Angles are converted to radians before trigonometric evaluation.
 \text{drift}=\psi-\chi.
 \]
 
-**Sideslip, \(eta\)** follows the existing application relationship between heading, track, and air-relative velocity. Any future sign change requires a requirement update and regression tests.
+**Sideslip, \(\beta\)** follows the existing application relationship between heading, track, and air-relative velocity. Any future sign change requires a requirement update and regression tests.
 
 ## Wind
 
-Wind direction must be documented as either “from” or “toward” wherever it is presented. The current source converts the wind vector internally before solving the triangle.
+The application uses **wind-from direction**, consistent with the usual meteorological convention.
 
-Headwind and crosswind signs must remain consistent between manual component input and wind-speed/direction input. Tests cover zero wind, pure headwind, pure crosswind, and oblique wind.
+For wind speed \(W\), wind-from direction \(\psi_w\), and reference track \(\chi\):
+
+\[
+HW=W\cos(\psi_w-\chi),
+\qquad
+CW=W\sin(\psi_w-\chi).
+\]
+
+Positive headwind means wind from ahead. Positive crosswind follows the application's positive normal-direction convention.
+
+Manual headwind/crosswind inputs and wind-speed/direction outputs must use the same convention. Tests cover zero wind, pure headwind, pure crosswind, and oblique wind.
 
 ## Numerical comparison
 

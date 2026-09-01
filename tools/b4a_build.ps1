@@ -1,6 +1,8 @@
 param(
     [string]$B4ABuilder = $env:B4A_BUILDER,
-    [string]$Project = (Join-Path $PSScriptRoot "..\AeroCalculator.b4a")
+    [string]$Project = (Join-Path $PSScriptRoot "..\AeroCalculator.b4a"),
+    [ValidateSet("Build", "BuildBundle")]
+    [string]$Task = "Build"
 )
 
 $ErrorActionPreference = "Stop"
@@ -15,10 +17,19 @@ if (-not (Test-Path $Project)) {
     throw "B4A project was not found at: $Project"
 }
 
-# B4ABuilder command-line syntax depends on the installed B4A generation.
-# Keep the executable and project explicit. Add release/signing options only
-# in a controlled release environment, never in pull-request CI.
-& $B4ABuilder $Project
+$ProjectPath = (Resolve-Path $Project).Path
+$BaseFolder = Split-Path -Parent $ProjectPath
+$ProjectFile = Split-Path -Leaf $ProjectPath
+
+$BuilderArgs = @(
+    "-Task=$Task",
+    "-BaseFolder=$BaseFolder",
+    "-Project=$ProjectFile",
+    "-NoSign=True",
+    "-ShowWarnings=True"
+)
+
+& $B4ABuilder @BuilderArgs
 if ($LASTEXITCODE -ne 0) {
     throw "B4A build failed with exit code $LASTEXITCODE."
 }

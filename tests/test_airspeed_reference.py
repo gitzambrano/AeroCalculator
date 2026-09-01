@@ -2,6 +2,8 @@ import unittest
 
 from tools.reference_physics import (
     dynamic_pressure,
+    impact_pressure_subsonic,
+    impact_pressure_to_mach,
     standard_atmosphere,
     tas_to_cas,
     tas_to_eas,
@@ -27,3 +29,11 @@ class TestAirspeedReference(unittest.TestCase):
 
     def test_dynamic_pressure(self):
         self.assertAlmostEqual(dynamic_pressure(100.0, 1.225), 6125.0, places=8)
+
+    def test_impact_pressure_mach_round_trip(self):
+        for pressure_pa in (101325.0, 54019.9, 22632.1):
+            for mach in (0.0, 0.2, 0.5, 0.8):
+                with self.subTest(pressure_pa=pressure_pa, mach=mach):
+                    qc = impact_pressure_subsonic(mach, pressure_pa)
+                    recovered = impact_pressure_to_mach(qc, pressure_pa)
+                    self.assertAlmostEqual(recovered, mach, places=12)
