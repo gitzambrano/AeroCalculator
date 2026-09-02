@@ -26,4 +26,4 @@ All notable changes to the repository should be recorded here.
 ### Known follow-up
 
 - Production calculation logic remains concentrated in `AeroCalculator.b4a`. Extract it incrementally only after B4A compile access is available and each block has regression coverage.
-- B4A compilation is not available in the current environment because `B4ABuilder.exe` is not installed or configured.
+- B4A command-line compilation is available via `tools/b4a_build.ps1` (requires `B4A_BUILDER` set to `B4ABuilder.exe`). A headless Release App Bundle can be produced with the private signing key under `Key/` (not tracked); the project-local `Libraries/` folder is registered through the B4A INI `AdditionalLibrariesFolder` setting.

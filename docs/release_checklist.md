@@ -24,7 +24,7 @@ Complete every applicable item before a public release.
 
 For ordinary Android mobile apps, Google Play requires new apps and app updates submitted from **2026-08-31** to target **Android 16 / API level 36** or higher.
 
-The current AeroCalculator project still targets API 34. Treat that as a release blocker, not as a reason to change the manifest without UI verification.
+The AeroCalculator manifest in `AeroCalculator.b4a` now declares `targetSdkVersion` 36 (was 34). The B4A 13.7+ toolchain required for API 36 support is satisfied by the installed B4ABuilder v13.7. Compilation requires the RichString additional library, which is now provided in the project-local `Libraries/` folder (see `docs/dependencies.md`). If a build environment only reads the global B4A `Libraries` folder, copy `RichString.jar`/`RichString.xml` there before building. Verify edge-to-edge layout before a Play release.
 
 Before a Play release:
 
