@@ -60,14 +60,15 @@ AGENTS.md                  Working rules for coding agents
 
 ## Build prerequisites
 
-The current project metadata targets Android SDK 34 and B4A project version 13. A release environment also needs the additional B4A libraries declared by `AeroCalculator.b4a`.
+The current project metadata declares `targetSdkVersion` 36 with B4A project version 13. A release environment also needs the additional B4A libraries declared by `AeroCalculator.b4a`. Use B4A 13.7 or newer for API 36 support. Google Play requires new apps and app updates submitted from 2026-08-31 to target Android 16 / API level 36 or higher.
 
 The repository currently includes archives for:
 
 - `AHViewPager`
 - `RSPopupMenu`
+- `RichString` (in the project-local `Libraries/` folder)
 
-Other declared libraries are installed through the B4A environment.
+Other declared libraries are installed through the B4A environment. See `docs/dependencies.md` for the full dependency list and the RichString build instructions.
 
 Open `AeroCalculator.b4a` in B4A and compile the project normally. Configure your own private signing key outside the repository for release builds.
 

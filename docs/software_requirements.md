@@ -16,7 +16,7 @@ This document states behavior that AeroCalculator must preserve. Requirement ide
 - **PH-4** — Geopotential and geometric altitude conversions shall use the documented Earth-radius convention.
 - **PH-5** — TAS, EAS, CAS, Mach, dynamic pressure, and impact pressure shall follow the equations in `docs/calculations.md`.
 - **PH-6** — Stall speed shall follow the lift-equilibrium relation with the selected mass, load factor, density, reference area, and maximum lift coefficient.
-- **PH-7** — A coordinated level turn shall satisfy \(n=1/\cos\phi\).
+- **PH-7** — A coordinated level turn shall satisfy $n=1/\cos\phi$.
 - **PH-8** — Wind calculations shall preserve the documented heading, track, sideslip, drift, headwind, and crosswind sign conventions.
 - **PH-9** — Density, absolute temperature, pressure, viscosity, and speed of sound shall remain physically valid within the documented model range.
 - **PH-10** — A numerical fix shall not be accepted only because it reproduces a historical application result.

@@ -22,6 +22,8 @@ All notable changes to the repository should be recorded here.
 - Audited the B4A standard-atmosphere forward, inverse, and geometric-altitude error paths through 84.852 km geopotential altitude.
 - Corrected high-altitude layer temperature bases, pressure relations, and inverse pressure-altitude signs.
 - Changed repository artifact checks to inspect Git-tracked files only.
+- Switched Markdown math to GitHub-compatible delimiters (`$$` and `$`) so equations render in the hosted documentation.
+- Updated the README build prerequisites to reflect `targetSdkVersion` 36 and the RichString requirement.
 
 ### Known follow-up
 

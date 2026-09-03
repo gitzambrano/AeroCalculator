@@ -18,7 +18,7 @@ Examples include:
 
 - unit-conversion round trips;
 - pressure-altitude round trips;
-- \(n=1/\cos\phi\);
+- $n=1/\cos\phi$;
 - zero-wind vector identities;
 - positive pressure, density, and temperature;
 - monotonic standard-atmosphere pressure.
