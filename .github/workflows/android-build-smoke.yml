@@ -96,7 +96,7 @@ jobs:
     name: Android API ${{ matrix.api-level }} multi-screen smoke
     needs: build-b4a
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -117,7 +117,7 @@ jobs:
             sudo chmod 666 /dev/kvm
           fi
 
-      - name: Boot emulator and exercise screen matrix
+      - name: Boot emulator and exercise screens and features
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
@@ -126,9 +126,11 @@ jobs:
           profile: pixel_2
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          script: bash tools/android_smoke_test.sh ci-apk/AeroCalculator-ci.apk ${{ matrix.api-level }}
+          script: |
+            bash tools/android_smoke_test.sh ci-apk/AeroCalculator-ci.apk ${{ matrix.api-level }}
+            python tools/android_feature_test.py ci-apk/AeroCalculator-ci.apk ${{ matrix.api-level }}
 
-      - name: Upload screenshots, UI dumps and logs
+      - name: Upload screenshots, UI dumps, reports and logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
