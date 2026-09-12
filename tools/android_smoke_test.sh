@@ -71,13 +71,23 @@ assert_dump_contains() {
   fi
 }
 
+assert_landscape_window() {
+  local dir="$1" stage="$2" width="$3" height="$4" file="$1/$2-window.txt"
+  if ! grep -E -q "[[:space:]]land[[:space:]]" "$file"; then
+    echo "Android did not report landscape configuration at $stage" >&2
+    return 1
+  fi
+  if ! grep -F -q "mBounds=Rect(0, 0 - ${width}, ${height})" "$file"; then
+    echo "Landscape bounds ${width}x${height} were not reported at $stage" >&2
+    return 1
+  fi
+}
+
 launch_app() {
   adb shell monkey -p "$PACKAGE_NAME" -c android.intent.category.LAUNCHER 1 >/dev/null
   sleep 3
 }
 
-# Tap an actual UI node, not an estimated screen coordinate. Status-bar/inset
-# geometry differs between Android versions and screen densities.
 tap_text() {
   local text="$1" tmp="$OUT_ROOT/tap-node.xml" xy
   adb shell uiautomator dump /sdcard/tap-node.xml >/dev/null 2>&1
@@ -113,33 +123,59 @@ scroll_down_repeatedly() {
   done
 }
 
-exercise_orientation() {
-  local dir="$1" tag="$2" width="$3" height="$4"
-  adb shell am force-stop "$PACKAGE_NAME" || true
-  adb logcat -c
-  launch_app
-  capture_state "$dir" "${tag}-inputs-top"
-  assert_alive_foreground_and_clean "$dir" "${tag}-inputs-top"
-  assert_dump_contains "$dir" "${tag}-inputs-top" 'text="Hp"'
+exercise_portrait() {
+  local dir="$1" width="$2" height="$3"
+  adb shell am force-stop "$PACKAGE_NAME" || true; adb logcat -c; launch_app
+  capture_state "$dir" "portrait-inputs-top"
+  assert_alive_foreground_and_clean "$dir" "portrait-inputs-top"
+  assert_dump_contains "$dir" "portrait-inputs-top" 'text="Hp"'
 
   scroll_down_repeatedly "$width" "$height" 8
-  capture_state "$dir" "${tag}-inputs-bottom"
-  assert_alive_foreground_and_clean "$dir" "${tag}-inputs-bottom"
-  assert_dump_contains "$dir" "${tag}-inputs-bottom" 'HeadWind|HeadWnd|WindSpd|Wind Speed|Wind Spd'
+  capture_state "$dir" "portrait-inputs-bottom"
+  assert_alive_foreground_and_clean "$dir" "portrait-inputs-bottom"
+  assert_dump_contains "$dir" "portrait-inputs-bottom" 'HeadWind|HeadWnd|WindSpd|Wind Speed|Wind Spd'
 
   tap_text "CALCULATE"
-  capture_state "$dir" "${tag}-outputs-top"
-  assert_alive_foreground_and_clean "$dir" "${tag}-outputs-top"
-  assert_dump_contains "$dir" "${tag}-outputs-top" 'Pressure Altitude'
+  capture_state "$dir" "portrait-outputs-top"
+  assert_alive_foreground_and_clean "$dir" "portrait-outputs-top"
+  assert_dump_contains "$dir" "portrait-outputs-top" 'Pressure Altitude'
 
   scroll_down_repeatedly "$width" "$height" 18
-  capture_state "$dir" "${tag}-outputs-bottom"
-  assert_alive_foreground_and_clean "$dir" "${tag}-outputs-bottom"
-  assert_dump_contains "$dir" "${tag}-outputs-bottom" 'AlongTrack Crosswind'
+  capture_state "$dir" "portrait-outputs-bottom"
+  assert_alive_foreground_and_clean "$dir" "portrait-outputs-bottom"
+  assert_dump_contains "$dir" "portrait-outputs-bottom" 'AlongTrack Crosswind'
 
   tap_text "AIRPLANES"
-  capture_state "$dir" "${tag}-airplanes"
-  assert_alive_foreground_and_clean "$dir" "${tag}-airplanes"
+  capture_state "$dir" "portrait-airplanes"
+  assert_alive_foreground_and_clean "$dir" "portrait-airplanes"
+}
+
+# Under a headless emulator, a wm landscape override correctly gives the app a
+# landscape Configuration and bounds, but uiautomator still reports child bounds
+# in the portrait framebuffer. Therefore landscape is verified with WindowManager,
+# screenshots, navigation, scroll gestures, foreground state and crash/ANR checks.
+exercise_landscape() {
+  local dir="$1" width="$2" height="$3"
+  adb shell am force-stop "$PACKAGE_NAME" || true; adb logcat -c; launch_app
+  capture_state "$dir" "landscape-inputs-top"
+  assert_alive_foreground_and_clean "$dir" "landscape-inputs-top"
+  assert_landscape_window "$dir" "landscape-inputs-top" "$width" "$height"
+
+  scroll_down_repeatedly "$width" "$height" 8
+  capture_state "$dir" "landscape-inputs-bottom"
+  assert_alive_foreground_and_clean "$dir" "landscape-inputs-bottom"
+
+  tap_text "CALCULATE"
+  capture_state "$dir" "landscape-outputs-top"
+  assert_alive_foreground_and_clean "$dir" "landscape-outputs-top"
+
+  scroll_down_repeatedly "$width" "$height" 18
+  capture_state "$dir" "landscape-outputs-bottom"
+  assert_alive_foreground_and_clean "$dir" "landscape-outputs-bottom"
+
+  tap_text "AIRPLANES"
+  capture_state "$dir" "landscape-airplanes"
+  assert_alive_foreground_and_clean "$dir" "landscape-airplanes"
 }
 
 for profile in "${profiles[@]}"; do
@@ -148,25 +184,21 @@ for profile in "${profiles[@]}"; do
   dir="$OUT_ROOT/$label"; mkdir -p "$dir"
 
   echo "=== API $API_LEVEL / $label / portrait ${size}@${density}dpi ==="
-  adb shell wm size "$size"
-  adb shell wm density "$density"
+  adb shell wm size "$size"; adb shell wm density "$density"
   adb shell settings put system accelerometer_rotation 0 || true
   adb shell settings put system user_rotation 0 || true
   adb shell cmd window user-rotation lock 0 >/dev/null 2>&1 || true
   adb shell pm clear "$PACKAGE_NAME" >/dev/null || true
-  exercise_orientation "$dir" "portrait" "$portrait_width" "$portrait_height"
+  exercise_portrait "$dir" "$portrait_width" "$portrait_height"
 
   landscape_size="${portrait_height}x${portrait_width}"
   echo "=== API $API_LEVEL / $label / landscape ${landscape_size}@${density}dpi ==="
-  adb shell wm size "$landscape_size"
-  adb shell wm density "$density"
-  adb shell cmd window user-rotation free >/dev/null 2>&1 || true
-  sleep 2
+  adb shell wm size "$landscape_size"; adb shell wm density "$density"
+  adb shell cmd window user-rotation free >/dev/null 2>&1 || true; sleep 2
   if ! adb shell wm size | tr -d '\r' | grep -q "Override size: ${landscape_size}"; then
-    echo "Landscape display override did not apply: $(adb shell wm size)" >&2
-    exit 1
+    echo "Landscape display override did not apply: $(adb shell wm size)" >&2; exit 1
   fi
-  exercise_orientation "$dir" "landscape" "$portrait_height" "$portrait_width"
+  exercise_landscape "$dir" "$portrait_height" "$portrait_width"
 done
 
 adb shell cmd window user-rotation free >/dev/null 2>&1 || true
