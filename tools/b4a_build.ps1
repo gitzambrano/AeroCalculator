@@ -3,6 +3,7 @@ param(
     [string]$Project = (Join-Path $PSScriptRoot "..\AeroCalculator.b4a"),
     [ValidateSet("Build", "BuildBundle")]
     [string]$Task = "Build",
+    [string]$AdditionalLibrariesFolder = "",
     [string]$KeyFile = "",
     [string]$KeyPassword = "",
     [string]$KeyAlias = "b4a"
@@ -33,24 +34,31 @@ if (-not (Test-Path (Join-Path $BaseFolder "*.b4a"))) {
     throw "No .b4a project file was found in: $BaseFolder"
 }
 
-# Additional libraries (for example the community RichString library) live in the
-# project-local Libraries folder. B4ABuilder only looks in its global/computed
-# library folders, so register the project Libraries folder through the B4A INI
-# AdditionalLibrariesFolder setting. A throwaway copy of the INI is used so the
-# user's IDE settings are never modified.
+# Additional libraries live in the project-local Libraries folder for normal local
+# builds. CI can supply a prepared root that also contains vendored community
+# libraries extracted from Install/*.zip. A throwaway INI copy keeps the user's IDE
+# settings unchanged.
 $DefaultIni = Join-Path $env:APPDATA "Anywhere Software\Basic4android\b4xV5.ini"
 if (-not (Test-Path $DefaultIni)) {
     throw "B4A INI was not found at: $DefaultIni"
 }
 
-$LibrariesFolder = Join-Path $BaseFolder "Libraries"
-if (-not (Test-Path $LibrariesFolder)) {
-    throw "Project Libraries folder was not found at: $LibrariesFolder"
+if (-not $AdditionalLibrariesFolder) {
+    $AdditionalLibrariesFolder = Join-Path $BaseFolder "Libraries"
 }
+if (-not (Test-Path $AdditionalLibrariesFolder)) {
+    throw "Additional libraries folder was not found at: $AdditionalLibrariesFolder"
+}
+$AdditionalLibrariesFolder = (Resolve-Path $AdditionalLibrariesFolder).Path
 
 $BuildIni = Join-Path $env:TEMP ("b4a_build_" + $PID + ".ini")
 $iniText = [IO.File]::ReadAllText($DefaultIni)
-$iniText = $iniText -replace 'AdditionalLibrariesFolder=[^\r\n]*', ("AdditionalLibrariesFolder=" + $LibrariesFolder)
+if ($iniText -match 'AdditionalLibrariesFolder=[^\r\n]*') {
+    $iniText = $iniText -replace 'AdditionalLibrariesFolder=[^\r\n]*', ("AdditionalLibrariesFolder=" + $AdditionalLibrariesFolder)
+}
+else {
+    $iniText += [Environment]::NewLine + "AdditionalLibrariesFolder=" + $AdditionalLibrariesFolder + [Environment]::NewLine
+}
 
 $NoSign = $true
 if ($KeyFile) {
@@ -59,12 +67,27 @@ if ($KeyFile) {
     }
     $NoSign = $false
     $resolvedKey = (Resolve-Path $KeyFile).Path
-    $iniText = $iniText -replace 'SignKeyFile=[^\r\n]*', ("SignKeyFile=" + $resolvedKey)
+    if ($iniText -match 'SignKeyFile=[^\r\n]*') {
+        $iniText = $iniText -replace 'SignKeyFile=[^\r\n]*', ("SignKeyFile=" + $resolvedKey)
+    }
+    else {
+        $iniText += [Environment]::NewLine + "SignKeyFile=" + $resolvedKey + [Environment]::NewLine
+    }
     if ($KeyPassword) {
-        $iniText = $iniText -replace 'SignKeyPassword=[^\r\n]*', ("SignKeyPassword=" + $KeyPassword)
+        if ($iniText -match 'SignKeyPassword=[^\r\n]*') {
+            $iniText = $iniText -replace 'SignKeyPassword=[^\r\n]*', ("SignKeyPassword=" + $KeyPassword)
+        }
+        else {
+            $iniText += "SignKeyPassword=" + $KeyPassword + [Environment]::NewLine
+        }
     }
     if ($KeyAlias) {
-        $iniText = $iniText -replace 'SignKeyAlias=[^\r\n]*', ("SignKeyAlias=" + $KeyAlias)
+        if ($iniText -match 'SignKeyAlias=[^\r\n]*') {
+            $iniText = $iniText -replace 'SignKeyAlias=[^\r\n]*', ("SignKeyAlias=" + $KeyAlias)
+        }
+        else {
+            $iniText += "SignKeyAlias=" + $KeyAlias + [Environment]::NewLine
+        }
     }
 }
 [IO.File]::WriteAllText($BuildIni, $iniText, [Text.Encoding]::UTF8)
