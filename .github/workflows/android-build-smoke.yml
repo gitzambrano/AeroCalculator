@@ -8,6 +8,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: android-build-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-b4a:
     name: Build B4A APK
