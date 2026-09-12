@@ -1,0 +1,140 @@
+name: android-build-smoke
+
+on:
+  push:
+    branches:
+      - main
+      - Full-documentation
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-b4a:
+    name: Build B4A APK
+    runs-on: windows-latest
+    timeout-minutes: 35
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare B4A 14, JDK 19 and Android 36
+        shell: pwsh
+        run: ./tools/ci_prepare_b4a.ps1
+
+      - name: Compile unsigned release APK
+        shell: pwsh
+        run: |
+          ./tools/b4a_build.ps1 `
+            -B4ABuilder "$env:B4A_BUILDER" `
+            -AdditionalLibrariesFolder "$env:B4A_ADDITIONAL_LIBRARIES" `
+            -Task Build
+
+      - name: Sign APK with ephemeral CI key
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $apk = Get-ChildItem -Path "$env:GITHUB_WORKSPACE\Objects" -Filter "*.apk" -File -Recurse -ErrorAction SilentlyContinue |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1
+          if (-not $apk) {
+            $apk = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Filter "*.apk" -File -Recurse -ErrorAction SilentlyContinue |
+              Sort-Object LastWriteTime -Descending |
+              Select-Object -First 1
+          }
+          if (-not $apk) { throw "B4A completed but no APK was found." }
+          Write-Host "Unsigned APK: $($apk.FullName)"
+
+          $buildTools = Get-ChildItem -Path "$env:B4A_ANDROID_ROOT\build-tools" -Directory |
+            Sort-Object Name -Descending |
+            Select-Object -First 1
+          if (-not $buildTools) { throw "Android build-tools were not found." }
+
+          $keytool = Join-Path $env:B4A_JAVA_BIN "keytool.exe"
+          $zipalign = Join-Path $buildTools.FullName "zipalign.exe"
+          $apksigner = Join-Path $buildTools.FullName "apksigner.bat"
+          foreach ($tool in @($keytool, $zipalign, $apksigner)) {
+            if (-not (Test-Path $tool)) { throw "Required signing tool was not found: $tool" }
+          }
+
+          $artifactDir = Join-Path $env:GITHUB_WORKSPACE "ci-artifacts"
+          New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
+          $aligned = Join-Path $artifactDir "AeroCalculator-aligned.apk"
+          $signed = Join-Path $artifactDir "AeroCalculator-ci.apk"
+          $keystore = Join-Path $env:RUNNER_TEMP "aerocalculator-ci.p12"
+          $password = "aerocalculator-ci-only"
+
+          & $keytool -genkeypair -alias aerocalculator-ci -keystore $keystore -storetype PKCS12 `
+            -storepass $password -keypass $password -keyalg RSA -keysize 2048 -validity 3650 `
+            -dname "CN=AeroCalculator CI, OU=CI, O=AeroCalculator, L=CI, S=CI, C=US" -noprompt
+          if ($LASTEXITCODE -ne 0) { throw "keytool failed." }
+
+          & $zipalign -f -p 4 $apk.FullName $aligned
+          if ($LASTEXITCODE -ne 0) { throw "zipalign failed." }
+
+          $env:JAVA_HOME = Split-Path -Parent $env:B4A_JAVA_BIN
+          & $apksigner sign --ks $keystore --ks-type PKCS12 --ks-key-alias aerocalculator-ci `
+            --ks-pass "pass:$password" --key-pass "pass:$password" --out $signed $aligned
+          if ($LASTEXITCODE -ne 0) { throw "apksigner failed." }
+
+          & $apksigner verify --verbose --print-certs $signed
+          if ($LASTEXITCODE -ne 0) { throw "APK signature verification failed." }
+
+          $aapt = Join-Path $buildTools.FullName "aapt2.exe"
+          if (Test-Path $aapt) {
+            & $aapt dump badging $signed | Tee-Object -FilePath (Join-Path $artifactDir "apk-badging.txt")
+          }
+
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AeroCalculator-ci-apk
+          path: |
+            ci-artifacts/AeroCalculator-ci.apk
+            ci-artifacts/apk-badging.txt
+          if-no-files-found: error
+          retention-days: 14
+
+  emulator-smoke:
+    name: Android API ${{ matrix.api-level }} multi-screen smoke
+    needs: build-b4a
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [28, 36]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: AeroCalculator-ci-apk
+          path: ci-apk
+
+      - name: Enable KVM access
+        run: |
+          if [ -e /dev/kvm ]; then
+            sudo chmod 666 /dev/kvm
+          fi
+
+      - name: Boot emulator and exercise screen matrix
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: bash tools/android_smoke_test.sh ci-apk/AeroCalculator-ci.apk ${{ matrix.api-level }}
+
+      - name: Upload screenshots, UI dumps and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-smoke-api-${{ matrix.api-level }}
+          path: smoke-results/
+          if-no-files-found: warn
+          retention-days: 14
