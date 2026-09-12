@@ -21,15 +21,32 @@ jobs:
         shell: pwsh
         run: ./tools/ci_prepare_b4a.ps1
 
-      - name: Compile unsigned release APK
+      - name: Create ephemeral CI signing key
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $keytool = Join-Path $env:B4A_JAVA_BIN "keytool.exe"
+          $keystore = Join-Path $env:RUNNER_TEMP "aerocalculator-ci.jks"
+          $password = "aerocalculator-ci-only"
+          & $keytool -genkeypair -alias b4a -keystore $keystore -storetype JKS `
+            -storepass $password -keypass $password -keyalg RSA -keysize 2048 -validity 3650 `
+            -dname "CN=AeroCalculator CI, OU=CI, O=AeroCalculator, L=CI, S=CI, C=US" -noprompt
+          if ($LASTEXITCODE -ne 0) { throw "keytool failed." }
+          Add-Content -Path $env:GITHUB_ENV -Value ("B4A_CI_KEYSTORE=" + $keystore)
+          Add-Content -Path $env:GITHUB_ENV -Value ("B4A_CI_KEY_PASSWORD=" + $password)
+
+      - name: Compile signed release APK
         shell: pwsh
         run: |
           ./tools/b4a_build.ps1 `
             -B4ABuilder "$env:B4A_BUILDER" `
             -AdditionalLibrariesFolder "$env:B4A_ADDITIONAL_LIBRARIES" `
-            -Task Build
+            -Task Build `
+            -KeyFile "$env:B4A_CI_KEYSTORE" `
+            -KeyPassword "$env:B4A_CI_KEY_PASSWORD" `
+            -KeyAlias "b4a"
 
-      - name: Sign APK with ephemeral CI key
+      - name: Validate and stage APK
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
@@ -42,46 +59,27 @@ jobs:
               Select-Object -First 1
           }
           if (-not $apk) { throw "B4A completed but no APK was found." }
-          Write-Host "Unsigned APK: $($apk.FullName)"
+          Write-Host "Compiled APK: $($apk.FullName)"
+
+          $artifactDir = Join-Path $env:GITHUB_WORKSPACE "ci-artifacts"
+          New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
+          $staged = Join-Path $artifactDir "AeroCalculator-ci.apk"
+          Copy-Item $apk.FullName $staged -Force
 
           $buildTools = Get-ChildItem -Path "$env:B4A_ANDROID_ROOT\build-tools" -Directory |
             Sort-Object Name -Descending |
             Select-Object -First 1
           if (-not $buildTools) { throw "Android build-tools were not found." }
 
-          $keytool = Join-Path $env:B4A_JAVA_BIN "keytool.exe"
-          $zipalign = Join-Path $buildTools.FullName "zipalign.exe"
-          $apksigner = Join-Path $buildTools.FullName "apksigner.bat"
-          foreach ($tool in @($keytool, $zipalign, $apksigner)) {
-            if (-not (Test-Path $tool)) { throw "Required signing tool was not found: $tool" }
-          }
-
-          $artifactDir = Join-Path $env:GITHUB_WORKSPACE "ci-artifacts"
-          New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
-          $aligned = Join-Path $artifactDir "AeroCalculator-aligned.apk"
-          $signed = Join-Path $artifactDir "AeroCalculator-ci.apk"
-          $keystore = Join-Path $env:RUNNER_TEMP "aerocalculator-ci.p12"
-          $password = "aerocalculator-ci-only"
-
-          & $keytool -genkeypair -alias aerocalculator-ci -keystore $keystore -storetype PKCS12 `
-            -storepass $password -keypass $password -keyalg RSA -keysize 2048 -validity 3650 `
-            -dname "CN=AeroCalculator CI, OU=CI, O=AeroCalculator, L=CI, S=CI, C=US" -noprompt
-          if ($LASTEXITCODE -ne 0) { throw "keytool failed." }
-
-          & $zipalign -f -p 4 $apk.FullName $aligned
-          if ($LASTEXITCODE -ne 0) { throw "zipalign failed." }
-
           $env:JAVA_HOME = Split-Path -Parent $env:B4A_JAVA_BIN
-          & $apksigner sign --ks $keystore --ks-type PKCS12 --ks-key-alias aerocalculator-ci `
-            --ks-pass "pass:$password" --key-pass "pass:$password" --out $signed $aligned
-          if ($LASTEXITCODE -ne 0) { throw "apksigner failed." }
-
-          & $apksigner verify --verbose --print-certs $signed
+          $apksigner = Join-Path $buildTools.FullName "apksigner.bat"
+          if (-not (Test-Path $apksigner)) { throw "apksigner was not found: $apksigner" }
+          & $apksigner verify --verbose --print-certs $staged
           if ($LASTEXITCODE -ne 0) { throw "APK signature verification failed." }
 
           $aapt = Join-Path $buildTools.FullName "aapt2.exe"
           if (Test-Path $aapt) {
-            & $aapt dump badging $signed | Tee-Object -FilePath (Join-Path $artifactDir "apk-badging.txt")
+            & $aapt dump badging $staged | Tee-Object -FilePath (Join-Path $artifactDir "apk-badging.txt")
           }
 
       - name: Upload installable APK
