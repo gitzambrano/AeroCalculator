@@ -28,9 +28,6 @@ profiles=(
 capture_state() {
   local dir="$1" name="$2"
   mkdir -p "$dir"
-  # UiAutomator can observe the final tree a few frames before the emulator
-  # compositor produces a stable screenshot after a display-size/rotation change.
-  # Warm up SurfaceFlinger once and keep the second frame.
   adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
   adb pull /sdcard/window.xml "$dir/${name}.xml" >/dev/null 2>&1 || true
   adb exec-out screencap -p > /tmp/aerocalculator-screencap-warmup.png || true
@@ -88,23 +85,6 @@ wait_for_ui_text() {
     sleep 0.35
   done
   echo "Timed out waiting for UI pattern: $pattern" >&2
-  return 1
-}
-
-wait_for_landscape_configuration() {
-  local width="$1" height="$2"
-  for _ in $(seq 1 25); do
-    local state
-    state="$(adb shell dumpsys window windows 2>/dev/null | tr -d '\r' || true)"
-    if grep -E -q "[[:space:]]land[[:space:]]" <<<"$state" && \
-       grep -F -q "mBounds=Rect(0, 0 - ${width}, ${height})" <<<"$state"; then
-      sleep 0.5
-      return 0
-    fi
-    sleep 0.4
-  done
-  echo "Landscape configuration ${width}x${height} did not become stable." >&2
-  adb shell dumpsys window windows | grep -m3 -E 'mBounds=Rect|land|port' >&2 || true
   return 1
 }
 
@@ -167,29 +147,23 @@ exercise_portrait() {
   capture_state "$dir" "portrait-inputs-top"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-top"
   assert_dump_contains "$dir" "portrait-inputs-top" 'text="Hp"'
-
   scroll_down_repeatedly "$width" "$height" 8
   capture_state "$dir" "portrait-inputs-bottom"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-bottom"
   assert_dump_contains "$dir" "portrait-inputs-bottom" 'HeadWind|HeadWnd|WindSpd|Wind Speed|Wind Spd'
-
   tap_text "CALCULATE"
   capture_state "$dir" "portrait-outputs-top"
   assert_alive_foreground_and_clean "$dir" "portrait-outputs-top"
   assert_dump_contains "$dir" "portrait-outputs-top" 'Pressure Altitude'
-
   scroll_down_repeatedly "$width" "$height" 18
   capture_state "$dir" "portrait-outputs-bottom"
   assert_alive_foreground_and_clean "$dir" "portrait-outputs-bottom"
   assert_dump_contains "$dir" "portrait-outputs-bottom" 'AlongTrack Crosswind'
-
   tap_text "AIRPLANES"
   capture_state "$dir" "portrait-airplanes"
   assert_alive_foreground_and_clean "$dir" "portrait-airplanes"
 }
 
-# Headless emulators are more reliable if the physical display stays in its
-# natural portrait size and Android rotates the Configuration itself.
 exercise_landscape() {
   local dir="$1" width="$2" height="$3"
   adb shell am force-stop "$PACKAGE_NAME" || true; adb logcat -c; launch_app
@@ -197,19 +171,15 @@ exercise_landscape() {
   capture_state "$dir" "landscape-inputs-top"
   assert_alive_foreground_and_clean "$dir" "landscape-inputs-top"
   assert_landscape_window "$dir" "landscape-inputs-top" "$width" "$height"
-
   scroll_down_repeatedly "$width" "$height" 8
   capture_state "$dir" "landscape-inputs-bottom"
   assert_alive_foreground_and_clean "$dir" "landscape-inputs-bottom"
-
   tap_text "CALCULATE"
   capture_state "$dir" "landscape-outputs-top"
   assert_alive_foreground_and_clean "$dir" "landscape-outputs-top"
-
   scroll_down_repeatedly "$width" "$height" 18
   capture_state "$dir" "landscape-outputs-bottom"
   assert_alive_foreground_and_clean "$dir" "landscape-outputs-bottom"
-
   tap_text "AIRPLANES"
   capture_state "$dir" "landscape-airplanes"
   assert_alive_foreground_and_clean "$dir" "landscape-airplanes"
@@ -228,16 +198,24 @@ for profile in "${profiles[@]}"; do
   adb shell pm clear "$PACKAGE_NAME" >/dev/null || true
   exercise_portrait "$dir" "$portrait_width" "$portrait_height"
 
-  landscape_size="${portrait_height}x${portrait_width}"
+  landscape_width="$portrait_height"
+  landscape_height="$portrait_width"
+  if (( landscape_width > 1920 )); then
+    landscape_height=$((portrait_width * 1920 / portrait_height))
+    landscape_width=1920
+  fi
+  landscape_size="${landscape_width}x${landscape_height}"
   echo "=== API $API_LEVEL / $label / landscape ${landscape_size}@${density}dpi ==="
-  adb shell wm size "$size"; adb shell wm density "$density"
   adb shell settings put system accelerometer_rotation 0 || true
-  adb shell settings put system user_rotation 1 || true
-  adb shell cmd window user-rotation lock 1 >/dev/null 2>&1 || true
-  wait_for_landscape_configuration "$portrait_height" "$portrait_width"
-  exercise_landscape "$dir" "$portrait_height" "$portrait_width"
   adb shell settings put system user_rotation 0 || true
-  adb shell cmd window user-rotation lock 0 >/dev/null 2>&1 || true
+  adb shell cmd window user-rotation free >/dev/null 2>&1 || true
+  adb shell wm size "$landscape_size"; adb shell wm density "$density"
+  sleep 2
+  if ! adb shell wm size | tr -d '\r' | grep -q "Override size: ${landscape_size}"; then
+    echo "Landscape display override did not apply: $(adb shell wm size)" >&2
+    exit 1
+  fi
+  exercise_landscape "$dir" "$landscape_width" "$landscape_height"
 done
 
 adb shell cmd window user-rotation free >/dev/null 2>&1 || true
