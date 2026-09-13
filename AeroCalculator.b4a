@@ -322,11 +322,22 @@ Sub Globals
 	
 	'Popup Menu
 	Dim PopupMenu As RSPopupMenu
+
+	'Android edge-to-edge safe content root
+	Dim root As Panel
+	Dim imeInsets As IME
 	
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 			
+	'Keep the complete application UI inside the system-bar-safe content area.
+	imeInsets.Initialize("imeInsets")
+	root.Initialize("")
+	Dim Content As Rect = imeInsets.GetContentRect
+	Activity.AddView(root, Content.Left, Content.Top, Content.Width, Content.Height)
+	imeInsets.UpdatePercentageReference(root.Width, root.Height)
+
 	' Criando screen de settings e iniciando GPS
     If FirstTime Then
 		CreatePreferenceScreen
@@ -527,12 +538,38 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlInput4 = Colors.RGB(255, 224, 148)
 		ColorPnlInput5 = Colors.RGB(255, 224, 148)
 	End If
+
+	'Color shown behind transparent system bars on edge-to-edge Android versions.
+	Activity.Color = ColorPnlTitle
+	root.Color = ColorPnlInput5
+
+	'Tamanho e numero de paineis de inputs
+	ib = 8dip
+	tb = 40dip
+	Dim PanelNb As Int
+	PanelNb = 14
+
+	'Escalonamento com a area util (exclui status/navigation bars).
+	Dim hh, yy As Double
+	hh = 99dip + PanelNb * (ib * 2 + tb) + PanelNb * 1dip + 1dip
+	yy = root.Height
+	xx = root.Width
+
+	sc = yy / hh
+	If sc<1 Then
+		sc=1
+	End If
+	If root.Width > root.Height Then
+		ld = 1
+	Else
+		ld = 0
+	End If
 	
 	'Criando pagina de Airplanes
 	pnlBack0.Initialize("")
 	pnlBack0.Color = ColorPnlInput5
     scvMain0.Initialize(3000)
-	pnlBack0.AddView(scvMain0, 0, 0, 100%x, 100%y-100dip)
+	pnlBack0.AddView(scvMain0, 0, 0, root.Width, root.Height-102dip*sc)
 	lst.Initialize(Me, scvMain0, "", "", "lst_LongClick", 1dip)
 	lst.DividerColor = ColorPnlLine3
 	container.AddPage(pnlBack0,"Airplanes")
@@ -545,29 +582,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	pnlBack1.Initialize("")
 	pnlBack1.Color = Colors.White
     scvMain1.Initialize(100%y)
-	pnlBack1.AddView(scvMain1, 0, 0, 100%x, 100%y-100dip)
+	pnlBack1.AddView(scvMain1, 0, 0, root.Width, root.Height-102dip*sc)
  
-	' Tamanho e numero de paineis de inputs
-	ib = 8dip
-	tb = 40dip	
-	Dim PanelNb As Int  
-	PanelNb = 14
-	
-	' Escalonamento com tamanho do celular
-	Dim hh, yy As Double
-	hh = 99dip + PanelNb * (ib * 2 + tb) + PanelNb * 1dip + 1dip
-	yy = Activity.Height
-	xx = Activity.Width
-	
-	sc = yy / hh
-	If sc<1 Then
-		sc=1
-	End If
-	If Activity.Width > Activity.Height Then
-		ld = 1
-	Else
-		ld = 0
-	End If
 
 	' Criando tela de inputs
 	Dim j As Int
@@ -1006,7 +1022,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	pnlBack2.Initialize("")
 	pnlBack2.Color = Colors.White
 	scvMain2.Initialize(500)
-    pnlBack2.AddView(scvMain2, 0, 0, 100%x, 100%y-100dip*sc)
+    pnlBack2.AddView(scvMain2, 0, 0, root.Width, root.Height-102dip*sc)
 	scvMain2.Panel.Height = PanelNb1 * PanelHeight1 + 3dip
 
 	container.AddPage(pnlBack2, "Outputs")
@@ -1014,7 +1030,7 @@ Sub Activity_Create(FirstTime As Boolean)
 ' Criando painel superior e botoes
 	Dim pnltitle As Panel 
 	pnltitle.Initialize("pnltitle")
-	Activity.AddView(pnltitle, 0, 0, 100%x, 102dip*sc)
+	root.AddView(pnltitle, 0, 0, root.Width, 102dip*sc)
 	pnltitle.Color = ColorPnlTitle
 
 	Dim img1 As ImageView
@@ -1114,13 +1130,13 @@ Sub Activity_Create(FirstTime As Boolean)
 	line.Elevation = 5dip
 
 	'Now we can add the pager to the activity
-	Activity.AddView(pager, 0, 102dip*sc, Activity.Width, Activity.Height-98dip*sc)
+	root.AddView(pager, 0, 102dip*sc, root.Width, root.Height-102dip*sc)
 	
 	'Adicionando menus
 	Dim pnlT As Panel
 	pnlT.Initialize("pnlT")
 	pnlT.Color =  Colors.Transparent
-	Activity.AddView(pnlT, 90%x, 0, 9%x, 34dip*sc)
+	root.AddView(pnlT, 90%x, 0, 9%x, 34dip*sc)
 	PopupMenu.Initialize("PopupMenu", pnlT)
 	AddMenus
 
@@ -1206,7 +1222,7 @@ Sub Activity_Resume
 	End If
 	
 	' Descobrir se estamos em modo Landscape ou Portrait
-	If Activity.Width > Activity.Height Then
+	If root.Width > root.Height Then
 		ld = 1
 	Else
 		ld = 0
@@ -1418,7 +1434,7 @@ Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
 	lbl1.TextColor = Colors.Black
 	lbl1.TextSize = 15
 	lbl1.Typeface = Typeface.DEFAULT
-	pnl.AddView(lbl1, 5dip, 10dip, 100%x, 30dip)
+	pnl.AddView(lbl1, 5dip, 10dip, root.Width-5dip, 30dip)
 	pnl.Color = ColorPnlInput5
 
 	'Criar paineis transparentes para botoes de cada aviao
@@ -1434,10 +1450,10 @@ Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
 	pnlTransp3.Color = Colors.Transparent
 	pnlTransp4.Initialize("pnlTransp4")
 	pnlTransp4.Color = Colors.Transparent
-	pnl.AddView(pnlTransp1,  Activity.Width-1.0*He, 0, 1.0*He, He)
-	pnl.AddView(pnlTransp2,  Activity.Width-1.0*He*2, 0, 1.0*He, He)
-	pnl.AddView(pnlTransp3,  Activity.Width-1.0*He*3, 0, 1.0*He, He)
-	pnl.AddView(pnlTransp4,  Activity.Width-1.0*He*4, 0, 1.0*He, He)
+	pnl.AddView(pnlTransp1,  root.Width-1.0*He, 0, 1.0*He, He)
+	pnl.AddView(pnlTransp2,  root.Width-1.0*He*2, 0, 1.0*He, He)
+	pnl.AddView(pnlTransp3,  root.Width-1.0*He*3, 0, 1.0*He, He)
+	pnl.AddView(pnlTransp4,  root.Width-1.0*He*4, 0, 1.0*He, He)
 	
 	Dim im1 As ImageView
 	Dim im2 As ImageView

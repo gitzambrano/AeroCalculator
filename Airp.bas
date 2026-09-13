@@ -81,6 +81,10 @@ Sub Globals
 	Dim indWeightUnit As Int
 	
 	Dim ID As Int
+
+	'Android edge-to-edge safe content root
+	Dim root As Panel
+	Dim imeInsets As IME
 	
 	
 End Sub
@@ -88,6 +92,15 @@ End Sub
 Sub Activity_Create (FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	'Activity.LoadLayout("Layout1")
+
+	'Keep the complete editor UI inside the system-bar-safe content area.
+	imeInsets.Initialize("imeInsets")
+	root.Initialize("")
+	Dim Content As Rect = imeInsets.GetContentRect
+	Activity.AddView(root, Content.Left, Content.Top, Content.Width, Content.Height)
+	imeInsets.UpdatePercentageReference(root.Width, root.Height)
+	Activity.Color = Main.ColorPnlTitle
+	root.Color = Main.ColorPnlInput1
 
 	indSrefUnit = 0
 	indcrefUnit = 0
@@ -102,8 +115,9 @@ Sub Activity_Create (FirstTime As Boolean)
 	
 	pnlBack0.Initialize("")
 	pnlBack0.Color = Main.ColorPnlInput1
-    scvMain0.Initialize(100%y-(50dip*Main.sc))
-	pnlBack0.AddView(scvMain0, 0, 0, 100%x, Activity.Height)
+	root.AddView(pnlBack0, 0, 50dip*Main.sc, root.Width, root.Height-50dip*Main.sc)
+    scvMain0.Initialize(pnlBack0.Height)
+	pnlBack0.AddView(scvMain0, 0, 0, pnlBack0.Width, pnlBack0.Height)
 	pnl1.Initialize("")
 	pnl2.Initialize("")
 	pnl3.Initialize("")
@@ -122,11 +136,10 @@ Sub Activity_Create (FirstTime As Boolean)
 		CreateItem(ii, He)
 	Next
 
-	Activity.AddView(pnlBack0, 0, 50dip*Main.sc, 100%x, Activity.Height-50dip*Main.sc)
 	
 	Dim pnltitle As Panel 
 	pnltitle.Initialize("pnltitle")
-	Activity.AddView(pnltitle, 0, 0, 100%x, 50dip*Main.sc)
+	root.AddView(pnltitle, 0, 0, root.Width, 50dip*Main.sc)
 	pnltitle.Color = Main.ColorPnlTitle
 	
 	Dim img2 As ImageView
@@ -135,7 +148,7 @@ Sub Activity_Create (FirstTime As Boolean)
 	Dim pnlTransparent2 As Panel
 	pnlTransparent2.Initialize("pnlTransparent2")
 	pnlTransparent2.Color =  Colors.Transparent
-	pnltitle.AddView(pnlTransparent2,  50%x, 0, 50%x, 100%y)
+	pnltitle.AddView(pnlTransparent2,  50%x, 0, 50%x, pnltitle.Height)
 	bmpImage2.Initialize(File.DirAssets,"ic_action_cancel.png")
 	img2.Initialize("img2")
 	img2.Bitmap = bmpImage2
@@ -165,7 +178,7 @@ Sub Activity_Create (FirstTime As Boolean)
 	Dim pnlTransparent3 As Panel
 	pnlTransparent3.Initialize("pnlTransparent3")
 	pnlTransparent3.Color =  Colors.Transparent
-	pnltitle.AddView(pnlTransparent3,  0%x, 0, 50%x, 100%y)
+	pnltitle.AddView(pnlTransparent3,  0%x, 0, 50%x, pnltitle.Height)
 	bmpImage3.Initialize(File.DirAssets,"ic_action_accept.png")
 	img3.Initialize("img3")
 	img3.Bitmap = bmpImage3
@@ -192,7 +205,7 @@ Sub Activity_Create (FirstTime As Boolean)
 	Dim paneldiv As Panel
 	paneldiv.Initialize("paneldiv")
 	paneldiv.Color =  Colors.White
-	pnltitle.AddView(paneldiv,  50%x, 0, 1dip, 100%y)
+	pnltitle.AddView(paneldiv,  50%x, 0, 1dip, pnltitle.Height)
 	
 End Sub
 
@@ -936,8 +949,8 @@ Sub CreateItem(ii As Int, He As Int)
 			pnlTransp2.Initialize("pnlTransp2")
 			pnlTransp1.Color = Colors.Transparent
 			pnlTransp2.Color = Colors.Transparent
-			pnl5.AddView(pnlTransp1,(edtCLmax1.Left+edtCLmax1.Width)+2%x, 2dip, (Activity.Width-edtCLmax1.Left-edtCLmax1.Width)-3%x, 40dip)
-			pnl5.AddView(pnlTransp2,(edtCLmax1.Left+edtCLmax1.Width)+2%x, 50dip,(Activity.Width-edtCLmax1.Left-edtCLmax1.Width)-3%x, 34dip)
+			pnl5.AddView(pnlTransp1,(edtCLmax1.Left+edtCLmax1.Width)+2%x, 2dip, (pnl5.Width-edtCLmax1.Left-edtCLmax1.Width)-3%x, 40dip)
+			pnl5.AddView(pnlTransp2,(edtCLmax1.Left+edtCLmax1.Width)+2%x, 50dip,(pnl5.Width-edtCLmax1.Left-edtCLmax1.Width)-3%x, 34dip)
 			pnlTransp1.AddView(img11, pnlTransp1.Width-34dip, 10dip, 34dip, 34dip)
 			pnlTransp2.AddView(img22, 20dip, 9dip, 34dip, 34dip)
 			img11.Height = 12dip
