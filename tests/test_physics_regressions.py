@@ -10,7 +10,7 @@ from tools.reference_physics import EARTH_RADIUS_M, P0, R_AIR, standard_atmosphe
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = (ROOT / "AeroCalculator.b4a").read_text(encoding="utf-8-sig")
-COMPACT = re.sub(r"\\s+", "", SOURCE)
+COMPACT = re.sub(r"\s+", "", SOURCE)
 G0 = 9.80665
 
 
