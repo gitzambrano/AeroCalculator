@@ -28,9 +28,14 @@ profiles=(
 capture_state() {
   local dir="$1" name="$2"
   mkdir -p "$dir"
-  adb exec-out screencap -p > "$dir/${name}.png"
+  # UiAutomator can observe the final tree a few frames before the emulator
+  # compositor produces a stable screenshot after a display-size/rotation change.
+  # Warm up SurfaceFlinger once and keep the second frame.
   adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
   adb pull /sdcard/window.xml "$dir/${name}.xml" >/dev/null 2>&1 || true
+  adb exec-out screencap -p > /tmp/aerocalculator-screencap-warmup.png || true
+  sleep 0.6
+  adb exec-out screencap -p > "$dir/${name}.png"
   adb shell dumpsys window windows > "$dir/${name}-window.txt" || true
 }
 
@@ -69,6 +74,38 @@ assert_dump_contains() {
     echo "Expected UI text '$pattern' was not visible at $stage" >&2
     return 1
   fi
+}
+
+wait_for_ui_text() {
+  local pattern="$1" tries="${2:-20}" tmp="$OUT_ROOT/wait-ui.xml"
+  for _ in $(seq 1 "$tries"); do
+    adb shell uiautomator dump /sdcard/wait-ui.xml >/dev/null 2>&1 || true
+    adb pull /sdcard/wait-ui.xml "$tmp" >/dev/null 2>&1 || true
+    if [[ -s "$tmp" ]] && grep -E -q "$pattern" "$tmp"; then
+      sleep 0.4
+      return 0
+    fi
+    sleep 0.35
+  done
+  echo "Timed out waiting for UI pattern: $pattern" >&2
+  return 1
+}
+
+wait_for_landscape_configuration() {
+  local width="$1" height="$2"
+  for _ in $(seq 1 25); do
+    local state
+    state="$(adb shell dumpsys window windows 2>/dev/null | tr -d '\r' || true)"
+    if grep -E -q "[[:space:]]land[[:space:]]" <<<"$state" && \
+       grep -F -q "mBounds=Rect(0, 0 - ${width}, ${height})" <<<"$state"; then
+      sleep 0.5
+      return 0
+    fi
+    sleep 0.4
+  done
+  echo "Landscape configuration ${width}x${height} did not become stable." >&2
+  adb shell dumpsys window windows | grep -m3 -E 'mBounds=Rect|land|port' >&2 || true
+  return 1
 }
 
 assert_landscape_window() {
@@ -126,6 +163,7 @@ scroll_down_repeatedly() {
 exercise_portrait() {
   local dir="$1" width="$2" height="$3"
   adb shell am force-stop "$PACKAGE_NAME" || true; adb logcat -c; launch_app
+  wait_for_ui_text 'text="Hp"'
   capture_state "$dir" "portrait-inputs-top"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-top"
   assert_dump_contains "$dir" "portrait-inputs-top" 'text="Hp"'
@@ -150,13 +188,12 @@ exercise_portrait() {
   assert_alive_foreground_and_clean "$dir" "portrait-airplanes"
 }
 
-# Under a headless emulator, a wm landscape override correctly gives the app a
-# landscape Configuration and bounds, but uiautomator still reports child bounds
-# in the portrait framebuffer. Therefore landscape is verified with WindowManager,
-# screenshots, navigation, scroll gestures, foreground state and crash/ANR checks.
+# Headless emulators are more reliable if the physical display stays in its
+# natural portrait size and Android rotates the Configuration itself.
 exercise_landscape() {
   local dir="$1" width="$2" height="$3"
   adb shell am force-stop "$PACKAGE_NAME" || true; adb logcat -c; launch_app
+  wait_for_ui_text 'text="Hp"'
   capture_state "$dir" "landscape-inputs-top"
   assert_alive_foreground_and_clean "$dir" "landscape-inputs-top"
   assert_landscape_window "$dir" "landscape-inputs-top" "$width" "$height"
@@ -193,12 +230,14 @@ for profile in "${profiles[@]}"; do
 
   landscape_size="${portrait_height}x${portrait_width}"
   echo "=== API $API_LEVEL / $label / landscape ${landscape_size}@${density}dpi ==="
-  adb shell wm size "$landscape_size"; adb shell wm density "$density"
-  adb shell cmd window user-rotation free >/dev/null 2>&1 || true; sleep 2
-  if ! adb shell wm size | tr -d '\r' | grep -q "Override size: ${landscape_size}"; then
-    echo "Landscape display override did not apply: $(adb shell wm size)" >&2; exit 1
-  fi
+  adb shell wm size "$size"; adb shell wm density "$density"
+  adb shell settings put system accelerometer_rotation 0 || true
+  adb shell settings put system user_rotation 1 || true
+  adb shell cmd window user-rotation lock 1 >/dev/null 2>&1 || true
+  wait_for_landscape_configuration "$portrait_height" "$portrait_width"
   exercise_landscape "$dir" "$portrait_height" "$portrait_width"
+  adb shell settings put system user_rotation 0 || true
+  adb shell cmd window user-rotation lock 0 >/dev/null 2>&1 || true
 done
 
 adb shell cmd window user-rotation free >/dev/null 2>&1 || true
