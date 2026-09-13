@@ -21,7 +21,7 @@ class TestFlightMechanicsReference(unittest.TestCase):
             n = load_factor_from_bank(bank)
             self.assertAlmostEqual(bank_from_load_factor(n), bank, places=12)
 
-    def test_stall_speed_scales_with_sqrt_load_factor(self):
-        v1 = stall_speed_tas(1000.0, 1.0, 1.225, 16.0, 1.5)
-        v2 = stall_speed_tas(1000.0, 2.0, 1.225, 16.0, 1.5)
-        self.assertAlmostEqual(v2 / v1, math.sqrt(2.0), places=12)
+    def test_reference_one_g_stall_speed(self):
+        v = stall_speed_tas(1000.0, 1.0, 1.225, 16.0, 1.5)
+        expected = math.sqrt(2.0 * 1000.0 * 9.80665 / (1.225 * 16.0 * 1.5))
+        self.assertAlmostEqual(v, expected, places=12)

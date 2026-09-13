@@ -147,13 +147,13 @@ The application uses mass as an input and converts it to weight with standard gr
 
 ## 7. Stall speed and Vs factor
 
-For the selected $C_{L,max}$:
+The application reports the 1-g reference stall speed for the selected $C_{L,max}$:
 
 $$
-V_s=\sqrt{\frac{2nW}{\rho S C_{L,max}}}.
+V_{s,1g}=\sqrt{\frac{2W}{\rho S C_{L,max}}}.
 $$
 
-The application derives corresponding Mach and CAS values through the same atmosphere and compressibility model.
+This displayed value is independent of the selected maneuver load factor. An accelerated-stall speed would scale as $V_{s,n}=V_{s,1g}\sqrt{n}$, but that is not the `Stall Speed Vs` output. The application derives corresponding Mach and CAS values through the same atmosphere and compressibility model.
 
 ## 8. Reynolds number
 
@@ -194,3 +194,15 @@ The implementation solves different combinations of known heading, track, sidesl
 - Sensor accuracy is external to the numerical model.
 - Very strong-wind geometries can make inverse trigonometric solutions infeasible. The UI must report such cases instead of producing a plausible invalid result.
 - The B4A application warns when pressure altitude exceeds 84.852 km. It does not claim valid standard-atmosphere output above that limit.
+
+## 12. Turn radius and turn rate
+
+For a coordinated constant-bank turn relative to the air mass, the radius and heading rate use true airspeed:
+
+$$
+R_{air}=\frac{V_T^2}{g\tan\phi},
+\qquad
+\dot\psi=\frac{g\tan\phi}{V_T}.
+$$
+
+A steady wind translates the air-relative circular trajectory; the ground track is generally not a circle. Therefore ground speed shall not be substituted into these coordinated-turn equations.

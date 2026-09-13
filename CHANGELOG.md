@@ -24,6 +24,12 @@ All notable changes to the repository should be recorded here.
 - Changed repository artifact checks to inspect Git-tracked files only.
 - Switched Markdown math to GitHub-compatible delimiters (`$$` and `$`) so equations render in the hosted documentation.
 - Updated the README build prerequisites to reflect `targetSdkVersion` 36 and the RichString requirement.
+- Replaced the geometric-altitude iteration with a safeguarded root solver that converges for both Delta ISA and OAT inputs.
+- Reworked wind-triangle inversion so all Track/Heading and Sideslip/Drift combinations close vectorially for TAS and ground-speed inputs.
+- Corrected density altitude across the documented atmosphere range.
+- Corrected coordinated-turn radius and rate to use true airspeed.
+- Corrected Fahrenheit display conversion for the temperature-sensor input.
+- Clarified that the displayed stall speed is the 1-g reference Vs.
 
 ### Known follow-up
 

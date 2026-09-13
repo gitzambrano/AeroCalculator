@@ -2458,8 +2458,8 @@ Sub TempUnit_Click
 		btnTempUnit.Text = "°F"
 		kTemp = 5/9
 		cTemp = -32 * 5/9 + 273.15
-		kTemp2 = 1
-		cTemp2 = 273.15
+		kTemp2 = 9/5
+		cTemp2 = 32
 	Else If indTempUnit = 2 Then
 		btnTempUnit.Text = "K"
 		kTemp = 1
@@ -3045,24 +3045,12 @@ Sub Calculate
 	exp=2.71828182846
 	
 	' Usuario escolheu Altitude Geometrica como Input
-	Dim Hgeom_input_m,Hp_input_m,Error,perturb,deriv,relax As Double
-	Dim cont As Int
-	If indAltType = 1 Or  indAltType = 2 Then
+	Dim Hgeom_input_m,Hp_input_m As Double
+	If indAltType = 1 Or indAltType = 2 Then
 		Hgeom_input_m = AltValue
 		Hgeop_m = (6356766/(6356766+Hgeom_input_m))*Hgeom_input_m
 		Hgeom = Hgeom_input_m/0.3048
-		Error=1
-		perturb = 0.001
-		relax = 1
-		Hp_input_m = Hgeop_m
-		deriv = 0
-		cont=0
-		Do While cont<100 And Abs(Error)>0.001
-			Hp_input_m = Hp_input_m - deriv * Error * relax
-			deriv = (-CalcError(Hgeop_m,Hp_input_m) + CalcError(Hgeop_m,Hp_input_m+perturb)) / perturb
-			Error = CalcError(Hgeop_m,Hp_input_m)
-			cont = cont+1	
-		Loop	
+		Hp_input_m = PressureAltitudeFromGeometricAltitude(Hgeop_m)
 	End If
 	
 	' Usuario escolheu Altitude Pressao como Input
@@ -3105,7 +3093,7 @@ Sub Calculate
 	Rho_Rho0=P_P0/T_T0
 	Rho=Rho_Rho0*Rho0
 	mu = mu0*(Power(T_kelvin,1.5)/(T_kelvin+120)/11.984)
-	Hd = 145442.156 * (1-Power((P_P0/T_T0),0.234969))
+	Hd = DensityAltitudeFromDensity(Rho)/0.3048
 	
 	If indAltType = 0 Or indAltType = 3 Or indAltType = 4 Then
 	Hgeop_m = Hp - 29.271247 * isa* Logarithm(P_P0,exp)
@@ -3340,81 +3328,122 @@ Sub DefaultInputs
 End Sub
 
 Sub WindCalc
-u_wind_inert = -Headwind*Cos(WindRefAngle)+ CrossWind*Sin(WindRefAngle)
-v_wind_inert = -CrossWind * Cos(WindRefAngle)  - Headwind * Sin(WindRefAngle)
-WS = Sqrt(Headwind * Headwind + CrossWind * CrossWind)
-WD = ATan2(v_wind_inert, u_wind_inert)+ 3.14159265358979 
-	
-If indSpdType = 6 Or indSpdType = 7 Then
-	If indAngle1Type = 0 Then
-		Track = Angle1Value
-		If indAngle2Type = 0 Then
-			Beta = Angle2Value 
-			u_inert = gs * Cos(Track) 
-			v_inert = gs * Sin(Track)
+	u_wind_inert = -Headwind*Cos(WindRefAngle) + CrossWind*Sin(WindRefAngle)
+	v_wind_inert = -CrossWind*Cos(WindRefAngle) - Headwind*Sin(WindRefAngle)
+	WS = Sqrt(Headwind*Headwind + CrossWind*CrossWind)
+	WD = ATan2(v_wind_inert, u_wind_inert) + 3.14159265358979
+
+	Dim AirDirection, WindAlongAir, Discriminant, WindNormal, Ratio As Double
+
+	If indSpdType = 6 Or indSpdType = 7 Then
+		' Ground speed is known.
+		If indAngle1Type = 0 Then
+			' Track is known, so the complete ground-velocity vector is known.
+			Track = Angle1Value
+			u_inert = gs*Cos(Track)
+			v_inert = gs*Sin(Track)
 			u_airsp_inert = u_inert - u_wind_inert
 			v_airsp_inert = v_inert - v_wind_inert
-			Psi = ATan2(v_airsp_inert, u_airsp_inert) - Beta
-		Else If indAngle2Type = 1 Then
-			Drift = Angle2Value 
-			Psi = Track + Drift
-			Beta = Track - Psi + ASin(Sin(2 * 3.14159265358979 - WD + 3.14159265358979 - Psi) * WS / gs)	
-		End If
-	Else If indAngle1Type = 1 Then
-		Psi = Angle1Value
-		If indAngle2Type = 0 Then
-			Beta = Angle2Value 
-			Track = Psi + Beta-ASin(Sin(2 * 3.14159265358979 - WD + 3.14159265358979 - Psi) * WS / gs)
-		Else If indAngle2Type = 1 Then
-			Drift = Angle2Value
-			Track = Psi - Drift
-			u_inert = gs * Cos(Track) 
-			v_inert = gs * Sin(Track)
-			u_airsp_inert = u_inert - u_wind_inert
-			v_airsp_inert = v_inert - v_wind_inert
-			Beta = ATan2(v_airsp_inert, u_airsp_inert) - Psi
-		End If
-	End If
-	tas = (gs + WS * Cos(WD-Track)) / Cos(Psi + Beta-Track)
-Else 		
-	' Usuario Escolheu Psi como Output
-	If indAngle1Type = 1 Then
-		Psi = Angle1Value 
-		If indAngle2Type = 0 Then
-			Beta = Angle2Value 
-			u_airsp_inert = tas*Cos(Psi+Beta) 
-			v_airsp_inert = tas*Sin(Psi+Beta)	
-			u_inert = u_airsp_inert + u_wind_inert
-			v_inert = v_airsp_inert + v_wind_inert
-			Track = ATan2(v_inert, u_inert) 
-		Else If indAngle2Type = 1 Then
-			Drift = Angle2Value 
-			Track = Psi - Drift
-			If ((WS / tas) * Sin(WD-Track)) > 1 Then
-				MsgboxAsync("Heading Cannot be flown. Wind too strong!", "Error")
+			tas = Sqrt(u_airsp_inert*u_airsp_inert + v_airsp_inert*v_airsp_inert)
+			AirDirection = ATan2(v_airsp_inert, u_airsp_inert)
+			If indAngle2Type = 0 Then
+				Beta = Angle2Value
+				Psi = AirDirection - Beta
+			Else
+				Drift = Angle2Value
+				Psi = Track + Drift
+				Beta = NormalizeSignedAngle(AirDirection - Psi)
 			End If
-			Beta = -Drift + ASin((WS / tas) * Sin(WD-Track))
+		Else
+			' Heading is known.
+			Psi = Angle1Value
+			If indAngle2Type = 1 Then
+				' Drift fixes track, so the complete ground-velocity vector is known.
+				Drift = Angle2Value
+				Track = Psi - Drift
+				u_inert = gs*Cos(Track)
+				v_inert = gs*Sin(Track)
+				u_airsp_inert = u_inert - u_wind_inert
+				v_airsp_inert = v_inert - v_wind_inert
+				tas = Sqrt(u_airsp_inert*u_airsp_inert + v_airsp_inert*v_airsp_inert)
+				AirDirection = ATan2(v_airsp_inert, u_airsp_inert)
+				Beta = NormalizeSignedAngle(AirDirection - Psi)
+			Else
+				' Heading and sideslip fix the air-velocity direction. Solve its magnitude.
+				Beta = Angle2Value
+				AirDirection = Psi + Beta
+				WindAlongAir = u_wind_inert*Cos(AirDirection) + v_wind_inert*Sin(AirDirection)
+				Discriminant = WindAlongAir*WindAlongAir + gs*gs - WS*WS
+				If Discriminant < 0 Then
+					MsgboxAsync("Ground speed is incompatible with the selected heading, sideslip, and wind.", "Error")
+					tas = 0
+					Return
+				End If
+				tas = -WindAlongAir + Sqrt(Discriminant)
+				If tas < 0 Then
+					MsgboxAsync("Ground speed is incompatible with the selected heading, sideslip, and wind.", "Error")
+					tas = 0
+					Return
+				End If
+				u_airsp_inert = tas*Cos(AirDirection)
+				v_airsp_inert = tas*Sin(AirDirection)
+				u_inert = u_airsp_inert + u_wind_inert
+				v_inert = v_airsp_inert + v_wind_inert
+				Track = ATan2(v_inert, u_inert)
+			End If
 		End If
-	' Usuario Escolheu Track como Output
-	Else If indAngle1Type = 0 Then
-		Track = Angle1Value
-		If indAngle2Type = 0 Then
+	Else
+		' TAS is known.
+		If indAngle1Type = 1 And indAngle2Type = 0 Then
+			' Heading and sideslip directly fix the air-velocity vector.
+			Psi = Angle1Value
 			Beta = Angle2Value
-			Psi = Track-Beta + ASin((WS / tas) * Sin(WD-Track))
-		Else If indAngle2Type = 1 Then
-			Drift = Angle2Value 
-			Beta = -Drift + ASin((WS / tas) * Sin(WD-Track))
-			Psi = Drift + Track
+			AirDirection = Psi + Beta
+		Else
+			' The remaining combinations fix track. Solve the air direction that cancels cross-track wind.
+			If indAngle1Type = 0 Then
+				Track = Angle1Value
+				If indAngle2Type = 0 Then
+					Beta = Angle2Value
+				Else
+					Drift = Angle2Value
+					Psi = Track + Drift
+				End If
+			Else
+				Psi = Angle1Value
+				Drift = Angle2Value
+				Track = Psi - Drift
+			End If
+
+			WindNormal = -u_wind_inert*Sin(Track) + v_wind_inert*Cos(Track)
+			Ratio = -WindNormal/tas
+			If Abs(Ratio) > 1 Then
+				MsgboxAsync("Selected track cannot be maintained with the current airspeed and wind.", "Error")
+				gs = 0
+				Return
+			End If
+			AirDirection = Track + ASin(Ratio)
+			If indAngle1Type = 0 And indAngle2Type = 0 Then
+				Psi = AirDirection - Beta
+			Else
+				Beta = NormalizeSignedAngle(AirDirection - Psi)
+			End If
 		End If
+
+		u_airsp_inert = tas*Cos(AirDirection)
+		v_airsp_inert = tas*Sin(AirDirection)
+		u_inert = u_airsp_inert + u_wind_inert
+		v_inert = v_airsp_inert + v_wind_inert
+		gs = Sqrt(u_inert*u_inert + v_inert*v_inert)
+		Track = ATan2(v_inert, u_inert)
 	End If
-	gs = tas*Cos(Psi+Beta-Track) - WS*Cos(WD-Track)
-End If
-		
-	Drift = Psi - Track
-		
-	HW = WS * Cos(WD-Track)
-	CW = WS * Sin(WD-Track)
-	
+
+	Drift = NormalizeSignedAngle(Psi - Track)
+	Beta = NormalizeSignedAngle(Beta)
+
+	HW = WS*Cos(WD-Track)
+	CW = WS*Sin(WD-Track)
+
 	If Abs(Drift) < 0.000001 Then Drift = 0
 	If Abs(Track) < 0.000001 Then Track = 0
 	If Abs(Beta) < 0.000001 Then Beta = 0
@@ -3427,53 +3456,137 @@ End If
 	Select manager.GetString("angleformat")
 	Case "0/360 (0/π)"
 		If Track < 0 Then
-			Track = 2 * 3.14159265358979323846 + Track
-		Else If Track >= (2 * 3.14159265358979323846) Then
-			Track = Track - 2 * 3.14159265358979323846 
+			Track = 2*3.14159265358979323846 + Track
+		Else If Track >= 2*3.14159265358979323846 Then
+			Track = Track - 2*3.14159265358979323846
 		End If
 		If Psi < 0 Then
-			Psi = 2 * 3.14159265358979323846 + Psi
-		Else If Psi >= (2 * 3.14159265358979323846) Then
-			Psi = Psi - 2 * 3.14159265358979323846
+			Psi = 2*3.14159265358979323846 + Psi
+		Else If Psi >= 2*3.14159265358979323846 Then
+			Psi = Psi - 2*3.14159265358979323846
 		End If
 		If WD < 0 Then
-			WD = 2 * 3.14159265358979323846 + WD
-		Else If WD >= (2 * 3.14159265358979323846) Then
-			WD = WD - 2 * 3.14159265358979323846 
-		End If		
+			WD = 2*3.14159265358979323846 + WD
+		Else If WD >= 2*3.14159265358979323846 Then
+			WD = WD - 2*3.14159265358979323846
+		End If
 	Case "-180/180 (-π/π)"
-		If Track < -3.14159265358979323846 Then
-			Track = 2 * 3.14159265358979323846 + Track
-		Else If Track > 3.14159265358979323846 Then
-			Track = Track - 2 * 3.14159265358979323846 
-		End If
-		If Psi < -3.14159265358979323846 Then
-			Psi = 2 * 3.14159265358979323846 + Psi
-		Else If Psi > 3.14159265358979323846 Then
-			Psi = Psi - 2 * 3.14159265358979323846
-		End If
-		If WD < -3.14159265358979323846 Then
-			WD = 2 * 3.14159265358979323846 + WD
-		Else If WD > 3.14159265358979323846 Then
-			WD = WD - 2 * 3.14159265358979323846 
-		End If
+		Track = NormalizeSignedAngle(Track)
+		Psi = NormalizeSignedAngle(Psi)
+		WD = NormalizeSignedAngle(WD)
 	End Select
-		
+End Sub
+
+Sub NormalizeSignedAngle (Angle As Double) As Double
+	Do While Angle > 3.14159265358979323846
+		Angle = Angle - 2*3.14159265358979323846
+	Loop
+	Do While Angle <= -3.14159265358979323846
+		Angle = Angle + 2*3.14159265358979323846
+	Loop
+	Return Angle
 End Sub
 
 Sub CalcError (Hgeop_input_m As Double, Hp_input_m As Double) As Double
-	Dim Error As Double
+	Dim Residual, LocalIsa, LocalT As Double
 	SetStandardAtmosphereFromPressureAltitude(Hp_input_m)
 	If indTempType = 0 Then
-		isa = TempValue*kTemp
-		T_kelvin = T_std + isa
+		LocalIsa = TempValue*kTemp
 	Else
-		T_kelvin = TempValue*kTemp + cTemp
-		isa = T_kelvin - T_std
+		LocalT = TempValue*kTemp + cTemp
+		LocalIsa = LocalT - T_std
 	End If
-	Error = Hp_input_m - Hgeop_input_m - 29.271247 * isa* Logarithm(P_P0,exp)
-	Error = Abs (Error)
-	Return Error
+	Residual = Hp_input_m - Hgeop_input_m - 29.271247*LocalIsa*Logarithm(P_P0,exp)
+	Return Residual
+End Sub
+
+Sub PressureAltitudeFromGeometricAltitude (Hgeop_input_m As Double) As Double
+	Dim Lower, Upper, FLower, FUpper, Guess, FGuess As Double
+	Dim Perturb, XLower, XUpper, Derivative, Candidate As Double
+	Dim cont As Int
+	Lower = -5000
+	Upper = 84852
+	FLower = CalcError(Hgeop_input_m, Lower)
+	FUpper = CalcError(Hgeop_input_m, Upper)
+
+	If FLower*FUpper > 0 Then
+		Return Hgeop_input_m
+	End If
+
+	Guess = Hgeop_input_m
+	If Guess <= Lower Or Guess >= Upper Then Guess = (Lower + Upper)/2
+	Perturb = 1
+
+	For cont = 0 To 39
+		FGuess = CalcError(Hgeop_input_m, Guess)
+		If Abs(FGuess) <= 0.001 Then
+			Return Guess
+		End If
+
+		If FLower*FGuess <= 0 Then
+			Upper = Guess
+			FUpper = FGuess
+		Else
+			Lower = Guess
+			FLower = FGuess
+		End If
+
+		XLower = Guess - Perturb
+		XUpper = Guess + Perturb
+		If XLower < Lower Then XLower = Lower
+		If XUpper > Upper Then XUpper = Upper
+		If XUpper > XLower Then
+			Derivative = (CalcError(Hgeop_input_m, XUpper) - CalcError(Hgeop_input_m, XLower))/(XUpper-XLower)
+		Else
+			Derivative = 0
+		End If
+
+		If Abs(Derivative) > 0.000000001 Then
+			Candidate = Guess - FGuess/Derivative
+		Else
+			Candidate = (Lower + Upper)/2
+		End If
+		If Candidate <= Lower Or Candidate >= Upper Then Candidate = (Lower + Upper)/2
+		Guess = Candidate
+	Next
+
+	Return Guess
+End Sub
+
+Sub StandardDensityAtPressureAltitude (AltitudeM As Double) As Double
+	Dim SavedT, SavedP, StandardDensity As Double
+	SavedT = T_std
+	SavedP = P_P0
+	SetStandardAtmosphereFromPressureAltitude(AltitudeM)
+	StandardDensity = P_P0*P0/(287.05287*T_std)
+	T_std = SavedT
+	P_P0 = SavedP
+	Return StandardDensity
+End Sub
+
+Sub DensityAltitudeFromDensity (DensityValue As Double) As Double
+	Dim Lower, Upper, Midpoint, MidDensity As Double
+	Dim cont As Int
+	Lower = -5000
+	Upper = 84852
+
+	If DensityValue >= StandardDensityAtPressureAltitude(Lower) Then
+		Return Lower
+	End If
+	If DensityValue <= StandardDensityAtPressureAltitude(Upper) Then
+		Return Upper
+	End If
+
+	For cont = 0 To 31
+		Midpoint = (Lower + Upper)/2
+		MidDensity = StandardDensityAtPressureAltitude(Midpoint)
+		If MidDensity > DensityValue Then
+			Lower = Midpoint
+		Else
+			Upper = Midpoint
+		End If
+	Next
+	Return (Lower + Upper)/2
 End Sub
 
 Sub SetStandardAtmosphereFromPressureAltitude (AltitudeM As Double)
@@ -3813,14 +3926,14 @@ Sub WriteText
 		End If
 	Case 32
 		lblVar.Text = "Turn Radius"
-		lblRes.Text = NumberFormat2(gs*gs/(9.80665*Tan(Bank)*1000), 1, 3 + d, 3 + d, False) & " Km"
-		If IsNan(gs*gs/(9.80665*Tan(Bank)*1000)) Or IsInf(gs*gs/(9.80665*Tan(Bank)*1000)) Then
+		lblRes.Text = NumberFormat2(tas*tas/(9.80665*Tan(Bank)*1000), 1, 3 + d, 3 + d, False) & " Km"
+		If IsNan(tas*tas/(9.80665*Tan(Bank)*1000)) Or IsInf(tas*tas/(9.80665*Tan(Bank)*1000)) Then
 			lblRes.Text = "----"
 		End If
 	Case 33
 		lblVar.Text = "Turn Rate"
-		lblRes.Text = NumberFormat2((9.80665*Tan(Bank))/gs * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle") & "/s"
-		If IsNan(9.80665*Tan(Bank)/gs) Or IsInf(9.80665*Tan(Bank)/gs) Then
+		lblRes.Text = NumberFormat2((9.80665*Tan(Bank))/tas * k2angle, 1, 2 + d, 2 + d, False) & " " & manager.GetString("angle") & "/s"
+		If IsNan(9.80665*Tan(Bank)/tas) Or IsInf(9.80665*Tan(Bank)/tas) Then
 			lblRes.Text = "----"
 		End If
 	Case 34

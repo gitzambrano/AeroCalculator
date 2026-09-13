@@ -30,7 +30,7 @@ The application accepts or derives TAS, CAS, EAS, Mach, lift coefficient, Vs fac
 
 Aircraft profiles store reference area, reference chord, several mass definitions, and CLmax values for flap configurations.
 
-Stall calculations combine mass, load factor, density, reference area, and CLmax.
+The displayed stall speed is the 1-g reference value and combines mass, density, reference area, and CLmax. Maneuver load factor does not change that displayed Vs.
 
 ### Maneuver
 
