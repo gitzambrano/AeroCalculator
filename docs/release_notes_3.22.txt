@@ -1,0 +1,12 @@
+<en-US>
+What's new in v3.22:
+• Support for Android 15 & 16 (edge-to-edge layout).
+• Improved atmosphere, altitude, and wind calculation solvers.
+• General stability fixes and UI refinements.
+</en-US>
+<pt-BR>
+Novidades da v3.22:
+• Suporte ao Android 15 e 16 (layout edge-to-edge).
+• Cálculos de atmosfera, altitude e vento aprimorados.
+• Correções de estabilidade e refinamentos visuais.
+</pt-BR>

@@ -2,9 +2,18 @@
 import json, re, subprocess, sys, time, xml.etree.ElementTree as ET
 from pathlib import Path
 
-APK=sys.argv[1]; API=sys.argv[2] if len(sys.argv)>2 else 'unknown'
-PKG='flightdyn.aerocalculator'; OUT=Path(f'smoke-results/api-{API}/feature-regression'); OUT.mkdir(parents=True,exist_ok=True)
-R={'api':API,'checks':[]}
+# ==============================================================================
+# FALLBACK CONFIGURATION (Used when running without CLI arguments)
+# ==============================================================================
+DEFAULT_APK_PATH = Path("Objects/AeroCalculator.apk")
+DEFAULT_API_LEVEL = "36"
+
+APK = sys.argv[1] if len(sys.argv) > 1 else str(DEFAULT_APK_PATH)
+API = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_API_LEVEL
+PKG = 'flightdyn.aerocalculator'
+OUT = Path(f'smoke-results/api-{API}/feature-regression')
+OUT.mkdir(parents=True, exist_ok=True)
+R = {'api': API, 'checks': []}
 
 def run(*a,check=True,text=True):
  p=subprocess.run(a,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=text)

@@ -33,6 +33,9 @@ secrets/
 *.token
 *.keyfile
 service-account*.json
+*service_account*.json
+*play_store*.json
+*play-store*.json
 google-services.json
 
 # ==============================================================================

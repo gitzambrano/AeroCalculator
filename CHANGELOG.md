@@ -2,7 +2,7 @@
 
 All notable changes to the repository should be recorded here.
 
-## Unreleased
+## [3.22] - 2026-09-13
 
 ### Added
 
@@ -12,8 +12,10 @@ All notable changes to the repository should be recorded here.
 - Portable reference-physics verification suite.
 - Repository, documentation, asset, dependency, and source sanity checks.
 - Characterization and reference-data separation.
-- GitHub Actions quality workflow.
+- GitHub Actions quality and multi-screen smoke test workflows.
 - Release checklist and optional B4ABuilder helper.
+- Automated Google Play Store upload script (`tools/upload_playstore.py`) with zero-argument fallbacks.
+- Bilingual release notes (`docs/release_notes_3.22.txt`).
 - Third-party notice placeholder pending license verification.
 
 ### Changed

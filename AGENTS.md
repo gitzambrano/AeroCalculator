@@ -66,6 +66,22 @@ The desired long-term boundary is:
 
 New calculation logic should move toward pure B4A modules that do not read controls, preferences, files, or Android APIs directly.
 
+## Python tooling conventions
+
+All Python scripts under `tools/` must run without command-line arguments.
+
+Define default or fallback parameters as explicit variables near the top of each script. Command-line flags may override these variables, but the script must execute successfully when invoked with zero arguments.
+
+Do not commit private credentials, tokens, keystores, or service-account JSON files to Git. Keep credentials in the ignored `Key/` directory or supply them via environment variables.
+
+## Google Play release workflow
+
+1. Increment `#VersionCode` and update `#VersionName` in `AeroCalculator.b4a`.
+2. Generate the signed release bundle (`Objects/AeroCalculator.aab`) and APK (`Objects/AeroCalculator.apk`) using `B4ABuilder.exe` with the private keystore under `Key/key_aero_calc.keystore` (key alias `b4a`).
+3. Maintain release notes in `docs/release_notes_<version>.txt` using language blocks such as `<en-US>` and `<pt-BR>`.
+4. Upload the release via Google Play Console manually or automatically via `tools/upload_playstore.py`.
+5. For automated uploads, save the Google Cloud service-account key to `Key/play_store_service_account.json` (git-ignored) and enable the Google Play Android Developer API in the linked Google Cloud project.
+
 ## Completion
 
 Do not report a change as complete while a required test fails, documentation is inconsistent, or a change is only partially wired into the application.
