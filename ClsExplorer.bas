@@ -1,4 +1,4 @@
-B4A=true
+﻿B4A=true
 Group=Default Group
 ModulesStructureVersion=1
 Type=Class
@@ -416,13 +416,13 @@ Private Sub pnlVisu_Close(ViewTag As Object)
 	pnlVisu = Null
 End Sub
 
-' Resize a picture
 Private Sub IsImage(NomFichier As String) As Boolean
 	Dim Minus As String
 	Minus = NomFichier.ToLowerCase
 	Return (Minus.EndsWith(".bmp") Or Minus.EndsWith(".gif") Or Minus.EndsWith(".jpg") Or Minus.EndsWith(".png"))
 End Sub
 
+' Resize a picture
 Private Sub CreateScaledBitmap(Original As Bitmap, Width As Int, Height As Int) As Bitmap
 	Dim r As Reflector
 	Dim b As Bitmap
@@ -467,11 +467,11 @@ Private Sub AfficherImage(Image As String)
 				If RatioImg > RatioBmp Then
 					Diviseur = bmp.Height / pnlVisu.Height
 					bmp = CreateScaledBitmap(bmp, Round(bmp.Width / Diviseur / Density), _
-																Round(pnlVisu.Height / Density))
+															Round(pnlVisu.Height / Density))
 				Else
 					Diviseur = bmp.Width / pnlVisu.Width
 					bmp = CreateScaledBitmap(bmp, Round(pnlVisu.Width / Density), _
-																Round(bmp.Height / Diviseur / Density))
+															Round(bmp.Height / Diviseur / Density))
 				End If
 				ivVisu.Gravity = Gravity.NO_GRAVITY
 			End If
@@ -502,43 +502,59 @@ Private Sub AfficherTexte(Texte As String)
 	pnlVisu.AddView(lblVisu, 10dip, 10dip, pnlFiles.Width - (2*Marge) - 20dip, pnlFiles.Height - (2*Marge) - 20dip)
 	pnlFiles.AddView(pnlVisu, Marge, Marge, pnlFiles.Width - (2*Marge), pnlFiles.Height - (2*Marge))
 	pnlVisu.Color = Colors.Transparent
-	lblVisu.Color = Colors.Transparent
+	svFichiers.Visible = False
 	lblVisu.TextColor = FileTextColor1
-	lblVisu.TextSize = 14
+	lblVisu.TextSize = 16
 	lblVisu.Typeface = Typeface.DEFAULT
-	lblVisu.Text = "Please wait..."
-	lblVisu.Gravity = Gravity.TOP + Gravity.LEFT
-	DoEvents: DoEvents
 	Try
-		Dim Reader As TextReader
+		Dim Contenu As StringBuilder: Contenu.Initialize
+		Dim Reader As TextReader, Ligne As String, Cpt As Int
 		Reader.Initialize(File.OpenInput(strChemin, Texte))
-		lblVisu.Text = Reader.ReadAll
+		Ligne = Reader.ReadLine
+		Do While Ligne <> Null
+			Cpt = Cpt + 1
+			If Cpt > 50 Then
+				Contenu.Append("--- Lines after 50 are skipped ---")
+				Exit
+			End If
+			Contenu.Append(Ligne).Append(CRLF)
+			Ligne = Reader.ReadLine
+		Loop
 		Reader.Close
+		lblVisu.Text = Contenu
 		Dim r As Reflector
 		r.Target = pnlVisu
 		r.SetOnClickListener("pnlVisu_Close") 'We cannot use here the usual B4A click listener
 	Catch
 		Msgbox(LastException.Message, "Oooops")
+		Reader.Close
 		pnlVisu_Close(Null)
 	End Try
 End Sub
 
-Private Sub lstFichiers_Click(ID As Int)
-	Dim p As Panel
-	p = lstFichiers.GetPanel(ID)
+Private Sub lstFichiers_Click(Item As Panel, ItemTag As Object)
 	Dim lbl As Label
-	lbl = p.GetView(0)
-	If lbl.Text.StartsWith("/") Then
+	lbl = Item.GetView(0)
+	If lbl.Text = "/ .." Then
+		' Open the parent folder
+		Dim PosSlash As Int, ParentPath As String
+		PosSlash = strChemin.LastIndexOf("/")
+		ParentPath = strChemin.SubString2(0, PosSlash)
+		If ParentPath = "" Then ParentPath = "/"
+		ReadFolder(ParentPath)
+		If bDossiersSeuls Then
+			edtFilename.Text = ParentPath
+			edtFilename.RequestFocus
+		Else
+			edtFilename.Text = ""
+		End If
+	Else If lbl.Text.StartsWith("/ ") Then
 		' Open the selected folder
 		Dim NewPath As String
-		If lbl.Text = "/ .." Then
-			If strChemin.LastIndexOf("/") = 0 Then
-				NewPath = "/"
-			Else
-				NewPath = strChemin.SubString2(0, strChemin.LastIndexOf("/"))
-			End If
+		If strChemin = "/" Then
+			NewPath = strChemin & lbl.Text.SubString(2)
 		Else
-			NewPath = File.Combine(strChemin, lbl.Text.SubString(2))
+			NewPath = strChemin & "/" & lbl.Text.SubString(2)
 		End If
 		ReadFolder(NewPath)
 		If bDossiersSeuls Then
