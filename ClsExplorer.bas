@@ -1,4 +1,4 @@
-﻿B4A=true
+B4A=true
 Group=Default Group
 ModulesStructureVersion=1
 Type=Class
@@ -21,6 +21,7 @@ Sub Class_Globals
 	Private bDossiersSeuls As Boolean
 	Private bVisualiser As Boolean
 	Private strBtnOKTxt As String
+	Private SafeRect As Rect
 
 	Private pnlMasque As Panel
 	Private pnlCadre As Panel
@@ -47,6 +48,9 @@ End Sub
 Public Sub Initialize(Activity As Activity, DefaultFolder As String, Filter As String, VisuPnl As Boolean, OnlyFolders As Boolean, OkText As String)
 	Dim Ecart As Int: Ecart = 10dip
 	actEcran = Activity
+	Dim imeInsets As IME
+	imeInsets.Initialize("")
+	SafeRect = imeInsets.GetContentRect
 	strChemin = DefaultFolder
 	lstFiltre.Initialize
 	Dim strFiltre As String, PosVirg As Int
@@ -66,7 +70,7 @@ Public Sub Initialize(Activity As Activity, DefaultFolder As String, Filter As S
 	FileTextColor1 = Colors.RGB(116, 172, 232)
 	FileTextColor2 = Colors.Gray
 	DividerColor = Colors.DarkGray
-	DialogRect.Initialize(Ecart, Ecart, 100%x - Ecart, 100%y - Ecart)
+	DialogRect.Initialize(Ecart, Ecart, SafeRect.Width - Ecart, SafeRect.Height - Ecart)
 	WaitUntilOK = True
 End Sub
 
@@ -260,7 +264,7 @@ Public Sub Explorer As typResult
 	pnlCadre.AddView(pnlFiles, MarginBord, MarginBord, Largeur - (2*MarginBord), Hauteur - HauteurCartouche - (2*MarginBord))
 	pnlCadre.AddView(pnlCartouche, MarginBord, Hauteur - HauteurCartouche - MarginBord, Largeur - (2*MarginBord), HauteurCartouche)
 	pnlMasque.AddView(pnlCadre, DialogRect.Left, DialogRect.Top, Largeur, Hauteur)
-	actEcran.AddView(pnlMasque, 0, 0, 100%x, 100%y)
+	actEcran.AddView(pnlMasque, SafeRect.Left, SafeRect.Top, SafeRect.Width, SafeRect.Height)
 
 	If strChemin.EndsWith("/") And strChemin <> "/" Then strChemin = strChemin.SubString2(0, strChemin.Length)
 	ReadFolder(strChemin)
@@ -309,8 +313,8 @@ Public Sub Explorer2(DarkTheme As Boolean) As typResult
 	svFichiers.Initialize(0)
 	svFichiers.Color = BackgroundColor
 	Dim Largeur, Hauteur As Int
-	Largeur = 100%x - (2*MarginBord)
-	Hauteur = 100%y - (2*MarginBord)
+	Largeur = SafeRect.Width - (2*MarginBord)
+	Hauteur = SafeRect.Height - (2*MarginBord)
 	pnlFiles.AddView(svFichiers, Margin, Margin, Largeur - (2*Margin), Hauteur - (2*Margin) - HauteurCartouche)
 	r.Target = svFichiers
 	r.SetOnKeyListener("dlg_KeyPress")
@@ -344,7 +348,7 @@ Public Sub Explorer2(DarkTheme As Boolean) As typResult
 
 	pnlMasque.AddView(pnlFiles, MarginBord, MarginBord - Margin, Largeur, Hauteur - HauteurCartouche)
 	pnlMasque.AddView(pnlCartouche, MarginBord, Hauteur - HauteurCartouche + pnlFiles.Top, Largeur, HauteurCartouche)
-	actEcran.AddView(pnlMasque, 0, 0, 100%x, 100%y)
+	actEcran.AddView(pnlMasque, SafeRect.Left, SafeRect.Top, SafeRect.Width, SafeRect.Height)
 
 	If strChemin.EndsWith("/") And strChemin <> "/" Then strChemin = strChemin.SubString2(0, strChemin.Length)
 	ReadFolder(strChemin)
@@ -412,13 +416,13 @@ Private Sub pnlVisu_Close(ViewTag As Object)
 	pnlVisu = Null
 End Sub
 
+' Resize a picture
 Private Sub IsImage(NomFichier As String) As Boolean
 	Dim Minus As String
 	Minus = NomFichier.ToLowerCase
 	Return (Minus.EndsWith(".bmp") Or Minus.EndsWith(".gif") Or Minus.EndsWith(".jpg") Or Minus.EndsWith(".png"))
 End Sub
 
-' Resize a picture
 Private Sub CreateScaledBitmap(Original As Bitmap, Width As Int, Height As Int) As Bitmap
 	Dim r As Reflector
 	Dim b As Bitmap
@@ -463,11 +467,11 @@ Private Sub AfficherImage(Image As String)
 				If RatioImg > RatioBmp Then
 					Diviseur = bmp.Height / pnlVisu.Height
 					bmp = CreateScaledBitmap(bmp, Round(bmp.Width / Diviseur / Density), _
-															Round(pnlVisu.Height / Density))
+																Round(pnlVisu.Height / Density))
 				Else
 					Diviseur = bmp.Width / pnlVisu.Width
 					bmp = CreateScaledBitmap(bmp, Round(pnlVisu.Width / Density), _
-															Round(bmp.Height / Diviseur / Density))
+																Round(bmp.Height / Diviseur / Density))
 				End If
 				ivVisu.Gravity = Gravity.NO_GRAVITY
 			End If
@@ -498,59 +502,43 @@ Private Sub AfficherTexte(Texte As String)
 	pnlVisu.AddView(lblVisu, 10dip, 10dip, pnlFiles.Width - (2*Marge) - 20dip, pnlFiles.Height - (2*Marge) - 20dip)
 	pnlFiles.AddView(pnlVisu, Marge, Marge, pnlFiles.Width - (2*Marge), pnlFiles.Height - (2*Marge))
 	pnlVisu.Color = Colors.Transparent
-	svFichiers.Visible = False
+	lblVisu.Color = Colors.Transparent
 	lblVisu.TextColor = FileTextColor1
-	lblVisu.TextSize = 16
+	lblVisu.TextSize = 14
 	lblVisu.Typeface = Typeface.DEFAULT
+	lblVisu.Text = "Please wait..."
+	lblVisu.Gravity = Gravity.TOP + Gravity.LEFT
+	DoEvents: DoEvents
 	Try
-		Dim Contenu As StringBuilder: Contenu.Initialize
-		Dim Reader As TextReader, Ligne As String, Cpt As Int
+		Dim Reader As TextReader
 		Reader.Initialize(File.OpenInput(strChemin, Texte))
-		Ligne = Reader.ReadLine
-		Do While Ligne <> Null
-			Cpt = Cpt + 1
-			If Cpt > 50 Then
-				Contenu.Append("--- Lines after 50 are skipped ---")
-				Exit
-			End If
-			Contenu.Append(Ligne).Append(CRLF)
-			Ligne = Reader.ReadLine
-		Loop
+		lblVisu.Text = Reader.ReadAll
 		Reader.Close
-		lblVisu.Text = Contenu
 		Dim r As Reflector
 		r.Target = pnlVisu
 		r.SetOnClickListener("pnlVisu_Close") 'We cannot use here the usual B4A click listener
 	Catch
 		Msgbox(LastException.Message, "Oooops")
-		Reader.Close
 		pnlVisu_Close(Null)
 	End Try
 End Sub
 
-Private Sub lstFichiers_Click(Item As Panel, ItemTag As Object)
+Private Sub lstFichiers_Click(ID As Int)
+	Dim p As Panel
+	p = lstFichiers.GetPanel(ID)
 	Dim lbl As Label
-	lbl = Item.GetView(0)
-	If lbl.Text = "/ .." Then
-		' Open the parent folder
-		Dim PosSlash As Int, ParentPath As String
-		PosSlash = strChemin.LastIndexOf("/")
-		ParentPath = strChemin.SubString2(0, PosSlash)
-		If ParentPath = "" Then ParentPath = "/"
-		ReadFolder(ParentPath)
-		If bDossiersSeuls Then
-			edtFilename.Text = ParentPath
-			edtFilename.RequestFocus
-		Else
-			edtFilename.Text = ""
-		End If
-	Else If lbl.Text.StartsWith("/ ") Then
+	lbl = p.GetView(0)
+	If lbl.Text.StartsWith("/") Then
 		' Open the selected folder
 		Dim NewPath As String
-		If strChemin = "/" Then
-			NewPath = strChemin & lbl.Text.SubString(2)
+		If lbl.Text = "/ .." Then
+			If strChemin.LastIndexOf("/") = 0 Then
+				NewPath = "/"
+			Else
+				NewPath = strChemin.SubString2(0, strChemin.LastIndexOf("/"))
+			End If
 		Else
-			NewPath = strChemin & "/" & lbl.Text.SubString(2)
+			NewPath = File.Combine(strChemin, lbl.Text.SubString(2))
 		End If
 		ReadFolder(NewPath)
 		If bDossiersSeuls Then
