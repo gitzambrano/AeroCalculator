@@ -1,4 +1,4 @@
-﻿Build1=Default,flightdyn.aerocalculator
+Build1=Default,flightdyn.aerocalculator
 File1=android-3-dot-menu.png
 File10=icon_error.png
 File11=icon_flat_green_white.png
@@ -65,8 +65,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: AeroCalculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 27
-	#VersionName: 3.22
+	#VersionCode: 28
+	#VersionName: 3.23
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -4170,7 +4170,7 @@ Sub MenuCall (MenuItem As Int)
 		StartActivity(screen.CreateIntent)
 	Case 1
 		Dim pm As PackageManager
-			Msgbox2Async(CRLF & "AeroCalculator" & CRLF & CRLF & "2025 / version " & pm.GetVersionName("flightdyn.aerocalculator") & CRLF & CRLF & "Gustavo José Zambrano" & CRLF & CRLF & "flightdyn@gmail.com" & CRLF, "    About","","","",LoadBitmap(File.DirAssets,"icon_bezel_transp_green.png"),True)
+			Msgbox2Async(CRLF & "AeroCalculator" & CRLF & CRLF & DateTime.GetYear(DateTime.Now) & " / version " & pm.GetVersionName("flightdyn.aerocalculator") & CRLF & CRLF & "Gustavo José Zambrano" & CRLF & CRLF & "flightdyn@gmail.com" & CRLF, "    About","","","",LoadBitmap(File.DirAssets,"icon_bezel_transp_green.png"),True)
 	    Wait For Msgbox_Result (Idx88 As Int)
 		Return
 	Case 2

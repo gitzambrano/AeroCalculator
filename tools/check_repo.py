@@ -107,6 +107,11 @@ def check_project(errors: list[str], warnings: list[str]) -> None:
             "historical invalid 20-32 km atmosphere temperature expression reappeared"
         )
 
+    if re.search(r'"\s*20\d{2}\s*/\s*version\s*"', text):
+        errors.append(
+            "About dialog contains a hardcoded year; use DateTime.GetYear(DateTime.Now) instead"
+        )
+
 
 def check_security(errors: list[str]) -> None:
     tracked = subprocess.run(

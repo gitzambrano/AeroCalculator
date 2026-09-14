@@ -1,0 +1,10 @@
+﻿<en-US>
+What's new in v3.23:
+• Fixed About dialog year to dynamically reflect the current year.
+• General stability and version updates.
+</en-US>
+<pt-BR>
+Novidades da v3.23:
+• Correção do ano exibido na tela "Sobre" para refletir dinamicamente o ano corrente.
+• Atualizações gerais de estabilidade e versão.
+</pt-BR>

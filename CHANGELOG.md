@@ -2,6 +2,13 @@
 
 All notable changes to the repository should be recorded here.
 
+## [3.23] - 2026-09-13
+
+### Changed
+
+- Replaced hardcoded year in About dialog with dynamic `DateTime.GetYear(DateTime.Now)`.
+- Updated version metadata to 3.23 (VersionCode 28).
+
 ## [3.22] - 2026-09-13
 
 ### Added

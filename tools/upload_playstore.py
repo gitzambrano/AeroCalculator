@@ -233,7 +233,6 @@ def main() -> int:
         # Check default files in docs/
         candidate_notes = [
             ROOT / "docs" / f"release_notes_{proj_vn}.txt" if proj_vn else None,
-            ROOT / "docs" / "release_notes_3.22.txt",
             ROOT / "docs" / "release_notes.txt",
         ]
         for cn in candidate_notes:
