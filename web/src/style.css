@@ -113,6 +113,18 @@ body { background: #e9f2f1; }
     linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
 }
+.input-tail {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+}
+
+.input-tail > .unit-select,
+.input-tail > .speed-delta {
+  width: 100%;
+  height: 100%;
+}
+
 .value-input {
   min-width: 0;
   border: 0;
@@ -126,6 +138,7 @@ body { background: #e9f2f1; }
   outline: none;
 }
 .value-input:focus { box-shadow: inset 0 -2px var(--title); }
+.speed-delta { text-align: center; border-left: 1px solid rgb(0 145 131 / .20); }
 .value-input::placeholder { color: #8a9392; }
 .unit-select { text-align: center; text-align-last: center; padding-left: 8px; }
 
