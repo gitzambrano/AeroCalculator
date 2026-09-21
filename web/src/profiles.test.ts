@@ -88,13 +88,27 @@ describe("aircraft profiles", () => {
   });
 
   it("parses Java Properties escapes used by B4A", () => {
-    const props = parseProperties("# comment\\nKey\\ With\\ Spaces=value\\u0020x\\nPath=C\\\\Temp");
+    const props = parseProperties([
+      "# comment",
+      "Key\\\\ With\\\\ Spaces=value\\\\u0020x",
+      "Path=C\\\\\\\\Temp",
+    ].join("\\n"));
     expect(props.get("Key With Spaces")).toBe("value x");
     expect(props.get("Path")).toBe("C\\Temp");
   });
 
   it("auto-detects Android airplanes.txt during import", () => {
-    const imported = importProfiles("N=1\\n1_Name=Legacy\\ 500\\n1_S=42\\n1_c=3\\n1_W1=18000\\n1_F0=1.5\\n1_Sunit=0\\n1_cunit=0\\n1_Wunit=0\\n");
+    const imported = importProfiles([
+      "N=1",
+      "1_Name=Legacy 500",
+      "1_S=42",
+      "1_c=3",
+      "1_W1=18000",
+      "1_F0=1.5",
+      "1_Sunit=0",
+      "1_cunit=0",
+      "1_Wunit=0",
+    ].join("\\n"));
     expect(imported[0].name).toBe("Legacy 500");
     expect(imported[0].weights.MTOW).toBe(18000);
   });
