@@ -400,7 +400,14 @@ body { background: var(--input-bg); }
 .danger-button { border: 1px solid #a40019; background: white; color: #a40019; padding: 10px 14px; }
 .simple-dialog { width: min(330px, calc(100% - 32px)); }
 .about-content { padding: 24px; text-align: center; background: white; }
-.about-content img { width: 58px; height: 58px; }
+.about-content img {
+  width: 64px;
+  height: 64px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--title);
+  object-fit: contain;
+}
 .about-content h2 { margin: 10px 0 4px; }
 .about-content p { margin: 6px 0; }
 .about-content button { margin-top: 14px; min-width: 90px; min-height: 38px; }
