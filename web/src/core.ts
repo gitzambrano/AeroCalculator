@@ -309,7 +309,7 @@ export function solveWindTriangle(input: WindTriangleInput): WindTriangleSolutio
   const uWind = -headwindMS * Math.cos(windReferenceRad) + crosswindMS * Math.sin(windReferenceRad);
   const vWind = -crosswindMS * Math.cos(windReferenceRad) - headwindMS * Math.sin(windReferenceRad);
   const windSpeed = Math.hypot(headwindMS, crosswindMS);
-  const windDirection = windSpeed < 1e-12 ? 0 : normalizeSignedAngle(Math.atan2(vWind, uWind) + Math.PI);
+  const windDirection = windSpeed < 1e-12 ? Math.PI : normalizeSignedAngle(Math.atan2(vWind, uWind) + Math.PI);
 
   let tas = knownSpeed === "tas" ? speedMS : Number.NaN;
   let gs = knownSpeed === "gs" ? speedMS : Number.NaN;

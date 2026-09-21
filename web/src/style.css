@@ -148,7 +148,7 @@ body { background: var(--input-bg); }
 .input-row {
   min-height: 58px;
   display: grid;
-  grid-template-columns: 30% 36% 20%;
+  grid-template-columns: 30fr 36fr 20fr;
   column-gap: 4%;
   align-items: stretch;
   padding: 8px 3%;
@@ -203,7 +203,7 @@ body { background: var(--input-bg); }
   background: linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
 }
-.airplane-row { grid-template-columns: 30% 66%; column-gap: 4%; }
+.airplane-row { grid-template-columns: 30fr 60fr; column-gap: 4%; }
 .profile-select {
   width: 100%;
   padding: 0 34px 0 12px;
@@ -438,8 +438,8 @@ body { background: var(--input-bg); }
   .brand-row { grid-template-columns: 46px 1fr 42px 42px; padding-left: 10px; }
   .brand { font-size: 21px; }
   .brand-icon { width: 35px; height: 35px; }
-  .input-row { grid-template-columns: 30% 36% 20%; min-height: 56px; }
-  .airplane-row { grid-template-columns: 30% 66%; }
+  .input-row { grid-template-columns: 30fr 36fr 20fr; min-height: 56px; }
+  .airplane-row { grid-template-columns: 30fr 60fr; }
   .field-select, .unit-select, .value-input { font-size: 14px; padding-left: 8px; padding-right: 8px; }
   .field-select { padding-right: 24px; background-position: right 11px center, right 6px center, center; }
   .result-row { padding-left: 4px; padding-right: 4px; }
