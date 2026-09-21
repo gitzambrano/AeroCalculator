@@ -84,3 +84,9 @@ __pycache__/
 # Additional Python verification artifacts
 .pytest_cache/
 tests/data/*.generated.json
+
+
+# Web build artifacts
+web/node_modules/
+web/dist/
+web/.vite/
