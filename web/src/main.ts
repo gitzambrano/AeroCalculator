@@ -4,7 +4,6 @@ import {
   WEIGHT_KEYS,
   deleteProfile,
   exportAndroidProfiles,
-  exportProfiles,
   importProfiles,
   loadProfiles,
   newProfile,
@@ -282,8 +281,37 @@ recalculate();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register(new URL("./sw.js", document.baseURI).toString()).catch(() => undefined);
+    void initializeOfflineCache();
   });
+}
+
+async function initializeOfflineCache(): Promise<void> {
+  try {
+    const registration = await navigator.serviceWorker.register(new URL("./sw.js", document.baseURI).toString());
+    await navigator.serviceWorker.ready;
+
+    const urls = new Set<string>([window.location.href]);
+    for (const entry of performance.getEntriesByType("resource")) {
+      const url = new URL(entry.name, window.location.href);
+      if (url.origin === window.location.origin) urls.add(url.href);
+    }
+
+    const worker = registration.active ?? registration.waiting ?? registration.installing;
+    if (!worker) return;
+
+    await new Promise<void>((resolve) => {
+      const channel = new MessageChannel();
+      const timeout = window.setTimeout(resolve, 5000);
+      channel.port1.onmessage = () => {
+        window.clearTimeout(timeout);
+        resolve();
+      };
+      worker.postMessage({ type: "CACHE_URLS", urls: [...urls] }, [channel.port2]);
+    });
+    document.documentElement.dataset.offlineReady = "true";
+  } catch {
+    // Offline support must never prevent calculator startup.
+  }
 }
 
 function opts(values: string[]): SelectOption[] {
@@ -669,11 +697,11 @@ function clearInputs(): void {
 }
 
 function exportProfileFile(): void {
-  const blob = new Blob([exportProfiles(profiles)], { type: "application/json" });
+  const blob = new Blob([exportAndroidProfiles(profiles)], { type: "text/plain;charset=US-ASCII" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "airplanes.json";
+  link.download = "airplanes.txt";
   link.click();
   URL.revokeObjectURL(url);
 }
