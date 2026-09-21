@@ -54,7 +54,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The production build is written to `web/dist/`. The build generates the service worker from the exact Vite output so the installed PWA can reload offline.
+The production build is written to `web/dist/`. JavaScript, CSS, fonts, and UI images are inlined into the generated `index.html`; the remaining static files are the manifest, app icon, and generated service worker. This keeps the Pages build self-contained and allows offline reload after installation.
 
 ## Verification
 
