@@ -89,7 +89,11 @@ test("all non-sensor speed input modes produce a valid TAS", async ({ page }) =>
     await select(page, "spd-type", item.type);
     if (item.unit) await select(page, "spd-unit", item.unit);
     await fill(page, "spd-value", item.value);
-    if (item.type === "Vs Factor") await fill(page, "spdDelta-value", "0");
+    if (item.type === "Vs Factor") {
+      await expect(page.locator("#spdDelta-label")).toBeVisible();
+      await expect(page.locator("#spd-unit")).toBeHidden();
+      await fill(page, "spdDelta-value", "10");
+    }
     expect(await resultText(page, "True Airspeed"), item.type).not.toBe("----");
     await expect(page.locator("#calc-status")).toBeHidden();
   }
@@ -147,6 +151,7 @@ test("both wind input modes and angle combinations remain solvable", async ({ pa
   expect(await resultText(page, "Ground Speed")).not.toBe("----");
 
   await select(page, "headWind-type", "Wind Speed");
+  await expect(page.locator('[data-field="crossWind"]')).toBeHidden();
   await fill(page, "headWind-value", "20");
   await fill(page, "windRef-value", "90");
   expect(Number.parseFloat(await resultText(page, "Wind Speed"))).toBeCloseTo(20, 1);
@@ -210,8 +215,16 @@ test("aircraft profile create, select and Android-compatible export work end to 
   await expect(page.locator("#sref-value")).toHaveValue("42");
   await select(page, "weight-type", "MTOW");
   await expect(page.locator("#weight-value")).toHaveValue("12000");
+  await expect(page.locator("#clmax-type option")).toHaveCount(2);
   await select(page, "clmax-type", "Flap 0");
   await expect(page.locator("#clmax-value")).toHaveValue("1.6");
+
+  await page.getByRole("button", { name: "AIRPLANES" }).click();
+  await page.locator(".airplane-edit-button").click();
+  await expect(page.locator("[data-flap-row]:visible")).toHaveCount(1);
+  await expect(page.locator("#profile-flap-1")).toHaveValue("");
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await page.getByRole("button", { name: "INPUTS" }).click();
 
   await page.getByRole("button", { name: "More options" }).click();
   const downloadPromise = page.waitForEvent("download");
@@ -248,6 +261,15 @@ test("Android airplanes.txt can be imported through the browser UI", async ({ pa
   });
 
   await expect(page.locator(".airplane-name-button strong")).toHaveText("Imported Jet");
+
+  await page.locator("#profile-import").setInputFiles({
+    name: "airplanes.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from(content),
+  });
+  await expect(page.locator(".airplane-name-button strong")).toHaveCount(2);
+  await expect(page.locator(".airplane-name-button strong").nth(0)).toHaveText("Imported Jet");
+  await expect(page.locator(".airplane-name-button strong").nth(1)).toHaveText("Imported Jet");
 });
 
 test("installed PWA remains usable offline after the first load", async ({ page, context }) => {
