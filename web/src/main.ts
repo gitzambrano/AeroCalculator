@@ -3,6 +3,7 @@ import iconUrl from "./assets/icon-bezel-transp-white.png";
 import {
   WEIGHT_KEYS,
   deleteProfile,
+  exportAndroidProfiles,
   exportProfiles,
   importProfiles,
   loadProfiles,
@@ -676,7 +677,11 @@ async function importSelectedFile(): Promise<void> {
   if (!file) return;
   try {
     const imported = importProfiles(await file.text());
-    for (const profile of imported) profiles = upsertProfile(profiles, profile);
+    for (const profile of imported) {
+      const duplicateName = profiles.find((existing) => existing.name.trim().toLowerCase() === profile.name.trim().toLowerCase());
+      if (duplicateName) profile.id = duplicateName.id;
+      profiles = upsertProfile(profiles, profile);
+    }
     saveProfiles(localStorage, profiles);
     renderProfiles();
     renderAirplaneSelector();
