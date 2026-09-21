@@ -1,5 +1,7 @@
 # User Guide
 
+AeroCalculator is available on Android and in the browser at https://gitzambrano.github.io/AeroCalculator/ when Pages deployment is enabled. The portable calculator behavior is shared by both products; device sensor inputs are Android-only.
+
 ## 1. Application pages
 
 AeroCalculator uses three main pages: Airplanes, Inputs, and Outputs.
@@ -56,7 +58,7 @@ The calculator can combine heading, track, sideslip, drift, TAS, and ground spee
 
 ## 8. Sensors
 
-Sensor-based entries depend on Android hardware and permissions. If a sensor is unavailable, select a manual input mode.
+Sensor-based entries are available only in the Android application and depend on Android hardware and permissions. The browser uses manual inputs for these quantities.
 
 Sensor inputs do not change the underlying physics equations. They only change the source of the input value.
 
