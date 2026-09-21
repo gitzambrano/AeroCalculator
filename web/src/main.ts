@@ -330,6 +330,7 @@ byId("settings-form").addEventListener("submit", (event) => {
 
 initializeHelpers();
 initializeSwipeNavigation();
+window.matchMedia("(max-width: 430px)").addEventListener("change", refreshResponsiveOptionLabels);
 
 applyTheme();
 renderProfiles();
@@ -578,11 +579,27 @@ function initializeSwipeNavigation(): void {
   });
 }
 
+function responsiveOptionLabel(value: string, label: string): string {
+  if (!window.matchMedia("(max-width: 430px)").matches) return label;
+  if (value === "Ground Speed") return "Grnd Speed";
+  if (value === "Runway Angle") return "Rnwy Angle";
+  return label;
+}
+
+function refreshResponsiveOptionLabels(): void {
+  document.querySelectorAll<HTMLSelectElement>("select").forEach((selectElement) => {
+    for (const option of selectElement.options) {
+      if (option.value === "Ground Speed") option.textContent = responsiveOptionLabel(option.value, "Ground Speed");
+      else if (option.value === "Runway Angle") option.textContent = responsiveOptionLabel(option.value, "Runway Angle");
+    }
+  });
+}
+
 function fillSelect(select: HTMLSelectElement, options: SelectOption[], selected: string): void {
   select.replaceChildren(...options.map((item) => {
     const option = document.createElement("option");
     option.value = item.value;
-    option.textContent = item.label;
+    option.textContent = responsiveOptionLabel(item.value, item.label);
     option.selected = item.value === selected;
     return option;
   }));
