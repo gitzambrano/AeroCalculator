@@ -1,6 +1,18 @@
 import "./style.css";
 import iconUrl from "./assets/icon-bezel-transp-white.png";
 import {
+  WEIGHT_KEYS,
+  deleteProfile,
+  exportProfiles,
+  importProfiles,
+  loadProfiles,
+  newProfile,
+  saveProfiles,
+  upsertProfile,
+  type AircraftProfile,
+  type WeightKey,
+} from "./profiles";
+import {
   GAMMA,
   G0,
   P0,
@@ -48,7 +60,7 @@ const fields: Field[] = [
   { id: "alt", typeOptions: opts(["Hp", "Hg", "P"]), unitOptions: opts(["ft", "m", "km", "nm", "mi", "in"]), defaultType: "Hp", defaultUnit: "ft", placeholder: "Altitude", defaultValue: "10000" },
   { id: "temp", typeOptions: opts(["Δ ISA", "OAT"]), unitOptions: opts(["°C", "°F", "K"]), defaultType: "Δ ISA", defaultUnit: "°C", placeholder: "Temperature", defaultValue: "0" },
   { id: "spd", typeOptions: opts(["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"]), unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "TAS", defaultUnit: "kt", placeholder: "Speed", defaultValue: "250" },
-  { id: "weight", typeOptions: opts(["Weight", "MTOW", "MLW", "MZFW", "BOW", "Heavy", "Light"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "10000" },
+  { id: "weight", typeOptions: opts(["Weight"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "10000" },
   { id: "sref", typeOptions: [{ value: "Sref", label: "Sref" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "30" },
   { id: "cref", typeOptions: [{ value: "cref", label: "cref" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "2" },
   { id: "clmax", typeOptions: [{ value: "CLmax", label: "CLmax" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1.5" },
@@ -73,6 +85,12 @@ const resultNames = [
 const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) throw new Error("Missing #app");
 
+const SELECTED_PROFILE_KEY = "aerocalculator.selected-profile.v1";
+let profiles = loadProfiles(localStorage);
+let selectedProfileId = localStorage.getItem(SELECTED_PROFILE_KEY) ?? "custom";
+let editingProfileId: string | null = null;
+let visibleFlapRows = 0;
+
 app.innerHTML = `
   <main class="app-shell">
     <header class="topbar">
@@ -90,29 +108,68 @@ app.innerHTML = `
     </header>
 
     <section id="page-airplanes" class="page airplane-page">
-      <div class="airplane-card">
-        <h2>Airplanes</h2>
-        <p>The web build keeps aircraft data local in the browser. Full Android profile import/export parity is the next migration block.</p>
-        <span class="status-pill">Browser-local profiles</span>
-      </div>
-      <div class="profile-grid">
-        <button class="profile-button" type="button"><strong>Generic aircraft</strong><span>Sref 30 m² · cref 2 m · CLmax 1.5</span></button>
-      </div>
+      <div class="profile-list" id="profile-list"></div>
     </section>
 
     <section id="page-inputs" class="page active">
-      <p class="helper" id="helper">Web calculation core uses the same documented ISA, airspeed and flight-mechanics equations as the Android project.</p>
       <div class="input-list" id="input-list"></div>
     </section>
 
     <section id="page-calculate" class="page">
-      <p class="helper" id="calc-status">Results update from the current inputs.</p>
+      <p class="status-banner" id="calc-status" hidden></p>
       <ul class="results" id="results"></ul>
     </section>
+
+    <div class="popup-menu" id="main-menu" hidden>
+      <button type="button" data-menu="clear">Clear Inputs</button>
+      <button type="button" data-menu="import">Import Airplanes</button>
+      <button type="button" data-menu="export">Export Airplanes</button>
+      <button type="button" data-menu="settings">Settings</button>
+      <button type="button" data-menu="feedback">Send Feedback</button>
+      <button type="button" data-menu="about">About</button>
+    </div>
+
+    <input id="profile-import" type="file" accept=".json,application/json,text/plain" hidden />
+
+    <dialog class="profile-dialog" id="profile-editor">
+      <form method="dialog" id="profile-form">
+        <div class="editor-toolbar">
+          <button type="submit" value="save" id="profile-save">✓&nbsp;&nbsp;Save</button>
+          <button type="button" id="profile-cancel">✕&nbsp;&nbsp;Cancel</button>
+        </div>
+        <div class="editor-scroll">
+          <div class="editor-row"><label for="profile-name">Name</label><input id="profile-name" type="text" placeholder="Aircraft Name" /></div>
+          <div class="editor-row"><label for="profile-sref">S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
+          <div class="editor-row"><label for="profile-cref">c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
+          <section class="editor-section">
+            <div class="editor-section-head"><strong>Weight</strong><select id="profile-weight-unit"><option>kg</option><option>lb</option><option>ton</option><option>slug</option><option>oz</option></select></div>
+            <div class="weight-grid"><label>MTOW<input id="profile-weight-MTOW" inputmode="decimal" placeholder="MTOW" /></label><label>MLW<input id="profile-weight-MLW" inputmode="decimal" placeholder="MLW" /></label><label>MZFW<input id="profile-weight-MZFW" inputmode="decimal" placeholder="MZFW" /></label><label>BOW<input id="profile-weight-BOW" inputmode="decimal" placeholder="BOW" /></label><label>Heavy<input id="profile-weight-Heavy" inputmode="decimal" placeholder="Heavy" /></label><label>Light<input id="profile-weight-Light" inputmode="decimal" placeholder="Light" /></label></div>
+          </section>
+          <section class="editor-section">
+            <div class="editor-section-head"><strong>CL<sub>MAX</sub></strong><button type="button" id="add-flap" class="add-flap">＋</button></div>
+            <div class="flap-grid" id="flap-grid"><label data-flap-row="0" hidden>Flap 0<input id="profile-flap-0" inputmode="decimal" placeholder="Flap 0" /></label><label data-flap-row="1" hidden>Flap 1<input id="profile-flap-1" inputmode="decimal" placeholder="Flap 1" /></label><label data-flap-row="2" hidden>Flap 2<input id="profile-flap-2" inputmode="decimal" placeholder="Flap 2" /></label><label data-flap-row="3" hidden>Flap 3<input id="profile-flap-3" inputmode="decimal" placeholder="Flap 3" /></label><label data-flap-row="4" hidden>Flap 4<input id="profile-flap-4" inputmode="decimal" placeholder="Flap 4" /></label><label data-flap-row="5" hidden>Flap 5<input id="profile-flap-5" inputmode="decimal" placeholder="Flap 5" /></label><label data-flap-row="6" hidden>Flap 6<input id="profile-flap-6" inputmode="decimal" placeholder="Flap 6" /></label><label data-flap-row="7" hidden>Flap 7<input id="profile-flap-7" inputmode="decimal" placeholder="Flap 7" /></label><label data-flap-row="8" hidden>Flap 8<input id="profile-flap-8" inputmode="decimal" placeholder="Flap 8" /></label><label data-flap-row="9" hidden>Flap 9<input id="profile-flap-9" inputmode="decimal" placeholder="Flap 9" /></label><label data-flap-row="10" hidden>Flap 10<input id="profile-flap-10" inputmode="decimal" placeholder="Flap 10" /></label><label data-flap-row="11" hidden>Flap 11<input id="profile-flap-11" inputmode="decimal" placeholder="Flap 11" /></label><label data-flap-row="12" hidden>Flap 12<input id="profile-flap-12" inputmode="decimal" placeholder="Flap 12" /></label><label data-flap-row="13" hidden>Flap 13<input id="profile-flap-13" inputmode="decimal" placeholder="Flap 13" /></label></div>
+          </section>
+          <div class="editor-actions" id="profile-delete-wrap" hidden>
+            <button type="button" class="danger-button" id="profile-delete">Delete Airplane</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="simple-dialog" id="about-dialog">
+      <div class="about-content">
+        <img src="${iconUrl}" alt="" />
+        <h2>AeroCalculator</h2>
+        <p>Browser edition</p>
+        <p>Gustavo José Zambrano</p>
+        <button type="button" data-close-dialog="about-dialog">OK</button>
+      </div>
+    </dialog>
   </main>
 `;
 
 const inputList = byId("input-list");
+inputList.append(createAirplaneRow());
 for (const field of fields) inputList.append(createInputRow(field));
 
 const resultsList = byId("results");
@@ -131,21 +188,64 @@ document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control")
   el.addEventListener("input", recalculate);
   el.addEventListener("change", () => {
     normalizeDependentUnits();
+    if (el.id === "weight-type" || el.id === "clmax-type") applyProfileNamedValue();
     recalculate();
   });
 });
 
-byId("add-profile").addEventListener("click", () => activatePage("airplanes"));
-byId("more-menu").addEventListener("click", () => {
-  byId("helper").textContent = "Web preview · TypeScript core · Android visual language.";
-  activatePage("inputs");
+byId("add-profile").addEventListener("click", () => openProfileEditor());
+byId("more-menu").addEventListener("click", (event) => {
+  event.stopPropagation();
+  const menu = byId("main-menu");
+  menu.hidden = !menu.hidden;
+});
+document.addEventListener("click", (event) => {
+  const menu = byId("main-menu");
+  if (!menu.hidden && !menu.contains(event.target as Node) && event.target !== byId("more-menu")) menu.hidden = true;
+});
+document.querySelectorAll<HTMLButtonElement>("[data-menu]").forEach((button) => {
+  button.addEventListener("click", () => handleMenu(button.dataset.menu ?? ""));
+});
+byId("profile-cancel").addEventListener("click", closeProfileEditor);
+byId("profile-save").addEventListener("click", (event) => {
+  event.preventDefault();
+  saveProfileFromEditor();
+});
+byId("profile-delete").addEventListener("click", deleteEditingProfile);
+byId("add-flap").addEventListener("click", showNextFlapRow);
+(byId("profile-import") as HTMLInputElement).addEventListener("change", importSelectedFile);
+document.querySelectorAll<HTMLButtonElement>("[data-close-dialog]").forEach((button) => {
+  button.addEventListener("click", () => (byId(button.dataset.closeDialog ?? "") as HTMLDialogElement).close());
 });
 
+renderProfiles();
+renderAirplaneSelector();
 normalizeDependentUnits();
+applyProfileSelection(selectedProfileId, false);
 recalculate();
 
 function opts(values: string[]): SelectOption[] {
   return values.map((value) => ({ value, label: value }));
+}
+
+function createAirplaneRow(): HTMLElement {
+  const row = document.createElement("div");
+  row.className = "input-row airplane-row";
+
+  const label = document.createElement("button");
+  label.type = "button";
+  label.className = "field-button";
+  label.textContent = "Airplane";
+  label.addEventListener("click", () => activatePage("airplanes"));
+
+  const picker = document.createElement("select");
+  picker.id = "airplane-select";
+  picker.className = "profile-select";
+  picker.setAttribute("aria-label", "Airplane profile");
+  picker.addEventListener("change", () => applyProfileSelection(picker.value));
+
+  row.append(label, picker);
+  return row;
 }
 
 function createInputRow(field: Field): HTMLElement {
@@ -207,6 +307,251 @@ function activatePage(page: string): void {
   document.querySelectorAll<HTMLElement>(".page").forEach((el) => el.classList.toggle("active", el.id === `page-${page}`));
   document.querySelectorAll<HTMLButtonElement>(".tab").forEach((el) => el.setAttribute("aria-selected", String(el.dataset.page === page)));
   if (page === "calculate") recalculate();
+}
+
+function renderProfiles(): void {
+  const list = byId("profile-list");
+  list.replaceChildren();
+  for (const profile of profiles) {
+    const row = document.createElement("div");
+    row.className = "airplane-list-row";
+
+    const selectButton = document.createElement("button");
+    selectButton.type = "button";
+    selectButton.className = "airplane-name-button";
+    selectButton.innerHTML = `<strong>${escapeHtml(profile.name || "Unnamed Airplane")}</strong><span>${profile.sref} ${profile.srefUnit} · ${profile.cref} ${profile.crefUnit}</span>`;
+    selectButton.addEventListener("click", () => {
+      applyProfileSelection(profile.id);
+      activatePage("inputs");
+    });
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "airplane-edit-button";
+    editButton.textContent = "✎";
+    editButton.setAttribute("aria-label", `Edit ${profile.name}`);
+    editButton.addEventListener("click", () => openProfileEditor(profile.id));
+
+    row.append(selectButton, editButton);
+    list.append(row);
+  }
+}
+
+function renderAirplaneSelector(): void {
+  const picker = byId("airplane-select") as HTMLSelectElement;
+  const options: SelectOption[] = [
+    { value: "custom", label: "Custom Airplane" },
+    ...profiles.map((profile) => ({ value: profile.id, label: profile.name || "Unnamed Airplane" })),
+  ];
+  if (selectedProfileId !== "custom" && !profiles.some((p) => p.id === selectedProfileId)) selectedProfileId = "custom";
+  fillSelect(picker, options, selectedProfileId);
+}
+
+function selectedProfile(): AircraftProfile | undefined {
+  return profiles.find((profile) => profile.id === selectedProfileId);
+}
+
+function applyProfileSelection(id: string, recalc = true): void {
+  selectedProfileId = profiles.some((p) => p.id === id) ? id : "custom";
+  localStorage.setItem(SELECTED_PROFILE_KEY, selectedProfileId);
+  const picker = document.getElementById("airplane-select") as HTMLSelectElement | null;
+  if (picker) picker.value = selectedProfileId;
+
+  const weightSelect = select("weight-type");
+  const clSelect = select("clmax-type");
+  const profile = selectedProfile();
+
+  if (!profile) {
+    preserveSelect(weightSelect, ["Weight"], "Weight");
+    preserveSelect(clSelect, ["CLmax"], "CLmax");
+  } else {
+    (byId("sref-value") as HTMLInputElement).value = String(profile.sref);
+    preserveSelect(select("sref-unit"), [profile.srefUnit], profile.srefUnit);
+    (byId("cref-value") as HTMLInputElement).value = String(profile.cref);
+    preserveSelect(select("cref-unit"), [profile.crefUnit], profile.crefUnit);
+
+    const weightOptions = ["Weight", ...WEIGHT_KEYS.filter((key) => profile.weights[key] !== undefined)];
+    preserveSelect(weightSelect, weightOptions, "Weight");
+    const flapOptions = ["CLmax", ...profile.clmax.flatMap((value, index) => value === null ? [] : [`Flap ${index}`])];
+    preserveSelect(clSelect, flapOptions, "CLmax");
+  }
+
+  if (recalc) recalculate();
+}
+
+function applyProfileNamedValue(): void {
+  const profile = selectedProfile();
+  if (!profile) return;
+
+  const weightType = selectValue("weight-type") as "Weight" | WeightKey;
+  if (weightType !== "Weight") {
+    const value = profile.weights[weightType];
+    if (value !== undefined) {
+      (byId("weight-value") as HTMLInputElement).value = String(value);
+      preserveSelect(select("weight-unit"), [profile.weightUnit], profile.weightUnit);
+    }
+  }
+
+  const clType = selectValue("clmax-type");
+  if (clType.startsWith("Flap ")) {
+    const index = Number(clType.slice(5));
+    const value = profile.clmax[index];
+    if (value !== null && Number.isFinite(value)) (byId("clmax-value") as HTMLInputElement).value = String(value);
+  }
+}
+
+function openProfileEditor(id?: string): void {
+  editingProfileId = id ?? null;
+  const profile = id ? profiles.find((item) => item.id === id) : undefined;
+  const source = profile ? structuredClone(profile) : newProfile();
+
+  (byId("profile-name") as HTMLInputElement).value = source.name;
+  (byId("profile-sref") as HTMLInputElement).value = source.sref ? String(source.sref) : "";
+  (byId("profile-sref-unit") as HTMLSelectElement).value = source.srefUnit;
+  (byId("profile-cref") as HTMLInputElement).value = source.cref ? String(source.cref) : "";
+  (byId("profile-cref-unit") as HTMLSelectElement).value = source.crefUnit;
+  (byId("profile-weight-unit") as HTMLSelectElement).value = source.weightUnit;
+  for (const key of WEIGHT_KEYS) {
+    (byId(`profile-weight-${key}`) as HTMLInputElement).value =
+      source.weights[key] === undefined ? "" : String(source.weights[key]);
+  }
+  for (let index = 0; index < 14; index += 1) {
+    (byId(`profile-flap-${index}`) as HTMLInputElement).value =
+      source.clmax[index] === null ? "" : String(source.clmax[index]);
+  }
+
+  const lastPopulated = source.clmax.reduce((last, value, index) => value === null ? last : index, -1);
+  visibleFlapRows = Math.max(0, lastPopulated + 1);
+  renderFlapRows();
+  byId("profile-delete-wrap").hidden = !profile;
+  (byId("profile-editor") as HTMLDialogElement).showModal();
+}
+
+function closeProfileEditor(): void {
+  (byId("profile-editor") as HTMLDialogElement).close();
+  editingProfileId = null;
+}
+
+function showNextFlapRow(): void {
+  if (visibleFlapRows < 14) visibleFlapRows += 1;
+  renderFlapRows();
+}
+
+function renderFlapRows(): void {
+  document.querySelectorAll<HTMLElement>("[data-flap-row]").forEach((row) => {
+    row.hidden = Number(row.dataset.flapRow) >= visibleFlapRows;
+  });
+  (byId("add-flap") as HTMLButtonElement).disabled = visibleFlapRows >= 14;
+}
+
+function saveProfileFromEditor(): void {
+  const current = editingProfileId ? profiles.find((p) => p.id === editingProfileId) : undefined;
+  const profile = current ? structuredClone(current) : newProfile();
+  profile.name = (byId("profile-name") as HTMLInputElement).value.trim();
+  if (!profile.name) {
+    (byId("profile-name") as HTMLInputElement).focus();
+    return;
+  }
+
+  profile.sref = optionalNumber("profile-sref") ?? 0;
+  profile.srefUnit = (byId("profile-sref-unit") as HTMLSelectElement).value;
+  profile.cref = optionalNumber("profile-cref") ?? 0;
+  profile.crefUnit = (byId("profile-cref-unit") as HTMLSelectElement).value;
+  profile.weightUnit = (byId("profile-weight-unit") as HTMLSelectElement).value;
+  profile.weights = {};
+  for (const key of WEIGHT_KEYS) {
+    const value = optionalNumber(`profile-weight-${key}`);
+    if (value !== null) profile.weights[key] = value;
+  }
+  profile.clmax = Array.from({ length: 14 }, (_, index) => optionalNumber(`profile-flap-${index}`));
+
+  profiles = upsertProfile(profiles, profile);
+  saveProfiles(localStorage, profiles);
+  selectedProfileId = profile.id;
+  localStorage.setItem(SELECTED_PROFILE_KEY, selectedProfileId);
+  renderProfiles();
+  renderAirplaneSelector();
+  applyProfileSelection(profile.id, false);
+  closeProfileEditor();
+  activatePage("airplanes");
+}
+
+function deleteEditingProfile(): void {
+  if (!editingProfileId) return;
+  const profile = profiles.find((p) => p.id === editingProfileId);
+  if (!profile || !confirm(`Delete ${profile.name}?`)) return;
+  profiles = deleteProfile(profiles, editingProfileId);
+  saveProfiles(localStorage, profiles);
+  if (selectedProfileId === editingProfileId) selectedProfileId = "custom";
+  localStorage.setItem(SELECTED_PROFILE_KEY, selectedProfileId);
+  renderProfiles();
+  renderAirplaneSelector();
+  applyProfileSelection(selectedProfileId, false);
+  closeProfileEditor();
+}
+
+function handleMenu(action: string): void {
+  byId("main-menu").hidden = true;
+  if (action === "clear") {
+    if (confirm("Are you sure you want to clear the inputs?")) clearInputs();
+  } else if (action === "import") {
+    (byId("profile-import") as HTMLInputElement).click();
+  } else if (action === "export") {
+    exportProfileFile();
+  } else if (action === "settings") {
+    alert("Output-unit settings are being matched to the Android settings screen next.");
+  } else if (action === "feedback") {
+    window.location.href = "mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback";
+  } else if (action === "about") {
+    (byId("about-dialog") as HTMLDialogElement).showModal();
+  }
+}
+
+function clearInputs(): void {
+  const ids = ["alt","temp","spd","weight","sref","cref","clmax","nz","angle1","angle2","headWind","crossWind","windRef"];
+  for (const id of ids) (byId(`${id}-value`) as HTMLInputElement).value = "";
+  (byId("spdDelta-value") as HTMLInputElement).value = "";
+  recalculate();
+}
+
+function exportProfileFile(): void {
+  const blob = new Blob([exportProfiles(profiles)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "airplanes.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function importSelectedFile(): Promise<void> {
+  const input = byId("profile-import") as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (!file) return;
+  try {
+    const imported = importProfiles(await file.text());
+    for (const profile of imported) profiles = upsertProfile(profiles, profile);
+    saveProfiles(localStorage, profiles);
+    renderProfiles();
+    renderAirplaneSelector();
+    activatePage("airplanes");
+  } catch (error) {
+    alert(error instanceof Error ? error.message : "Unable to import airplanes.");
+  }
+}
+
+function optionalNumber(id: string): number | null {
+  const raw = (byId(id) as HTMLInputElement).value.trim().replace(",", ".");
+  if (!raw) return null;
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : null;
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;",
+  }[char] ?? char));
 }
 
 function normalizeDependentUnits(): void {
@@ -470,6 +815,7 @@ function setStatus(text: string, error: boolean): void {
   const status = byId("calc-status");
   status.textContent = text;
   status.classList.toggle("error", error);
+  status.hidden = !error;
 }
 
 function fmt(value: number, digits: number): string {
