@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Xenara";
-  src: url("/xenara-bold.ttf") format("truetype");
+  src: url("./assets/xenara-bold.ttf") format("truetype");
   font-display: swap;
 }
 

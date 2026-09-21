@@ -1,4 +1,5 @@
 import "./style.css";
+import iconUrl from "./assets/icon-bezel-transp-white.png";
 import {
   GAMMA,
   G0,
@@ -73,7 +74,7 @@ app.innerHTML = `
   <main class="app-shell">
     <header class="topbar">
       <div class="brand-row">
-        <img class="brand-icon" src="./icon-bezel-transp-white.png" alt="" />
+        <img class="brand-icon" src="${iconUrl}" alt="" />
         <div class="brand">AeroCalculator</div>
         <button class="icon-button" id="add-profile" aria-label="Add airplane">+</button>
         <button class="icon-button" id="more-menu" aria-label="More options">⋮</button>
