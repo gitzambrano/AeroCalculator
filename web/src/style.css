@@ -20,9 +20,61 @@
   --danger: #b00020;
 }
 
+
+:root[data-theme="Ancient Brown"] {
+  --title: #3e291e;
+  --title-dark: #3e291e;
+  --input-bg: #e4d2b4;
+  --field-bg: #f3edd2;
+  --button-a: #dcd2c1;
+  --button-b: #f3edd2;
+  --divider: #3e291e;
+  --muted: #675f56;
+}
+:root[data-theme="Dark Shadows"] {
+  --title: #000000;
+  --title-dark: #000000;
+  --input-bg: #ffffff;
+  --field-bg: #f3f3f3;
+  --button-a: #d3d3d3;
+  --button-b: #f3f3f5;
+  --divider: #000000;
+  --muted: #626262;
+}
+:root[data-theme="Blue Sky"] {
+  --title: #1a237e;
+  --title-dark: #1a237e;
+  --input-bg: #ffffff;
+  --field-bg: #e8eaf8;
+  --button-a: #d4d6e4;
+  --button-b: #e8eaf8;
+  --divider: #1a237e;
+  --muted: #666a85;
+}
+:root[data-theme="Red Alert"] {
+  --title: #b0120a;
+  --title-dark: #b0120a;
+  --input-bg: #f9bdbb;
+  --field-bg: #fde0dc;
+  --button-a: #ffc7c5;
+  --button-b: #fde0dc;
+  --divider: #b0120a;
+  --muted: #78514e;
+}
+:root[data-theme="Orange Juice"] {
+  --title: #e66200;
+  --title-dark: #e66200;
+  --input-bg: #ffe094;
+  --field-bg: #fff6af;
+  --button-a: #fffdaa;
+  --button-b: #ffecb3;
+  --divider: #e66200;
+  --muted: #765b31;
+}
+
 * { box-sizing: border-box; }
 html, body, #app { min-height: 100%; margin: 0; }
-body { background: #e9f2f1; }
+body { background: var(--input-bg); }
 
 .app-shell {
   width: min(100%, 860px);
@@ -331,6 +383,55 @@ body { background: #e9f2f1; }
 .about-content h2 { margin: 10px 0 4px; }
 .about-content p { margin: 6px 0; }
 .about-content button { margin-top: 14px; min-width: 90px; min-height: 38px; }
+
+.settings-dialog {
+  width: min(430px, calc(100% - 28px));
+  max-height: min(90vh, 720px);
+  background: white;
+}
+.settings-dialog form { padding: 18px 20px 16px; }
+.settings-dialog h2 { margin: 0 0 18px; font-size: 21px; }
+.settings-dialog h3 {
+  margin: 18px -20px 8px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--title);
+  background: #f2f2f2;
+}
+.settings-dialog label {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(130px, 45%);
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid #ececec;
+  font-size: 14px;
+}
+.settings-dialog select {
+  height: 34px;
+  border: 0;
+  border-bottom: 1px solid #aaa;
+  background: white;
+  font-size: 14px;
+}
+.settings-dialog .check-row input { justify-self: end; width: 20px; height: 20px; }
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 18px;
+}
+.dialog-buttons button {
+  min-width: 84px;
+  min-height: 38px;
+  border: 0;
+  background: transparent;
+  color: var(--title);
+  font-weight: 600;
+  cursor: pointer;
+}
+
 
 @media (max-width: 430px) {
   .app-shell { width: 100%; box-shadow: none; }
