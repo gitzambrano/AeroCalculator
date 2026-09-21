@@ -73,3 +73,15 @@ Before a Play release:
 - [ ] Update `docs/units_and_conventions.md` for unit or sign changes.
 - [ ] Update `docs/dependencies.md` for library changes.
 - [ ] Update requirements for deliberate behavior changes.
+
+
+## Web release
+
+- [ ] Run `cd web && npm test`.
+- [ ] Run `cd web && npm run build`.
+- [ ] Run `cd web && npm run test:e2e`.
+- [ ] Confirm the `Web` GitHub Actions workflow is green.
+- [ ] Confirm no horizontal overflow or clipped critical text on mobile and desktop test viewports.
+- [ ] Confirm Android-compatible `airplanes.txt` import/export.
+- [ ] Confirm the PWA reloads offline after first load.
+- [ ] Confirm https://gitzambrano.github.io/AeroCalculator/ serves the current `main` build when Pages deployment is enabled.
