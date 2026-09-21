@@ -56,6 +56,59 @@ type Field = {
   defaultValue?: string;
 };
 
+const PAGE_ORDER = ["airplanes", "inputs", "calculate"] as const;
+
+const FIELD_HELPERS: Record<string, string> = {
+  "Hp": "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
+  "Hg": "Geometric altitude: physical height above mean sea level.",
+  "P": "Static atmospheric pressure. AeroCalculator converts it to pressure altitude.",
+  "Δ ISA": "Temperature deviation from the ISA temperature at the current pressure altitude.",
+  "OAT": "Outside air temperature at the aircraft condition.",
+  "TAS": "True Airspeed: aircraft speed relative to the surrounding air mass.",
+  "CAS": "Calibrated Airspeed: indicated airspeed corrected for instrument/position error and compressibility using the standard sea-level reference.",
+  "EAS": "Equivalent Airspeed: speed at standard sea-level density with the same dynamic pressure as the current flight condition.",
+  "Mach": "Mach number: True Airspeed divided by the local speed of sound.",
+  "CL": "Lift coefficient. With mass, load factor and reference area, it defines the required dynamic pressure.",
+  "Vs Factor": "Multiplier applied to the 1-g calibrated stall speed. The optional +Δ term is added in knots.",
+  "Ground Speed": "Aircraft speed relative to the ground. Wind and direction inputs are used to recover the air-relative velocity.",
+  "Qdyn": "Dynamic pressure q = ½ρV².",
+  "Qc": "Impact pressure qc = total pressure minus static pressure for the documented subsonic model.",
+  "Weight": "Aircraft mass used for lift, stall-speed and maneuver calculations.",
+  "Sref": "Wing reference area used in aerodynamic force and coefficient calculations.",
+  "cref": "Wing reference chord used to calculate Reynolds number.",
+  "CLmax": "Maximum lift coefficient used to calculate the 1-g stall speed.",
+  "NzPullup": "Normal load factor for a pull-up maneuver. Bank angle is zero.",
+  "NzTurn": "Normal load factor in a coordinated level turn. Bank angle is derived from Nz = 1/cos(φ).",
+  "BankTurn": "Bank angle for a coordinated level turn. Load factor is derived from Nz = 1/cos(φ).",
+  "Track": "Track angle: direction of the ground-velocity vector.",
+  "Heading": "Heading angle: direction the aircraft longitudinal axis points.",
+  "Sideslip": "Sideslip angle β: angle between the aircraft heading and the air-relative velocity direction.",
+  "Drift": "Drift angle: heading minus track.",
+  "HeadWind": "Wind component along the selected runway/reference direction. Positive means headwind.",
+  "Wind Speed": "Wind-vector magnitude. Use Wind Direction for its direction.",
+  "CrossWind": "Wind component perpendicular to the selected runway/reference direction.",
+  "Runway Angle": "Reference direction used to resolve headwind and crosswind components.",
+  "Wind Direction": "Direction from which the wind is referenced in the wind-vector input mode.",
+};
+
+function helperFor(fieldId: string, typeValue: string): string {
+  return FIELD_HELPERS[typeValue] ?? {
+    alt: "Altitude or pressure input used to define the atmospheric state.",
+    temp: "Temperature input used to define the atmospheric state.",
+    spd: "Primary speed or aerodynamic quantity used to determine airspeed.",
+    weight: "Aircraft mass.",
+    sref: "Wing reference area.",
+    cref: "Wing reference chord.",
+    clmax: "Maximum lift coefficient.",
+    nz: "Maneuver load-factor or bank-angle input.",
+    angle1: "Primary aircraft/ground direction angle.",
+    angle2: "Secondary aerodynamic/ground direction angle.",
+    headWind: "Wind input.",
+    crossWind: "Crosswind input.",
+    windRef: "Wind reference direction.",
+  }[fieldId] ?? "AeroCalculator input.";
+}
+
 const fields: Field[] = [
   { id: "alt", typeOptions: opts(["Hp", "Hg", "P"]), unitOptions: opts(["ft", "m", "km", "nm", "mi", "in"]), defaultType: "Hp", defaultUnit: "ft", placeholder: "Altitude", defaultValue: "0" },
   { id: "temp", typeOptions: opts(["Δ ISA", "OAT"]), unitOptions: opts(["°C", "°F", "K"]), defaultType: "OAT", defaultUnit: "°C", placeholder: "Temperature", defaultValue: "0" },
@@ -200,6 +253,7 @@ app.innerHTML = `
         </div>
       </form>
     </dialog>
+    <div id="field-tooltip" class="field-tooltip" role="tooltip" hidden></div>
   </main>
 `;
 
@@ -233,6 +287,7 @@ document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control")
       convertInputForUnitChange(el);
     }
     normalizeDependentUnits();
+    if (el instanceof HTMLSelectElement && el.id.endsWith("-type")) updateInputHelpers(el.id.replace(/-type$/, ""));
     if (el.id === "weight-type" || el.id === "clmax-type") applyProfileNamedValue();
     syncSelectPreviousValues();
     persistInputState();
@@ -273,12 +328,16 @@ byId("settings-form").addEventListener("submit", (event) => {
   saveOutputSettings();
 });
 
+initializeHelpers();
+initializeSwipeNavigation();
+
 applyTheme();
 renderProfiles();
 renderAirplaneSelector();
 applyProfileSelection(selectedProfileId, false);
 restoreInputState();
 normalizeDependentUnits();
+for (const field of fields) updateInputHelpers(field.id);
 syncSelectPreviousValues();
 recalculate();
 
@@ -305,12 +364,14 @@ function createAirplaneRow(): HTMLElement {
   label.type = "button";
   label.className = "field-button";
   label.textContent = "Airplane";
+  setHelper(label, "Open the aircraft-profile list to create, edit or select stored aircraft geometry.");
   label.addEventListener("click", () => activatePage("airplanes"));
 
   const picker = document.createElement("select");
   picker.id = "airplane-select";
   picker.className = "profile-select";
   picker.setAttribute("aria-label", "Airplane profile");
+  setHelper(picker, "Select a stored aircraft profile. Its reference geometry, named weights and CLmax flap values become available in Inputs.");
   picker.addEventListener("change", () => applyProfileSelection(picker.value));
 
   row.append(label, picker);
@@ -328,6 +389,7 @@ function createInputRow(field: Field): HTMLElement {
   type.className = "field-select calc-control";
   type.setAttribute("aria-label", `${field.id} quantity`);
   fillSelect(type, field.typeOptions, field.defaultType);
+  setHelper(type, helperFor(field.id, field.defaultType));
 
   const value = document.createElement("input");
   value.id = `${field.id}-value`;
@@ -336,12 +398,15 @@ function createInputRow(field: Field): HTMLElement {
   value.autocomplete = "off";
   value.placeholder = field.placeholder ?? "";
   value.value = field.defaultValue ?? "";
+  value.setAttribute("aria-label", `${field.typeOptions.find((item) => item.value === field.defaultType)?.label ?? field.id} value`);
+  setHelper(value, helperFor(field.id, field.defaultType));
 
   const unit = document.createElement("select");
   unit.id = `${field.id}-unit`;
   unit.className = "unit-select calc-control";
   unit.setAttribute("aria-label", `${field.id} unit`);
   fillSelect(unit, field.unitOptions, field.defaultUnit);
+  setHelper(unit, "Unit used for this input value. Changing the unit converts the current numeric value when applicable.");
 
   const tail = document.createElement("div");
   tail.className = "input-tail";
@@ -353,8 +418,8 @@ function createInputRow(field: Field): HTMLElement {
     deltaLabel.id = "spdDelta-label";
     deltaLabel.className = "speed-delta-label";
     deltaLabel.textContent = "+ Δ";
-    deltaLabel.title = "Delta speed relative to Vs Factor [kt]";
     deltaLabel.setAttribute("aria-label", "Delta speed relative to Vs Factor");
+    setHelper(deltaLabel, "Additional calibrated speed added to Vs Factor × Vs. This Δ term is always entered in knots.");
     deltaLabel.hidden = true;
 
     const delta = document.createElement("input");
@@ -365,6 +430,8 @@ function createInputRow(field: Field): HTMLElement {
     delta.placeholder = "+ Δkt";
     delta.value = "0";
     delta.hidden = true;
+    delta.setAttribute("aria-label", "Vs Factor delta speed in knots");
+    setHelper(delta, "Additional calibrated speed in knots added after multiplying the 1-g stall speed by Vs Factor.");
     deltaLabel.addEventListener("click", () => delta.focus());
 
     tail.append(delta);
@@ -374,6 +441,137 @@ function createInputRow(field: Field): HTMLElement {
 
   row.append(type, value, tail);
   return row;
+}
+
+function setHelper(element: HTMLElement, text: string): void {
+  element.dataset.helper = text;
+}
+
+function updateInputHelpers(fieldId: string): void {
+  const type = document.getElementById(`${fieldId}-type`) as HTMLSelectElement | null;
+  const value = document.getElementById(`${fieldId}-value`) as HTMLInputElement | null;
+  if (!type || !value) return;
+  const helper = helperFor(fieldId, type.value);
+  setHelper(type, helper);
+  setHelper(value, helper);
+  const selectedLabel = type.selectedOptions[0]?.textContent?.trim() || fieldId;
+  value.setAttribute("aria-label", `${selectedLabel} value`);
+}
+
+function initializeHelpers(): void {
+  const tooltip = byId("field-tooltip");
+  let activeTarget: HTMLElement | null = null;
+
+  const show = (target: HTMLElement): void => {
+    const text = target.dataset.helper?.trim();
+    if (!text) return;
+    activeTarget = target;
+    tooltip.textContent = text;
+    tooltip.hidden = false;
+    tooltip.style.left = "8px";
+    tooltip.style.top = "8px";
+
+    requestAnimationFrame(() => {
+      if (activeTarget !== target || tooltip.hidden) return;
+      const rect = target.getBoundingClientRect();
+      const tip = tooltip.getBoundingClientRect();
+      const margin = 8;
+      const left = Math.min(
+        Math.max(margin, rect.left + rect.width / 2 - tip.width / 2),
+        Math.max(margin, window.innerWidth - tip.width - margin),
+      );
+      const below = rect.bottom + 8;
+      const top = below + tip.height <= window.innerHeight - margin
+        ? below
+        : Math.max(margin, rect.top - tip.height - 8);
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+    });
+  };
+
+  const hide = (target?: HTMLElement): void => {
+    if (target && activeTarget !== target) return;
+    activeTarget = null;
+    tooltip.hidden = true;
+  };
+
+  document.addEventListener("pointerover", (event) => {
+    if ((event as PointerEvent).pointerType === "touch") return;
+    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
+    if (target) show(target);
+  });
+  document.addEventListener("pointerout", (event) => {
+    if ((event as PointerEvent).pointerType === "touch") return;
+    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
+    if (target) hide(target);
+  });
+  document.addEventListener("focusin", (event) => {
+    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
+    if (target) show(target);
+  });
+  document.addEventListener("focusout", (event) => {
+    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
+    if (target) hide(target);
+  });
+  window.addEventListener("scroll", () => hide(), { passive: true });
+  window.addEventListener("resize", () => hide(), { passive: true });
+}
+
+function currentPageName(): typeof PAGE_ORDER[number] {
+  const selected = document.querySelector<HTMLButtonElement>('.tab[aria-selected="true"]')?.dataset.page;
+  return PAGE_ORDER.includes(selected as typeof PAGE_ORDER[number])
+    ? selected as typeof PAGE_ORDER[number]
+    : "inputs";
+}
+
+function initializeSwipeNavigation(): void {
+  const shell = document.querySelector<HTMLElement>(".app-shell");
+  if (!shell) return;
+
+  let pointerId: number | null = null;
+  let startX = 0;
+  let startY = 0;
+  let startTime = 0;
+  let tracking = false;
+
+  shell.addEventListener("pointerdown", (event) => {
+    if (event.pointerType !== "touch" || document.querySelector("dialog[open]")) return;
+    pointerId = event.pointerId;
+    startX = event.clientX;
+    startY = event.clientY;
+    startTime = performance.now();
+    tracking = true;
+  });
+
+  shell.addEventListener("pointermove", (event) => {
+    if (!tracking || event.pointerId !== pointerId) return;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    if (Math.abs(dx) > 24 && Math.abs(dx) > Math.abs(dy) * 1.2) event.preventDefault();
+  }, { passive: false });
+
+  const finish = (event: PointerEvent): void => {
+    if (!tracking || event.pointerId !== pointerId) return;
+    tracking = false;
+    pointerId = null;
+
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    const elapsed = performance.now() - startTime;
+    if (elapsed > 900 || Math.abs(dx) < 55 || Math.abs(dx) <= Math.abs(dy) * 1.25) return;
+
+    const current = currentPageName();
+    const index = PAGE_ORDER.indexOf(current);
+    const nextIndex = dx < 0 ? index + 1 : index - 1;
+    if (nextIndex < 0 || nextIndex >= PAGE_ORDER.length) return;
+    activatePage(PAGE_ORDER[nextIndex], dx < 0 ? "left" : "right");
+  };
+
+  shell.addEventListener("pointerup", finish);
+  shell.addEventListener("pointercancel", () => {
+    tracking = false;
+    pointerId = null;
+  });
 }
 
 function fillSelect(select: HTMLSelectElement, options: SelectOption[], selected: string): void {
@@ -386,8 +584,18 @@ function fillSelect(select: HTMLSelectElement, options: SelectOption[], selected
   }));
 }
 
-function activatePage(page: string): void {
-  document.querySelectorAll<HTMLElement>(".page").forEach((el) => el.classList.toggle("active", el.id === `page-${page}`));
+function activatePage(page: string, swipeDirection?: "left" | "right"): void {
+  let activePage: HTMLElement | null = null;
+  document.querySelectorAll<HTMLElement>(".page").forEach((el) => {
+    const active = el.id === `page-${page}`;
+    el.classList.toggle("active", active);
+    el.classList.remove("swipe-in-left", "swipe-in-right");
+    if (active) activePage = el;
+  });
+  if (activePage && swipeDirection) {
+    activePage.classList.add(swipeDirection === "left" ? "swipe-in-left" : "swipe-in-right");
+    window.setTimeout(() => activePage?.classList.remove("swipe-in-left", "swipe-in-right"), 180);
+  }
   document.querySelectorAll<HTMLButtonElement>(".tab").forEach((el) => el.setAttribute("aria-selected", String(el.dataset.page === page)));
   if (page === "calculate") recalculate();
 }
@@ -879,6 +1087,8 @@ function normalizeDependentUnits(): void {
   } else {
     preserveSelect(windRefType, ["Runway Angle"], "Runway Angle");
   }
+
+  for (const field of fields) updateInputHelpers(field.id);
 }
 
 function recalculate(): void {
