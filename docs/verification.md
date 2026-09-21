@@ -74,3 +74,19 @@ python tools/source_inventory.py
 Portable CI cannot prove that the Android project compiles unless a B4A environment is available. Before release, run the B4A compile step in `docs/release_checklist.md`.
 
 When a licensed and reproducible Windows runner is available, use `tools/b4a_build.ps1` to add a compile smoke test without production signing.
+
+
+## Web verification
+
+The browser application is isolated under `web/`. Run:
+
+```bash
+cd web
+npm install
+npm test
+npm run build
+npx playwright install chromium
+npm run test:e2e
+```
+
+The `Web` GitHub Actions workflow performs the same checks. Chromium coverage includes mobile, tablet, laptop, and desktop viewports, functional UI paths, Android-compatible aircraft-profile interchange, and offline PWA reload.
