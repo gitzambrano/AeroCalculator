@@ -589,16 +589,14 @@ function fillSelect(select: HTMLSelectElement, options: SelectOption[], selected
 }
 
 function activatePage(page: string, swipeDirection?: "left" | "right"): void {
-  let activePage: HTMLElement | null = null;
   document.querySelectorAll<HTMLElement>(".page").forEach((el) => {
-    const active = el.id === `page-${page}`;
-    el.classList.toggle("active", active);
+    el.classList.toggle("active", el.id === `page-${page}`);
     el.classList.remove("swipe-in-left", "swipe-in-right");
-    if (active) activePage = el;
   });
+  const activePage = document.getElementById(`page-${page}`);
   if (activePage && swipeDirection) {
     activePage.classList.add(swipeDirection === "left" ? "swipe-in-left" : "swipe-in-right");
-    window.setTimeout(() => activePage?.classList.remove("swipe-in-left", "swipe-in-right"), 180);
+    window.setTimeout(() => activePage.classList.remove("swipe-in-left", "swipe-in-right"), 180);
   }
   document.querySelectorAll<HTMLButtonElement>(".tab").forEach((el) => el.setAttribute("aria-selected", String(el.dataset.page === page)));
   if (page === "calculate") recalculate();
