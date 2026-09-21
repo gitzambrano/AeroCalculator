@@ -37,6 +37,8 @@ describe("aircraft profiles", () => {
     expect(loaded[0].name).toBe("Test Jet");
     expect(loaded[0].weights.MTOW).toBe(12000);
     expect(loaded[0].clmax[0]).toBe(1.42);
+    expect(loaded[0].clmax[1]).toBeNull();
+    expect(loaded[0].clmax[13]).toBeNull();
   });
 
   it("upserts and deletes profiles deterministically", () => {
@@ -85,6 +87,8 @@ describe("aircraft profiles", () => {
     expect(imported[0].weights.Light).toBe(8000);
     expect(imported[0].clmax[0]).toBe(1.42);
     expect(imported[0].clmax[13]).toBe(2.35);
+    expect(imported[0].clmax[1]).toBeNull();
+    expect(exportAndroidProfiles([imported[0]])).toContain("1_F1=");
   });
 
   it("parses Java Properties escapes used by B4A", () => {
