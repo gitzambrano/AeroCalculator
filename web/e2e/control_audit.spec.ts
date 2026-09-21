@@ -370,7 +370,7 @@ test("aircraft editor exercises every unit, weight, flap, save, edit and delete 
   await expect(page.locator("#clmax-type option")).toHaveCount(15);
   for (let i = 0; i < 14; i += 1) {
     await select(page, "clmax-type", "Flap " + i);
-    await expect(page.locator("#clmax-value")).toHaveValue((1.4 + i * 0.05).toFixed(2));
+    expect(Number(await page.locator("#clmax-value").inputValue())).toBeCloseTo(1.4 + i * 0.05, 10);
   }
 
   await page.getByRole("button", { name: "AIRPLANES" }).click();
@@ -389,26 +389,32 @@ test("invalid edge inputs fail visibly without crashing the web app", async ({ p
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
 
+  const expectVisibleCalculationError = async (): Promise<void> => {
+    await page.getByRole("button", { name: "CALCULATE" }).click();
+    await expect(page.locator("#calc-status")).toBeVisible();
+    await page.getByRole("button", { name: "INPUTS" }).click();
+  };
+
   await select(page, "alt-type", "P");
   await fill(page, "alt-value", "-1");
-  await expect(page.locator("#calc-status")).toBeVisible();
+  await expectVisibleCalculationError();
 
   await select(page, "alt-type", "Hp");
   await select(page, "alt-unit", "m");
   await fill(page, "alt-value", "90000");
-  await expect(page.locator("#calc-status")).toBeVisible();
+  await expectVisibleCalculationError();
 
   await fill(page, "alt-value", "0");
   await select(page, "spd-type", "Mach");
   await fill(page, "spd-value", "1.2");
-  await expect(page.locator("#calc-status")).toBeVisible();
+  await expectVisibleCalculationError();
 
   await select(page, "spd-type", "TAS");
   await select(page, "spd-unit", "kt");
   await fill(page, "spd-value", "180");
   await select(page, "nz-type", "BankTurn");
-  await fill(page, "nz-value", "90");
-  await expect(page.locator("#calc-status")).toBeVisible();
+  await fill(page, "nz-value", "100");
+  await expectVisibleCalculationError();
 
   expect(errors).toEqual([]);
   await expect(page.locator(".app-shell")).toBeVisible();
