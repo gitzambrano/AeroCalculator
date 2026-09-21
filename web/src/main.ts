@@ -852,16 +852,12 @@ function normalizeDependentUnits(): void {
   preserveSelect(select("nz-unit"), nzType === "BankTurn" ? ["deg"] : ["g"], nzType === "BankTurn" ? "deg" : "g");
 
   const windMode = selectValue("headWind-type");
-  const cross = byId("crossWind-value") as HTMLInputElement;
-  const crossType = select("crossWind-type");
+  const crossRow = document.querySelector<HTMLElement>('[data-field="crossWind"]');
   const windRefType = select("windRef-type");
+  if (crossRow) crossRow.hidden = windMode === "Wind Speed";
   if (windMode === "Wind Speed") {
-    cross.disabled = true;
-    crossType.disabled = true;
     preserveSelect(windRefType, ["Wind Direction"], "Wind Direction");
   } else {
-    cross.disabled = false;
-    crossType.disabled = false;
     preserveSelect(windRefType, ["Runway Angle"], "Runway Angle");
   }
 }
