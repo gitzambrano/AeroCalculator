@@ -366,9 +366,11 @@ function applyProfileSelection(id: string, recalc = true): void {
     preserveSelect(clSelect, ["CLmax"], "CLmax");
   } else {
     (byId("sref-value") as HTMLInputElement).value = String(profile.sref);
-    preserveSelect(select("sref-unit"), [profile.srefUnit], profile.srefUnit);
+    preserveSelect(select("sref-unit"), ["m²", "ft²", "in²", "cm²", "mm²"], profile.srefUnit);
+    select("sref-unit").value = profile.srefUnit;
     (byId("cref-value") as HTMLInputElement).value = String(profile.cref);
-    preserveSelect(select("cref-unit"), [profile.crefUnit], profile.crefUnit);
+    preserveSelect(select("cref-unit"), ["m", "ft", "in", "cm", "mm"], profile.crefUnit);
+    select("cref-unit").value = profile.crefUnit;
 
     const weightOptions = ["Weight", ...WEIGHT_KEYS.filter((key) => profile.weights[key] !== undefined)];
     preserveSelect(weightSelect, weightOptions, "Weight");
@@ -388,7 +390,8 @@ function applyProfileNamedValue(): void {
     const value = profile.weights[weightType];
     if (value !== undefined) {
       (byId("weight-value") as HTMLInputElement).value = String(value);
-      preserveSelect(select("weight-unit"), [profile.weightUnit], profile.weightUnit);
+      preserveSelect(select("weight-unit"), ["kg", "lb", "ton", "slug", "oz"], profile.weightUnit);
+      select("weight-unit").value = profile.weightUnit;
     }
   }
 
@@ -420,7 +423,7 @@ function openProfileEditor(id?: string): void {
       source.clmax[index] === null ? "" : String(source.clmax[index]);
   }
 
-  const lastPopulated = source.clmax.reduce((last, value, index) => value === null ? last : index, -1);
+  const lastPopulated = source.clmax.reduce<number>((last, value, index) => value === null ? last : index, -1);
   visibleFlapRows = Math.max(0, lastPopulated + 1);
   renderFlapRows();
   byId("profile-delete-wrap").hidden = !profile;
