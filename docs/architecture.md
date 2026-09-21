@@ -2,7 +2,7 @@
 
 ## Current state
 
-The current project is a compact B4A application. `AeroCalculator.b4a` owns both Android interaction and a large fraction of the numerical calculation. This coupling is the main maintainability risk because a UI edit can affect physics and calculation logic is difficult to exercise outside the Activity.
+The repository contains two supported user-facing frontends. The Android application remains B4A-based, with `AeroCalculator.b4a` owning Android interaction and a large fraction of the historical numerical calculation. The browser application under `web/` is a TypeScript/Vite implementation of the portable calculator behavior and aircraft-profile workflow. The two implementations are verified against independent physics references and documented invariants rather than by importing one implementation into the other.
 
 ## Target dependency direction
 
@@ -57,9 +57,34 @@ This separation prevents a copied implementation error from validating itself.
 
 Profile persistence belongs outside the calculation core. Parsing and storage can stay in the Android/B4A layer while pure calculations receive already normalized numeric values.
 
+## Browser application
+
+The browser dependency direction is:
+
+```text
+Browser UI
+    |
+    v
+Input parsing and SI normalization
+    |
+    v
+Pure TypeScript calculation core
+    |
+    v
+Results in SI
+    |
+    v
+Output conversion and formatting
+    |
+    v
+Responsive browser UI
+```
+
+Browser persistence, PWA caching, and aircraft-profile import/export stay outside the numerical core. The browser imports and exports the Android-compatible `airplanes.txt` Java Properties format for profile interchange.
+
 ## Sensors
 
-Sensor collection stays in the Android layer. Sensor values must pass through the same unit-normalization functions as manual values.
+Sensor collection stays in the Android layer. Sensor values must pass through the same unit-normalization functions as manual values. Device GPS, pressure, and temperature sensor input modes are intentionally not part of the browser product.
 
 ## Migration rule
 
