@@ -786,12 +786,14 @@ function recalculate(): void {
       nz = loadFactorFromBank(bank);
     } else {
       nz = num("nz-value");
-      if (nz <= 0) throw new Error("Load factor must be positive.");
-      bank = nzType === "NzTurn" && nz >= 1 ? bankFromLoadFactor(nz) : 0;
+      bank = nzType === "NzTurn" && nz >= 1 ? bankFromLoadFactor(nz) : nzType === "NzTurn" ? Number.NaN : 0;
     }
 
-    const vsTas = stallSpeedTas1g(mass, atmosphere.densityKgM3, sref, clmax);
-    const vsCas = tasToCas(vsTas, atmosphere);
+    const stallInputsValid = mass > 0 && atmosphere.densityKgM3 > 0 && sref > 0 && clmax > 0;
+    const vsTas = stallInputsValid
+      ? stallSpeedTas1g(mass, atmosphere.densityKgM3, sref, clmax)
+      : Number.NaN;
+    const vsCas = Number.isFinite(vsTas) ? tasToCas(vsTas, atmosphere) : Number.NaN;
 
     const windBase = resolveWindBase();
     const speedType = selectValue("spd-type");
@@ -816,8 +818,8 @@ function recalculate(): void {
     const totalP = atmosphere.pressurePa + qc;
     const totalT = atmosphere.temperatureK * (1 + 0.5 * (GAMMA - 1) * mach ** 2);
     const mu = dynamicViscosity(atmosphere.temperatureK);
-    const cl = liftCoefficient(mass, nz, q, sref);
-    const vsFactor = cas / vsCas;
+    const cl = q > 0 && sref > 0 ? liftCoefficient(mass, nz, q, sref) : Number.NaN;
+    const vsFactor = Number.isFinite(vsCas) && vsCas > 0 ? cas / vsCas : Number.NaN;
     const reynolds = atmosphere.densityKgM3 * tas * cref / mu;
 
     const pressureRatio = atmosphere.pressurePa / P0;
@@ -833,7 +835,7 @@ function recalculate(): void {
       "Density Altitude": formatLength(densityAltitudeM),
       "Temperature Altitude": formatLength(temperatureAltitudeM),
       "Pressure": formatPressure(atmosphere.pressurePa),
-      "Density": `${fmt(atmosphere.densityKgM3, 4)} kg/m³`,
+      "Density": formatScalarWithUnit(atmosphere.densityKgM3, 3, "kg/m³"),
       "Temperature": formatTemperature(atmosphere.temperatureK),
       "Delta ISA": formatTemperatureDelta(deltaIsa),
       "Total Temperature": formatTemperature(totalT),
@@ -848,18 +850,18 @@ function recalculate(): void {
       "Lift Coefficient CL": fmt(cl, 3),
       "Mach": fmt(mach, 3),
       "Reynolds": `${fmt(reynolds / 1e6, 2)} × 10⁶`,
-      "Pressure Ratio δ": fmt(pressureRatio, 4),
-      "Density Ratio σ": fmt(densityRatio, 4),
-      "Temperature Ratio θ": fmt(tempRatio, 4),
+      "Pressure Ratio δ": fmt(pressureRatio, 3),
+      "Density Ratio σ": fmt(densityRatio, 3),
+      "Temperature Ratio θ": fmt(tempRatio, 3),
       "Dynamic Pressure": formatPressure(q),
       "Impact Pressure": formatPressure(qc),
       "Total Pressure": formatPressure(totalP),
-      "DynPressure * S / g": `${fmt(q * sref / G0, 1)} kgf`,
-      "Lift Force": `${fmt(cl * q * sref / G0, 1)} kgf`,
-      "Weight/Delta W/δ": `${fmt(mass / pressureRatio, 1)} kgf`,
-      "Load Factor Nz": `${fmt(nz, 2)} g`,
-      "Bank Angle φ": `${fmt(bank * 180 / Math.PI, 2)} deg`,
-      "Turn Radius": Number.isFinite(turnRadiusM) ? `${fmt(turnRadiusM / 1000, 3)} km` : "----",
+      "DynPressure * S / g": formatScalarWithUnit(q * sref / G0, 1, "kgf"),
+      "Lift Force": formatScalarWithUnit(cl * q * sref / G0, 1, "kgf"),
+      "Weight/Delta W/δ": formatScalarWithUnit(mass / pressureRatio, 1, "kgf"),
+      "Load Factor Nz": formatScalarWithUnit(nz, 2, "g"),
+      "Bank Angle φ": formatPlainAngle(bank),
+      "Turn Radius": Number.isFinite(turnRadiusM) ? `${fmt(turnRadiusM / 1000, 3)} Km` : "----",
       "Turn Rate": Number.isFinite(turnRate) ? formatAngleRate(turnRate) : "----",
       "Track Angle": angleText(windSolution.trackRad),
       "Heading Angle Ψ": angleText(windSolution.headingRad),
@@ -943,6 +945,7 @@ function resolveTas(atmosphere: Atmosphere, mass: number, nz: number, sref: numb
     tas = Math.sqrt(2 * q / atmosphere.densityKgM3);
   } else if (type === "Vs Factor") {
     if (value < 0) throw new Error("Vs Factor cannot be negative.");
+    if (!Number.isFinite(vsCas)) throw new Error("Vs Factor requires valid mass, reference area, and CLmax.");
     const deltaCas = units.speedToMS(num("spdDelta-value"), "kt");
     const targetCas = value * vsCas + deltaCas;
     if (targetCas < 0) throw new Error("Vs Factor plus Δ speed produces a negative CAS.");
@@ -972,6 +975,17 @@ function setStatus(text: string, error: boolean): void {
 function fmt(value: number, digits: number): string {
   if (!Number.isFinite(value)) return "----";
   return value.toFixed(digits + (settings.extraDecimal ? 1 : 0));
+}
+
+function formatScalarWithUnit(value: number, digits: number, unit: string): string {
+  if (!Number.isFinite(value)) return "----";
+  return `${fmt(value, digits)} ${unit}`;
+}
+
+function formatPlainAngle(rad: number): string {
+  if (!Number.isFinite(rad)) return "----";
+  const value = settings.angle === "deg" ? rad * 180 / Math.PI : rad;
+  return `${fmt(value, 2)} ${settings.angle}`;
 }
 
 function formatLength(m: number): string {
