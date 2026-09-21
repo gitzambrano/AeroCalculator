@@ -4,6 +4,8 @@ export default defineConfig({
   base: "./",
   build: {
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: false,
+    assetsInlineLimit: Number.MAX_SAFE_INTEGER,
+    cssCodeSplit: false,
   },
 });
