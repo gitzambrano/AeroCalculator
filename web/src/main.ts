@@ -57,14 +57,14 @@ type Field = {
 };
 
 const fields: Field[] = [
-  { id: "alt", typeOptions: opts(["Hp", "Hg", "P"]), unitOptions: opts(["ft", "m", "km", "nm", "mi", "in"]), defaultType: "Hp", defaultUnit: "ft", placeholder: "Altitude", defaultValue: "10000" },
-  { id: "temp", typeOptions: opts(["Δ ISA", "OAT"]), unitOptions: opts(["°C", "°F", "K"]), defaultType: "Δ ISA", defaultUnit: "°C", placeholder: "Temperature", defaultValue: "0" },
-  { id: "spd", typeOptions: opts(["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"]), unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "TAS", defaultUnit: "kt", placeholder: "Speed", defaultValue: "250" },
-  { id: "weight", typeOptions: opts(["Weight"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "10000" },
-  { id: "sref", typeOptions: [{ value: "Sref", label: "Sref" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "30" },
-  { id: "cref", typeOptions: [{ value: "cref", label: "cref" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "2" },
-  { id: "clmax", typeOptions: [{ value: "CLmax", label: "CLmax" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1.5" },
-  { id: "nz", typeOptions: [{ value: "Nz", label: "Nz" }, { value: "Bank", label: "Bank" }], unitOptions: opts(["g", "deg"]), defaultType: "Nz", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
+  { id: "alt", typeOptions: opts(["Hp", "Hg", "P"]), unitOptions: opts(["ft", "m", "km", "nm", "mi", "in"]), defaultType: "Hp", defaultUnit: "ft", placeholder: "Altitude", defaultValue: "0" },
+  { id: "temp", typeOptions: opts(["Δ ISA", "OAT"]), unitOptions: opts(["°C", "°F", "K"]), defaultType: "OAT", defaultUnit: "°C", placeholder: "Temperature", defaultValue: "0" },
+  { id: "spd", typeOptions: opts(["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"]), unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "CAS", defaultUnit: "kt", placeholder: "Speed", defaultValue: "0" },
+  { id: "weight", typeOptions: opts(["Weight"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "1" },
+  { id: "sref", typeOptions: [{ value: "Sref", label: "S_ref_wing" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
+  { id: "cref", typeOptions: [{ value: "cref", label: "c_ref_wing" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
+  { id: "clmax", typeOptions: [{ value: "CLmax", label: "CLMAX" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1" },
+  { id: "nz", typeOptions: [{ value: "NzPullup", label: "Nz (Pull-up)" }, { value: "NzTurn", label: "Nz (Turn)" }, { value: "BankTurn", label: "Bank (Turn)" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
   { id: "angle1", typeOptions: opts(["Track", "Heading"]), unitOptions: opts(["deg", "rad"]), defaultType: "Track", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "angle2", typeOptions: opts(["Sideslip", "Drift"]), unitOptions: opts(["deg", "rad"]), defaultType: "Sideslip", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "headWind", typeOptions: [{ value: "HeadWind", label: "HeadWind" }, { value: "Wind Speed", label: "Wind Speed" }], unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "HeadWind", defaultUnit: "kt", placeholder: "Wind", defaultValue: "0" },
@@ -680,7 +680,7 @@ function normalizeDependentUnits(): void {
   }
 
   const nzType = selectValue("nz-type");
-  preserveSelect(select("nz-unit"), nzType === "Bank" ? ["deg", "rad"] : ["g"], nzType === "Bank" ? "deg" : "g");
+  preserveSelect(select("nz-unit"), nzType === "BankTurn" ? ["deg"] : ["g"], nzType === "BankTurn" ? "deg" : "g");
 
   const windMode = selectValue("headWind-type");
   const cross = byId("crossWind-value") as HTMLInputElement;
@@ -726,13 +726,14 @@ function recalculate(): void {
 
     let bank = 0;
     let nz = 1;
-    if (selectValue("nz-type") === "Bank") {
-      bank = units.angleToRad(num("nz-value"), selectValue("nz-unit"));
+    const nzType = selectValue("nz-type");
+    if (nzType === "BankTurn") {
+      bank = units.angleToRad(num("nz-value"), "deg");
       nz = loadFactorFromBank(bank);
     } else {
       nz = num("nz-value");
       if (nz <= 0) throw new Error("Load factor must be positive.");
-      if (nz >= 1) bank = bankFromLoadFactor(nz);
+      bank = nzType === "NzTurn" && nz >= 1 ? bankFromLoadFactor(nz) : 0;
     }
 
     const vsTas = stallSpeedTas1g(mass, atmosphere.densityKgM3, sref, clmax);
@@ -990,6 +991,11 @@ function preserveSelect(el: HTMLSelectElement, values: string[], fallback: strin
 
 function num(id: string): number {
   const raw = (byId(id) as HTMLInputElement).value.trim().replace(",", ".");
+  if (!raw) {
+    if (["weight-value", "sref-value", "cref-value", "clmax-value"].includes(id)) return 1;
+    if (id === "nz-value") return selectValue("nz-type") === "BankTurn" ? 0 : 1;
+    return 0;
+  }
   const value = Number(raw);
   if (!Number.isFinite(value)) throw new Error(`Enter a valid number for ${id.replace("-value", "")}.`);
   return value;
