@@ -85,7 +85,20 @@ const resultNames = [
 const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) throw new Error("Missing #app");
 
+type OutputSettings = {
+  altitude: string;
+  pressure: string;
+  temperature: string;
+  speed: string;
+  angle: "deg" | "rad";
+  angleFormat: "0/360" | "-180/180";
+  extraDecimal: boolean;
+  theme: "Green Peace" | "Ancient Brown" | "Dark Shadows" | "Blue Sky" | "Red Alert" | "Orange Juice";
+};
+
 const SELECTED_PROFILE_KEY = "aerocalculator.selected-profile.v1";
+const SETTINGS_KEY = "aerocalculator.settings.v1";
+let settings = loadOutputSettings();
 let profiles = loadProfiles(localStorage);
 let selectedProfileId = localStorage.getItem(SELECTED_PROFILE_KEY) ?? "custom";
 let editingProfileId: string | null = null;
@@ -165,6 +178,27 @@ app.innerHTML = `
         <button type="button" data-close-dialog="about-dialog">OK</button>
       </div>
     </dialog>
+    <dialog class="settings-dialog simple-dialog" id="settings-dialog">
+      <form id="settings-form">
+        <h2>Settings</h2>
+        <h3>Interface Options</h3>
+        <label>Theme<select id="setting-theme">
+          <option>Green Peace</option><option>Ancient Brown</option><option>Dark Shadows</option><option>Blue Sky</option><option>Red Alert</option><option>Orange Juice</option>
+        </select></label>
+        <h3>Output Units and Format</h3>
+        <label>Altitude Unit<select id="setting-altitude"><option>ft</option><option>m</option><option>km</option><option>nm</option><option>mi</option><option>in</option></select></label>
+        <label>Pressure Unit<select id="setting-pressure"><option>mbar</option><option>Pa</option><option>hPa</option><option>atm</option><option>mmHg</option><option>psi</option></select></label>
+        <label>Temperature Unit<select id="setting-temperature"><option>°C</option><option>°F</option><option>K</option></select></label>
+        <label>Speed Unit<select id="setting-speed"><option>kt</option><option>m/s</option><option>km/h</option><option>mph</option><option>ft/s</option></select></label>
+        <label>Angle Unit<select id="setting-angle"><option>deg</option><option>rad</option></select></label>
+        <label>Angle Interval<select id="setting-angle-format"><option value="0/360">0/360 (0/2π)</option><option value="-180/180">-180/180 (-π/π)</option></select></label>
+        <label class="check-row"><span>Increase one decimal place</span><input id="setting-extra-decimal" type="checkbox" /></label>
+        <div class="dialog-buttons">
+          <button type="button" id="settings-cancel">Cancel</button>
+          <button type="submit">Save</button>
+        </div>
+      </form>
+    </dialog>
   </main>
 `;
 
@@ -217,7 +251,13 @@ byId("add-flap").addEventListener("click", showNextFlapRow);
 document.querySelectorAll<HTMLButtonElement>("[data-close-dialog]").forEach((button) => {
   button.addEventListener("click", () => (byId(button.dataset.closeDialog ?? "") as HTMLDialogElement).close());
 });
+byId("settings-cancel").addEventListener("click", () => (byId("settings-dialog") as HTMLDialogElement).close());
+byId("settings-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  saveOutputSettings();
+});
 
+applyTheme();
 renderProfiles();
 renderAirplaneSelector();
 normalizeDependentUnits();
@@ -502,12 +542,65 @@ function handleMenu(action: string): void {
   } else if (action === "export") {
     exportProfileFile();
   } else if (action === "settings") {
-    alert("Output-unit settings are being matched to the Android settings screen next.");
+    openSettings();
   } else if (action === "feedback") {
     window.location.href = "mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback";
   } else if (action === "about") {
     (byId("about-dialog") as HTMLDialogElement).showModal();
   }
+}
+
+function loadOutputSettings(): OutputSettings {
+  const defaults: OutputSettings = {
+    altitude: "ft",
+    pressure: "mbar",
+    temperature: "°C",
+    speed: "kt",
+    angle: "deg",
+    angleFormat: "0/360",
+    extraDecimal: false,
+    theme: "Green Peace",
+  };
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return defaults;
+    return { ...defaults, ...JSON.parse(raw) };
+  } catch {
+    return defaults;
+  }
+}
+
+function openSettings(): void {
+  (byId("setting-theme") as HTMLSelectElement).value = settings.theme;
+  (byId("setting-altitude") as HTMLSelectElement).value = settings.altitude;
+  (byId("setting-pressure") as HTMLSelectElement).value = settings.pressure;
+  (byId("setting-temperature") as HTMLSelectElement).value = settings.temperature;
+  (byId("setting-speed") as HTMLSelectElement).value = settings.speed;
+  (byId("setting-angle") as HTMLSelectElement).value = settings.angle;
+  (byId("setting-angle-format") as HTMLSelectElement).value = settings.angleFormat;
+  (byId("setting-extra-decimal") as HTMLInputElement).checked = settings.extraDecimal;
+  (byId("settings-dialog") as HTMLDialogElement).showModal();
+}
+
+function saveOutputSettings(): void {
+  settings = {
+    theme: (byId("setting-theme") as HTMLSelectElement).value as OutputSettings["theme"],
+    altitude: (byId("setting-altitude") as HTMLSelectElement).value,
+    pressure: (byId("setting-pressure") as HTMLSelectElement).value,
+    temperature: (byId("setting-temperature") as HTMLSelectElement).value,
+    speed: (byId("setting-speed") as HTMLSelectElement).value,
+    angle: (byId("setting-angle") as HTMLSelectElement).value as "deg" | "rad",
+    angleFormat: (byId("setting-angle-format") as HTMLSelectElement).value as "0/360" | "-180/180",
+    extraDecimal: (byId("setting-extra-decimal") as HTMLInputElement).checked,
+  };
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  applyTheme();
+  (byId("settings-dialog") as HTMLDialogElement).close();
+  recalculate();
+}
+
+function applyTheme(): void {
+  document.documentElement.dataset.theme = settings.theme;
 }
 
 function clearInputs(): void {
@@ -686,9 +779,9 @@ function recalculate(): void {
       "Temperature Altitude": formatLength(temperatureAltitudeM),
       "Pressure": formatPressure(atmosphere.pressurePa),
       "Density": `${fmt(atmosphere.densityKgM3, 4)} kg/m³`,
-      "Temperature": `${fmt(atmosphere.temperatureK - 273.15, 2)} °C`,
-      "Delta ISA": `${fmt(deltaIsa, 2)} °C`,
-      "Total Temperature": `${fmt(totalT - 273.15, 2)} °C`,
+      "Temperature": formatTemperature(atmosphere.temperatureK),
+      "Delta ISA": formatTemperatureDelta(deltaIsa),
+      "Total Temperature": formatTemperature(totalT),
       "Viscosity": `${mu.toExponential(5)} Pa·s`,
       "Sound Speed": formatSpeed(atmosphere.speedOfSoundMS),
       "True Airspeed": formatSpeed(tas),
@@ -712,7 +805,7 @@ function recalculate(): void {
       "Load Factor Nz": `${fmt(nz, 2)} g`,
       "Bank Angle φ": `${fmt(bank * 180 / Math.PI, 2)} deg`,
       "Turn Radius": Number.isFinite(turnRadiusM) ? `${fmt(turnRadiusM / 1000, 3)} km` : "----",
-      "Turn Rate": Number.isFinite(turnRate) ? `${fmt(turnRate * 180 / Math.PI, 2)} deg/s` : "----",
+      "Turn Rate": Number.isFinite(turnRate) ? formatAngleRate(turnRate) : "----",
       "Track Angle": angleText(windSolution.trackRad),
       "Heading Angle Ψ": angleText(windSolution.headingRad),
       "Drift Angle": signedAngleText(windSolution.driftRad),
@@ -823,33 +916,65 @@ function setStatus(text: string, error: boolean): void {
 
 function fmt(value: number, digits: number): string {
   if (!Number.isFinite(value)) return "----";
-  return value.toFixed(digits);
+  return value.toFixed(digits + (settings.extraDecimal ? 1 : 0));
 }
 
 function formatLength(m: number): string {
   if (!Number.isFinite(m)) return "----";
-  return `${fmt(m / 0.3048, 1)} ft`;
+  const value = m / units.lengthToM(1, settings.altitude);
+  return `${fmt(value, 1)} ${settings.altitude}`;
 }
 
 function formatSpeed(ms: number): string {
   if (!Number.isFinite(ms)) return "----";
-  return `${fmt(ms / (1852 / 3600), 2)} kt`;
+  const value = ms / units.speedToMS(1, settings.speed);
+  return `${fmt(value, 2)} ${settings.speed}`;
 }
 
 function formatPressure(pa: number): string {
   if (!Number.isFinite(pa)) return "----";
-  return `${fmt(pa / 100, 2)} hPa`;
+  const value = pa / units.pressureToPa(1, settings.pressure);
+  return `${fmt(value, 2)} ${settings.pressure}`;
+}
+
+function formatTemperature(kelvin: number): string {
+  if (!Number.isFinite(kelvin)) return "----";
+  let value = kelvin;
+  if (settings.temperature === "°C") value = kelvin - 273.15;
+  else if (settings.temperature === "°F") value = (kelvin - 273.15) * 9 / 5 + 32;
+  return `${fmt(value, 2)} ${settings.temperature}`;
+}
+
+function formatTemperatureDelta(deltaK: number): string {
+  if (!Number.isFinite(deltaK)) return "----";
+  const value = settings.temperature === "°F" ? deltaK * 9 / 5 : deltaK;
+  return `${fmt(value, 2)} ${settings.temperature}`;
+}
+
+function outputAngle(rad: number, signed: boolean): number {
+  let angle = rad;
+  if (!signed && settings.angleFormat === "0/360") {
+    angle = ((angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  } else {
+    while (angle > Math.PI) angle -= 2 * Math.PI;
+    while (angle <= -Math.PI) angle += 2 * Math.PI;
+  }
+  return settings.angle === "deg" ? angle * 180 / Math.PI : angle;
 }
 
 function angleText(rad: number): string {
   if (!Number.isFinite(rad)) return "----";
-  const normalized = ((rad * 180 / Math.PI) % 360 + 360) % 360;
-  return `${fmt(normalized, 2)} deg`;
+  return `${fmt(outputAngle(rad, false), 2)} ${settings.angle}`;
 }
 
 function signedAngleText(rad: number): string {
   if (!Number.isFinite(rad)) return "----";
-  return `${fmt(rad * 180 / Math.PI, 2)} deg`;
+  return `${fmt(outputAngle(rad, true), 2)} ${settings.angle}`;
+}
+
+function formatAngleRate(radPerSecond: number): string {
+  const value = settings.angle === "deg" ? radPerSecond * 180 / Math.PI : radPerSecond;
+  return `${fmt(value, 2)} ${settings.angle}/s`;
 }
 
 function lengthAnyToM(value: number, unit: string): number {
