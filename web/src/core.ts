@@ -57,7 +57,7 @@ export function geopotentialToGeometric(HM: number): number {
 }
 
 export function standardAtmosphere(HM: number): Atmosphere {
-  if (HM < 0 || HM > 84_852) throw new Error("Pressure altitude must be between 0 and 84.852 km.");
+  if (HM < -5_000 || HM > 84_852) throw new Error("Pressure altitude must be between -5 and 84.852 km.");
   let idx = 0;
   for (let i = 0; i < LAYER_BASES_M.length - 1; i += 1) {
     if (HM >= LAYER_BASES_M[i]) idx = i;
@@ -86,13 +86,15 @@ export function standardAtmosphere(HM: number): Atmosphere {
 
 export function pressureToGeopotentialAltitude(pPa: number): number {
   if (pPa <= 0) throw new Error("Pressure must be positive.");
+  const maxP = standardAtmosphere(-5_000).pressurePa;
   const minP = standardAtmosphere(84_852).pressurePa;
-  if (pPa > P0 || pPa < minP) throw new Error("Pressure is outside the supported atmosphere range.");
+  if (pPa > maxP || pPa < minP) throw new Error("Pressure is outside the supported atmosphere range.");
   for (let i = 0; i < LAYERS.length; i += 1) {
     const layer = LAYERS[i];
     const top = LAYER_BASES_M[i + 1];
     const pTop = standardAtmosphere(top).pressurePa;
-    if (pPa <= layer.p && pPa >= pTop) {
+    const pBottom = i === 0 ? maxP : layer.p;
+    if (pPa <= pBottom && pPa >= pTop) {
       if (layer.lapse === 0) {
         return layer.H - (R_AIR * layer.T / G0) * Math.log(pPa / layer.p);
       }
@@ -183,6 +185,249 @@ export function loadFactorFromBank(bankRad: number): number {
 export function bankFromLoadFactor(loadFactor: number): number {
   if (loadFactor < 1) throw new Error("Coordinated level-turn load factor must be ≥ 1.");
   return Math.acos(1 / loadFactor);
+}
+
+export type TemperatureSpecification =
+  | { kind: "deltaIsa"; deltaK: number }
+  | { kind: "oat"; temperatureK: number };
+
+function localIsaAtPressureAltitude(HM: number, spec: TemperatureSpecification): number {
+  const std = standardAtmosphere(HM);
+  return spec.kind === "deltaIsa" ? spec.deltaK : spec.temperatureK - std.temperatureK;
+}
+
+export function pressureAltitudeFromGeopotentialAltitude(
+  geopotentialAltitudeM: number,
+  temperature: TemperatureSpecification,
+): number {
+  const residual = (pressureAltitudeM: number): number => {
+    const std = standardAtmosphere(pressureAltitudeM);
+    const localIsa = localIsaAtPressureAltitude(pressureAltitudeM, temperature);
+    return pressureAltitudeM
+      - geopotentialAltitudeM
+      - 29.271247 * localIsa * Math.log(std.pressurePa / P0);
+  };
+
+  let lower = -5_000;
+  let upper = 84_852;
+  let fLower = residual(lower);
+  const fUpper = residual(upper);
+  if (fLower * fUpper > 0) return geopotentialAltitudeM;
+
+  let guess = geopotentialAltitudeM;
+  if (guess <= lower || guess >= upper) guess = (lower + upper) / 2;
+
+  for (let i = 0; i < 40; i += 1) {
+    const fGuess = residual(guess);
+    if (Math.abs(fGuess) <= 0.001) return guess;
+
+    if (fLower * fGuess <= 0) {
+      upper = guess;
+    } else {
+      lower = guess;
+      fLower = fGuess;
+    }
+
+    const xLower = Math.max(lower, guess - 1);
+    const xUpper = Math.min(upper, guess + 1);
+    const derivative = xUpper > xLower
+      ? (residual(xUpper) - residual(xLower)) / (xUpper - xLower)
+      : 0;
+
+    let candidate = Math.abs(derivative) > 1e-9
+      ? guess - fGuess / derivative
+      : (lower + upper) / 2;
+    if (candidate <= lower || candidate >= upper) candidate = (lower + upper) / 2;
+    guess = candidate;
+  }
+  return guess;
+}
+
+export function densityAltitudeFromDensity(densityKgM3: number): number {
+  if (densityKgM3 <= 0) throw new Error("Density must be positive.");
+  let lower = -5_000;
+  let upper = 84_852;
+  const densityAt = (h: number): number => standardAtmosphere(h).densityKgM3;
+
+  if (densityKgM3 >= densityAt(lower)) return lower;
+  if (densityKgM3 <= densityAt(upper)) return upper;
+
+  for (let i = 0; i < 32; i += 1) {
+    const midpoint = (lower + upper) / 2;
+    if (densityAt(midpoint) > densityKgM3) lower = midpoint;
+    else upper = midpoint;
+  }
+  return (lower + upper) / 2;
+}
+
+export function temperatureAltitudeFromTemperature(temperatureK: number): number {
+  if (temperatureK <= 0) throw new Error("Absolute temperature must be positive.");
+  return temperatureK > 216.65
+    ? 11_000 * (288.15 - temperatureK) / 71.5
+    : 11_000;
+}
+
+export function normalizeSignedAngle(angleRad: number): number {
+  let angle = angleRad;
+  while (angle > Math.PI) angle -= 2 * Math.PI;
+  while (angle <= -Math.PI) angle += 2 * Math.PI;
+  return angle;
+}
+
+export interface WindTriangleInput {
+  knownSpeed: "tas" | "gs";
+  speedMS: number;
+  angle1: "track" | "heading";
+  angle1Rad: number;
+  angle2: "sideslip" | "drift";
+  angle2Rad: number;
+  headwindMS: number;
+  crosswindMS: number;
+  windReferenceRad: number;
+}
+
+export interface WindTriangleSolution {
+  tasMS: number;
+  groundSpeedMS: number;
+  trackRad: number;
+  headingRad: number;
+  driftRad: number;
+  sideslipRad: number;
+  windSpeedMS: number;
+  windDirectionRad: number;
+  alongTrackHeadwindMS: number;
+  alongTrackCrosswindMS: number;
+}
+
+export function solveWindTriangle(input: WindTriangleInput): WindTriangleSolution {
+  const {
+    knownSpeed, speedMS, angle1, angle1Rad, angle2, angle2Rad,
+    headwindMS, crosswindMS, windReferenceRad,
+  } = input;
+  if (speedMS < 0) throw new Error("Speed cannot be negative.");
+
+  const uWind = -headwindMS * Math.cos(windReferenceRad) + crosswindMS * Math.sin(windReferenceRad);
+  const vWind = -crosswindMS * Math.cos(windReferenceRad) - headwindMS * Math.sin(windReferenceRad);
+  const windSpeed = Math.hypot(headwindMS, crosswindMS);
+  const windDirection = windSpeed < 1e-12 ? 0 : normalizeSignedAngle(Math.atan2(vWind, uWind) + Math.PI);
+
+  let tas = knownSpeed === "tas" ? speedMS : Number.NaN;
+  let gs = knownSpeed === "gs" ? speedMS : Number.NaN;
+  let track = Number.NaN;
+  let heading = Number.NaN;
+  let drift = Number.NaN;
+  let beta = Number.NaN;
+  let airDirection = Number.NaN;
+  let uGround = Number.NaN;
+  let vGround = Number.NaN;
+  let uAir = Number.NaN;
+  let vAir = Number.NaN;
+
+  if (knownSpeed === "gs") {
+    if (angle1 === "track") {
+      track = angle1Rad;
+      uGround = gs * Math.cos(track);
+      vGround = gs * Math.sin(track);
+      uAir = uGround - uWind;
+      vAir = vGround - vWind;
+      tas = Math.hypot(uAir, vAir);
+      airDirection = Math.atan2(vAir, uAir);
+      if (angle2 === "sideslip") {
+        beta = angle2Rad;
+        heading = airDirection - beta;
+      } else {
+        drift = angle2Rad;
+        heading = track + drift;
+        beta = normalizeSignedAngle(airDirection - heading);
+      }
+    } else {
+      heading = angle1Rad;
+      if (angle2 === "drift") {
+        drift = angle2Rad;
+        track = heading - drift;
+        uGround = gs * Math.cos(track);
+        vGround = gs * Math.sin(track);
+        uAir = uGround - uWind;
+        vAir = vGround - vWind;
+        tas = Math.hypot(uAir, vAir);
+        airDirection = Math.atan2(vAir, uAir);
+        beta = normalizeSignedAngle(airDirection - heading);
+      } else {
+        beta = angle2Rad;
+        airDirection = heading + beta;
+        const windAlongAir = uWind * Math.cos(airDirection) + vWind * Math.sin(airDirection);
+        const discriminant = windAlongAir ** 2 + gs ** 2 - windSpeed ** 2;
+        if (discriminant < -1e-10) {
+          throw new Error("Ground speed is incompatible with the selected heading, sideslip, and wind.");
+        }
+        tas = -windAlongAir + Math.sqrt(Math.max(0, discriminant));
+        if (tas < 0) {
+          throw new Error("Ground speed is incompatible with the selected heading, sideslip, and wind.");
+        }
+        uAir = tas * Math.cos(airDirection);
+        vAir = tas * Math.sin(airDirection);
+        uGround = uAir + uWind;
+        vGround = vAir + vWind;
+        track = Math.atan2(vGround, uGround);
+      }
+    }
+  } else {
+    if (angle1 === "heading" && angle2 === "sideslip") {
+      heading = angle1Rad;
+      beta = angle2Rad;
+      airDirection = heading + beta;
+    } else {
+      if (angle1 === "track") {
+        track = angle1Rad;
+        if (angle2 === "sideslip") beta = angle2Rad;
+        else {
+          drift = angle2Rad;
+          heading = track + drift;
+        }
+      } else {
+        heading = angle1Rad;
+        drift = angle2Rad;
+        track = heading - drift;
+      }
+
+      const windNormal = -uWind * Math.sin(track) + vWind * Math.cos(track);
+      const ratio = -windNormal / tas;
+      if (Math.abs(ratio) > 1 + 1e-12) {
+        throw new Error("Selected track cannot be maintained with the current airspeed and wind.");
+      }
+      airDirection = track + Math.asin(Math.max(-1, Math.min(1, ratio)));
+      if (angle1 === "track" && angle2 === "sideslip") heading = airDirection - beta;
+      else beta = normalizeSignedAngle(airDirection - heading);
+    }
+
+    uAir = tas * Math.cos(airDirection);
+    vAir = tas * Math.sin(airDirection);
+    uGround = uAir + uWind;
+    vGround = vAir + vWind;
+    gs = Math.hypot(uGround, vGround);
+    track = Math.atan2(vGround, uGround);
+  }
+
+  drift = normalizeSignedAngle(heading - track);
+  beta = normalizeSignedAngle(beta);
+  track = normalizeSignedAngle(track);
+  heading = normalizeSignedAngle(heading);
+
+  const alongTrackHeadwind = windSpeed * Math.cos(windDirection - track);
+  const alongTrackCrosswind = windSpeed * Math.sin(windDirection - track);
+
+  return {
+    tasMS: Math.abs(tas) < 1e-12 ? 0 : tas,
+    groundSpeedMS: Math.abs(gs) < 1e-12 ? 0 : gs,
+    trackRad: Math.abs(track) < 1e-12 ? 0 : track,
+    headingRad: Math.abs(heading) < 1e-12 ? 0 : heading,
+    driftRad: Math.abs(drift) < 1e-12 ? 0 : drift,
+    sideslipRad: Math.abs(beta) < 1e-12 ? 0 : beta,
+    windSpeedMS: Math.abs(windSpeed) < 1e-12 ? 0 : windSpeed,
+    windDirectionRad: Math.abs(windDirection) < 1e-12 ? 0 : windDirection,
+    alongTrackHeadwindMS: Math.abs(alongTrackHeadwind) < 1e-12 ? 0 : alongTrackHeadwind,
+    alongTrackCrosswindMS: Math.abs(alongTrackCrosswind) < 1e-12 ? 0 : alongTrackCrosswind,
+  };
 }
 
 export function dynamicViscosity(temperatureK: number): number {
