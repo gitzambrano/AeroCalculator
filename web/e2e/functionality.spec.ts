@@ -179,12 +179,18 @@ test("output settings change formatting without changing the calculation", async
   await page.getByRole("button", { name: "Settings" }).click();
   await select(page, "setting-speed", "m/s");
   await select(page, "setting-angle", "deg");
-  await page.locator("#setting-extra-decimal").check();
   await page.locator("#settings-form").getByRole("button", { name: "Save" }).click();
 
   expect(await resultText(page, "True Airspeed")).toContain("m/s");
   expect(await resultText(page, "Bank Angle φ")).toContain("deg");
-  expect(await resultText(page, "Mach")).toBe(machBefore + "0");
+  expect(await resultText(page, "Mach")).toBe(machBefore);
+
+  await page.getByRole("button", { name: "More options" }).click();
+  await page.getByRole("button", { name: "Settings" }).click();
+  await page.locator("#setting-extra-decimal").check();
+  await page.locator("#settings-form").getByRole("button", { name: "Save" }).click();
+  const machWithExtraDigit = Number(await resultText(page, "Mach"));
+  expect(machWithExtraDigit).toBeCloseTo(Number(machBefore), 3);
 });
 
 test("aircraft profile create, select and Android-compatible export work end to end", async ({ page }) => {
@@ -249,7 +255,7 @@ test("installed PWA remains usable offline after the first load", async ({ page,
   await page.evaluate(async () => {
     if ("serviceWorker" in navigator) await navigator.serviceWorker.ready;
   });
-  await page.waitForTimeout(250);
+  await expect.poll(() => page.locator("html").getAttribute("data-offline-ready"), { timeout: 10000 }).toBe("true");
   await context.setOffline(true);
   await page.reload();
   await expect(page.locator(".app-shell")).toBeVisible();
