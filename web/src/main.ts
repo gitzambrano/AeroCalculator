@@ -564,6 +564,10 @@ function initializeSwipeNavigation(): void {
     const index = PAGE_ORDER.indexOf(current);
     const nextIndex = dx < 0 ? index + 1 : index - 1;
     if (nextIndex < 0 || nextIndex >= PAGE_ORDER.length) return;
+
+    event.preventDefault();
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    byId("main-menu").hidden = true;
     activatePage(PAGE_ORDER[nextIndex], dx < 0 ? "left" : "right");
   };
 
