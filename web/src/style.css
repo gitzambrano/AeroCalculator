@@ -96,14 +96,17 @@ body { background: #e9f2f1; }
 .input-row {
   min-height: 58px;
   display: grid;
-  grid-template-columns: minmax(126px, 37%) minmax(108px, 1fr) minmax(72px, 19%);
+  grid-template-columns: 30% 36% 20%;
+  column-gap: 4%;
   align-items: stretch;
+  padding: 8px 3%;
   border-bottom: 1px solid var(--divider);
+  background: var(--input-bg);
 }
-.field-select, .unit-select {
+.field-select, .unit-select, .profile-select, .field-button {
   appearance: none;
   border: 0;
-  border-radius: 0;
+  border-radius: 2px;
   padding: 0 30px 0 12px;
   font-size: 15px;
   color: #111;
@@ -112,6 +115,7 @@ body { background: #e9f2f1; }
     linear-gradient(135deg, #555 50%, transparent 50%) right 8px center / 5px 5px no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.22);
 }
 .input-tail {
   position: relative;
@@ -128,8 +132,6 @@ body { background: #e9f2f1; }
 .value-input {
   min-width: 0;
   border: 0;
-  border-left: 1px solid rgb(0 145 131 / .20);
-  border-right: 1px solid rgb(0 145 131 / .20);
   background: var(--field-bg);
   color: #111;
   text-align: right;
@@ -142,69 +144,206 @@ body { background: #e9f2f1; }
 .value-input::placeholder { color: #8a9392; }
 .unit-select { text-align: center; text-align-last: center; padding-left: 8px; }
 
-.helper {
-  margin: 0;
-  padding: 12px 16px;
-  font-size: 13px;
-  color: var(--muted);
-  background: #fff;
-  border-bottom: 1px solid #d6dfde;
+.field-button {
+  font: inherit;
+  font-size: 15px;
+  color: #111;
+  background: linear-gradient(var(--button-a), var(--button-b));
+  cursor: pointer;
 }
-.helper.error { color: var(--danger); font-weight: 600; }
+.airplane-row { grid-template-columns: 30% 66%; column-gap: 4%; }
+.profile-select {
+  width: 100%;
+  padding: 0 34px 0 12px;
+  font-size: 15px;
+  color: #111;
+  background:
+    linear-gradient(45deg, transparent 50%, #555 50%) right 16px center / 5px 5px no-repeat,
+    linear-gradient(135deg, #555 50%, transparent 50%) right 11px center / 5px 5px no-repeat,
+    var(--field-bg);
+  cursor: pointer;
+}
+
+.status-banner {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--danger);
+  background: #fff4f4;
+  border-bottom: 1px solid var(--danger);
+}
+.status-banner.error { font-weight: 600; }
 
 .results { margin: 0; padding: 0; list-style: none; }
 .result-row {
   min-height: 40px;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-template-columns: 54% 46%;
   align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
-  border-bottom: 1px solid #d9e2e1;
+  padding: 0 5px;
+  border-bottom: 1px solid var(--divider);
 }
-.result-name { font-size: 14px; color: #333; }
-.result-value { font-size: 14px; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
-.result-value.na { color: #87908f; font-weight: 400; }
-
-.airplane-page { background: white; }
-.airplane-card {
-  padding: 18px 16px;
-  border-bottom: 1px solid #d9e2e1;
-}
-.airplane-card h2 { margin: 0 0 6px; font-size: 18px; color: var(--title-dark); }
-.airplane-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
-.profile-grid { display: grid; gap: 10px; padding: 16px; }
-.profile-button {
-  min-height: 54px;
-  border: 1px solid #b9cfcc;
-  background: linear-gradient(#fafffd, #e4fffb);
-  border-radius: 3px;
-  text-align: left;
-  padding: 8px 12px;
+.result-row:nth-child(odd) { background: var(--input-bg); }
+.result-row:nth-child(even) { background: var(--field-bg); }
+.result-name, .result-value {
   font-size: 15px;
+  color: #111;
+  font-weight: 400;
+  text-align: left;
+  padding-left: 5px;
+  overflow-wrap: anywhere;
 }
-.profile-button strong { display: block; color: #222; }
-.profile-button span { color: var(--muted); font-size: 12px; }
+.result-value.na { color: #87908f; }
 
-.status-pill {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 5px 8px;
-  border-radius: 999px;
-  background: #e9f2f1;
-  color: #35615c;
-  font-size: 12px;
+.airplane-page { background: var(--input-bg); }
+.profile-list { min-height: calc(100vh - 102px); }
+.airplane-list-row {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: 1fr 58px;
+  border-bottom: 1px solid var(--divider);
+  background: var(--input-bg);
 }
+.airplane-name-button, .airplane-edit-button {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.airplane-name-button strong { display: block; font-size: 15px; font-weight: 500; }
+.airplane-name-button span { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+.airplane-edit-button { text-align: center; font-size: 22px; color: var(--title-dark); }
+
+.popup-menu {
+  position: fixed;
+  z-index: 60;
+  top: 50px;
+  left: min(calc(50% + 430px - 235px), calc(100% - 235px));
+  width: 225px;
+  padding: 5px 0;
+  background: #f5f5f5;
+  border: 1px solid #d3d3d3;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.28);
+}
+.popup-menu[hidden] { display: none; }
+.popup-menu button {
+  width: 100%;
+  height: 46px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0 18px;
+  font-size: 15px;
+  color: #222;
+  cursor: pointer;
+}
+.popup-menu button:hover, .popup-menu button:focus-visible { background: #e6e6e6; outline: none; }
+
+.profile-dialog, .simple-dialog {
+  border: 0;
+  padding: 0;
+  background: var(--input-bg);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+}
+.profile-dialog {
+  width: min(100%, 860px);
+  height: min(92vh, 850px);
+  max-width: none;
+  max-height: none;
+}
+.profile-dialog::backdrop, .simple-dialog::backdrop { background: rgb(0 0 0 / 0.38); }
+.profile-dialog form { height: 100%; display: flex; flex-direction: column; }
+.editor-toolbar {
+  height: 50px;
+  flex: 0 0 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--title);
+}
+.editor-toolbar button {
+  border: 0;
+  color: white;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+}
+.editor-toolbar button + button { border-left: 1px solid white; }
+.editor-scroll { overflow-y: auto; flex: 1; background: var(--input-bg); }
+.editor-row {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: 20% 55% 20%;
+  gap: 1%;
+  align-items: center;
+  padding: 7px 1%;
+  border-bottom: 1px solid var(--divider);
+}
+.editor-row > label { font-size: 15px; font-weight: 600; }
+.editor-row input, .editor-row select,
+.weight-grid input, .flap-grid input, .editor-section-head select {
+  min-width: 0;
+  height: 34px;
+  border: 0;
+  border-radius: 0;
+  background: var(--field-bg);
+  padding: 0 9px;
+  font-size: 14px;
+}
+.editor-section { border-bottom: 1px solid var(--divider); }
+.editor-section-head {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: 1fr 20%;
+  align-items: center;
+  padding: 7px 1%;
+}
+.editor-section-head strong { font-size: 15px; }
+.weight-grid, .flap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.weight-grid label, .flap-grid label {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: 42% 58%;
+  align-items: center;
+  padding: 7px 2%;
+  font-size: 14px;
+}
+.add-flap {
+  justify-self: end;
+  width: 38px;
+  height: 34px;
+  border: 0;
+  background: var(--title);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+.add-flap:disabled { opacity: .35; }
+.editor-actions { padding: 16px; }
+.danger-button { border: 1px solid #a40019; background: white; color: #a40019; padding: 10px 14px; }
+.simple-dialog { width: min(330px, calc(100% - 32px)); }
+.about-content { padding: 24px; text-align: center; background: white; }
+.about-content img { width: 58px; height: 58px; }
+.about-content h2 { margin: 10px 0 4px; }
+.about-content p { margin: 6px 0; }
+.about-content button { margin-top: 14px; min-width: 90px; min-height: 38px; }
 
 @media (max-width: 430px) {
   .app-shell { width: 100%; box-shadow: none; }
   .brand-row { grid-template-columns: 46px 1fr 42px 42px; padding-left: 10px; }
   .brand { font-size: 21px; }
   .brand-icon { width: 35px; height: 35px; }
-  .input-row { grid-template-columns: 37% 1fr 21%; min-height: 56px; }
+  .input-row { grid-template-columns: 30% 36% 20%; min-height: 56px; }
+  .airplane-row { grid-template-columns: 30% 66%; }
   .field-select, .unit-select, .value-input { font-size: 14px; padding-left: 8px; padding-right: 8px; }
   .field-select { padding-right: 24px; background-position: right 11px center, right 6px center, center; }
-  .result-row { padding-left: 12px; padding-right: 12px; gap: 8px; }
+  .result-row { padding-left: 4px; padding-right: 4px; }
+  .popup-menu { left: auto; right: 8px; top: 48px; }
+  .profile-dialog { width: 100%; height: 100%; margin: 0; }
 }
 
 @media (min-width: 720px) {
