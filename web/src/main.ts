@@ -139,7 +139,7 @@ app.innerHTML = `
       <button type="button" data-menu="import">Import Airplanes</button>
       <button type="button" data-menu="export">Export Airplanes</button>
       <button type="button" data-menu="settings">Settings</button>
-      <button type="button" data-menu="feedback">Send Feedback</button>
+      <a id="feedback-link" href="mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback">Send Feedback</a>
       <button type="button" data-menu="about">About</button>
     </div>
 
@@ -252,6 +252,9 @@ document.addEventListener("click", (event) => {
 });
 document.querySelectorAll<HTMLButtonElement>("[data-menu]").forEach((button) => {
   button.addEventListener("click", () => handleMenu(button.dataset.menu ?? ""));
+});
+byId("feedback-link").addEventListener("click", () => {
+  byId("main-menu").hidden = true;
 });
 byId("profile-cancel").addEventListener("click", closeProfileEditor);
 byId("profile-save").addEventListener("click", (event) => {
@@ -585,8 +588,6 @@ function handleMenu(action: string): void {
     exportProfileFile();
   } else if (action === "settings") {
     openSettings();
-  } else if (action === "feedback") {
-    window.location.href = "mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback";
   } else if (action === "about") {
     (byId("about-dialog") as HTMLDialogElement).showModal();
   }
