@@ -228,8 +228,14 @@ document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control")
     recalculate();
   });
   el.addEventListener("change", () => {
+    if (el instanceof HTMLSelectElement && el.id.endsWith("-type")) {
+      handleTypeSelectionChange(el);
+    } else if (el instanceof HTMLSelectElement && el.id.endsWith("-unit")) {
+      convertInputForUnitChange(el);
+    }
     normalizeDependentUnits();
     if (el.id === "weight-type" || el.id === "clmax-type") applyProfileNamedValue();
+    syncSelectPreviousValues();
     persistInputState();
     recalculate();
   });
@@ -271,6 +277,7 @@ renderAirplaneSelector();
 applyProfileSelection(selectedProfileId, false);
 restoreInputState();
 normalizeDependentUnits();
+syncSelectPreviousValues();
 recalculate();
 
 if ("serviceWorker" in navigator) {
@@ -433,6 +440,7 @@ function applyProfileSelection(id: string, recalc = true): void {
     preserveSelect(clSelect, flapOptions, "CLmax");
   }
 
+  syncSelectPreviousValues();
   if (recalc) recalculate();
 }
 
@@ -704,6 +712,109 @@ function escapeHtml(value: string): string {
   }[char] ?? char));
 }
 
+function handleTypeSelectionChange(selectElement: HTMLSelectElement): void {
+  const previous = selectElement.dataset.previousValue ?? selectElement.value;
+  if (previous === selectElement.value) return;
+
+  const clear = (id: string): void => {
+    (byId(`${id}-value`) as HTMLInputElement).value = "";
+  };
+
+  switch (selectElement.id) {
+    case "alt-type":
+      clear("alt");
+      break;
+    case "temp-type":
+      clear("temp");
+      break;
+    case "spd-type":
+      clear("spd");
+      (byId("spdDelta-value") as HTMLInputElement).value = "";
+      break;
+    case "nz-type":
+      clear("nz");
+      break;
+    case "angle1-type":
+      clear("angle1");
+      break;
+    case "angle2-type":
+      clear("angle2");
+      break;
+    case "headWind-type":
+      clear("headWind");
+      clear("crossWind");
+      clear("windRef");
+      break;
+  }
+}
+
+function convertInputForUnitChange(unitSelect: HTMLSelectElement): void {
+  const previousUnit = unitSelect.dataset.previousValue;
+  const newUnit = unitSelect.value;
+  if (!previousUnit || previousUnit === newUnit) return;
+
+  const fieldId = unitSelect.id.replace(/-unit$/, "");
+  const input = document.getElementById(`${fieldId}-value`) as HTMLInputElement | null;
+  if (!input || !input.value.trim()) return;
+
+  const parsed = Number(input.value.trim().replace(",", "."));
+  if (!Number.isFinite(parsed)) return;
+
+  let converted: number | null = null;
+  if (fieldId === "alt") {
+    if (selectValue("alt-type") === "P") {
+      converted = units.pressureToPa(parsed, previousUnit) / units.pressureToPa(1, newUnit);
+    } else {
+      converted = units.lengthToM(parsed, previousUnit) / units.lengthToM(1, newUnit);
+    }
+  } else if (fieldId === "temp") {
+    if (selectValue("temp-type") === "Δ ISA") {
+      const deltaK = units.temperatureDeltaToK(parsed, previousUnit);
+      converted = newUnit === "°F" ? deltaK * 9 / 5 : deltaK;
+    } else {
+      converted = temperatureFromK(units.temperatureToK(parsed, previousUnit), newUnit);
+    }
+  } else if (fieldId === "spd") {
+    const speedType = selectValue("spd-type");
+    if (speedType === "Qdyn" || speedType === "Qc") {
+      converted = units.pressureToPa(parsed, previousUnit) / units.pressureToPa(1, newUnit);
+    } else if (!["Mach", "CL", "Vs Factor"].includes(speedType)) {
+      converted = units.speedToMS(parsed, previousUnit) / units.speedToMS(1, newUnit);
+    }
+  } else if (fieldId === "weight") {
+    converted = units.massToKg(parsed, previousUnit) / units.massToKg(1, newUnit);
+  } else if (fieldId === "sref") {
+    converted = units.areaToM2(parsed, previousUnit) / units.areaToM2(1, newUnit);
+  } else if (fieldId === "cref") {
+    converted = lengthAnyToM(parsed, previousUnit) / lengthAnyToM(1, newUnit);
+  } else if (["angle1", "angle2", "windRef"].includes(fieldId)) {
+    converted = units.angleToRad(parsed, previousUnit) / units.angleToRad(1, newUnit);
+  } else if (fieldId === "headWind" || fieldId === "crossWind") {
+    converted = units.speedToMS(parsed, previousUnit) / units.speedToMS(1, newUnit);
+  }
+
+  if (converted !== null && Number.isFinite(converted)) {
+    input.value = formatEditableNumber(converted);
+  }
+}
+
+function temperatureFromK(kelvin: number, unit: string): number {
+  if (unit === "°C") return kelvin - 273.15;
+  if (unit === "°F") return (kelvin - 273.15) * 9 / 5 + 32;
+  return kelvin;
+}
+
+function formatEditableNumber(value: number): string {
+  const rounded = Math.round(value * 1e9) / 1e9;
+  return String(rounded);
+}
+
+function syncSelectPreviousValues(): void {
+  document.querySelectorAll<HTMLSelectElement>("select").forEach((selectElement) => {
+    selectElement.dataset.previousValue = selectElement.value;
+  });
+}
+
 function normalizeDependentUnits(): void {
   const altType = selectValue("alt-type");
   const altUnit = select("alt-unit");
@@ -727,7 +838,7 @@ function normalizeDependentUnits(): void {
     if (speedType === "Mach" || speedType === "CL") {
       preserveSelect(speedUnit, ["—"], "—");
     } else if (speedType === "Qdyn" || speedType === "Qc") {
-      preserveSelect(speedUnit, ["mbar", "Pa", "hPa", "atm", "mmHg", "psi"], "Pa");
+      preserveSelect(speedUnit, ["mbar", "Pa", "hPa", "atm", "mmHg", "psi"], "mbar");
     } else {
       preserveSelect(speedUnit, ["kt", "m/s", "km/h", "mph", "ft/s"], "kt");
     }
