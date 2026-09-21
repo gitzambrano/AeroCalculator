@@ -281,37 +281,13 @@ recalculate();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    void initializeOfflineCache();
+    void navigator.serviceWorker.register(new URL("./sw.js", document.baseURI).toString())
+      .then(() => navigator.serviceWorker.ready)
+      .then(() => {
+        document.documentElement.dataset.offlineReady = "true";
+      })
+      .catch(() => undefined);
   });
-}
-
-async function initializeOfflineCache(): Promise<void> {
-  try {
-    const registration = await navigator.serviceWorker.register(new URL("./sw.js", document.baseURI).toString());
-    await navigator.serviceWorker.ready;
-
-    const urls = new Set<string>([window.location.href]);
-    for (const entry of performance.getEntriesByType("resource")) {
-      const url = new URL(entry.name, window.location.href);
-      if (url.origin === window.location.origin) urls.add(url.href);
-    }
-
-    const worker = registration.active ?? registration.waiting ?? registration.installing;
-    if (!worker) return;
-
-    await new Promise<void>((resolve) => {
-      const channel = new MessageChannel();
-      const timeout = window.setTimeout(resolve, 5000);
-      channel.port1.onmessage = () => {
-        window.clearTimeout(timeout);
-        resolve();
-      };
-      worker.postMessage({ type: "CACHE_URLS", urls: [...urls] }, [channel.port2]);
-    });
-    document.documentElement.dataset.offlineReady = "true";
-  } catch {
-    // Offline support must never prevent calculator startup.
-  }
 }
 
 function opts(values: string[]): SelectOption[] {
