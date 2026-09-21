@@ -445,6 +445,7 @@ function applyProfileSelection(id: string, recalc = true): void {
   }
 
   syncSelectPreviousValues();
+  persistInputState();
   if (recalc) recalculate();
 }
 
@@ -690,8 +691,6 @@ async function importSelectedFile(): Promise<void> {
   try {
     const imported = importProfiles(await file.text());
     for (const profile of imported) {
-      const duplicateName = profiles.find((existing) => existing.name.trim().toLowerCase() === profile.name.trim().toLowerCase());
-      if (duplicateName) profile.id = duplicateName.id;
       profiles = upsertProfile(profiles, profile);
     }
     saveProfiles(localStorage, profiles);
