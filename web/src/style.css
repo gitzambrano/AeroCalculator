@@ -149,7 +149,7 @@ body { background: var(--input-bg); }
 .input-row {
   min-height: 58px;
   display: grid;
-  grid-template-columns: 30fr 36fr 20fr;
+  grid-template-columns: minmax(0, 35%) minmax(0, 35%) minmax(0, 22%);
   column-gap: 4%;
   align-items: stretch;
   padding: 8px 3%;
@@ -158,6 +158,8 @@ body { background: var(--input-bg); }
 }
 .field-select, .unit-select, .profile-select, .field-button {
   appearance: none;
+  width: 100%;
+  min-width: 0;
   border: 0;
   border-radius: 2px;
   padding: 0 30px 0 12px;
@@ -196,7 +198,7 @@ body { background: var(--input-bg); }
 .speed-delta { text-align: center; border-left: 1px solid rgb(0 145 131 / .20); }
 
 .speed-row.vs-factor-mode {
-  grid-template-columns: 30fr 17fr 15fr 20fr;
+  grid-template-columns: minmax(0, 35%) minmax(0, 17%) minmax(0, 14%) minmax(0, 22%);
 }
 .speed-delta-label {
   border: 0;
@@ -224,7 +226,7 @@ body { background: var(--input-bg); }
   background: linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
 }
-.airplane-row { grid-template-columns: 30fr 60fr; column-gap: 4%; }
+.airplane-row { grid-template-columns: minmax(0, 35%) minmax(0, 61%); column-gap: 4%; }
 .profile-select {
   width: 100%;
   padding: 0 34px 0 12px;
@@ -235,6 +237,39 @@ body { background: var(--input-bg); }
     linear-gradient(135deg, #555 50%, transparent 50%) right 11px center / 5px 5px no-repeat,
     var(--field-bg);
   cursor: pointer;
+}
+
+.field-tooltip {
+  position: fixed;
+  z-index: 140;
+  max-width: min(340px, calc(100vw - 16px));
+  padding: 9px 11px;
+  border-radius: 6px;
+  background: rgb(32 33 36 / 0.97);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.35;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.28);
+  pointer-events: none;
+}
+.field-tooltip[hidden] { display: none; }
+
+.page.active {
+  touch-action: pan-y;
+}
+.page.swipe-in-left {
+  animation: page-swipe-in-left 170ms ease-out;
+}
+.page.swipe-in-right {
+  animation: page-swipe-in-right 170ms ease-out;
+}
+@keyframes page-swipe-in-left {
+  from { opacity: .72; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes page-swipe-in-right {
+  from { opacity: .72; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .status-banner {
@@ -473,8 +508,8 @@ body { background: var(--input-bg); }
   .brand-row { grid-template-columns: 46px 1fr 42px 42px; padding-left: 10px; }
   .brand { font-size: 21px; }
   .brand-icon { width: 35px; height: 35px; }
-  .input-row { grid-template-columns: 30fr 36fr 20fr; min-height: 56px; }
-  .airplane-row { grid-template-columns: 30fr 60fr; }
+  .input-row { grid-template-columns: minmax(0, 35%) minmax(0, 35%) minmax(0, 22%); min-height: 56px; }
+  .airplane-row { grid-template-columns: minmax(0, 35%) minmax(0, 61%); }
   .field-select, .unit-select, .value-input { font-size: 14px; padding-left: 8px; padding-right: 8px; }
   .field-select { padding-right: 24px; background-position: right 11px center, right 6px center, center; }
   .result-row { padding-left: 4px; padding-right: 4px; }
@@ -494,7 +529,10 @@ body { background: var(--input-bg); }
     padding-left: 5px;
     padding-right: 5px;
   }
-  .field-select { padding-right: 20px; }
+  .field-select {
+    padding-right: 20px;
+    background-position: right 9px center, right 4px center, center;
+  }
   .unit-select { padding-left: 3px; }
   .result-name, .result-value { font-size: 13px; padding-left: 3px; }
   .settings-dialog form { padding-left: 12px; padding-right: 12px; }
