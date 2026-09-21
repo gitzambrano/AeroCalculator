@@ -318,6 +318,7 @@ function createInputRow(field: Field): HTMLElement {
   const row = document.createElement("div");
   row.className = "input-row";
   row.dataset.field = field.id;
+  if (field.id === "spd") row.classList.add("speed-row");
 
   const type = document.createElement("select");
   type.id = `${field.id}-type`;
@@ -344,6 +345,15 @@ function createInputRow(field: Field): HTMLElement {
   tail.append(unit);
 
   if (field.id === "spd") {
+    const deltaLabel = document.createElement("button");
+    deltaLabel.type = "button";
+    deltaLabel.id = "spdDelta-label";
+    deltaLabel.className = "speed-delta-label";
+    deltaLabel.textContent = "+ Δ";
+    deltaLabel.title = "Delta speed relative to Vs Factor [kt]";
+    deltaLabel.setAttribute("aria-label", "Delta speed relative to Vs Factor");
+    deltaLabel.hidden = true;
+
     const delta = document.createElement("input");
     delta.id = "spdDelta-value";
     delta.className = "value-input calc-control speed-delta";
@@ -352,7 +362,11 @@ function createInputRow(field: Field): HTMLElement {
     delta.placeholder = "+ Δkt";
     delta.value = "0";
     delta.hidden = true;
+    deltaLabel.addEventListener("click", () => delta.focus());
+
     tail.append(delta);
+    row.append(type, value, deltaLabel, tail);
+    return row;
   }
 
   row.append(type, value, tail);
@@ -829,11 +843,16 @@ function normalizeDependentUnits(): void {
   const speedType = selectValue("spd-type");
   const speedUnit = select("spd-unit");
   const speedDelta = byId("spdDelta-value") as HTMLInputElement;
+  const speedDeltaLabel = byId("spdDelta-label") as HTMLButtonElement;
   const speedInput = byId("spd-value") as HTMLInputElement;
-  if (speedType === "Vs Factor") {
+  const speedRow = document.querySelector<HTMLElement>('[data-field="spd"]');
+  const isVsFactor = speedType === "Vs Factor";
+  speedRow?.classList.toggle("vs-factor-mode", isVsFactor);
+  speedDeltaLabel.hidden = !isVsFactor;
+  if (isVsFactor) {
     speedUnit.hidden = true;
     speedDelta.hidden = false;
-    speedInput.placeholder = "Vs Factor";
+    speedInput.placeholder = "Factor";
   } else {
     speedUnit.hidden = false;
     speedDelta.hidden = true;
