@@ -4,9 +4,10 @@ This document states behavior that AeroCalculator must preserve. Requirement ide
 
 ## 1. Scope
 
-- **SC-1** — AeroCalculator shall provide atmospheric, altitude, airspeed, aerodynamic, maneuver, wind, and aircraft-profile calculations on Android.
-- **SC-2** — The supported application remains the B4A Android project. Verification tooling may use Python, but Python is not a second user-facing calculator.
-- **SC-3** — Device GPS, pressure, and temperature sensors are optional inputs. Missing sensor capability shall not break calculations that do not require that sensor.
+- **SC-1** — AeroCalculator shall provide atmospheric, altitude, airspeed, aerodynamic, maneuver, wind, and aircraft-profile calculations on Android and in a supported browser application.
+- **SC-2** — The Android product remains the B4A application. The browser product is a TypeScript implementation with the same documented calculation behavior and visual language where browser platform conventions permit. Python remains verification tooling only and is not a user-facing calculator.
+- **SC-3** — Device GPS, pressure, and temperature sensor modes are Android-only. The browser product is not required to expose device-sensor input modes.
+- **SC-4** — Except for Android-only sensor modes, supported browser calculations, aircraft-profile data, output settings, themes, and import/export behavior shall remain functionally equivalent to the documented Android behavior.
 
 ## 2. Physics and numerical correctness
 
@@ -35,12 +36,15 @@ This document states behavior that AeroCalculator must preserve. Requirement ide
 - **UI-2** — Selecting another input type may change which quantity is solved, but it shall not silently reinterpret a retained value with incompatible units.
 - **UI-3** — User-facing labels shall use consistent aerodynamic terminology.
 - **UI-4** — A calculation shall not require network access.
+- **UI-5** — The browser UI shall not require horizontal scrolling at supported mobile, tablet, or desktop viewport widths.
+- **UI-6** — Browser controls, labels, result values, menus, and dialogs shall remain visible and usable without clipped interactive content at supported viewport widths.
 
 ## 5. Aircraft profiles
 
 - **AP-1** — Aircraft profiles shall preserve name, reference area, reference chord, defined masses, defined flap CLmax values, and their unit selections.
 - **AP-2** — Adding, duplicating, editing, deleting, importing, or selecting one profile shall not modify an unrelated profile.
 - **AP-3** — A missing optional mass or flap entry shall remain distinguishable from a numerical zero.
+- **AP-4** — Browser import and export shall support the Android `airplanes.txt` Java Properties database format for interchange with the B4A application.
 
 ## 6. Sensors
 
@@ -67,6 +71,7 @@ This document states behavior that AeroCalculator must preserve. Requirement ide
 - **QR-7** — A release shall pass the release checklist.
 - **QR-8** — Agent instruction mirrors shall remain identical.
 - **QR-9** — Tests shall identify the requirement they protect when practical.
+- **QR-10** — Browser CI shall run automated responsive-layout checks in real Chromium at representative mobile, tablet, laptop, and desktop viewports.
 
 ## 9. Build and release
 
@@ -74,3 +79,4 @@ This document states behavior that AeroCalculator must preserve. Requirement ide
 - **RL-2** — Signing keys, credentials, generated APK/AAB files, and B4A build outputs shall not be committed.
 - **RL-3** — Release version code and version name shall be reviewed together.
 - **RL-4** — Production signing shall remain separate from ordinary pull-request verification.
+- **RL-5** — The browser production build shall pass TypeScript, numerical, profile-interchange, and Chromium responsive-layout tests before deployment.
