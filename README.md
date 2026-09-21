@@ -7,6 +7,7 @@ Developed by Gustavo José Zambrano.
 **Quick access:** [Web calculator](https://gitzambrano.github.io/AeroCalculator/) · [Web source and build guide](web/README.md)
 
 [![Google Play](https://img.shields.io/badge/Google_Play-AeroCalculator-green?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=flightdyn.aerocalculator)
+[![Web App](https://img.shields.io/badge/Web-AeroCalculator-009183?logo=googlechrome&logoColor=white)](https://gitzambrano.github.io/AeroCalculator/)
 
 ## Capabilities
 
