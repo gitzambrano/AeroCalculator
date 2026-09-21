@@ -4,6 +4,8 @@
 
 Developed by Gustavo José Zambrano.
 
+**Quick access:** [Web calculator](https://gitzambrano.github.io/AeroCalculator/) · [Web source and build guide](web/README.md)
+
 [![Google Play](https://img.shields.io/badge/Google_Play-AeroCalculator-green?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=flightdyn.aerocalculator)
 
 ## Capabilities
@@ -31,6 +33,7 @@ Historical application output is not automatically treated as physical truth.
 
 ## Documentation
 
+- [Web application](web/README.md)
 - [User guide](docs/user_guide.md)
 - [Technical calculation reference](docs/calculations.md)
 - [Units and conventions](docs/units_and_conventions.md)
