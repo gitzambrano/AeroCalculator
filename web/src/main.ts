@@ -581,8 +581,8 @@ function initializeSwipeNavigation(): void {
 
 function responsiveOptionLabel(value: string, label: string): string {
   if (!window.matchMedia("(max-width: 430px)").matches) return label;
-  if (value === "Ground Speed") return "Grnd Speed";
-  if (value === "Runway Angle") return "Rnwy Angle";
+  if (value === "Ground Speed") return "Grd Spd";
+  if (value === "Runway Angle") return "RwyAngle";
   return label;
 }
 
