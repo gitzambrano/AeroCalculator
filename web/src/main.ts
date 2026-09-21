@@ -408,6 +408,11 @@ function setStatus(text: string, error: boolean): void {
   status.classList.toggle("error", error);
 }
 
+function fmt(value: number, digits: number): string {
+  if (!Number.isFinite(value)) return "----";
+  return value.toFixed(digits);
+}
+
 function formatLength(m: number): string {
   if (!Number.isFinite(m)) return "----";
   return `${fmt(m / 0.3048, 1)} ft`;
