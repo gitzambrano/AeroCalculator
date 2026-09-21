@@ -10,6 +10,7 @@ import {
   bankFromLoadFactor,
   casToTas,
   deltaIsaState,
+  densityAltitudeFromDensity,
   dynamicPressure,
   dynamicViscosity,
   geometricToGeopotential,
@@ -18,15 +19,18 @@ import {
   impactPressureToMach,
   liftCoefficient,
   loadFactorFromBank,
+  pressureAltitudeFromGeopotentialAltitude,
   pressureToGeopotentialAltitude,
+  solveWindTriangle,
   stallSpeedTas1g,
   standardAtmosphere,
   tasToCas,
   tasToEas,
   tasToMach,
+  temperatureAltitudeFromTemperature,
   units,
-  windComponents,
   type Atmosphere,
+  type TemperatureSpecification,
 } from "./core";
 
 type SelectOption = { value: string; label: string };
@@ -43,8 +47,7 @@ type Field = {
 const fields: Field[] = [
   { id: "alt", typeOptions: opts(["Hp", "Hg", "P"]), unitOptions: opts(["ft", "m", "km", "nm", "mi", "in"]), defaultType: "Hp", defaultUnit: "ft", placeholder: "Altitude", defaultValue: "10000" },
   { id: "temp", typeOptions: opts(["Δ ISA", "OAT"]), unitOptions: opts(["°C", "°F", "K"]), defaultType: "Δ ISA", defaultUnit: "°C", placeholder: "Temperature", defaultValue: "0" },
-  { id: "spd", typeOptions: opts(["TAS", "CAS", "EAS", "Mach", "CL", "Qdyn", "Qc"]), unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "TAS", defaultUnit: "kt", placeholder: "Speed", defaultValue: "250" },
-  { id: "spdDelta", typeOptions: [{ value: "delta", label: "+ Δ" }], unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "delta", defaultUnit: "kt", placeholder: "Speed increment", defaultValue: "0" },
+  { id: "spd", typeOptions: opts(["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"]), unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "TAS", defaultUnit: "kt", placeholder: "Speed", defaultValue: "250" },
   { id: "weight", typeOptions: opts(["Weight", "MTOW", "MLW", "MZFW", "BOW", "Heavy", "Light"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "10000" },
   { id: "sref", typeOptions: [{ value: "Sref", label: "Sref" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "30" },
   { id: "cref", typeOptions: [{ value: "cref", label: "cref" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "2" },
@@ -170,7 +173,23 @@ function createInputRow(field: Field): HTMLElement {
   unit.setAttribute("aria-label", `${field.id} unit`);
   fillSelect(unit, field.unitOptions, field.defaultUnit);
 
-  row.append(type, value, unit);
+  const tail = document.createElement("div");
+  tail.className = "input-tail";
+  tail.append(unit);
+
+  if (field.id === "spd") {
+    const delta = document.createElement("input");
+    delta.id = "spdDelta-value";
+    delta.className = "value-input calc-control speed-delta";
+    delta.inputMode = "decimal";
+    delta.autocomplete = "off";
+    delta.placeholder = "+ Δkt";
+    delta.value = "0";
+    delta.hidden = true;
+    tail.append(delta);
+  }
+
+  row.append(type, value, tail);
   return row;
 }
 
@@ -200,12 +219,23 @@ function normalizeDependentUnits(): void {
 
   const speedType = selectValue("spd-type");
   const speedUnit = select("spd-unit");
-  if (speedType === "Mach" || speedType === "CL") {
-    preserveSelect(speedUnit, ["—"], "—");
-  } else if (speedType === "Qdyn" || speedType === "Qc") {
-    preserveSelect(speedUnit, ["mbar", "Pa", "hPa", "atm", "mmHg", "psi"], "Pa");
+  const speedDelta = byId("spdDelta-value") as HTMLInputElement;
+  const speedInput = byId("spd-value") as HTMLInputElement;
+  if (speedType === "Vs Factor") {
+    speedUnit.hidden = true;
+    speedDelta.hidden = false;
+    speedInput.placeholder = "Vs Factor";
   } else {
-    preserveSelect(speedUnit, ["kt", "m/s", "km/h", "mph", "ft/s"], "kt");
+    speedUnit.hidden = false;
+    speedDelta.hidden = true;
+    speedInput.placeholder = speedType === "Mach" ? "Mach" : speedType === "CL" ? "Lift coefficient" : "Speed";
+    if (speedType === "Mach" || speedType === "CL") {
+      preserveSelect(speedUnit, ["—"], "—");
+    } else if (speedType === "Qdyn" || speedType === "Qc") {
+      preserveSelect(speedUnit, ["mbar", "Pa", "hPa", "atm", "mmHg", "psi"], "Pa");
+    } else {
+      preserveSelect(speedUnit, ["kt", "m/s", "km/h", "mph", "ft/s"], "kt");
+    }
   }
 
   const nzType = selectValue("nz-type");
@@ -228,8 +258,26 @@ function normalizeDependentUnits(): void {
 
 function recalculate(): void {
   try {
-    const H = resolveAltitude();
-    const atmosphere = resolveAtmosphere(H);
+    const pressureAltitudeM = resolvePressureAltitude();
+    const atmosphere = resolveAtmosphere(pressureAltitudeM);
+    const standard = standardAtmosphere(pressureAltitudeM);
+    const deltaIsa = atmosphere.temperatureK - standard.temperatureK;
+
+    const altType = selectValue("alt-type");
+    let geopotentialAltitudeM: number;
+    let geometricAltitudeM: number;
+    if (altType === "Hg") {
+      geometricAltitudeM = units.lengthToM(num("alt-value"), selectValue("alt-unit"));
+      geopotentialAltitudeM = geometricToGeopotential(geometricAltitudeM);
+    } else {
+      geopotentialAltitudeM = pressureAltitudeM
+        - 29.271247 * deltaIsa * Math.log(atmosphere.pressurePa / P0);
+      geometricAltitudeM = geopotentialToGeometric(geopotentialAltitudeM);
+    }
+
+    const densityAltitudeM = densityAltitudeFromDensity(atmosphere.densityKgM3);
+    const temperatureAltitudeM = temperatureAltitudeFromTemperature(atmosphere.temperatureK);
+
     const mass = units.massToKg(num("weight-value"), selectValue("weight-unit"));
     const sref = units.areaToM2(num("sref-value"), selectValue("sref-unit"));
     const cref = lengthAnyToM(num("cref-value"), selectValue("cref-unit"));
@@ -242,12 +290,28 @@ function recalculate(): void {
       nz = loadFactorFromBank(bank);
     } else {
       nz = num("nz-value");
+      if (nz <= 0) throw new Error("Load factor must be positive.");
       if (nz >= 1) bank = bankFromLoadFactor(nz);
     }
 
-    const tas = resolveTas(atmosphere, mass, nz, sref);
+    const vsTas = stallSpeedTas1g(mass, atmosphere.densityKgM3, sref, clmax);
+    const vsCas = tasToCas(vsTas, atmosphere);
+
+    const windBase = resolveWindBase();
+    const speedType = selectValue("spd-type");
+    let tas: number;
+    let windSolution;
+    if (speedType === "Ground Speed") {
+      const gs = units.speedToMS(num("spd-value"), selectValue("spd-unit"));
+      windSolution = solveWindTriangle({ ...windBase, knownSpeed: "gs", speedMS: gs });
+      tas = windSolution.tasMS;
+    } else {
+      tas = resolveTas(atmosphere, mass, nz, sref, vsCas);
+      windSolution = solveWindTriangle({ ...windBase, knownSpeed: "tas", speedMS: tas });
+    }
+
     const mach = tasToMach(tas, atmosphere.temperatureK);
-    if (mach >= 1) throw new Error("This first web port intentionally preserves the documented subsonic CAS model (M < 1).");
+    if (mach >= 1) throw new Error("The current documented CAS model is subsonic and requires M < 1.");
 
     const eas = tasToEas(tas, atmosphere.densityKgM3);
     const cas = tasToCas(tas, atmosphere);
@@ -257,53 +321,21 @@ function recalculate(): void {
     const totalT = atmosphere.temperatureK * (1 + 0.5 * (GAMMA - 1) * mach ** 2);
     const mu = dynamicViscosity(atmosphere.temperatureK);
     const cl = liftCoefficient(mass, nz, q, sref);
-    const vsTas = stallSpeedTas1g(mass, atmosphere.densityKgM3, sref, clmax);
-    const vsCas = tasToCas(vsTas, atmosphere);
     const vsFactor = cas / vsCas;
     const reynolds = atmosphere.densityKgM3 * tas * cref / mu;
 
-    const std = standardAtmosphere(H);
-    const deltaIsa = atmosphere.temperatureK - std.temperatureK;
-    const geom = geopotentialToGeometric(H);
     const pressureRatio = atmosphere.pressurePa / P0;
     const densityRatio = atmosphere.densityKgM3 / RHO0;
     const tempRatio = atmosphere.temperatureK / T0;
-
-    const angle1 = units.angleToRad(num("angle1-value"), selectValue("angle1-unit"));
-    const angle2 = units.angleToRad(num("angle2-value"), selectValue("angle2-unit"));
-    let track = selectValue("angle1-type") === "Track" ? angle1 : Number.NaN;
-    let heading = selectValue("angle1-type") === "Heading" ? angle1 : Number.NaN;
-    let drift = selectValue("angle2-type") === "Drift" ? angle2 : Number.NaN;
-    const beta = selectValue("angle2-type") === "Sideslip" ? angle2 : Number.NaN;
-    if (Number.isFinite(track) && Number.isFinite(drift)) heading = track + drift;
-    if (Number.isFinite(heading) && Number.isFinite(track)) drift = heading - track;
-
-    let windSpeed = Number.NaN;
-    let windDirection = Number.NaN;
-    let headwind = Number.NaN;
-    let crosswind = Number.NaN;
-    if (selectValue("headWind-type") === "Wind Speed") {
-      windSpeed = units.speedToMS(num("headWind-value"), selectValue("headWind-unit"));
-      windDirection = units.angleToRad(num("windRef-value"), selectValue("windRef-unit"));
-      const reference = Number.isFinite(track) ? track : 0;
-      [headwind, crosswind] = windComponents(windSpeed, windDirection, reference);
-    } else {
-      headwind = units.speedToMS(num("headWind-value"), selectValue("headWind-unit"));
-      crosswind = units.speedToMS(num("crossWind-value"), selectValue("crossWind-unit"));
-      windSpeed = Math.hypot(headwind, crosswind);
-      const reference = units.angleToRad(num("windRef-value"), selectValue("windRef-unit"));
-      windDirection = reference + Math.atan2(crosswind, headwind);
-    }
-
     const turnRadiusM = Math.abs(Math.tan(bank)) > 1e-12 ? tas ** 2 / (G0 * Math.tan(bank)) : Number.NaN;
     const turnRate = tas > 0 ? G0 * Math.tan(bank) / tas : Number.NaN;
 
     const outputs: Record<string, string> = {
-      "Pressure Altitude": formatLength(H),
-      "Geometric Altitude": formatLength(geom),
-      "Geopotencial Altitude": formatLength(H),
-      "Density Altitude": "----",
-      "Temperature Altitude": "----",
+      "Pressure Altitude": formatLength(pressureAltitudeM),
+      "Geometric Altitude": formatLength(geometricAltitudeM),
+      "Geopotencial Altitude": formatLength(geopotentialAltitudeM),
+      "Density Altitude": formatLength(densityAltitudeM),
+      "Temperature Altitude": formatLength(temperatureAltitudeM),
       "Pressure": formatPressure(atmosphere.pressurePa),
       "Density": `${fmt(atmosphere.densityKgM3, 4)} kg/m³`,
       "Temperature": `${fmt(atmosphere.temperatureK - 273.15, 2)} °C`,
@@ -314,7 +346,7 @@ function recalculate(): void {
       "True Airspeed": formatSpeed(tas),
       "Calibrated Airspeed": formatSpeed(cas),
       "Equivalent Airspeed": formatSpeed(eas),
-      "Ground Speed": "----",
+      "Ground Speed": formatSpeed(windSolution.groundSpeedMS),
       "Stall Speed Vs": formatSpeed(vsCas),
       "Vs Factor": fmt(vsFactor, 3),
       "Lift Coefficient CL": fmt(cl, 3),
@@ -333,45 +365,71 @@ function recalculate(): void {
       "Bank Angle φ": `${fmt(bank * 180 / Math.PI, 2)} deg`,
       "Turn Radius": Number.isFinite(turnRadiusM) ? `${fmt(turnRadiusM / 1000, 3)} km` : "----",
       "Turn Rate": Number.isFinite(turnRate) ? `${fmt(turnRate * 180 / Math.PI, 2)} deg/s` : "----",
-      "Track Angle": angleText(track),
-      "Heading Angle Ψ": angleText(heading),
-      "Drift Angle": angleText(drift),
-      "Sideslip Angle β": angleText(beta),
-      "Wind Speed": formatSpeed(windSpeed),
-      "Wind Direction": angleText(windDirection),
-      "AlongTrack Headwind": formatSpeed(headwind),
-      "AlongTrack Crosswind": formatSpeed(crosswind),
+      "Track Angle": angleText(windSolution.trackRad),
+      "Heading Angle Ψ": angleText(windSolution.headingRad),
+      "Drift Angle": signedAngleText(windSolution.driftRad),
+      "Sideslip Angle β": signedAngleText(windSolution.sideslipRad),
+      "Wind Speed": formatSpeed(windSolution.windSpeedMS),
+      "Wind Direction": angleText(windSolution.windDirectionRad),
+      "AlongTrack Headwind": formatSpeed(windSolution.alongTrackHeadwindMS),
+      "AlongTrack Crosswind": formatSpeed(windSolution.alongTrackCrosswindMS),
     };
 
     renderResults(outputs);
-    setStatus(`Valid ISA/subsonic solution · H = ${fmt(H, 1)} m · M = ${fmt(mach, 3)}`, false);
+    setStatus(
+      `Valid solution · Hp = ${fmt(pressureAltitudeM, 1)} m · M = ${fmt(mach, 3)} · GS = ${fmt(windSolution.groundSpeedMS / (1852 / 3600), 1)} kt`,
+      false,
+    );
   } catch (error) {
     renderResults({});
     setStatus(error instanceof Error ? error.message : "Unable to calculate.", true);
   }
 }
 
-function resolveAltitude(): number {
+function resolveTemperatureSpecification(): TemperatureSpecification {
+  const value = num("temp-value");
+  const type = selectValue("temp-type");
+  const unit = selectValue("temp-unit");
+  return type === "Δ ISA"
+    ? { kind: "deltaIsa", deltaK: units.temperatureDeltaToK(value, unit) }
+    : { kind: "oat", temperatureK: units.temperatureToK(value, unit) };
+}
+
+function resolvePressureAltitude(): number {
   const value = num("alt-value");
   const type = selectValue("alt-type");
   const unit = selectValue("alt-unit");
   if (type === "P") return pressureToGeopotentialAltitude(units.pressureToPa(value, unit));
   const metres = units.lengthToM(value, unit);
-  return type === "Hg" ? geometricToGeopotential(metres) : metres;
+  if (type === "Hp") return metres;
+  const geopotential = geometricToGeopotential(metres);
+  return pressureAltitudeFromGeopotentialAltitude(geopotential, resolveTemperatureSpecification());
 }
 
-function resolveAtmosphere(H: number): Atmosphere {
-  const value = num("temp-value");
-  const type = selectValue("temp-type");
-  const unit = selectValue("temp-unit");
-  if (type === "Δ ISA") return deltaIsaState(H, units.temperatureDeltaToK(value, unit));
-  return atmosphereWithTemperature(H, units.temperatureToK(value, unit));
+function resolveAtmosphere(pressureAltitudeM: number): Atmosphere {
+  const spec = resolveTemperatureSpecification();
+  return spec.kind === "deltaIsa"
+    ? deltaIsaState(pressureAltitudeM, spec.deltaK)
+    : atmosphereWithTemperature(pressureAltitudeM, spec.temperatureK);
 }
 
-function resolveTas(atmosphere: Atmosphere, mass: number, nz: number, sref: number): number {
+function resolveWindBase() {
+  const windMode = selectValue("headWind-type");
+  return {
+    angle1: selectValue("angle1-type") === "Track" ? "track" as const : "heading" as const,
+    angle1Rad: units.angleToRad(num("angle1-value"), selectValue("angle1-unit")),
+    angle2: selectValue("angle2-type") === "Sideslip" ? "sideslip" as const : "drift" as const,
+    angle2Rad: units.angleToRad(num("angle2-value"), selectValue("angle2-unit")),
+    headwindMS: units.speedToMS(num("headWind-value"), selectValue("headWind-unit")),
+    crosswindMS: windMode === "Wind Speed"
+      ? 0
+      : units.speedToMS(num("crossWind-value"), selectValue("crossWind-unit")),
+    windReferenceRad: units.angleToRad(num("windRef-value"), selectValue("windRef-unit")),
+  };
+}
+
+function resolveTas(atmosphere: Atmosphere, mass: number, nz: number, sref: number, vsCas: number): number {
   const value = num("spd-value");
-  const deltaRaw = num("spdDelta-value");
-  const delta = units.speedToMS(deltaRaw, selectValue("spdDelta-unit"));
   const type = selectValue("spd-type");
   const unit = selectValue("spd-unit");
   let tas: number;
@@ -381,16 +439,22 @@ function resolveTas(atmosphere: Atmosphere, mass: number, nz: number, sref: numb
   else if (type === "Mach") tas = value * atmosphere.speedOfSoundMS;
   else if (type === "Qdyn") tas = Math.sqrt(2 * units.pressureToPa(value, unit) / atmosphere.densityKgM3);
   else if (type === "Qc") {
-    const M = impactPressureToMach(units.pressureToPa(value, unit), atmosphere.pressurePa);
-    tas = M * atmosphere.speedOfSoundMS;
+    const mach = impactPressureToMach(units.pressureToPa(value, unit), atmosphere.pressurePa);
+    tas = mach * atmosphere.speedOfSoundMS;
   } else if (type === "CL") {
     if (value <= 0) throw new Error("CL input must be positive.");
     const q = mass * G0 * nz / (value * sref);
     tas = Math.sqrt(2 * q / atmosphere.densityKgM3);
+  } else if (type === "Vs Factor") {
+    if (value < 0) throw new Error("Vs Factor cannot be negative.");
+    const deltaCas = units.speedToMS(num("spdDelta-value"), "kt");
+    const targetCas = value * vsCas + deltaCas;
+    if (targetCas < 0) throw new Error("Vs Factor plus Δ speed produces a negative CAS.");
+    tas = casToTas(targetCas, atmosphere);
   } else {
     throw new Error("Unsupported speed input.");
   }
-  return tas + delta;
+  return tas;
 }
 
 function renderResults(values: Record<string, string>): void {
@@ -432,6 +496,11 @@ function angleText(rad: number): string {
   if (!Number.isFinite(rad)) return "----";
   const normalized = ((rad * 180 / Math.PI) % 360 + 360) % 360;
   return `${fmt(normalized, 2)} deg`;
+}
+
+function signedAngleText(rad: number): string {
+  if (!Number.isFinite(rad)) return "----";
+  return `${fmt(rad * 180 / Math.PI, 2)} deg`;
 }
 
 function lengthAnyToM(value: number, unit: string): number {
