@@ -27,7 +27,9 @@ The initial web core implements the independently documented blocks for:
 
 The implementation is intentionally subsonic where the repository documentation only claims the subsonic isentropic CAS relation.
 
-Android sensors and Android profile-file APIs are not used by the browser build.
+GPS, pressure-sensor, and temperature-sensor input modes are intentionally Android-only. All other supported calculator and aircraft-profile behavior is expected to maintain web/Android parity.
+
+Aircraft profiles are stored locally in the browser and can be imported from or exported to the Android-compatible `airplanes.txt` Java Properties format. The web application is installable as a PWA and caches the static application for offline use after the first successful load.
 
 ## Local development
 
@@ -38,14 +40,16 @@ npm test
 npm run dev
 ```
 
-Production build:
+Production build and browser checks:
 
 ```bash
 npm run build
+npx playwright install chromium
+npm run test:e2e
 ```
 
 The generated static site is written to `web/dist/` and requires no backend.
 
 ## Verification
 
-`.github/workflows/web.yml` runs TypeScript checking, numerical tests, and the production Vite build. The test cases include the same independent atmosphere and turn references used by the repository's portable verification strategy.
+``.github/workflows/web.yml` runs TypeScript checking, numerical and profile-interchange tests, the production Vite build, and real-Chromium responsive-layout checks. The browser checks cover narrow mobile, standard mobile, tablet, laptop, and desktop widths and reject horizontal overflow, clipped critical text, and controls that leave the viewport.
