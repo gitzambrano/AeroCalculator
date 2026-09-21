@@ -4,7 +4,7 @@
 
 Developed by Gustavo José Zambrano.
 
-**Quick access:** [Web calculator](https://gitzambrano.github.io/AeroCalculator/) · [Web source and build guide](web/README.md)
+**Web application:** [Open AeroCalculator](https://gitzambrano.github.io/AeroCalculator/)
 
 [![Google Play](https://img.shields.io/badge/Google_Play-AeroCalculator-green?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=flightdyn.aerocalculator)
 [![Web App](https://img.shields.io/badge/Web-AeroCalculator-009183?logo=googlechrome&logoColor=white)](https://gitzambrano.github.io/AeroCalculator/)
@@ -34,7 +34,6 @@ Historical application output is not automatically treated as physical truth.
 
 ## Documentation
 
-- [Web application](web/README.md)
 - [User guide](docs/user_guide.md)
 - [Technical calculation reference](docs/calculations.md)
 - [Units and conventions](docs/units_and_conventions.md)
