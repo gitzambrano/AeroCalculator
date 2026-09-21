@@ -1,6 +1,6 @@
 # AeroCalculator
 
-**AeroCalculator** is an aeronautics and flight-dynamics calculator for Android built with **Basic4android (B4A)**. It provides atmosphere and altitude calculations, airspeed conversions, aerodynamic quantities, maneuver relations, wind calculations, sensor-assisted inputs, and aircraft profiles.
+**AeroCalculator** is an aeronautics and flight-dynamics calculator available as an Android application built with **Basic4android (B4A)** and as a TypeScript browser application. It provides atmosphere and altitude calculations, airspeed conversions, aerodynamic quantities, maneuver relations, wind calculations, and aircraft profiles. Android additionally supports optional device-sensor inputs.
 
 Developed by Gustavo José Zambrano.
 
@@ -15,7 +15,8 @@ Developed by Gustavo José Zambrano.
 - Load-factor and bank-angle calculations.
 - Heading, track, sideslip, drift, ground-speed, headwind, and crosswind calculations.
 - Aircraft profiles with reference geometry, masses, and flap CLmax values.
-- Optional GPS, pressure-sensor, and temperature-sensor inputs.
+- Optional GPS, pressure-sensor, and temperature-sensor inputs on Android.
+- Responsive, offline-capable browser/PWA version with Android-compatible aircraft-profile import/export.
 
 ## Repository quality model
 
@@ -51,6 +52,7 @@ Files/                     Runtime assets
 Icons/                     App and store graphics
 Install/                   Vendored B4A library archives
 
+web/                       TypeScript/Vite browser application and Chromium UI tests
 docs/                      User, physics, architecture, and process documentation
 tests/                     Portable reference, invariant, and sanity tests
 tools/                     Repository and numerical verification tools
