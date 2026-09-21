@@ -300,7 +300,8 @@ body { background: var(--input-bg); }
   box-shadow: 0 4px 14px rgb(0 0 0 / 0.28);
 }
 .popup-menu[hidden] { display: none; }
-.popup-menu button {
+.popup-menu button,
+.popup-menu a {
   width: 100%;
   height: 46px;
   border: 0;
@@ -311,7 +312,13 @@ body { background: var(--input-bg); }
   color: #222;
   cursor: pointer;
 }
-.popup-menu button:hover, .popup-menu button:focus-visible { background: #e6e6e6; outline: none; }
+.popup-menu a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.popup-menu button:hover, .popup-menu button:focus-visible,
+.popup-menu a:hover, .popup-menu a:focus-visible { background: #e6e6e6; outline: none; }
 
 .profile-dialog, .simple-dialog {
   border: 0;
