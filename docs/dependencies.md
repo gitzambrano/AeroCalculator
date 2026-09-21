@@ -36,6 +36,12 @@ Before a public release, confirm the upstream license and redistribution permiss
 
 Do not infer a license from the fact that an archive is publicly downloadable.
 
+## Web application
+
+The browser application is isolated under `web/` and uses Node.js tooling only for development and verification. Runtime deployment is static and requires no backend.
+
+Development dependencies are declared in `web/package.json` and include TypeScript, Vite, Vitest, Playwright, and Node type definitions. CI currently uses Node.js 22.
+
 ## Python verification dependencies
 
 The portable verification suite uses only the Python standard library. This keeps CI independent of application tooling.
