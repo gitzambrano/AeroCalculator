@@ -1,0 +1,207 @@
+@font-face {
+  font-family: "Xenara";
+  src: url("/xenara-bold.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  font-family: Roboto, Arial, Helvetica, sans-serif;
+  color: #121212;
+  background: #e9f2f1;
+  font-synthesis: none;
+  --title: #009183;
+  --title-dark: #00796f;
+  --input-bg: #e9f2f1;
+  --field-bg: #fcfffe;
+  --button-a: #e4fffb;
+  --button-b: #fafffd;
+  --divider: #009183;
+  --muted: #66706f;
+  --danger: #b00020;
+}
+
+* { box-sizing: border-box; }
+html, body, #app { min-height: 100%; margin: 0; }
+body { background: #e9f2f1; }
+
+.app-shell {
+  width: min(100%, 860px);
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--field-bg);
+  box-shadow: 0 0 28px rgb(0 0 0 / 0.13);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 102px;
+  color: white;
+  background: var(--title);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.28);
+}
+
+.brand-row {
+  height: 57px;
+  display: grid;
+  grid-template-columns: 52px 1fr 48px 48px;
+  align-items: center;
+  padding: 0 10px 0 14px;
+}
+
+.brand-icon { width: 38px; height: 38px; object-fit: contain; }
+.brand { font-family: Xenara, Roboto, sans-serif; font-size: 23px; line-height: 1; letter-spacing: .15px; }
+.icon-button {
+  border: 0;
+  background: transparent;
+  color: white;
+  width: 44px;
+  height: 44px;
+  font-size: 28px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.icon-button:hover, .icon-button:focus-visible { background: rgb(255 255 255 / 0.12); outline: none; }
+
+.tabs {
+  height: 45px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.tab {
+  position: relative;
+  border: 0;
+  background: transparent;
+  color: #efefef;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .25px;
+  cursor: pointer;
+  padding: 0 0 7px;
+}
+.tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 4px;
+  background: white;
+}
+.tab:focus-visible { outline: 2px solid white; outline-offset: -4px; }
+
+.page { display: none; min-height: calc(100vh - 102px); }
+.page.active { display: block; }
+
+.input-list { background: var(--input-bg); }
+.input-row {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: minmax(126px, 37%) minmax(108px, 1fr) minmax(72px, 19%);
+  align-items: stretch;
+  border-bottom: 1px solid var(--divider);
+}
+.field-select, .unit-select {
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0 30px 0 12px;
+  font-size: 15px;
+  color: #111;
+  background:
+    linear-gradient(45deg, transparent 50%, #555 50%) right 13px center / 5px 5px no-repeat,
+    linear-gradient(135deg, #555 50%, transparent 50%) right 8px center / 5px 5px no-repeat,
+    linear-gradient(var(--button-a), var(--button-b));
+  cursor: pointer;
+}
+.value-input {
+  min-width: 0;
+  border: 0;
+  border-left: 1px solid rgb(0 145 131 / .20);
+  border-right: 1px solid rgb(0 145 131 / .20);
+  background: var(--field-bg);
+  color: #111;
+  text-align: right;
+  padding: 0 12px;
+  font-size: 15px;
+  outline: none;
+}
+.value-input:focus { box-shadow: inset 0 -2px var(--title); }
+.value-input::placeholder { color: #8a9392; }
+.unit-select { text-align: center; text-align-last: center; padding-left: 8px; }
+
+.helper {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  background: #fff;
+  border-bottom: 1px solid #d6dfde;
+}
+.helper.error { color: var(--danger); font-weight: 600; }
+
+.results { margin: 0; padding: 0; list-style: none; }
+.result-row {
+  min-height: 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid #d9e2e1;
+}
+.result-name { font-size: 14px; color: #333; }
+.result-value { font-size: 14px; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.result-value.na { color: #87908f; font-weight: 400; }
+
+.airplane-page { background: white; }
+.airplane-card {
+  padding: 18px 16px;
+  border-bottom: 1px solid #d9e2e1;
+}
+.airplane-card h2 { margin: 0 0 6px; font-size: 18px; color: var(--title-dark); }
+.airplane-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.profile-grid { display: grid; gap: 10px; padding: 16px; }
+.profile-button {
+  min-height: 54px;
+  border: 1px solid #b9cfcc;
+  background: linear-gradient(#fafffd, #e4fffb);
+  border-radius: 3px;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 15px;
+}
+.profile-button strong { display: block; color: #222; }
+.profile-button span { color: var(--muted); font-size: 12px; }
+
+.status-pill {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #e9f2f1;
+  color: #35615c;
+  font-size: 12px;
+}
+
+@media (max-width: 430px) {
+  .app-shell { width: 100%; box-shadow: none; }
+  .brand-row { grid-template-columns: 46px 1fr 42px 42px; padding-left: 10px; }
+  .brand { font-size: 21px; }
+  .brand-icon { width: 35px; height: 35px; }
+  .input-row { grid-template-columns: 37% 1fr 21%; min-height: 56px; }
+  .field-select, .unit-select, .value-input { font-size: 14px; padding-left: 8px; padding-right: 8px; }
+  .field-select { padding-right: 24px; background-position: right 11px center, right 6px center, center; }
+  .result-row { padding-left: 12px; padding-right: 12px; gap: 8px; }
+}
+
+@media (min-width: 720px) {
+  body { padding: 20px 0; }
+  .app-shell { min-height: calc(100vh - 40px); border-radius: 5px; overflow: hidden; }
+  .topbar { position: sticky; }
+  .input-row { min-height: 62px; }
+  .field-select, .unit-select, .value-input { font-size: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+}
