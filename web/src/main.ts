@@ -98,6 +98,7 @@ type OutputSettings = {
 
 const SELECTED_PROFILE_KEY = "aerocalculator.selected-profile.v1";
 const SETTINGS_KEY = "aerocalculator.settings.v1";
+const INPUT_STATE_KEY = "aerocalculator.inputs.v1";
 let settings = loadOutputSettings();
 let profiles = loadProfiles(localStorage);
 let selectedProfileId = localStorage.getItem(SELECTED_PROFILE_KEY) ?? "custom";
@@ -219,10 +220,16 @@ document.querySelectorAll<HTMLButtonElement>(".tab").forEach((tab) => {
 });
 
 document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control").forEach((el) => {
-  el.addEventListener("input", recalculate);
+  el.addEventListener("input", () => {
+    if (el.id === "weight-value" && selectValue("weight-type") !== "Weight") select("weight-type").value = "Weight";
+    if (el.id === "clmax-value" && selectValue("clmax-type") !== "CLmax") select("clmax-type").value = "CLmax";
+    persistInputState();
+    recalculate();
+  });
   el.addEventListener("change", () => {
     normalizeDependentUnits();
     if (el.id === "weight-type" || el.id === "clmax-type") applyProfileNamedValue();
+    persistInputState();
     recalculate();
   });
 });
@@ -260,9 +267,16 @@ byId("settings-form").addEventListener("submit", (event) => {
 applyTheme();
 renderProfiles();
 renderAirplaneSelector();
-normalizeDependentUnits();
 applyProfileSelection(selectedProfileId, false);
+restoreInputState();
+normalizeDependentUnits();
 recalculate();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register(new URL("./sw.js", document.baseURI).toString()).catch(() => undefined);
+  });
+}
 
 function opts(values: string[]): SelectOption[] {
   return values.map((value) => ({ value, label: value }));
@@ -550,6 +564,40 @@ function handleMenu(action: string): void {
   }
 }
 
+function persistInputState(): void {
+  const state: Record<string, string> = {};
+  document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control").forEach((el) => {
+    state[el.id] = el.value;
+  });
+  localStorage.setItem(INPUT_STATE_KEY, JSON.stringify(state));
+}
+
+function restoreInputState(): void {
+  let state: Record<string, string>;
+  try {
+    state = JSON.parse(localStorage.getItem(INPUT_STATE_KEY) ?? "{}");
+  } catch {
+    return;
+  }
+
+  const typeIds = fields.map((field) => `${field.id}-type`);
+  for (const id of typeIds) {
+    const el = document.getElementById(id) as HTMLSelectElement | null;
+    if (el && state[id] && Array.from(el.options).some((option) => option.value === state[id])) el.value = state[id];
+  }
+  normalizeDependentUnits();
+
+  document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control").forEach((el) => {
+    const saved = state[el.id];
+    if (saved === undefined) return;
+    if (el instanceof HTMLSelectElement) {
+      if (Array.from(el.options).some((option) => option.value === saved)) el.value = saved;
+    } else {
+      el.value = saved;
+    }
+  });
+}
+
 function loadOutputSettings(): OutputSettings {
   const defaults: OutputSettings = {
     altitude: "ft",
@@ -607,6 +655,7 @@ function clearInputs(): void {
   const ids = ["alt","temp","spd","weight","sref","cref","clmax","nz","angle1","angle2","headWind","crossWind","windRef"];
   for (const id of ids) (byId(`${id}-value`) as HTMLInputElement).value = "";
   (byId("spdDelta-value") as HTMLInputElement).value = "";
+  persistInputState();
   recalculate();
 }
 
