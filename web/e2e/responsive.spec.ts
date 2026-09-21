@@ -86,6 +86,14 @@ for (const viewport of viewports) {
         );
         expect(widths.length).toBeGreaterThan(5);
         expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(0.6);
+
+        await page.locator("#spd-type").selectOption("Ground Speed");
+        await expect(page.locator("#spd-type").locator("option:checked")).toHaveText("Grnd Speed");
+        await expect(page.locator("#windRef-type").locator('option[value="Runway Angle"]')).toHaveText("Rnwy Angle");
+      } else {
+        await page.locator("#spd-type").selectOption("Ground Speed");
+        await expect(page.locator("#spd-type").locator("option:checked")).toHaveText("Ground Speed");
+        await expect(page.locator("#windRef-type").locator('option[value="Runway Angle"]')).toHaveText("Runway Angle");
       }
 
       await page.getByRole("button", { name: "CALCULATE" }).click();
