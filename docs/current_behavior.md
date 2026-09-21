@@ -1,10 +1,10 @@
 # Current Behavior Inventory
 
-This inventory describes the responsibilities visible in the current source before architectural extraction. It is a characterization document, not a statement that every existing numerical result is correct.
+This inventory describes the responsibilities visible in the current Android and browser sources. It is a characterization document, not a statement that every existing numerical result is correct.
 
-## Main project
+## Android application
 
-`AeroCalculator.b4a` currently owns most application state, UI construction, preferences, sensor integration, input conversion, numerical calculation, and output formatting.
+`AeroCalculator.b4a` currently owns most Android application state, UI construction, preferences, sensor integration, input conversion, numerical calculation, and output formatting.
 
 The main calculator exposes three pages:
 
@@ -60,3 +60,14 @@ The target dependency direction is:
 `Android UI -> SI normalization -> pure calculation core -> output conversion -> Android UI`
 
 The extraction must be incremental. Characterization and reference tests must protect numerical behavior before calculation blocks move out of the Activity.
+
+
+## Browser application
+
+The supported browser implementation lives under `web/`. It provides the portable calculator, aircraft profiles, settings, themes, Android-compatible `airplanes.txt` interchange, and offline PWA behavior. Device GPS, pressure-sensor, and temperature-sensor input modes remain Android-only.
+
+The web calculation path is:
+
+`Browser UI -> SI normalization -> TypeScript calculation core -> output conversion -> responsive browser UI`
+
+The browser implementation is verified with independent numerical tests and Chromium end-to-end tests rather than by importing the B4A implementation.
