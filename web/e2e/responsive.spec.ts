@@ -1,9 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const viewports = [
-  { name: "mobile-small", width: 320, height: 568 },
-  { name: "mobile", width: 412, height: 915 },
+  { name: "mobile-320", width: 320, height: 568 },
+  { name: "mobile-360", width: 360, height: 800 },
+  { name: "mobile-375", width: 375, height: 812 },
+  { name: "mobile-390", width: 390, height: 844 },
+  { name: "mobile-412", width: 412, height: 915 },
+  { name: "mobile-430", width: 430, height: 932 },
+  { name: "small-tablet", width: 600, height: 960 },
   { name: "tablet", width: 768, height: 1024 },
+  { name: "tablet-landscape", width: 1024, height: 768 },
   { name: "laptop", width: 1366, height: 900 },
   { name: "desktop", width: 1920, height: 1080 },
 ] as const;
@@ -71,6 +77,16 @@ for (const viewport of viewports) {
       await assertNoHorizontalOverflow(page);
       await assertCriticalTextNotClipped(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
+
+      if (viewport.width <= 430) {
+        const widths = await page.locator(".input-row:not([hidden]) > .field-select, .airplane-row > .field-button").evaluateAll((elements) =>
+          elements
+            .filter((el) => getComputedStyle(el).display !== "none")
+            .map((el) => Math.round(el.getBoundingClientRect().width * 10) / 10)
+        );
+        expect(widths.length).toBeGreaterThan(5);
+        expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(0.6);
+      }
 
       await page.getByRole("button", { name: "CALCULATE" }).click();
       await expect(page.locator(".result-row")).toHaveCount(42);
