@@ -90,9 +90,9 @@ describe("aircraft profiles", () => {
   it("parses Java Properties escapes used by B4A", () => {
     const props = parseProperties([
       "# comment",
-      "Key\\\\ With\\\\ Spaces=value\\\\u0020x",
-      "Path=C\\\\\\\\Temp",
-    ].join("\\n"));
+      String.raw`Key\ With\ Spaces=value\u0020x`,
+      String.raw`Path=C\\Temp`,
+    ].join("\n"));
     expect(props.get("Key With Spaces")).toBe("value x");
     expect(props.get("Path")).toBe("C\\Temp");
   });
@@ -108,7 +108,7 @@ describe("aircraft profiles", () => {
       "1_Sunit=0",
       "1_cunit=0",
       "1_Wunit=0",
-    ].join("\\n"));
+    ].join("\n"));
     expect(imported[0].name).toBe("Legacy 500");
     expect(imported[0].weights.MTOW).toBe(18000);
   });
