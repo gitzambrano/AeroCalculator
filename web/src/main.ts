@@ -637,7 +637,12 @@ function renderProfiles(): void {
     dragHandle.setAttribute("aria-label", `Drag to reorder ${displayName}`);
     dragHandle.title = "Drag to reorder";
     setHelper(dragHandle, "Drag this handle up or down to reorder the aircraft list. The saved and exported airplanes.txt order follows this list.");
-    dragHandle.addEventListener("pointerdown", (event) => beginProfileDrag(event, row, dragHandle));
+    dragHandle.draggable = true;
+    dragHandle.addEventListener("dragstart", (event) => beginDesktopProfileDrag(event, row, dragHandle));
+    dragHandle.addEventListener("dragend", () => finishDesktopProfileDrag(row));
+    dragHandle.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse") beginProfileDrag(event, row, dragHandle);
+    });
 
     const selectButton = document.createElement("button");
     selectButton.type = "button";
@@ -688,8 +693,80 @@ function duplicateStoredProfile(id: string): void {
   applyProfileSelection(duplicate.id, false);
 }
 
+function moveProfileRowAtY(list: HTMLElement, row: HTMLElement, clientY: number): void {
+  const siblings = Array.from(list.querySelectorAll<HTMLElement>(".airplane-list-row"))
+    .filter((candidate) => candidate !== row);
+  const before = siblings.find((candidate) => {
+    const rect = candidate.getBoundingClientRect();
+    return clientY < rect.top + rect.height / 2;
+  });
+
+  if (before) list.insertBefore(row, before);
+  else list.append(row);
+}
+
+function persistProfileOrderFromDom(list: HTMLElement, movedProfileId: string): void {
+  const orderedIds = Array.from(list.querySelectorAll<HTMLElement>(".airplane-list-row"))
+    .map((item) => item.dataset.profileId)
+    .filter((id): id is string => Boolean(id));
+  const finalIndex = orderedIds.indexOf(movedProfileId);
+  if (finalIndex < 0) {
+    renderProfiles();
+    return;
+  }
+
+  profiles = reorderProfile(profiles, movedProfileId, finalIndex);
+  saveProfiles(localStorage, profiles);
+  renderProfiles();
+  renderAirplaneSelector();
+}
+
+function beginDesktopProfileDrag(event: DragEvent, row: HTMLElement, handle: HTMLButtonElement): void {
+  const profileId = row.dataset.profileId;
+  if (!profileId || !event.dataTransfer) return;
+
+  event.stopPropagation();
+  row.classList.add("dragging");
+  handle.classList.add("dragging-handle");
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", profileId);
+
+  const list = byId("profile-list");
+  const onDragOver = (dragEvent: DragEvent): void => {
+    dragEvent.preventDefault();
+    if (dragEvent.dataTransfer) dragEvent.dataTransfer.dropEffect = "move";
+    moveProfileRowAtY(list, row, dragEvent.clientY);
+  };
+  const onDrop = (dropEvent: DragEvent): void => {
+    dropEvent.preventDefault();
+    finishDesktopProfileDrag(row);
+  };
+
+  list.dataset.draggingProfileId = profileId;
+  list.addEventListener("dragover", onDragOver);
+  list.addEventListener("drop", onDrop);
+  (row as HTMLElement & { _desktopDragCleanup?: () => void })._desktopDragCleanup = () => {
+    list.removeEventListener("dragover", onDragOver);
+    list.removeEventListener("drop", onDrop);
+  };
+}
+
+function finishDesktopProfileDrag(row: HTMLElement): void {
+  const profileId = row.dataset.profileId;
+  if (!profileId) return;
+
+  const list = byId("profile-list");
+  const dragRow = row as HTMLElement & { _desktopDragCleanup?: () => void };
+  dragRow._desktopDragCleanup?.();
+  delete dragRow._desktopDragCleanup;
+  delete list.dataset.draggingProfileId;
+  row.classList.remove("dragging");
+  row.querySelector(".airplane-drag-handle")?.classList.remove("dragging-handle");
+
+  persistProfileOrderFromDom(list, profileId);
+}
+
 function beginProfileDrag(event: PointerEvent, row: HTMLElement, handle: HTMLButtonElement): void {
-  if (event.pointerType === "mouse" && event.button !== 0) return;
   const profileId = row.dataset.profileId;
   if (!profileId) return;
 
@@ -705,16 +782,7 @@ function beginProfileDrag(event: PointerEvent, row: HTMLElement, handle: HTMLBut
   const move = (moveEvent: PointerEvent): void => {
     if (!active || moveEvent.pointerId !== pointerId) return;
     moveEvent.preventDefault();
-
-    const siblings = Array.from(list.querySelectorAll<HTMLElement>(".airplane-list-row"))
-      .filter((candidate) => candidate !== row);
-    const before = siblings.find((candidate) => {
-      const rect = candidate.getBoundingClientRect();
-      return moveEvent.clientY < rect.top + rect.height / 2;
-    });
-
-    if (before) list.insertBefore(row, before);
-    else list.append(row);
+    moveProfileRowAtY(list, row, moveEvent.clientY);
   };
 
   const finish = (finishEvent: PointerEvent): void => {
@@ -725,20 +793,7 @@ function beginProfileDrag(event: PointerEvent, row: HTMLElement, handle: HTMLBut
     handle.removeEventListener("pointercancel", finish);
     if (handle.hasPointerCapture(pointerId)) handle.releasePointerCapture(pointerId);
     row.classList.remove("dragging");
-
-    const orderedIds = Array.from(list.querySelectorAll<HTMLElement>(".airplane-list-row"))
-      .map((item) => item.dataset.profileId)
-      .filter((id): id is string => Boolean(id));
-    const finalIndex = orderedIds.indexOf(profileId);
-    if (finalIndex < 0) {
-      renderProfiles();
-      return;
-    }
-
-    profiles = reorderProfile(profiles, profileId, finalIndex);
-    saveProfiles(localStorage, profiles);
-    renderProfiles();
-    renderAirplaneSelector();
+    persistProfileOrderFromDom(list, profileId);
   };
 
   handle.addEventListener("pointermove", move);
