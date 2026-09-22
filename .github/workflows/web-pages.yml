@@ -1,5 +1,7 @@
 name: Web Pages
 
+# Publish web/dist as the GitHub Pages site root.
+
 on:
   push:
     branches:
