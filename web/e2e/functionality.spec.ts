@@ -261,11 +261,11 @@ test("aircraft can be duplicated, reordered by drag and exported in the persiste
   await expect(names).toHaveText(["Alpha", "Alpha Copy", "Bravo"]);
   await expect(page.locator("#airplane-select")).toHaveValue(/.+/);
 
-  const bravoHandle = page.getByRole("button", { name: "Drag to reorder Bravo" });
-  const alphaHandle = page.getByRole("button", { name: "Drag to reorder Alpha", exact: true });
+  const bravoRow = page.locator(".airplane-list-row").filter({ hasText: "Bravo" });
+  const alphaRow = page.locator(".airplane-list-row").filter({ hasText: /^Alpha10/ });
 
-  await bravoHandle.dragTo(alphaHandle, {
-    targetPosition: { x: 10, y: 2 },
+  await bravoRow.dragTo(alphaRow, {
+    targetPosition: { x: 20, y: 2 },
   });
 
   await expect(names).toHaveText(["Bravo", "Alpha", "Alpha Copy"]);
