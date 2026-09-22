@@ -240,6 +240,58 @@ test("aircraft profile create, select and Android-compatible export work end to 
   expect(content).toContain("1_F0=1.6");
 });
 
+test("aircraft can be duplicated, reordered by drag and exported in the persisted order", async ({ page }) => {
+  await page.goto("/");
+
+  const createAircraft = async (name: string, sref: string): Promise<void> => {
+    await page.getByRole("button", { name: "Add airplane" }).click();
+    await fill(page, "profile-name", name);
+    await fill(page, "profile-sref", sref);
+    await fill(page, "profile-cref", "2");
+    await page.locator("#profile-save").click();
+  };
+
+  await createAircraft("Alpha", "10");
+  await createAircraft("Bravo", "20");
+
+  const names = page.locator(".airplane-name-button strong");
+  await expect(names).toHaveText(["Alpha", "Bravo"]);
+
+  await page.getByRole("button", { name: "Duplicate Alpha" }).click();
+  await expect(names).toHaveText(["Alpha", "Alpha Copy", "Bravo"]);
+  await expect(page.locator("#airplane-select")).toHaveValue(/.+/);
+
+  const bravoHandle = page.getByRole("button", { name: "Drag to reorder Bravo" });
+  const firstRow = page.locator(".airplane-list-row").first();
+  const handleBox = await bravoHandle.boundingBox();
+  const firstBox = await firstRow.boundingBox();
+  expect(handleBox).not.toBeNull();
+  expect(firstBox).not.toBeNull();
+
+  await page.mouse.move(handleBox!.x + handleBox!.width / 2, handleBox!.y + handleBox!.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(firstBox!.x + firstBox!.width / 2, firstBox!.y + 4, { steps: 10 });
+  await page.mouse.up();
+
+  await expect(names).toHaveText(["Bravo", "Alpha", "Alpha Copy"]);
+
+  await page.reload();
+  await page.getByRole("button", { name: "AIRPLANES" }).click();
+  await expect(names).toHaveText(["Bravo", "Alpha", "Alpha Copy"]);
+
+  await page.getByRole("button", { name: "More options" }).click();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export Airplanes" }).click();
+  const download = await downloadPromise;
+  const path = await download.path();
+  expect(path).not.toBeNull();
+  const content = await readFile(path!, "utf8");
+  expect(content).toContain("N=3");
+  expect(content).toContain("1_Name=Bravo");
+  expect(content).toContain("2_Name=Alpha");
+  expect(content).toContain("3_Name=Alpha Copy");
+});
+
 test("Android airplanes.txt can be imported through the browser UI", async ({ page }) => {
   await page.goto("/");
   const content = [
