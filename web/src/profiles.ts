@@ -64,6 +64,45 @@ export function deleteProfile(profiles: AircraftProfile[], id: string): Aircraft
   return profiles.filter((profile) => profile.id !== id);
 }
 
+export function duplicateProfile(profiles: AircraftProfile[], id: string): AircraftProfile[] {
+  const index = profiles.findIndex((profile) => profile.id === id);
+  if (index < 0) return profiles.slice();
+
+  const source = profiles[index];
+  const existingNames = new Set(profiles.map((profile) => profile.name.trim().toLocaleLowerCase()));
+  const sourceName = source.name.trim() || "Unnamed Airplane";
+  const copyBase = `${sourceName} Copy`;
+  let copyName = copyBase;
+  let suffix = 2;
+  while (existingNames.has(copyName.toLocaleLowerCase())) {
+    copyName = `${copyBase} ${suffix}`;
+    suffix += 1;
+  }
+
+  const copy: AircraftProfile = {
+    ...source,
+    id: createId(),
+    name: copyName,
+    weights: { ...source.weights },
+    clmax: source.clmax.slice(),
+  };
+
+  const next = profiles.slice();
+  next.splice(index + 1, 0, copy);
+  return next;
+}
+
+export function reorderProfile(profiles: AircraftProfile[], id: string, toIndex: number): AircraftProfile[] {
+  const fromIndex = profiles.findIndex((profile) => profile.id === id);
+  if (fromIndex < 0) return profiles.slice();
+
+  const next = profiles.slice();
+  const [moved] = next.splice(fromIndex, 1);
+  const boundedIndex = Math.max(0, Math.min(Math.trunc(toIndex), next.length));
+  next.splice(boundedIndex, 0, moved);
+  return next;
+}
+
 export function exportProfiles(profiles: AircraftProfile[]): string {
   return JSON.stringify({
     format: "AeroCalculator-Web-Airplanes",
