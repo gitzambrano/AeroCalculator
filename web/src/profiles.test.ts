@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   PROFILE_STORAGE_KEY,
   deleteProfile,
+  duplicateProfile,
   exportAndroidProfiles,
   exportProfiles,
   importAndroidProfiles,
@@ -9,6 +10,7 @@ import {
   parseProperties,
   loadProfiles,
   newProfile,
+  reorderProfile,
   saveProfiles,
   upsertProfile,
   type StorageLike,
@@ -48,6 +50,42 @@ describe("aircraft profiles", () => {
     expect(upsertProfile([p], updated)).toHaveLength(1);
     expect(upsertProfile([p], updated)[0].name).toBe("B");
     expect(deleteProfile([p], "p1")).toEqual([]);
+  });
+
+  it("duplicates an aircraft immediately after the source with independent nested data", () => {
+    const a = newProfile("p1");
+    a.name = "Legacy 500";
+    a.weights.MTOW = 18000;
+    a.clmax[0] = 1.5;
+    const b = newProfile("p2");
+    b.name = "E190-E2";
+
+    const duplicated = duplicateProfile([a, b], "p1");
+    expect(duplicated).toHaveLength(3);
+    expect(duplicated.map((profile) => profile.name)).toEqual(["Legacy 500", "Legacy 500 Copy", "E190-E2"]);
+    expect(duplicated[1].id).not.toBe(a.id);
+
+    duplicated[1].weights.MTOW = 19000;
+    duplicated[1].clmax[0] = 1.7;
+    expect(duplicated[0].weights.MTOW).toBe(18000);
+    expect(duplicated[0].clmax[0]).toBe(1.5);
+
+    const duplicatedAgain = duplicateProfile(duplicated, "p1");
+    expect(duplicatedAgain[1].name).toBe("Legacy 500 Copy 2");
+  });
+
+  it("reorders aircraft and preserves that order in airplanes.txt export", () => {
+    const a = newProfile("p1"); a.name = "A";
+    const b = newProfile("p2"); b.name = "B";
+    const c = newProfile("p3"); c.name = "C";
+
+    const reordered = reorderProfile([a, b, c], "p3", 0);
+    expect(reordered.map((profile) => profile.id)).toEqual(["p3", "p1", "p2"]);
+
+    const text = exportAndroidProfiles(reordered);
+    expect(text).toContain("1_Name=C");
+    expect(text).toContain("2_Name=A");
+    expect(text).toContain("3_Name=B");
   });
 
   it("round-trips exported JSON", () => {
