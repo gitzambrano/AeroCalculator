@@ -3,10 +3,12 @@ import iconUrl from "./assets/icon-bezel-transp-white.png";
 import {
   WEIGHT_KEYS,
   deleteProfile,
+  duplicateProfile,
   exportAndroidProfiles,
   importProfiles,
   loadProfiles,
   newProfile,
+  reorderProfile,
   saveProfiles,
   upsertProfile,
   type AircraftProfile,
@@ -623,28 +625,125 @@ function renderProfiles(): void {
   const list = byId("profile-list");
   list.replaceChildren();
   for (const profile of profiles) {
+    const displayName = profile.name || "Unnamed Airplane";
     const row = document.createElement("div");
     row.className = "airplane-list-row";
+    row.dataset.profileId = profile.id;
+
+    const dragHandle = document.createElement("button");
+    dragHandle.type = "button";
+    dragHandle.className = "airplane-drag-handle";
+    dragHandle.textContent = "☰";
+    dragHandle.setAttribute("aria-label", `Drag to reorder ${displayName}`);
+    dragHandle.title = "Drag to reorder";
+    setHelper(dragHandle, "Drag this handle up or down to reorder the aircraft list. The saved and exported airplanes.txt order follows this list.");
+    dragHandle.addEventListener("pointerdown", (event) => beginProfileDrag(event, row, dragHandle));
 
     const selectButton = document.createElement("button");
     selectButton.type = "button";
     selectButton.className = "airplane-name-button";
-    selectButton.innerHTML = `<strong>${escapeHtml(profile.name || "Unnamed Airplane")}</strong><span>${profile.sref} ${profile.srefUnit} · ${profile.cref} ${profile.crefUnit}</span>`;
+    selectButton.innerHTML = `<strong>${escapeHtml(displayName)}</strong><span>${profile.sref} ${profile.srefUnit} · ${profile.cref} ${profile.crefUnit}</span>`;
     selectButton.addEventListener("click", () => {
       applyProfileSelection(profile.id);
       activatePage("inputs");
     });
 
+    const duplicateButton = document.createElement("button");
+    duplicateButton.type = "button";
+    duplicateButton.className = "airplane-duplicate-button";
+    duplicateButton.textContent = "⧉";
+    duplicateButton.setAttribute("aria-label", `Duplicate ${displayName}`);
+    duplicateButton.title = "Duplicate airplane";
+    setHelper(duplicateButton, "Duplicate this aircraft immediately below the original, including geometry, weights and CLmax values.");
+    duplicateButton.addEventListener("click", () => duplicateStoredProfile(profile.id));
+
     const editButton = document.createElement("button");
     editButton.type = "button";
     editButton.className = "airplane-edit-button";
     editButton.textContent = "✎";
-    editButton.setAttribute("aria-label", `Edit ${profile.name}`);
+    editButton.setAttribute("aria-label", `Edit ${displayName}`);
+    editButton.title = "Edit airplane";
+    setHelper(editButton, "Edit this aircraft profile.");
     editButton.addEventListener("click", () => openProfileEditor(profile.id));
 
-    row.append(selectButton, editButton);
+    row.append(dragHandle, selectButton, duplicateButton, editButton);
     list.append(row);
   }
+}
+
+function duplicateStoredProfile(id: string): void {
+  const sourceIndex = profiles.findIndex((profile) => profile.id === id);
+  if (sourceIndex < 0) return;
+
+  const next = duplicateProfile(profiles, id);
+  const duplicate = next[sourceIndex + 1];
+  if (!duplicate || duplicate.id === id) return;
+
+  profiles = next;
+  saveProfiles(localStorage, profiles);
+  selectedProfileId = duplicate.id;
+  localStorage.setItem(SELECTED_PROFILE_KEY, selectedProfileId);
+  renderProfiles();
+  renderAirplaneSelector();
+  applyProfileSelection(duplicate.id, false);
+}
+
+function beginProfileDrag(event: PointerEvent, row: HTMLElement, handle: HTMLButtonElement): void {
+  if (event.pointerType === "mouse" && event.button !== 0) return;
+  const profileId = row.dataset.profileId;
+  if (!profileId) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+  const list = byId("profile-list");
+  const pointerId = event.pointerId;
+  let active = true;
+
+  row.classList.add("dragging");
+  handle.setPointerCapture(pointerId);
+
+  const move = (moveEvent: PointerEvent): void => {
+    if (!active || moveEvent.pointerId !== pointerId) return;
+    moveEvent.preventDefault();
+
+    const siblings = Array.from(list.querySelectorAll<HTMLElement>(".airplane-list-row"))
+      .filter((candidate) => candidate !== row);
+    const before = siblings.find((candidate) => {
+      const rect = candidate.getBoundingClientRect();
+      return moveEvent.clientY < rect.top + rect.height / 2;
+    });
+
+    if (before) list.insertBefore(row, before);
+    else list.append(row);
+  };
+
+  const finish = (finishEvent: PointerEvent): void => {
+    if (!active || finishEvent.pointerId !== pointerId) return;
+    active = false;
+    handle.removeEventListener("pointermove", move);
+    handle.removeEventListener("pointerup", finish);
+    handle.removeEventListener("pointercancel", finish);
+    if (handle.hasPointerCapture(pointerId)) handle.releasePointerCapture(pointerId);
+    row.classList.remove("dragging");
+
+    const orderedIds = Array.from(list.querySelectorAll<HTMLElement>(".airplane-list-row"))
+      .map((item) => item.dataset.profileId)
+      .filter((id): id is string => Boolean(id));
+    const finalIndex = orderedIds.indexOf(profileId);
+    if (finalIndex < 0) {
+      renderProfiles();
+      return;
+    }
+
+    profiles = reorderProfile(profiles, profileId, finalIndex);
+    saveProfiles(localStorage, profiles);
+    renderProfiles();
+    renderAirplaneSelector();
+  };
+
+  handle.addEventListener("pointermove", move);
+  handle.addEventListener("pointerup", finish);
+  handle.addEventListener("pointercancel", finish);
 }
 
 function renderAirplaneSelector(): void {
