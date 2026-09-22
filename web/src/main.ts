@@ -636,10 +636,17 @@ function renderProfiles(): void {
     dragHandle.textContent = "☰";
     dragHandle.setAttribute("aria-label", `Drag to reorder ${displayName}`);
     dragHandle.title = "Drag to reorder";
-    setHelper(dragHandle, "Drag this handle up or down to reorder the aircraft list. The saved and exported airplanes.txt order follows this list.");
-    dragHandle.draggable = true;
-    dragHandle.addEventListener("dragstart", (event) => beginDesktopProfileDrag(event, row, dragHandle));
-    dragHandle.addEventListener("dragend", () => finishDesktopProfileDrag(row));
+    setHelper(dragHandle, "Drag this airplane up or down to reorder the list. The saved and exported airplanes.txt order follows this list.");
+    row.draggable = true;
+    row.addEventListener("dragstart", (event) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest(".airplane-duplicate-button, .airplane-edit-button")) {
+        event.preventDefault();
+        return;
+      }
+      beginDesktopProfileDrag(event, row, dragHandle);
+    });
+    row.addEventListener("dragend", () => finishDesktopProfileDrag(row));
     dragHandle.addEventListener("pointerdown", (event) => {
       if (event.pointerType !== "mouse") beginProfileDrag(event, row, dragHandle);
     });
