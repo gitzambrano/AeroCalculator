@@ -429,8 +429,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtName.ForceDoneButton = True
 			edtName.TextSize = 13
 			edtName.TextColor = Main.ColorEdtText
-			edtName.Color = Main.ColorEdt
+			edtName.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtName.HintColor = Main.ColorEdtHint
+			edtName.Typeface = Typeface.DEFAULT_BOLD
 			
 		Case 1
 			pnl2.Color = Main.ColorPnlInput1
@@ -462,8 +463,9 @@ Sub CreateItem(ii As Int, He As Int)
 		    btnSrefUnit.Text="m²"
 			btnSrefUnit.TextSize = 11
 			edtSref.TextColor = Main.ColorEdtText
-			edtSref.Color = Main.ColorEdt
+			edtSref.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtSref.HintColor = Main.ColorEdtHint
+			edtSref.Typeface = Typeface.DEFAULT_BOLD
 			btnSrefUnit.TextColor = Main.ColorButText1
 			
 		Case 2
@@ -496,8 +498,9 @@ Sub CreateItem(ii As Int, He As Int)
 		    btncrefUnit.Text="m"
 			btncrefUnit.TextSize = 11
 			edtcref.TextColor = Main.ColorEdtText
-			edtcref.Color = Main.ColorEdt
+			edtcref.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtcref.HintColor = Main.ColorEdtHint
+			edtcref.Typeface = Typeface.DEFAULT_BOLD
 			btncrefUnit.TextColor = Main.ColorButText1
 		
 		Case 3
@@ -537,8 +540,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight1.TextSize = 13
 			filter.SetCustomFilter(edtWeight1, edtWeight1.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtWeight1.TextColor = Main.ColorEdtText
-			edtWeight1.Color = Main.ColorEdt
+			edtWeight1.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtWeight1.HintColor = Main.ColorEdtHint
+			edtWeight1.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblWeight2 As Label: lblWeight2.Initialize("")
 			lblWeight2.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -556,8 +560,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight2.TextSize = 13
 			filter.SetCustomFilter(edtWeight2, edtWeight2.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtWeight2.TextColor = Main.ColorEdtText
-			edtWeight2.Color = Main.ColorEdt
+			edtWeight2.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtWeight2.HintColor = Main.ColorEdtHint
+			edtWeight2.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblWeight3 As Label: lblWeight3.Initialize("")
 			lblWeight3.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -575,8 +580,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight3.TextSize = 13
 			filter.SetCustomFilter(edtWeight3, edtWeight3.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtWeight3.TextColor = Main.ColorEdtText
-			edtWeight3.Color = Main.ColorEdt
+			edtWeight3.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtWeight3.HintColor = Main.ColorEdtHint
+			edtWeight3.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblWeight4 As Label: lblWeight4.Initialize("")
 			lblWeight4.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -594,8 +600,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight4.TextSize = 13
 			filter.SetCustomFilter(edtWeight4, edtWeight4.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtWeight4.TextColor = Main.ColorEdtText
-			edtWeight4.Color = Main.ColorEdt
+			edtWeight4.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtWeight4.HintColor = Main.ColorEdtHint
+			edtWeight4.Typeface = Typeface.DEFAULT_BOLD
 			
 			Dim lblWeight5 As Label: lblWeight5.Initialize("")
 			lblWeight5.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -613,8 +620,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight5.TextSize = 13
 			filter.SetCustomFilter(edtWeight5, edtWeight5.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtWeight5.TextColor = Main.ColorEdtText
-			edtWeight5.Color = Main.ColorEdt
+			edtWeight5.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtWeight5.HintColor = Main.ColorEdtHint
+			edtWeight5.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblWeight6 As Label: lblWeight6.Initialize("")
 			lblWeight6.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -632,8 +640,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight6.TextSize = 13
 			filter.SetCustomFilter(edtWeight6, edtWeight6.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtWeight6.TextColor = Main.ColorEdtText
-			edtWeight6.Color = Main.ColorEdt
+			edtWeight6.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtWeight6.HintColor = Main.ColorEdtHint
+			edtWeight6.Typeface = Typeface.DEFAULT_BOLD
 		
 		Case 4
 		    pnl5.Color = Main.ColorPnlInput1
@@ -675,8 +684,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax0.TextSize = 13
 			filter.SetCustomFilter(edtCLmax0, edtCLmax0.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax0.TextColor = Main.ColorEdtText
-			edtCLmax0.Color = Main.ColorEdt
+			edtCLmax0.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax0.HintColor = Main.ColorEdtHint
+			edtCLmax0.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax1 As Label: lblCLmax1.Initialize("")
 			lblCLmax1.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -694,8 +704,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax1.TextSize = 13
 			filter.SetCustomFilter(edtCLmax1, edtCLmax1.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax1.TextColor = Main.ColorEdtText
-			edtCLmax1.Color = Main.ColorEdt
+			edtCLmax1.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax1.HintColor = Main.ColorEdtHint
+			edtCLmax1.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax2 As Label: lblCLmax2.Initialize("")
 			lblCLmax2.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -713,8 +724,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax2.TextSize = 13
 			filter.SetCustomFilter(edtCLmax2, edtCLmax2.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax2.TextColor = Main.ColorEdtText
-			edtCLmax2.Color = Main.ColorEdt
+			edtCLmax2.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax2.HintColor = Main.ColorEdtHint
+			edtCLmax2.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax3 As Label: lblCLmax3.Initialize("")
 			lblCLmax3.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -732,8 +744,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax3.TextSize = 13
 			filter.SetCustomFilter(edtCLmax3, edtCLmax3.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax3.TextColor = Main.ColorEdtText
-			edtCLmax3.Color = Main.ColorEdt
+			edtCLmax3.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax3.HintColor = Main.ColorEdtHint
+			edtCLmax3.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax4 As Label: lblCLmax4.Initialize("")
 			lblCLmax4.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -751,8 +764,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax4.TextSize = 13
 			filter.SetCustomFilter(edtCLmax4, edtCLmax4.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax4.TextColor = Main.ColorEdtText
-			edtCLmax4.Color = Main.ColorEdt
+			edtCLmax4.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax4.HintColor = Main.ColorEdtHint
+			edtCLmax4.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax5 As Label: lblCLmax5.Initialize("")
 			lblCLmax5.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -770,8 +784,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax5.TextSize = 13
 			filter.SetCustomFilter(edtCLmax5, edtCLmax5.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax5.TextColor = Main.ColorEdtText
-			edtCLmax5.Color = Main.ColorEdt
+			edtCLmax5.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax5.HintColor = Main.ColorEdtHint
+			edtCLmax5.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax6 As Label: lblCLmax6.Initialize("")
 			lblCLmax6.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -789,8 +804,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax6.TextSize = 13
 			filter.SetCustomFilter(edtCLmax6, edtCLmax6.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax6.TextColor = Main.ColorEdtText
-			edtCLmax6.Color = Main.ColorEdt
+			edtCLmax6.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax6.HintColor = Main.ColorEdtHint
+			edtCLmax6.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax7 As Label: lblCLmax7.Initialize("")
 			lblCLmax7.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -808,8 +824,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax7.TextSize = 13
 			filter.SetCustomFilter(edtCLmax7, edtCLmax7.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax7.TextColor = Main.ColorEdtText
-			edtCLmax7.Color = Main.ColorEdt
+			edtCLmax7.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax7.HintColor = Main.ColorEdtHint
+			edtCLmax7.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax8 As Label: lblCLmax8.Initialize("")
 			lblCLmax8.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -827,8 +844,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax8.TextSize = 13
 			filter.SetCustomFilter(edtCLmax8, edtCLmax8.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax8.TextColor = Main.ColorEdtText
-			edtCLmax8.Color = Main.ColorEdt
+			edtCLmax8.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax8.HintColor = Main.ColorEdtHint
+			edtCLmax8.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax9 As Label: lblCLmax9.Initialize("")
 			lblCLmax9.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -846,8 +864,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax9.TextSize = 13
 			filter.SetCustomFilter(edtCLmax9, edtCLmax9.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax9.TextColor = Main.ColorEdtText
-			edtCLmax9.Color = Main.ColorEdt
+			edtCLmax9.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax9.HintColor = Main.ColorEdtHint
+			edtCLmax9.Typeface = Typeface.DEFAULT_BOLD
 			
 			Dim lblCLmax10 As Label: lblCLmax10.Initialize("")
 			lblCLmax10.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -865,8 +884,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax10.TextSize = 13
 			filter.SetCustomFilter(edtCLmax10, edtCLmax10.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax10.TextColor = Main.ColorEdtText
-			edtCLmax10.Color = Main.ColorEdt
+			edtCLmax10.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax10.HintColor = Main.ColorEdtHint
+			edtCLmax10.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax11 As Label: lblCLmax11.Initialize("")
 			lblCLmax11.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -884,8 +904,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax11.TextSize = 13
 			filter.SetCustomFilter(edtCLmax11, edtCLmax11.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax11.TextColor = Main.ColorEdtText
-			edtCLmax11.Color = Main.ColorEdt
+			edtCLmax11.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax11.HintColor = Main.ColorEdtHint
+			edtCLmax11.Typeface = Typeface.DEFAULT_BOLD
 			
 			Dim lblCLmax12 As Label: lblCLmax12.Initialize("")
 			lblCLmax12.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -903,8 +924,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax12.TextSize = 13
 			filter.SetCustomFilter(edtCLmax12, edtCLmax12.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax12.TextColor = Main.ColorEdtText
-			edtCLmax12.Color = Main.ColorEdt
+			edtCLmax12.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtCLmax12.HintColor = Main.ColorEdtHint
+			edtCLmax12.Typeface = Typeface.DEFAULT_BOLD
 		
 			Dim lblCLmax13 As Label: lblCLmax13.Initialize("")
 			lblCLmax13.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -922,8 +944,9 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax13.TextSize = 13
 			filter.SetCustomFilter(edtCLmax13, edtCLmax13.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax13.TextColor = Main.ColorEdtText
-			edtCLmax13.Color = Main.ColorEdt
-			edtCLmax13.HintColor = Main.ColorEdtHint			
+			edtCLmax13.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
+			edtCLmax13.HintColor = Main.ColorEdtHint
+			edtCLmax13.Typeface = Typeface.DEFAULT_BOLD			
 			
 			lblCLmax0.Visible = False
 			lblCLmax1.Visible = False
@@ -1322,6 +1345,12 @@ Sub pnlTransp2_Touch (Action As Int, X As Float, Y As Float) As Boolean
 		Next
 	End Select
 	Return True
+End Sub
+
+Public Sub EditGradient(BgColor As Int, BorderColor As Int) As ColorDrawable
+    Dim cd As ColorDrawable
+    cd.Initialize2(BgColor, 4dip, 1dip, BorderColor)
+    Return cd
 End Sub
 
 Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable

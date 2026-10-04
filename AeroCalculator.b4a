@@ -670,8 +670,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnAltUnit.Text="ft"
 			btnAltUnit.TextSize = 15*sc
 			edtAlt.TextColor = ColorEdtText
-			edtAlt.Color = ColorEdt
+			edtAlt.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtAlt.HintColor = ColorEdtHint
+			edtAlt.Typeface = Typeface.DEFAULT_BOLD
 			btnAltType.TextColor = ColorButText1
 			btnAltUnit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtAlt, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -695,8 +696,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnTempUnit.Text="°C"
 			btnTempUnit.TextSize = 15*sc
 			edtTemp.TextColor = ColorEdtText
-			edtTemp.Color = ColorEdt
+			edtTemp.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtTemp.HintColor = ColorEdtHint
+			edtTemp.Typeface = Typeface.DEFAULT_BOLD
 			btnTempType.TextColor = ColorButText1
 			btnTempUnit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtTemp, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -747,11 +749,13 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtSpdDelta.ForceDoneButton = True
 			filter.SetCustomFilter(edtSpdDelta, edtSpdDelta.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			edtSpd.TextColor = ColorEdtText
-			edtSpd.Color = ColorEdt
+			edtSpd.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtSpd.HintColor = ColorEdtHint
+			edtSpd.Typeface = Typeface.DEFAULT_BOLD
 			edtSpdDelta.TextColor = ColorEdtText
-			edtSpdDelta.Color = ColorEdt
+			edtSpdDelta.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtSpdDelta.HintColor = ColorEdtHint
+			edtSpdDelta.Typeface = Typeface.DEFAULT_BOLD
 			edtSpdDelta.Visible = False
 			btnSpdType.TextColor = ColorButText1
 			btnSpdUnit.TextColor = ColorButText1
@@ -778,8 +782,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnWeightUnit.Text="kg"
 			btnWeightUnit.TextSize = 15*sc
 			edtWeight.TextColor = ColorEdtText
-			edtWeight.Color = ColorEdt
+			edtWeight.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtWeight.HintColor = ColorEdtHint
+			edtWeight.Typeface = Typeface.DEFAULT_BOLD
 			btnWeight.TextColor = ColorButText1
 			btnWeightUnit.TextColor = ColorButText1
 			WeightS.Initialize
@@ -812,8 +817,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnSrefUnit.Text="m²"
 			btnSrefUnit.TextSize = 15*sc
 			edtSref.TextColor = ColorEdtText
-			edtSref.Color = ColorEdt
+			edtSref.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtSref.HintColor = ColorEdtHint
+			edtSref.Typeface = Typeface.DEFAULT_BOLD
 			btnSref.TextColor = ColorButText1
 			btnSrefUnit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtSref, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -844,8 +850,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btncrefUnit.Text="m"
 			btncrefUnit.TextSize = 15*sc
 			edtcref.TextColor = ColorEdtText
-			edtcref.Color = ColorEdt
+			edtcref.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtcref.HintColor = ColorEdtHint
+			edtcref.Typeface = Typeface.DEFAULT_BOLD
 			btncref.TextColor = ColorButText1
 			btncrefUnit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtcref, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -875,8 +882,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtCLmax.ForceDoneButton = True
 			filter.SetCustomFilter(edtCLmax, edtCLmax.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			edtCLmax.TextColor = ColorEdtText
-			edtCLmax.Color = ColorEdt
+			edtCLmax.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtCLmax.HintColor = ColorEdtHint
+			edtCLmax.Typeface = Typeface.DEFAULT_BOLD
 			btnCLmax.TextColor = ColorButText1
 			CLmaxS.Initialize
 			CLmaxS.Add("Custom CLmax")
@@ -904,8 +912,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnNzUnit.Text="g"
 			btnNzUnit.TextSize = 15*sc
 			edtNz.TextColor = ColorEdtText
-			edtNz.Color = ColorEdt
+			edtNz.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtNz.HintColor = ColorEdtHint
+			edtNz.Typeface = Typeface.DEFAULT_BOLD
 			btnNzType.TextColor = ColorButText1
 			btnNzUnit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtNz, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -932,8 +941,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnAngle1Unit.Text="deg"
 			btnAngle1Unit.TextSize = 15*sc
 			edtAngle1.TextColor = ColorEdtText
-			edtAngle1.Color = ColorEdt
+			edtAngle1.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtAngle1.HintColor = ColorEdtHint
+			edtAngle1.Typeface = Typeface.DEFAULT_BOLD
 			btnAngle1Type.TextColor = ColorButText1
 			btnAngle1Unit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtAngle1, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -960,8 +970,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnAngle2Unit.Text="deg"
 			btnAngle2Unit.TextSize = 15*sc
 			edtAngle2.TextColor = ColorEdtText
-			edtAngle2.Color = ColorEdt
+			edtAngle2.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtAngle2.HintColor = ColorEdtHint
+			edtAngle2.Typeface = Typeface.DEFAULT_BOLD
 			btnAngle2Type.TextColor = ColorButText1
 			btnAngle2Unit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtAngle2, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -991,8 +1002,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnHeadWindUnit.Text="kt"
 			btnHeadWindUnit.TextSize = 15*sc
 			edtHeadWind.TextColor = ColorEdtText
-			edtHeadWind.Color = ColorEdt
+			edtHeadWind.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtHeadWind.HintColor = ColorEdtHint
+			edtHeadWind.Typeface = Typeface.DEFAULT_BOLD
 			btnHeadWind.TextColor = ColorButText1
 			btnHeadWindUnit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtHeadWind, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -1022,8 +1034,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnCrossWindUnit.Text="kt"
 			btnCrossWindUnit.TextSize = 15*sc
 			edtCrossWind.TextColor = ColorEdtText
-			edtCrossWind.Color = ColorEdt
+			edtCrossWind.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtCrossWind.HintColor = ColorEdtHint
+			edtCrossWind.Typeface = Typeface.DEFAULT_BOLD
 			btnCrossWind.TextColor = ColorButText1
 			btnCrossWindUnit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtCrossWind, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -1050,8 +1063,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnWindRefAngleUnit.Text="deg"
 			btnWindRefAngleUnit.TextSize = 15*sc
 			edtWindRefAngle.TextColor = ColorEdtText
-			edtWindRefAngle.Color = ColorEdt
+			edtWindRefAngle.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			edtWindRefAngle.HintColor = ColorEdtHint
+			edtWindRefAngle.Typeface = Typeface.DEFAULT_BOLD
 			btnWindRefAngle.TextColor = ColorButText1
 			btnWindRefAngleUnit.TextColor = ColorButText1
 			'SetNinePatchButton2(edtWindRefAngle, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
@@ -4102,6 +4116,12 @@ Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable
     Return stdGradient
 End Sub
 
+Public Sub EditGradient(BgColor As Int, BorderColor As Int) As ColorDrawable
+    Dim cd As ColorDrawable
+    cd.Initialize2(BgColor, 4dip, 1dip, BorderColor)
+    Return cd
+End Sub
+
 Sub ButtonGradient2(ColorList() As Int) As StateListDrawable
     ' Flat tab button with transparent background
     Dim gdwEnabled As GradientDrawable
@@ -4159,24 +4179,23 @@ Sub pnlTransparent_Touch(Action As Int, X As Float, Y As Float) As Boolean
 	Select Action
 	Case Activity.ACTION_DOWN
 		pnlTransparent.Color = ColorPnlInput2
+		PopupMenu.Show
 	Case Activity.ACTION_UP
 		pnlTransparent.Color = Colors.Transparent
 	End Select
-	PopupMenu.Show
 	Return True
 End Sub
 
 Sub pnlTransparent1_Touch(Action As Int, X As Float, Y As Float) As Boolean
-	Dim phoneV As PhoneVibrate
-	Dim HideK As IME
-	HideK.Initialize("")
-    phoneV.Vibrate(30)
-	HideK.HideKeyboard
-	
-	StartActivity("Airp")
 	Select Action
 	Case Activity.ACTION_DOWN
 		pnlTransparent1.Color = ColorPnlInput2
+		Dim phoneV As PhoneVibrate
+		Dim HideK As IME
+		HideK.Initialize("")
+		phoneV.Vibrate(30)
+		HideK.HideKeyboard
+		StartActivity("Airp")
 	Case Activity.ACTION_UP
 		pnlTransparent1.Color = Colors.Transparent
 	End Select
@@ -4611,7 +4630,11 @@ Sub btnSettingTheme_Click
 		If themes(ii) = current Then sel = ii
 	Next
 	Wait For (AeroSheet.Show(Activity, items, "Theme", sel)) Complete (idx As Int)
-	If idx < 0 Or themes(idx) = current Then Return
+	If idx < 0 Then Return
+	If themes(idx) = current Then
+		CloseSettingsPopup
+		Return
+	End If
 	manager.SetString("theme", themes(idx))
 	CloseSettingsPopup
 	Dim jo As JavaObject

@@ -775,7 +775,7 @@ sub {
   .result-row { padding-left: 4px; padding-right: 4px; }
   .popup-menu { left: auto; right: 8px; top: 48px; }
   .profile-dialog { width: 100%; height: 100%; margin: 0; }
-  .airplane-list-row { grid-template-columns: 42px minmax(0, 1fr) 48px 48px; }
+  .airplane-list-row { grid-template-columns: 40px minmax(0, 1fr) 42px 42px 42px; }
 }
 
 @media (max-width: 359px) {
@@ -807,9 +807,9 @@ sub {
   .setting-desc { font-size: 11px; }
   .weight-grid, .flap-grid { grid-template-columns: 1fr; }
   .editor-row { grid-template-columns: 22% minmax(0, 1fr) 22%; }
-  .airplane-list-row { grid-template-columns: 36px minmax(0, 1fr) 42px 42px; }
+  .airplane-list-row { grid-template-columns: 32px minmax(0, 1fr) 36px 36px 36px; }
   .airplane-name-button { padding-left: 6px; padding-right: 6px; }
-  .airplane-duplicate-button, .airplane-edit-button { font-size: 20px; }
+  .airplane-duplicate-button, .airplane-edit-button, .airplane-delete-button { font-size: 18px; }
 }
 
 @media (min-width: 720px) {

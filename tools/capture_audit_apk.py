@@ -7,7 +7,6 @@ from the AeroCalculator application running on an Android emulator.
 import argparse
 import os
 import subprocess
-import sys
 import time
 
 # Default parameters
@@ -17,12 +16,12 @@ DEFAULT_OUTPUT_DIR = r"artifacts\screenshots\audit_apk"
 DEFAULT_PACKAGE_NAME = "flightdyn.aerocalculator"
 
 THEME_CONFIGS = [
-    ("Green Peace", "green_peace", 1375),
-    ("Ancient Brown", "ancient_brown", 1527),
-    ("Dark Shadows", "dark_shadows", 1679),
-    ("Blue Sky", "blue_sky", 1831),
-    ("Red Alert", "red_alert", 1983),
-    ("Orange Juice", "orange_juice", 2135),
+    ("Green Peace", "green_peace", 1380),
+    ("Ancient Brown", "ancient_brown", 1520),
+    ("Dark Shadows", "dark_shadows", 1660),
+    ("Blue Sky", "blue_sky", 1800),
+    ("Red Alert", "red_alert", 1940),
+    ("Orange Juice", "orange_juice", 2080),
 ]
 
 
@@ -56,94 +55,79 @@ class ApkScreenshotCapturer:
         print(f"Captured: {file_name} ({len(img_bytes):,} bytes)")
         return target_path
 
-    def is_settings_open(self) -> bool:
-        """Check if Settings overlay is currently open."""
-        self.run_cmd(["shell", "uiautomator", "dump", "/sdcard/d.xml"])
-        res = self.run_cmd(["shell", "grep", "-q", "SETTINGS", "/sdcard/d.xml"])
-        return res.returncode == 0
+    def restart_to_main(self) -> None:
+        """Cleanly restart the application to the main activity."""
+        self.run_cmd(["shell", "am", "force-stop", DEFAULT_PACKAGE_NAME])
+        time.sleep(0.5)
+        self.run_cmd(["shell", "am", "start", "-n", f"{DEFAULT_PACKAGE_NAME}/.main"])
+        time.sleep(3.5)
+        self.run_cmd(["shell", "input", "keyevent", "111"])
 
-    def close_settings_if_open(self) -> None:
-        """Ensure Settings overlay is closed."""
-        if self.is_settings_open():
-            self.run_cmd(["shell", "input", "keyevent", "4"])
-            time.sleep(1.0)
+    def set_theme(self, target_y: int) -> None:
+        """Open settings and select a theme from the bottom sheet."""
+        self.tap(1020, 135, 1.5)        # 3-dot overflow menu
+        self.tap(750, 630, 1.5)         # Settings menu item
+        self.tap(750, 530, 1.5)         # Theme row button
+        self.tap(540, target_y, 4.0)    # Target theme in bottom sheet -> Activity.Recreate
+        self.run_cmd(["shell", "input", "keyevent", "111"])
 
-    def ensure_main_activity(self) -> None:
-        """Ensure the main activity is active and dialogs are closed."""
-        # Dismiss any open dialogs or return from sub-activities
-        res = self.run_cmd(["shell", "dumpsys", "window"])
-        for line in res.stdout.splitlines():
-            if "mCurrentFocus" in line and ".airp" in line:
-                # Close Airplane Editor
-                self.tap(750, 140, 0.8)  # Tap Cancel
-                self.tap(716, 1339, 1.2)  # Tap Discard
-                break
-        self.close_settings_if_open()
+    def capture_theme(self, theme_slug: str) -> None:
+        """Capture all 5 screens for the current active theme."""
+        print(f"\n--- Capturing theme: {theme_slug} ---")
 
-    def set_theme(self, theme_name: str, theme_y: int) -> None:
-        """Switch the application theme via the Settings menu."""
-        print(f"\n--- Applying Theme: {theme_name} ---")
-        self.ensure_main_activity()
-
-        # Open 3-dot overflow menu (x=1020, y=140)
-        self.tap(1020, 140, 0.8)
-
-        # Tap Settings menu item (x=822, y=650)
-        self.tap(822, 650, 1.2)
-
-        # Tap Theme row button (x=808, y=529)
-        self.tap(808, 529, 1.0)
-
-        # Tap target theme option in bottom sheet
-        self.tap(540, theme_y, 3.0)
-
-        # If theme was already selected, settings remains open; dismiss it
-        self.close_settings_if_open()
-
-    def capture_theme_screens(self, theme_slug: str) -> None:
-        """Capture all 5 required screens for the current theme."""
         # 1. Airplanes tab
-        print("  Capturing 01_airplanes...")
-        self.tap(180, 265, 1.2)
+        print("  1. Airplanes tab")
+        self.tap(180, 240, 1.2)
+        self.run_cmd(["shell", "input", "keyevent", "111"])
         self.screencap(f"{theme_slug}_01_airplanes.png")
 
         # 2. Inputs tab
-        print("  Capturing 02_inputs...")
-        self.tap(540, 265, 1.2)
+        print("  2. Inputs tab")
+        self.tap(540, 240, 1.2)
+        self.run_cmd(["shell", "input", "keyevent", "111"])
         self.screencap(f"{theme_slug}_02_inputs.png")
 
         # 3. Calculate tab
-        print("  Capturing 03_calculate...")
-        self.tap(900, 265, 1.2)
+        print("  3. Calculate tab")
+        self.tap(900, 240, 1.2)
+        self.run_cmd(["shell", "input", "keyevent", "111"])
         self.screencap(f"{theme_slug}_03_calculate.png")
 
-        # 4. Airplane Editor activity (Airp.bas)
-        print("  Capturing 04_airplane_editor...")
-        self.tap(906, 140, 1.8)  # Tap '+' button in top bar
-        self.screencap(f"{theme_slug}_04_airplane_editor.png")
-        # Exit Airplane Editor
-        self.tap(750, 140, 0.8)  # Tap 'Cancel' in header
-        self.tap(716, 1339, 1.2)  # Tap 'Discard' in confirmation dialog
-
-        # 5. Settings overlay popup
-        print("  Capturing 05_settings...")
-        self.tap(1020, 140, 0.8)  # Open 3-dot overflow menu
-        self.tap(822, 650, 1.5)  # Tap Settings item
+        # 4. Settings overlay popup
+        print("  4. Settings popup")
+        self.tap(1020, 135, 1.5)
+        self.tap(750, 630, 1.5)  # Wait for menu to fade out
+        self.run_cmd(["shell", "input", "keyevent", "111"])
         self.screencap(f"{theme_slug}_05_settings.png")
-        # Close Settings popup (tap 'x' or press Back key)
-        self.tap(975, 226, 0.8)
+        self.tap(975, 228, 1.2)  # Close Settings card
+        self.run_cmd(["shell", "input", "keyevent", "111"])
 
-    def capture_all_themes(self) -> None:
-        """Capture all screens across all 6 themes."""
-        print("Starting comprehensive APK theme audit capture...")
-        for theme_name, theme_slug, theme_y in THEME_CONFIGS:
-            self.set_theme(theme_name, theme_y)
-            self.capture_theme_screens(theme_slug)
+        # 5. Airplane Editor activity (Airp.bas)
+        print("  5. Airplane editor")
+        self.tap(905, 135, 2.0)  # Tap '+' button in top bar
+        self.run_cmd(["shell", "input", "keyevent", "111"])  # Dismiss keyboard
+        time.sleep(0.5)
+        self.screencap(f"{theme_slug}_04_airplane_editor.png")
+        # Restart to cleanly return to main screen without any dialog or keyboard
+        self.restart_to_main()
 
-        # Restore default Green Peace theme at completion
-        print("\nRestoring default Green Peace theme...")
-        self.set_theme("Green Peace", 1375)
-        print("\nAll APK theme audit screenshots captured successfully.")
+    def capture_all(self) -> None:
+        """Capture all 6 themes in sequential order."""
+        # Ensure portrait orientation lock
+        self.run_cmd(["shell", "settings", "put", "system", "accelerometer_rotation", "0"])
+        self.run_cmd(["shell", "settings", "put", "system", "user_rotation", "0"])
+        self.restart_to_main()
+
+        for name, slug, target_y in THEME_CONFIGS:
+            # Set target theme
+            self.set_theme(target_y)
+            # Capture all 5 screens
+            self.capture_theme(slug)
+
+        # Restore default Green Peace
+        print("\nRestoring default Green Peace...")
+        self.set_theme(1375)
+        print("\nAll 30 APK theme audit screenshots captured successfully!")
 
 
 def main():
@@ -172,7 +156,7 @@ def main():
         device_id=args.device,
         output_dir=args.output_dir,
     )
-    capturer.capture_all_themes()
+    capturer.capture_all()
 
 
 if __name__ == "__main__":
