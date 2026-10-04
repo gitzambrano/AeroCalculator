@@ -1,0 +1,16 @@
+<en-US>
+What's new in v3.24:
+• Technical Help: KaTeX LaTeX formulas and physical model assumptions for 74 variables.
+• Modern UI: New in-app Settings overlay and proportional 3-column inputs layout.
+• Scientific notation: Enhanced formatting with precise subscripts (S_REF, c_REF, CL_MAX).
+• Aircraft management: Active profile badge and improved action buttons.
+• Polished themes: Enhanced Red Alert and Orange Juice palettes.
+</en-US>
+<pt-BR>
+Novidades da v3.24:
+• Ajuda técnica: Fórmulas em LaTeX (KaTeX) e premissas físicas para 74 variáveis.
+• Interface moderna: Novo painel de Configurações in-app e grid proporcional em Entradas.
+• Notação científica: Formatação aprimorada com subscritos (S_REF, c_REF, CL_MAX).
+• Gestão de aeronaves: Destaque de perfil ativo e botões de ação aprimorados.
+• Temas aperfeiçoados: Novas paletas vibrantes para Alerta Vermelho e Orange Juice.
+</pt-BR>
