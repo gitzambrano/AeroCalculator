@@ -16,12 +16,12 @@ DEFAULT_OUTPUT_DIR = r"artifacts\screenshots\audit_apk"
 DEFAULT_PACKAGE_NAME = "flightdyn.aerocalculator"
 
 THEME_CONFIGS = [
-    ("Green Peace", "green_peace", 1380),
-    ("Ancient Brown", "ancient_brown", 1520),
-    ("Dark Shadows", "dark_shadows", 1660),
-    ("Blue Sky", "blue_sky", 1800),
-    ("Red Alert", "red_alert", 1940),
-    ("Orange Juice", "orange_juice", 2080),
+    ("Green Peace", "green_peace", 1374),
+    ("Ancient Brown", "ancient_brown", 1526),
+    ("Dark Shadows", "dark_shadows", 1678),
+    ("Blue Sky", "blue_sky", 1830),
+    ("Red Alert", "red_alert", 1982),
+    ("Orange Juice", "orange_juice", 2134),
 ]
 
 
@@ -60,16 +60,14 @@ class ApkScreenshotCapturer:
         self.run_cmd(["shell", "am", "force-stop", DEFAULT_PACKAGE_NAME])
         time.sleep(0.5)
         self.run_cmd(["shell", "am", "start", "-n", f"{DEFAULT_PACKAGE_NAME}/.main"])
-        time.sleep(3.5)
-        self.run_cmd(["shell", "input", "keyevent", "111"])
+        time.sleep(4.0)
 
     def set_theme(self, target_y: int) -> None:
         """Open settings and select a theme from the bottom sheet."""
-        self.tap(1020, 135, 1.5)        # 3-dot overflow menu
-        self.tap(750, 630, 1.5)         # Settings menu item
-        self.tap(750, 530, 1.5)         # Theme row button
-        self.tap(540, target_y, 4.0)    # Target theme in bottom sheet -> Activity.Recreate
-        self.run_cmd(["shell", "input", "keyevent", "111"])
+        self.tap(1000, 135, 1.2)        # 3-dot overflow menu
+        self.tap(750, 690, 1.5)         # Settings menu item
+        self.tap(750, 520, 1.5)         # Theme row button
+        self.tap(540, target_y, 6.0)    # Target theme in bottom sheet -> Activity.Recreate
 
     def capture_theme(self, theme_slug: str) -> None:
         """Capture all 5 screens for the current active theme."""
@@ -77,38 +75,30 @@ class ApkScreenshotCapturer:
 
         # 1. Airplanes tab
         print("  1. Airplanes tab")
-        self.tap(180, 300, 1.2)
-        self.run_cmd(["shell", "input", "keyevent", "111"])
+        self.tap(180, 260, 1.0)
         self.screencap(f"{theme_slug}_01_airplanes.png")
 
         # 2. Inputs tab
         print("  2. Inputs tab")
-        self.tap(540, 300, 1.2)
-        self.run_cmd(["shell", "input", "keyevent", "111"])
+        self.tap(540, 260, 1.0)
         self.screencap(f"{theme_slug}_02_inputs.png")
 
         # 3. Calculate tab
         print("  3. Calculate tab")
-        self.tap(900, 300, 1.2)
-        self.run_cmd(["shell", "input", "keyevent", "111"])
+        self.tap(900, 260, 1.0)
         self.screencap(f"{theme_slug}_03_calculate.png")
 
         # 4. Settings overlay popup
         print("  4. Settings popup")
-        self.tap(1020, 135, 1.5)
-        self.tap(750, 630, 1.5)  # Wait for menu to fade out
-        self.run_cmd(["shell", "input", "keyevent", "111"])
+        self.tap(1000, 135, 1.2)        # 3-dot overflow menu
+        self.tap(750, 690, 1.5)         # Settings menu item
         self.screencap(f"{theme_slug}_05_settings.png")
-        self.tap(975, 228, 1.2)  # Close Settings card
-        self.run_cmd(["shell", "input", "keyevent", "111"])
+        self.tap(900, 230, 1.0)         # Close Settings card ('x')
 
         # 5. Airplane Editor activity (Airp.bas)
         print("  5. Airplane editor")
-        self.tap(905, 135, 2.0)  # Tap '+' button in top bar
-        self.run_cmd(["shell", "input", "keyevent", "111"])  # Dismiss keyboard
-        time.sleep(0.5)
+        self.tap(890, 135, 3.0)         # Tap '+' button in top bar
         self.screencap(f"{theme_slug}_04_airplane_editor.png")
-        # Restart to cleanly return to main screen without any dialog or keyboard
         self.restart_to_main()
 
     def capture_all(self) -> None:
@@ -126,7 +116,7 @@ class ApkScreenshotCapturer:
 
         # Restore default Green Peace
         print("\nRestoring default Green Peace...")
-        self.set_theme(1375)
+        self.set_theme(1374)
         print("\nAll 30 APK theme audit screenshots captured successfully!")
 
 

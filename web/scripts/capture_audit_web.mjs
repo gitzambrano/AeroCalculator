@@ -151,8 +151,10 @@ try {
     await settingsBtn.click();
     await page.waitForTimeout(300);
 
-    // Ensure the setting-theme select reflects the current theme
+    // Ensure the setting-theme select reflects the current theme and form is scrolled to top
     await page.evaluate((t) => {
+      const form = document.getElementById('settings-form');
+      if (form) form.scrollTop = 0;
       const sel = document.getElementById('setting-theme');
       if (sel) sel.value = t;
     }, theme);

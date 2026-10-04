@@ -170,13 +170,22 @@ sub {
   letter-spacing: .25px;
   cursor: pointer;
   padding: 0 0 7px;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
 }
-.tab[aria-selected="true"]::after {
+.tab[aria-selected="true"] {
+  opacity: 1;
+}
+.tab::after {
   content: "";
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  height: 4px;
+  height: 0;
   background: white;
+  transition: height 0.15s ease;
+}
+.tab[aria-selected="true"]::after {
+  height: 4px;
 }
 .tab:focus-visible { outline: 2px solid white; outline-offset: -4px; }
 
@@ -225,7 +234,7 @@ sub {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--button-border, #d5dce6);
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 0 30px 0 12px;
   font-size: 15px;
   color: var(--button-text, #111);
@@ -234,7 +243,8 @@ sub {
     linear-gradient(135deg, #555 50%, transparent 50%) right 8px center / 5px 5px no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 /* Never hide unit selector — show dash for dimensionless fields */
 .input-tail {
@@ -253,15 +263,19 @@ sub {
 .value-input {
   min-width: 0;
   border: 1px solid var(--button-border, #d5dce6);
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--field-bg);
   color: var(--field-text, #111);
   text-align: center;
   padding: 0 12px;
   font-size: 15px;
   outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.value-input:focus { box-shadow: inset 0 -2px var(--field-text, var(--title)); }
+.value-input:focus {
+  border-color: var(--field-text, var(--title));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--field-text, var(--title)) 25%, transparent);
+}
 .speed-delta { text-align: center; border-left: 1px solid var(--button-border, #d5dce6); }
 
 .speed-row.vs-factor-mode {
@@ -314,8 +328,8 @@ sub {
   font-size: 15px;
   color: var(--button-text, #111);
   background:
-    linear-gradient(45deg, transparent 50%, #555 50%) right 16px center / 5px 5px no-repeat,
-    linear-gradient(135deg, #555 50%, transparent 50%) right 11px center / 5px 5px no-repeat,
+    linear-gradient(45deg, transparent 50%, var(--accent, #555) 50%) right 16px center / 5px 5px no-repeat,
+    linear-gradient(135deg, var(--accent, #555) 50%, transparent 50%) right 11px center / 5px 5px no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 4px;
@@ -409,6 +423,7 @@ sub {
   border-left: 4px solid var(--field-text, var(--title));
   background: color-mix(in srgb, var(--field-bg) 65%, var(--input-bg));
 }
+.airplane-name-button .active-badge,
 .active-badge {
   display: inline-block;
   margin-left: 8px;
@@ -417,7 +432,7 @@ sub {
   font-weight: 700;
   letter-spacing: 0.05em;
   border-radius: 4px;
-  color: white;
+  color: white !important;
   background: var(--title);
   vertical-align: middle;
 }
@@ -476,7 +491,7 @@ sub {
   font-weight: 500;
   color: var(--button-text);
 }
-.airplane-name-button span { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+.airplane-name-button span:not(.active-badge) { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
 .airplane-duplicate-button,
 .airplane-edit-button {
   font-size: 20px;
@@ -536,6 +551,7 @@ sub {
   border: 0;
   padding: 0;
   background: var(--input-bg);
+  color: var(--button-text, #111);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgb(0 0 0 / 0.18);
 }
@@ -593,7 +609,7 @@ sub {
   align-items: center;
   padding: 7px 1%;
 }
-.editor-section-head strong { font-size: 15px; }
+.editor-section-head strong { font-size: 15px; color: var(--button-text); }
 .weight-grid, .flap-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -606,6 +622,7 @@ sub {
   align-items: center;
   padding: 7px 2%;
   font-size: 14px;
+  color: var(--button-text);
 }
 .add-flap {
   justify-self: end;
@@ -786,6 +803,105 @@ sub {
 .dialog-buttons button[type="submit"] { background: var(--title); color: white; }
 .dialog-buttons button[type="submit"]:hover { opacity: 0.9; }
 
+/* Modal Overlay & RotorCalculator Contextual Help Modal with LaTeX */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0s linear 0s;
+}
+
+.modal-card {
+  width: min(100%, 520px);
+  max-height: 90vh;
+  background: var(--input-bg);
+  border: 1px solid var(--divider);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  transform: translateY(16px);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.modal-overlay.open .modal-card {
+  transform: translateY(0);
+}
+
+.modal-header {
+  height: 52px;
+  padding: 0 20px;
+  background: var(--title);
+  border-bottom: 1px solid var(--divider);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.modal-close-btn {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 26px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+}
+
+.modal-body {
+  padding: 18px 22px;
+  overflow-y: auto;
+  color: var(--button-text);
+}
+
+#result-tooltip-eq-box {
+  background: var(--field-bg);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 12px 10px;
+  color: var(--accent);
+  margin-bottom: 14px;
+  overflow-x: auto;
+  text-align: center;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+  -webkit-overflow-scrolling: touch;
+}
+
+#result-tooltip-eq-box .katex {
+  font-size: 1.15em;
+  color: var(--accent);
+}
+
+#result-tooltip-eq-box .katex-display {
+  margin: 0.2em 0;
+}
+
 
 @media (max-width: 430px) {
   .app-shell { width: 100%; box-shadow: none; }
@@ -801,6 +917,7 @@ sub {
   .popup-menu { left: auto; right: 8px; top: 48px; }
   .profile-dialog { width: 100%; height: 100%; margin: 0; }
   .airplane-list-row { grid-template-columns: 40px minmax(0, 1fr) 42px 42px 42px; }
+  #result-tooltip-eq-box .katex { font-size: 1.0em; }
 }
 
 @media (max-width: 359px) {

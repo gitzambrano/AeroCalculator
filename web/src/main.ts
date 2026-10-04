@@ -1,4 +1,6 @@
 import "./style.css";
+import { CATALOG } from "./catalog";
+import { renderEquationLaTeX } from "./math-renderer";
 import iconUrl from "./assets/icon-bezel-transp-white.png";
 import {
   WEIGHT_KEYS,
@@ -121,8 +123,8 @@ const DEFAULT_OPTION_LABELS: Record<string, string> = {
   EAS: "Airspeed EAS",
   Qdyn: "Dynamic Pressure",
   Qc: "Impact Pressure",
-  Sref: "Wing Area S<sub>ref</sub>",
-  cref: "Wing Chord c<sub>ref</sub>",
+  Sref: "Area S<sub>REF</sub>",
+  cref: "Chord c<sub>REF</sub>",
   CLmax: "Flap 0 - CL<sub>MAX</sub>",
   NzPullup: "N<sub>Z</sub>&nbsp;(Pull-up)",
   NzTurn: "N<sub>Z</sub>&nbsp;(Turn)",
@@ -143,8 +145,8 @@ const fields: Field[] = [
   { id: "temp", typeOptions: opts(["Δ ISA", "OAT"]), unitOptions: opts(["°C", "°F", "K"]), defaultType: "OAT", defaultUnit: "°C", placeholder: "Temperature", defaultValue: "0" },
   { id: "spd", typeOptions: opts(["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"]), unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "CAS", defaultUnit: "kt", placeholder: "Speed", defaultValue: "0" },
   { id: "weight", typeOptions: opts(["Weight"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "1" },
-  { id: "sref", typeOptions: [{ value: "Sref", label: "Wing Area S<sub>ref</sub>" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
-  { id: "cref", typeOptions: [{ value: "cref", label: "Wing Chord c<sub>ref</sub>" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
+  { id: "sref", typeOptions: [{ value: "Sref", label: "Area S<sub>REF</sub>" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
+  { id: "cref", typeOptions: [{ value: "cref", label: "Chord c<sub>REF</sub>" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
   { id: "clmax", typeOptions: [{ value: "CLmax", label: "Flap 0 - CL<sub>MAX</sub>" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1" },
   { id: "nz", typeOptions: [{ value: "NzPullup", label: "N<sub>Z</sub>&nbsp;(Pull-up)" }, { value: "NzTurn", label: "N<sub>Z</sub>&nbsp;(Turn)" }, { value: "BankTurn", label: "Bank Angle" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
   { id: "angle1", typeOptions: opts(["Track", "Heading"]), unitOptions: opts(["deg", "rad"]), defaultType: "Track", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
@@ -164,6 +166,51 @@ const resultNames = [
   "Load Factor Nz", "Bank Angle φ", "Turn Radius", "Turn Rate", "Track Angle", "Heading Angle Ψ", "Drift Angle",
   "Sideslip Angle β", "Wind Speed", "Wind Direction", "AlongTrack Headwind", "AlongTrack Crosswind",
 ] as const;
+
+const RESULT_HELPERS: Record<string, string> = {
+  "Pressure Altitude": "Pressure altitude (Hp): ISA altitude corresponding to static pressure.\nEquation: pISA(Hp) = p\nUnit: m / ft",
+  "Geometric Altitude": "Geometric altitude (h): physical height above mean sea level.\nEquation: h = r H / (r - H)\nUnit: m / ft",
+  "Geopotencial Altitude": "Geopotential altitude (H): effective gravitational altitude used by standard atmosphere.\nEquation: H = r h / (r + h)\nUnit: m / ft",
+  "Density Altitude": "Density altitude (Hρ): ISA altitude with the same air density.\nEquation: ρISA(Hρ) = ρ\nUnit: m / ft",
+  "Temperature Altitude": "Temperature altitude (HT): altitude in ISA with the same temperature.\nEquation: TISA(HT) = T\nUnit: m / ft",
+  "Pressure": "Static atmospheric pressure (p).\nEquation: p = ρ R T\nUnit: Pa / mbar / psi",
+  "Density": "Air density (ρ): mass of air per unit volume.\nEquation: ρ = p / (R T)\nUnit: kg/m³",
+  "Temperature": "Outside air temperature (T).\nEquation: T = TISA(Hp) + ΔT\nUnit: °C / °F / K",
+  "Delta ISA": "ISA temperature deviation (ΔT): OAT minus standard ISA temperature.\nEquation: ΔT = T - TISA(Hp)\nUnit: °C / K",
+  "Total Temperature": "Total temperature (Tt): isentropic stagnation temperature.\nEquation: Tt = T (1 + (γ-1) M²/2)\nUnit: °C / °F / K",
+  "Viscosity": "Dynamic air viscosity (μ) from Sutherland correlation.\nUnit: Pa·s",
+  "Sound Speed": "Speed of sound (a): local sonic speed in ideal gas.\nEquation: a = √(γ R T)\nUnit: m/s / kt",
+  "True Airspeed": "True airspeed (TAS): speed relative to surrounding air mass.\nEquation: TAS = M a\nUnit: kt / m/s / km/h",
+  "Calibrated Airspeed": "Calibrated airspeed (CAS): pitot-static reading corrected for errors.\nUnit: kt / m/s / km/h",
+  "Equivalent Airspeed": "Equivalent airspeed (EAS): speed producing dynamic pressure at sea level.\nEquation: EAS = TAS √(ρ/ρ0)\nUnit: kt / m/s",
+  "Ground Speed": "Ground speed (GS): aircraft speed relative to ground surface.\nEquation: Vground = Vair + Vwind\nUnit: kt / m/s / km/h",
+  "Stall Speed Vs": "Reference 1-g stall speed (Vs).\nEquation: Vs,TAS = √(2 m g0 / (ρ S CLmax))\nUnit: kt / m/s",
+  "Vs Factor": "Stall speed multiplier factor.\nEquation: CAS = factor × Vs + ΔV",
+  "Lift Coefficient CL": "Required lift coefficient.\nEquation: CL = n m g0 / (q S)",
+  "Mach": "Mach number (M): TAS divided by local speed of sound.\nEquation: M = TAS / a",
+  "Reynolds": "Reynolds number (Re) based on mean aerodynamic chord.\nEquation: Re = ρ TAS cref / μ",
+  "Pressure Ratio δ": "Static pressure ratio.\nEquation: δ = p / p0",
+  "Density Ratio σ": "Air density ratio.\nEquation: σ = ρ / ρ0",
+  "Temperature Ratio θ": "Temperature ratio.\nEquation: θ = T / T0",
+  "Dynamic Pressure": "Dynamic pressure (q).\nEquation: q = ½ ρ TAS²\nUnit: Pa / mbar / psi",
+  "Impact Pressure": "Impact pressure (qc = pt - p).\nUnit: Pa / mbar / psi",
+  "Total Pressure": "Total pressure (pt = p + qc).\nUnit: Pa / mbar / psi",
+  "DynPressure * S / g": "Dynamic pressure force equivalent (q S / g0).\nUnit: kgf",
+  "Lift Force": "Total required aerodynamic lift (L = n m g0).\nUnit: kgf",
+  "Weight/Delta W/δ": "Aircraft weight normalized by pressure ratio (W / δ).\nUnit: kgf",
+  "Load Factor Nz": "Normal load factor (Nz = L / W).\nUnit: g",
+  "Bank Angle φ": "Coordinated level turn bank angle.\nEquation: n = 1 / cos φ\nUnit: deg / rad",
+  "Turn Radius": "Coordinated level turn radius.\nEquation: r = TAS² / (g0 tan φ)\nUnit: m / km",
+  "Turn Rate": "Coordinated level turn angular rate.\nEquation: ω = g0 tan φ / TAS\nUnit: deg/s / rad/s",
+  "Track Angle": "Ground track course angle.\nUnit: deg / rad",
+  "Heading Angle Ψ": "Aircraft nose heading angle.\nUnit: deg / rad",
+  "Drift Angle": "Drift angle: heading minus track.\nUnit: deg / rad",
+  "Sideslip Angle β": "Sideslip angle between aircraft axis and relative wind.\nUnit: deg / rad",
+  "Wind Speed": "Total horizontal wind speed magnitude.\nUnit: kt / m/s / km/h",
+  "Wind Direction": "Direction from which the wind blows (True North).\nUnit: deg / rad",
+  "AlongTrack Headwind": "Headwind component along ground track.\nUnit: kt / m/s",
+  "AlongTrack Crosswind": "Crosswind component perpendicular to ground track.\nUnit: kt / m/s",
+};
 
 const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) throw new Error("Missing #app");
@@ -236,8 +283,8 @@ app.innerHTML = `
         </div>
         <div class="editor-scroll">
           <div class="editor-row"><label for="profile-name">Name</label><input id="profile-name" type="text" placeholder="Aircraft Name" /></div>
-          <div class="editor-row"><label for="profile-sref">Wing Area S<sub>ref</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
-          <div class="editor-row"><label for="profile-cref">Wing Chord c<sub>ref</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
+          <div class="editor-row"><label for="profile-sref">Area S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
+          <div class="editor-row"><label for="profile-cref">Chord c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
           <section class="editor-section">
             <div class="editor-section-head"><strong>Weight</strong><select id="profile-weight-unit" aria-label="Aircraft weight unit"><option>kg</option><option>lb</option><option>ton</option><option>slug</option><option>oz</option></select></div>
             <div class="weight-grid"><label>MTOW<input id="profile-weight-MTOW" inputmode="decimal" placeholder="MTOW" /></label><label>MLW<input id="profile-weight-MLW" inputmode="decimal" placeholder="MLW" /></label><label>MZFW<input id="profile-weight-MZFW" inputmode="decimal" placeholder="MZFW" /></label><label>BOW<input id="profile-weight-BOW" inputmode="decimal" placeholder="BOW" /></label><label>Heavy<input id="profile-weight-Heavy" inputmode="decimal" placeholder="Heavy" /></label><label>Light<input id="profile-weight-Light" inputmode="decimal" placeholder="Light" /></label></div>
@@ -347,8 +394,93 @@ app.innerHTML = `
       </form>
     </dialog>
     <div id="field-tooltip" class="field-tooltip" role="tooltip" hidden></div>
+
+    <!-- MODAL: CONTEXTUAL HELP & TOOLTIP WITH LATEX (RotorCalculator standard) -->
+    <div class="modal-overlay" id="modal-result-tooltip">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title" id="result-tooltip-title">About • Parameter</div>
+          <button type="button" class="modal-close-btn" id="modal-tooltip-close" data-close="modal-result-tooltip" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="result-tooltip-desc" style="font-size: 14.5px; line-height: 1.6; color: var(--button-text); margin-bottom: 14px;"></div>
+          <div id="result-tooltip-eq-box" style="display: none;"></div>
+          <div id="result-tooltip-range-box" style="display: none; font-size: 13.5px; margin-bottom: 10px;">
+            <span style="font-weight: 700; color: #00a876;">Model / Assumptions: </span>
+            <span id="result-tooltip-range-text" style="color: var(--button-text);"></span>
+          </div>
+          <div id="result-tooltip-unit-box" style="display: none; font-size: 13.5px; margin-bottom: 16px;">
+            <span style="font-weight: 700; color: #d97706;">SI / Reference Unit: </span>
+            <span id="result-tooltip-unit-text" style="color: var(--button-text); font-weight: 700;"></span>
+          </div>
+          <button type="button" class="action-btn" id="btn-result-tooltip-ok" style="width: 100%; height: 42px; font-weight: 700; color: var(--accent); background: var(--button-a); border: 1px solid var(--button-border); border-radius: 8px; cursor: pointer;">OK</button>
+        </div>
+      </div>
+    </div>
   </main>
 `;
+
+export function showContextualHelp(key: string): void {
+  const item = CATALOG[key] || {
+    title: key,
+    desc: RESULT_HELPERS[key] || `Technical documentation for ${key}.`,
+    eq: "",
+    model: "Within the documented atmosphere and subsonic flight model.",
+    unit: "",
+  };
+
+  const titleEl = byId("result-tooltip-title");
+  if (titleEl) titleEl.textContent = item.title;
+
+  const descEl = byId("result-tooltip-desc");
+  if (descEl) descEl.textContent = item.desc;
+
+  const eqBox = byId("result-tooltip-eq-box");
+  const renderedEq = renderEquationLaTeX(key, item.eq);
+  if (renderedEq && eqBox) {
+    eqBox.innerHTML = renderedEq;
+    eqBox.style.display = "block";
+  } else if (eqBox) {
+    eqBox.innerHTML = "";
+    eqBox.style.display = "none";
+  }
+
+  const rangeBox = byId("result-tooltip-range-box");
+  const rangeText = byId("result-tooltip-range-text");
+  if (item.model && rangeBox && rangeText) {
+    rangeText.textContent = item.model;
+    rangeBox.style.display = "block";
+  } else if (rangeBox) {
+    rangeBox.style.display = "none";
+  }
+
+  const unitBox = byId("result-tooltip-unit-box");
+  const unitText = byId("result-tooltip-unit-text");
+  if (item.unit && unitBox && unitText) {
+    unitText.textContent = item.unit === "-" ? "Dimensionless (—)" : item.unit;
+    unitBox.style.display = "block";
+  } else if (unitBox) {
+    unitBox.style.display = "none";
+  }
+
+  byId("modal-result-tooltip")?.classList.add("open");
+}
+
+(window as unknown as { showContextualHelp: typeof showContextualHelp }).showContextualHelp = showContextualHelp;
+
+const closeTooltipModal = () => {
+  byId("modal-result-tooltip")?.classList.remove("open");
+};
+byId("modal-tooltip-close")?.addEventListener("click", closeTooltipModal);
+byId("btn-result-tooltip-ok")?.addEventListener("click", closeTooltipModal);
+byId("modal-result-tooltip")?.addEventListener("click", (e) => {
+  if (e.target === byId("modal-result-tooltip")) closeTooltipModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && byId("modal-result-tooltip")?.classList.contains("open")) {
+    closeTooltipModal();
+  }
+});
 
 const inputList = byId("input-list");
 inputList.append(createAirplaneRow());
@@ -358,7 +490,11 @@ const resultsList = byId("results");
 for (const name of resultNames) {
   const li = document.createElement("li");
   li.className = "result-row";
+  li.tabIndex = 0;
+  li.dataset.helper = RESULT_HELPERS[name] ?? name;
+  li.dataset.name = name;
   li.innerHTML = `<span class="result-name">${name}</span><span class="result-value na" data-result="${name}">----</span>`;
+  li.addEventListener("click", () => showContextualHelp(name));
   resultsList.append(li);
 }
 
@@ -468,6 +604,10 @@ function createAirplaneRow(): HTMLElement {
   label.textContent = "Airplane";
   setHelper(label, "Open the aircraft-profile list to create, edit or select stored aircraft geometry.");
   label.addEventListener("click", () => activatePage("airplanes"));
+  label.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    showContextualHelp("Aircraft Profile");
+  });
 
   const picker = document.createElement("select");
   picker.id = "airplane-select";
@@ -516,6 +656,23 @@ function createInputRow(field: Field): HTMLElement {
   wrap.append(type, display);
   updateTypeSelectDisplay(type);
   type.addEventListener("change", () => updateTypeSelectDisplay(type));
+
+  let timer: number | undefined;
+  let held = false;
+  wrap.addEventListener("pointerdown", () => {
+    held = false;
+    timer = window.setTimeout(() => {
+      held = true;
+      showContextualHelp(type.value);
+    }, 550);
+  });
+  ["pointerup", "pointercancel", "pointerleave"].forEach((evt) =>
+    wrap.addEventListener(evt, () => window.clearTimeout(timer))
+  );
+  wrap.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    showContextualHelp(type.value);
+  });
 
   const value = document.createElement("input");
   value.id = `${field.id}-value`;
@@ -646,6 +803,16 @@ function initializeHelpers(): void {
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
     if (target) hide(target);
   });
+  document.addEventListener("click", (event) => {
+    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
+    if (target && (target.classList.contains("result-row") || target.classList.contains("field-button") || target.classList.contains("field-select-wrap"))) {
+      if (activeTarget === target && !tooltip.hidden) {
+        hide(target);
+      } else {
+        show(target);
+      }
+    }
+  });
   window.addEventListener("scroll", () => hide(), { passive: true });
   window.addEventListener("resize", () => hide(), { passive: true });
 }
@@ -724,8 +891,8 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "Ground Speed") return "GrSpd";
   if (value === "Qdyn") return "Qdyn";
   if (value === "Qc") return "Qc";
-  if (value === "Sref") return "S<sub>ref</sub>";
-  if (value === "cref") return "c<sub>ref</sub>";
+  if (value === "Sref") return "S<sub>REF</sub>";
+  if (value === "cref") return "c<sub>REF</sub>";
   if (value === "CLmax") return "CL<sub>MAX</sub>";
   if (value === "NzTurn") return "N<sub>Z</sub>";
   if (value === "BankTurn") return "Bank";

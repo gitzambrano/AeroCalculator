@@ -441,7 +441,7 @@ Sub CreateItem(ii As Int, He As Int)
 			lblSref.Gravity = Gravity.LEFT
 			lblSref.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			Dim rs1 As RichString
-			rs1.Initialize("Wing Area S{T}{S}ref{T}{S}")
+			rs1.Initialize("Area S{T}{S}REF{T}{S}")
 			rs1.Subscript2("{S}")
 			rs1.RelativeSize2(.7,"{T}")
 			lblSref.Text = rs1
@@ -462,6 +462,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl2.AddView(btnSrefUnit,76%x, 8dip, 22%x, 34dip)
 		    btnSrefUnit.Text="m²"
 			btnSrefUnit.TextSize = 11
+			ModernizeButton(btnSrefUnit)
 			edtSref.TextColor = Main.ColorEdtText
 			edtSref.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtSref.HintColor = Main.ColorEdtHint
@@ -476,7 +477,7 @@ Sub CreateItem(ii As Int, He As Int)
 			lblcref.Gravity = Gravity.LEFT
 			lblcref.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			Dim rs2 As RichString
-			rs2.Initialize("Wing Chord c{T}{S}ref{T}{S}")
+			rs2.Initialize("Chord c{T}{S}REF{T}{S}")
 			rs2.Subscript2("{S}")
 			rs2.RelativeSize2(.7,"{T}")
 			lblcref.Text = rs2
@@ -497,6 +498,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl3.AddView(btncrefUnit,76%x, 8dip, 22%x, 34dip)
 		    btncrefUnit.Text="m"
 			btncrefUnit.TextSize = 11
+			ModernizeButton(btncrefUnit)
 			edtcref.TextColor = Main.ColorEdtText
 			edtcref.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtcref.HintColor = Main.ColorEdtHint
@@ -522,6 +524,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl4.AddView(btnWeightUnit,77%x, 8dip, 20%x, 34dip)
 		    btnWeightUnit.Text="Kg"
 			btnWeightUnit.TextSize = 11
+			ModernizeButton(btnWeightUnit)
 			btnWeightUnit.TextColor = Main.ColorButText1
 		
 		 	Dim lblWeight1 As Label: lblWeight1.Initialize("")
@@ -1351,6 +1354,16 @@ Public Sub EditGradient(BgColor As Int, BorderColor As Int) As ColorDrawable
     Dim cd As ColorDrawable
     cd.Initialize2(BgColor, 4dip, 1dip, BorderColor)
     Return cd
+End Sub
+
+Private Sub ModernizeButton(btn As Button)
+	Try
+		Dim jo As JavaObject = btn
+		jo.RunMethod("setAllCaps", Array(False))
+		jo.RunMethod("setStateListAnimator", Array(Null))
+	Catch
+		Log("ModernizeButton skipped: " & LastException.Message)
+	End Try
 End Sub
 
 Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable

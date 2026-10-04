@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="katex.min.css">
+<script src="katex.min.js"></script>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+    box-sizing: border-box;
+    color: #009183;
+    font-size: 16px;
+  }
+  .katex-display { margin: 0 !important; }
+  .katex { font-size: 1.05em; }
+</style>
+</head>
+<body>
+<div id="m"></div>
+<script>
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var c = params.get('c');
+    if (c) document.body.style.color = '#' + c;
+    var eq = params.get('eq');
+    if (eq) {
+      katex.render(decodeURIComponent(eq), document.getElementById('m'), { displayMode: true, throwOnError: false });
+    }
+  } catch(e) {
+    document.getElementById('m').innerText = eq || '';
+  }
+</script>
+</body>
+</html>

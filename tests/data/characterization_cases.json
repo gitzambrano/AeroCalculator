@@ -1,7 +1,7 @@
 {
   "kind": "source-characterization",
   "authority": "historical-structure-only",
-  "declared_modules": ["Airp", "ClsCheckList", "ClsExplorer", "ClsBottomSheet"],
+  "declared_modules": ["Airp", "ClsCheckList", "ClsExplorer", "ClsBottomSheet", "AeroNames"],
   "declared_libraries": [
     "ahviewpager",
     "rspopupmenu",

@@ -59,9 +59,10 @@ Module1=Airp
 Module2=ClsCheckList
 Module3=ClsExplorer
 Module4=ClsBottomSheet
+Module5=AeroNames
 NumberOfFiles=21
 NumberOfLibraries=12
-NumberOfModules=4
+NumberOfModules=5
 Version=13
 @EndOfDesignText@
  #Region  Project Attributes 
@@ -350,6 +351,7 @@ Sub Globals
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+	Activity.RemoveAllViews
 			
 	'Keep the complete application UI inside the system-bar-safe content area.
 	imeInsets.Initialize("imeInsets")
@@ -794,9 +796,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSref.Initialize("btnSref")
 		    pnlInput.AddView(btnSref, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btnSref.Text = MakeSubscript("Wing Area S", "ref", "")
+				btnSref.Text = MakeSubscript("Area S", "REF", "")
 			Else
-				btnSref.Text = MakeSubscript("S", "ref", "")
+				btnSref.Text = MakeSubscript("S", "REF", "")
 			End If
 			btnSref.TextSize = 15*sc
 			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
@@ -827,9 +829,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			btncref.Initialize("btncref")
 		    pnlInput.AddView(btncref, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btncref.Text = MakeSubscript("Wing Chord c", "ref", "")
+				btncref.Text = MakeSubscript("Chord c", "REF", "")
 			Else
-				btncref.Text = MakeSubscript("c", "ref", "")
+				btncref.Text = MakeSubscript("c", "REF", "")
 			End If
 			btncref.TextSize = 15*sc
 			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
@@ -1210,6 +1212,15 @@ Sub Activity_Create(FirstTime As Boolean)
 	AeroSheet.SetColors(ColorEdtText, ColorPnlInput2, ColorButText1, ColorEdtText, ColorPnlLine2)
 	SettingsPopupOpen = False
 
+	Dim allButtons() As Button = Array As Button(btnAirp, btnBack, btnCalc, btnAirplane, _
+		btnAltType, btnAltUnit, btnTempType, btnTempUnit, btnSpdType, btnSpdUnit, _
+		btnWeight, btnWeightUnit, btnSref, btnSrefUnit, btncref, btncrefUnit, _
+		btnCLmax, btnCLmaxUnit, btnNzType, btnNzUnit, btnAngle1Type, btnAngle1Unit, _
+		btnAngle2Type, btnAngle2Unit, btnHeadWind, btnHeadWindUnit, btnCrossWind, btnCrossWindUnit, _
+		btnWindRefAngle, btnWindRefAngleUnit, btnSpdDelta)
+	For Each b As Button In allButtons
+		If b.IsInitialized Then ModernizeButton(b)
+	Next
 End Sub
 
 Sub Activity_Resume
@@ -1222,6 +1233,33 @@ Sub Activity_Resume
 	End If
 	
 	pnlTransparent1.Color =  Colors.Transparent
+	
+	Dim HideK As IME
+	HideK.Initialize("")
+	HideK.HideKeyboard
+	
+	Dim in As Intent = Activity.GetStartingIntent
+	If in.IsInitialized Then
+		If in.HasExtra("theme") Then
+			Dim reqTheme As String = "" & in.GetExtra("theme")
+			If reqTheme <> "" And reqTheme <> manager.GetString("theme") Then
+				manager.SetString("theme", reqTheme)
+				Activity.RemoveAllViews
+				Activity_Create(False)
+				Return
+			End If
+		End If
+		If in.HasExtra("tab") Then
+			Dim reqTab As Int = in.GetExtra("tab")
+			If reqTab = 0 Then
+				btnAirp_Click
+			Else If reqTab = 1 Then
+				btnBack_Click
+			Else If reqTab = 2 Then
+				btnCalc_Click
+			End If
+		End If
+	End If
 	
 	' Recupera variaveis do arquivo interno lastmod.txt
 	Dim m As Map
@@ -1318,7 +1356,7 @@ Sub Activity_Resume
 				'Inicializar e criar lista de avioes na aba Airplanes
 				For ii= 1 To N
 					ID = ListAirp.Get(ii-1)
-					He = 50dip
+					He = 62dip
 					lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 				Next
 				lst.ResizePanel
@@ -1326,7 +1364,7 @@ Sub Activity_Resume
 				ToastMessageShow("Recreating ID List.", False)
 				For ii= 1 To N
 					ID = ii
-					He = 50dip
+					He = 62dip
 					lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 				Next
 				lst.ResizePanel	
@@ -1334,7 +1372,7 @@ Sub Activity_Resume
 		Else
 			For ii= 1 To N
 				ID = ii
-				He = 50dip
+				He = 62dip
 				lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 			Next
 			lst.ResizePanel
@@ -1343,7 +1381,7 @@ Sub Activity_Resume
 		init=lst.NumberOfItems
 		For ii= init+1 To N
 			ID = ii
-			He = 50dip
+			He = 62dip
 			lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 		Next
 		lst.ResizePanel
@@ -1501,19 +1539,33 @@ Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
 	lbl1.Gravity = Gravity.CENTER_VERTICAL
 	lbl1.Tag = ID 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 	Dim planeName As String = a.GetDefault(ID & "_Name", "")
-	Dim srefVal As String = a.GetDefault(ID & "_Sref", "")
-	Dim crefVal As String = a.GetDefault(ID & "_cref", "")
+	Dim srefVal As String = a.GetDefault(ID & "_S", "")
+	If srefVal.Length = 0 Then srefVal = a.GetDefault(ID & "_Sref", "")
+	Dim crefVal As String = a.GetDefault(ID & "_c", "")
+	If crefVal.Length = 0 Then crefVal = a.GetDefault(ID & "_cref", "")
+	Dim srefUnitIdx As Int = a.GetDefault(ID & "_Sunit", 0)
+	Dim crefUnitIdx As Int = a.GetDefault(ID & "_cunit", 0)
+	Dim sUnits() As String = Array As String("m²", "ft²", "in²", "cm²", "mm²")
+	Dim cUnits() As String = Array As String("m", "ft", "in", "cm", "mm")
+	Dim sUnitStr As String = "m²"
+	If srefUnitIdx >= 0 And srefUnitIdx < sUnits.Length Then sUnitStr = sUnits(srefUnitIdx)
+	Dim cUnitStr As String = "m"
+	If crefUnitIdx >= 0 And crefUnitIdx < cUnits.Length Then cUnitStr = cUnits(crefUnitIdx)
+
 	Dim cs As CSBuilder
 	cs.Initialize.Bold.Append(planeName).Pop
+	If ID = ID_use Then
+		cs.Append("  ").Bold.Color(ColorEdtText).Append("ACTIVE").Pop.Pop
+	End If
 	If srefVal.Length > 0 And crefVal.Length > 0 Then
-		cs.Append(CRLF).RelativeSize(0.78).Color(ColorEdtHint).Append(srefVal & " m²  •  " & crefVal & " m").Pop
+		cs.Append(CRLF).RelativeSize(0.78).Color(ColorEdtHint).Append(srefVal & " " & sUnitStr & "  •  " & crefVal & " " & cUnitStr).Pop
 	End If
 	lbl1.Text = cs
 	lbl1.TextColor = ColorButText1
 	lbl1.TextSize = 14
 	lbl1.SingleLine = False
 	pnl.AddView(lbl1, 14dip, 0, root.Width - 4.0 * He - 18dip, He)
-	pnl.Color = ColorPnlInput5
+	pnl.Background = EditGradient(ColorPnlInput2, ColorPnlLine3)
 
 	If ID = ID_use Then
 		Dim pnlActiveBar As Panel
@@ -1852,6 +1904,23 @@ Sub SpinnerCreate
 	spnAirp.TextColor = ColorEdtText
 	spnAirp.DropdownTextColor = ColorEdtText
 	spnAirp.DropdownBackgroundColor = ColorPnlInput5
+
+	Dim lblSpnChevron As Label
+	lblSpnChevron.Initialize("lblSpnChevron")
+	lblSpnChevron.Text = Chr(9662)
+	lblSpnChevron.TextSize = 13 * sc
+	lblSpnChevron.TextColor = ColorEdtText
+	lblSpnChevron.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.CENTER_HORIZONTAL)
+	panelspn.AddView(lblSpnChevron, panelspn.Width - 22dip * sc, 0, 20dip * sc, panelspn.Height)
+End Sub
+
+Sub lblSpnChevron_Click
+	Try
+		Dim jo As JavaObject = spnAirp
+		jo.RunMethod("performClick", Null)
+	Catch
+		Log("spn click: " & LastException.Message)
+	End Try
 End Sub
 
 Sub spnAirp_ItemClick (Position As Int, Value As Object)
@@ -2128,9 +2197,9 @@ Sub btnSref_Click
 	items.Add("Wing Reference Area Sref|Theoretical wing planform area used as aerodynamic reference. Includes fuselage carve-out in some conventions.")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area", 0)) Complete (idx As Int)
 	If xx > 340dip Or sc > 1 Then
-		btnSref.Text = MakeSubscript("Wing Area S", "ref", "")
+		btnSref.Text = MakeSubscript("Area S", "REF", "")
 	Else
-		btnSref.Text = MakeSubscript("S", "ref", "")
+		btnSref.Text = MakeSubscript("S", "REF", "")
 	End If
 End Sub
 
@@ -2155,9 +2224,9 @@ Sub btncref_Click
 	items.Add("Mean Aerodynamic Chord cref|Wing MAC — reference length for pitching moments and Reynolds number. Also called the standard mean chord (SMC).")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Chord", 0)) Complete (idx As Int)
 	If xx > 340dip Or sc > 1 Then
-		btncref.Text = MakeSubscript("Wing Chord c", "ref", "")
+		btncref.Text = MakeSubscript("Chord c", "REF", "")
 	Else
-		btncref.Text = MakeSubscript("c", "ref", "")
+		btncref.Text = MakeSubscript("c", "REF", "")
 	End If
 End Sub
 
@@ -3360,6 +3429,12 @@ Sub Calculate
 		lblRes.Typeface = Typeface.DEFAULT_BOLD
 		lblRes.TextColor = ColorEdtText
 		lblRes.Gravity =  Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
+		Try
+			Dim joRes As JavaObject = lblRes
+			joRes.RunMethod("setFontFeatureSettings", Array("tnum"))
+		Catch
+			Log("tnum skipped: " & LastException.Message)
+		End Try
 		WriteText
 	Next
 
@@ -4473,6 +4548,16 @@ Private Sub MakeSubscript(baseText As String, subText As String, extraText As St
 	Return cs
 End Sub
 
+Private Sub ModernizeButton(btn As Button)
+	Try
+		Dim jo As JavaObject = btn
+		jo.RunMethod("setAllCaps", Array(False))
+		jo.RunMethod("setStateListAnimator", Array(Null))
+	Catch
+		Log("ModernizeButton skipped: " & LastException.Message)
+	End Try
+End Sub
+
 Private Sub SettingsAddHeader(parent As Panel, cardW As Int, y As Int, title As String) As Int
 	Dim lbl As Label
 	lbl.Initialize("")
@@ -4510,6 +4595,7 @@ Private Sub SettingsAddRow(parent As Panel, cardW As Int, y As Int, rowH As Int,
 	b.SingleLine = True
 	b.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2), Array As Int(ColorBut1, ColorPnlTitle))
 	parent.AddView(b, cardW * 0.57, y + (rowH - 44dip) / 2, cardW * 0.39, 44dip)
+	ModernizeButton(b)
 	Return b
 End Sub
 
@@ -4652,8 +4738,8 @@ Sub btnSettingTheme_Click
 	End If
 	manager.SetString("theme", themes(idx))
 	CloseSettingsPopup
-	Dim jo As JavaObject
-	jo.InitializeContext.RunMethod("recreate", Null)
+	Activity.RemoveAllViews
+	Activity_Create(False)
 End Sub
 
 Sub btnSettingAltUnit_Click
@@ -5073,4 +5159,233 @@ Sub TimerT14_Tick
 	edtWindRefAngle.SelectAll
 	TimerT14.Enabled = False
 End Sub
+
+Sub ShowTechnicalHelp(Field As String)
+	Dim Key As String
+	Select Field
+	Case "alt"
+		Select indAltType
+		Case 0: Key = "Hp"
+		Case 1: Key = "Hg"
+		Case 2: Key = "Hg"
+		Case 3: Key = "P"
+		Case 4: Key = "P"
+		Case Else: Key = "Hp"
+		End Select
+	Case "temp"
+		If indTempType = 0 Then Key = "Δ ISA" Else Key = "OAT"
+	Case "spd"
+		Select indSpdType
+		Case 0: Key = "TAS"
+		Case 1: Key = "CAS"
+		Case 2: Key = "EAS"
+		Case 3: Key = "Mach"
+		Case 4: Key = "CL"
+		Case 5: Key = "Vs Factor"
+		Case 6, 7: Key = "Ground Speed"
+		Case 8: Key = "Qdyn"
+		Case 9: Key = "Qc"
+		Case Else: Key = "TAS"
+		End Select
+	Case "Weight"
+		Key = "Weight"
+	Case "Sref"
+		Key = "Sref"
+	Case "cref"
+		Key = "cref"
+	Case "CLmax"
+		Key = "CLmax"
+	Case "nz"
+		If indNzType = 2 Then
+			Key = "BankTurn"
+		Else If indNzType = 1 Then
+			Key = "NzTurn"
+		Else
+			Key = "NzPullup"
+		End If
+	Case "angle1"
+		If indAngle1Type = 0 Then Key = "Track" Else Key = "Heading"
+	Case "angle2"
+		If indAngle2Type = 0 Then Key = "Sideslip" Else Key = "Drift"
+	Case "headWind"
+		If indWindType = 0 Then Key = "HeadWind" Else Key = "Wind Speed"
+	Case "crossWind"
+		If indWindType = 0 Then Key = "CrossWind" Else Key = "Wind Speed"
+	Case "windRef"
+		If indWindType = 0 Then Key = "Runway Angle" Else Key = "Wind Direction"
+	Case "airplane"
+		AeroSheet.ShowHelp(Activity, "Airplane Selection", "Airplane Selection" & CRLF & CRLF & "Definition: Select an aircraft profile from the saved aircraft library, or modify the individual geometric parameters directly." & CRLF & CRLF & "Model: Stored aircraft configuration database.")
+		Return
+	Case Else
+		Key = Field
+	End Select
+	Dim helpText As String = AeroNames.Help(Key)
+	AeroSheet.ShowHelp(Activity, Key, helpText)
+End Sub
+
+Sub ShowResultHelp(idx As Int)
+	Dim keys() As String = Array As String( _
+		"Pressure Altitude", "Geometric Altitude", "Geopotencial Altitude", "Density Altitude", "Temperature Altitude", _
+		"Pressure", "Density", "Temperature", "Delta ISA", "Total Temperature", "Viscosity", "Sound Speed", _
+		"True Airspeed", "Calibrated Airspeed", "Equivalent Airspeed", "Ground Speed", "Stall Speed Vs", "Vs Factor", _
+		"Lift Coefficient CL", "Mach", "Reynolds", "Pressure Ratio δ", "Density Ratio σ", "Temperature Ratio θ", _
+		"Dynamic Pressure", "Impact Pressure", "Total Pressure", "DynPressure * S / g", "Lift Force", "Weight/Delta W/δ", _
+		"Load Factor Nz", "Bank Angle φ", "Turn Radius", "Turn Rate", "Track Angle", "Heading Angle Ψ", "Drift Angle", _
+		"Sideslip Angle β", "Wind Speed", "Wind Direction", "AlongTrack Headwind", "AlongTrack Crosswind")
+	If idx >= 0 And idx < keys.Length Then
+		Dim k As String = keys(idx)
+		Dim helpText As String = AeroNames.Help(k)
+		AeroSheet.ShowHelp(Activity, k, helpText)
+	End If
+End Sub
+
+Sub pnlTest_Click
+	Dim pTarget As Panel = Sender
+	ShowResultHelp(pTarget.Tag)
+End Sub
+
+Sub lblVar_Click
+	Dim lTarget As Label = Sender
+	ShowResultHelp(lTarget.Tag)
+End Sub
+
+Sub lblRes_Click
+	Dim lTarget As Label = Sender
+	ShowResultHelp(lTarget.Tag)
+End Sub
+
+Sub btnAltType_LongClick
+	ShowTechnicalHelp("alt")
+End Sub
+Sub btnAltUnit_LongClick
+	ShowTechnicalHelp("alt")
+End Sub
+Sub edtAlt_LongClick
+	ShowTechnicalHelp("alt")
+End Sub
+
+Sub btnTempType_LongClick
+	ShowTechnicalHelp("temp")
+End Sub
+Sub btnTempUnit_LongClick
+	ShowTechnicalHelp("temp")
+End Sub
+Sub edtTemp_LongClick
+	ShowTechnicalHelp("temp")
+End Sub
+
+Sub btnSpdType_LongClick
+	ShowTechnicalHelp("spd")
+End Sub
+Sub btnSpdUnit_LongClick
+	ShowTechnicalHelp("spd")
+End Sub
+Sub edtSpd_LongClick
+	ShowTechnicalHelp("spd")
+End Sub
+
+Sub btnWeight_LongClick
+	ShowTechnicalHelp("Weight")
+End Sub
+Sub btnWeightUnit_LongClick
+	ShowTechnicalHelp("Weight")
+End Sub
+Sub edtWeight_LongClick
+	ShowTechnicalHelp("Weight")
+End Sub
+
+Sub btnSref_LongClick
+	ShowTechnicalHelp("Sref")
+End Sub
+Sub btnSrefUnit_LongClick
+	ShowTechnicalHelp("Sref")
+End Sub
+Sub edtSref_LongClick
+	ShowTechnicalHelp("Sref")
+End Sub
+
+Sub btncref_LongClick
+	ShowTechnicalHelp("cref")
+End Sub
+Sub btncrefUnit_LongClick
+	ShowTechnicalHelp("cref")
+End Sub
+Sub edtcref_LongClick
+	ShowTechnicalHelp("cref")
+End Sub
+
+Sub btnCLmax_LongClick
+	ShowTechnicalHelp("CLmax")
+End Sub
+Sub btnCLmaxUnit_LongClick
+	ShowTechnicalHelp("CLmax")
+End Sub
+Sub edtCLmax_LongClick
+	ShowTechnicalHelp("CLmax")
+End Sub
+
+Sub btnNzType_LongClick
+	ShowTechnicalHelp("nz")
+End Sub
+Sub btnNzUnit_LongClick
+	ShowTechnicalHelp("nz")
+End Sub
+Sub edtNz_LongClick
+	ShowTechnicalHelp("nz")
+End Sub
+
+Sub btnAngle1Type_LongClick
+	ShowTechnicalHelp("angle1")
+End Sub
+Sub btnAngle1Unit_LongClick
+	ShowTechnicalHelp("angle1")
+End Sub
+Sub edtAngle1_LongClick
+	ShowTechnicalHelp("angle1")
+End Sub
+
+Sub btnAngle2Type_LongClick
+	ShowTechnicalHelp("angle2")
+End Sub
+Sub btnAngle2Unit_LongClick
+	ShowTechnicalHelp("angle2")
+End Sub
+Sub edtAngle2_LongClick
+	ShowTechnicalHelp("angle2")
+End Sub
+
+Sub btnHeadWind_LongClick
+	ShowTechnicalHelp("headWind")
+End Sub
+Sub btnHeadWindUnit_LongClick
+	ShowTechnicalHelp("headWind")
+End Sub
+Sub edtHeadWind_LongClick
+	ShowTechnicalHelp("headWind")
+End Sub
+
+Sub btnCrossWind_LongClick
+	ShowTechnicalHelp("crossWind")
+End Sub
+Sub btnCrossWindUnit_LongClick
+	ShowTechnicalHelp("crossWind")
+End Sub
+Sub edtCrossWind_LongClick
+	ShowTechnicalHelp("crossWind")
+End Sub
+
+Sub btnWindRefAngle_LongClick
+	ShowTechnicalHelp("windRef")
+End Sub
+Sub btnWindRefAngleUnit_LongClick
+	ShowTechnicalHelp("windRef")
+End Sub
+Sub edtWindRefAngle_LongClick
+	ShowTechnicalHelp("windRef")
+End Sub
+
+Sub btnAirplane_LongClick
+	ShowTechnicalHelp("airplane")
+End Sub
+
 
