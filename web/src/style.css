@@ -369,22 +369,30 @@ sub {
 .result-row {
   min-height: 40px;
   display: grid;
-  grid-template-columns: 54% 46%;
+  grid-template-columns: 52% 48%;
   align-items: center;
-  padding: 0 5px;
+  padding: 0 10px;
   border-bottom: 1px solid var(--divider);
 }
 .result-row:nth-child(odd) { background: var(--input-bg); }
 .result-row:nth-child(even) { background: var(--field-bg); }
-.result-name, .result-value {
-  font-size: 15px;
+.result-name {
+  font-size: 14px;
   color: var(--button-text, #111);
-  font-weight: 400;
+  font-weight: 500;
   text-align: left;
-  padding-left: 5px;
   overflow-wrap: anywhere;
 }
-.result-value.na { color: var(--muted, #87908f); }
+.result-value {
+  font-size: 15px;
+  color: var(--field-text, var(--title));
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  padding-right: 4px;
+  overflow-wrap: anywhere;
+}
+.result-value.na { color: var(--muted, #87908f); font-weight: 400; }
 
 .airplane-page { background: var(--input-bg); }
 .profile-list { min-height: calc(100vh - 102px); }
@@ -395,6 +403,23 @@ sub {
   align-items: stretch;
   border-bottom: 1px solid var(--divider);
   background: var(--input-bg);
+  transition: background-color 0.15s ease;
+}
+.airplane-list-row.active-profile {
+  border-left: 4px solid var(--field-text, var(--title));
+  background: color-mix(in srgb, var(--field-bg) 65%, var(--input-bg));
+}
+.active-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  color: white;
+  background: var(--title);
+  vertical-align: middle;
 }
 .airplane-list-row.dragging {
   position: relative;

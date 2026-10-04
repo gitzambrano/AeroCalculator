@@ -641,7 +641,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnAirplane.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
 			panelspn.Initialize("panelspn")
 			pnlInput.AddView(panelspn, 50%x, ib * sc, 47%x, tb * sc)
-			panelspn.Background=ButtonGradient(Array As Int(ColorEdt, ColorEdt),Array As Int(ColorBut1, ColorPnlTitle))
+			panelspn.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			spnAirp.Initialize("spnAirp")
 			spnAirp.TextSize = 14*sc
 			SpinnerCreate
@@ -1500,13 +1500,27 @@ Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
 	Dim lbl1 As Label: lbl1.Initialize("")
 	lbl1.Gravity = Gravity.CENTER_VERTICAL
 	lbl1.Tag = ID 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
-	lbl1.Text = a.Get(ID & "_Name")
+	Dim planeName As String = a.GetDefault(ID & "_Name", "")
+	Dim srefVal As String = a.GetDefault(ID & "_Sref", "")
+	Dim crefVal As String = a.GetDefault(ID & "_cref", "")
+	Dim cs As CSBuilder
+	cs.Initialize.Bold.Append(planeName).Pop
+	If srefVal.Length > 0 And crefVal.Length > 0 Then
+		cs.Append(CRLF).RelativeSize(0.78).Color(ColorEdtHint).Append(srefVal & " m²  •  " & crefVal & " m").Pop
+	End If
+	lbl1.Text = cs
 	lbl1.TextColor = ColorButText1
-	lbl1.TextSize = 15
-	lbl1.Typeface = Typeface.DEFAULT
-	lbl1.SingleLine = True
+	lbl1.TextSize = 14
+	lbl1.SingleLine = False
 	pnl.AddView(lbl1, 14dip, 0, root.Width - 4.0 * He - 18dip, He)
 	pnl.Color = ColorPnlInput5
+
+	If ID = ID_use Then
+		Dim pnlActiveBar As Panel
+		pnlActiveBar.Initialize("")
+		pnlActiveBar.Color = ColorPnlLine
+		pnl.AddView(pnlActiveBar, 0, 0, 4dip, He)
+	End If
 
 	'Criar paineis transparentes para botoes de cada aviao
 	Dim pnlTransp1 As Panel
@@ -3334,15 +3348,16 @@ Sub Calculate
 	        pnltest.Color=ColorPnlInput4	
 	    End If	    
 		lblVar.Initialize("lblVar")
-	    pnltest.AddView(lblVar,5dip, 0dip, 54%x-5dip, PanelHeight1)
+	    pnltest.AddView(lblVar, 8dip, 0dip, 52%x - 8dip, PanelHeight1)
 	    lblVar.Tag=i
-	    lblVar.TextSize=15
-		lblVar.TextColor = ColorEdtText
+	    lblVar.TextSize=14
+		lblVar.TextColor = ColorButText1
 		lblVar.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
 	    lblRes.Initialize("lblRes")
-	    pnltest.AddView(lblRes,55%x, 0dip, 45%x,PanelHeight1)
+	    pnltest.AddView(lblRes, 52%x, 0dip, 48%x - 8dip, PanelHeight1)
 	    lblRes.Tag=i
 	    lblRes.TextSize=15
+		lblRes.Typeface = Typeface.DEFAULT_BOLD
 		lblRes.TextColor = ColorEdtText
 		lblRes.Gravity =  Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
 		WriteText

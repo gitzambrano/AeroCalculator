@@ -783,6 +783,10 @@ function renderProfiles(): void {
     const row = document.createElement("div");
     row.className = "airplane-list-row";
     row.dataset.profileId = profile.id;
+    const isActive = selectedProfileId === profile.id;
+    if (isActive) {
+      row.classList.add("active-profile");
+    }
 
     const dragHandle = document.createElement("button");
     dragHandle.type = "button";
@@ -808,7 +812,8 @@ function renderProfiles(): void {
     const selectButton = document.createElement("button");
     selectButton.type = "button";
     selectButton.className = "airplane-name-button";
-    selectButton.innerHTML = `<strong>${escapeHtml(displayName)}</strong><span>${profile.sref} ${profile.srefUnit} · ${profile.cref} ${profile.crefUnit}</span>`;
+    const activeBadge = isActive ? `<span class="active-badge">ACTIVE</span>` : "";
+    selectButton.innerHTML = `<strong>${escapeHtml(displayName)}${activeBadge}</strong><span>${profile.sref} ${profile.srefUnit} · ${profile.cref} ${profile.crefUnit}</span>`;
     selectButton.addEventListener("click", () => {
       applyProfileSelection(profile.id);
       activatePage("inputs");

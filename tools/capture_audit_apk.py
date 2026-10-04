@@ -77,19 +77,19 @@ class ApkScreenshotCapturer:
 
         # 1. Airplanes tab
         print("  1. Airplanes tab")
-        self.tap(180, 240, 1.2)
+        self.tap(180, 300, 1.2)
         self.run_cmd(["shell", "input", "keyevent", "111"])
         self.screencap(f"{theme_slug}_01_airplanes.png")
 
         # 2. Inputs tab
         print("  2. Inputs tab")
-        self.tap(540, 240, 1.2)
+        self.tap(540, 300, 1.2)
         self.run_cmd(["shell", "input", "keyevent", "111"])
         self.screencap(f"{theme_slug}_02_inputs.png")
 
         # 3. Calculate tab
         print("  3. Calculate tab")
-        self.tap(900, 240, 1.2)
+        self.tap(900, 300, 1.2)
         self.run_cmd(["shell", "input", "keyevent", "111"])
         self.screencap(f"{theme_slug}_03_calculate.png")
 
