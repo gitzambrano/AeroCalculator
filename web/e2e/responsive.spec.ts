@@ -79,7 +79,7 @@ for (const viewport of viewports) {
       await assertVisibleInteractiveElementsInsideViewport(page);
 
       if (viewport.width <= 430) {
-        const widths = await page.locator(".input-row:not([hidden]) > .field-select, .airplane-row > .field-button").evaluateAll((elements) =>
+        const widths = await page.locator(".input-row:not([hidden]) > .field-select-wrap, .input-row:not([hidden]) > .field-select, .airplane-row > .field-button").evaluateAll((elements) =>
           elements
             .filter((el) => getComputedStyle(el).display !== "none")
             .map((el) => Math.round(el.getBoundingClientRect().width * 10) / 10)

@@ -111,21 +111,49 @@ function helperFor(fieldId: string, typeValue: string): string {
   }[fieldId] ?? "AeroCalculator input.";
 }
 
+const DEFAULT_OPTION_LABELS: Record<string, string> = {
+  Hp: "Altitude H<sub>P</sub>",
+  Hg: "Altitude H<sub>G</sub>",
+  P: "Static Pressure",
+  OAT: "Temperature OAT",
+  TAS: "Airspeed TAS",
+  CAS: "Airspeed CAS",
+  EAS: "Airspeed EAS",
+  Qdyn: "Dynamic Pressure",
+  Qc: "Impact Pressure",
+  Sref: "Wing Area S<sub>ref</sub>",
+  cref: "Wing Chord c<sub>ref</sub>",
+  CLmax: "Flap 0 - CL<sub>MAX</sub>",
+  NzPullup: "N<sub>Z</sub>&nbsp;(Pull-up)",
+  NzTurn: "N<sub>Z</sub>&nbsp;(Turn)",
+  BankTurn: "Bank Angle",
+  Track: "Track Angle",
+  Heading: "Heading Angle",
+  Sideslip: "Sideslip Angle",
+  Drift: "Drift Angle",
+  "Runway Angle": "Runway Angle",
+};
+
+function opts(values: string[]): SelectOption[] {
+  return values.map((value) => ({ value, label: DEFAULT_OPTION_LABELS[value] ?? value }));
+}
+
 const fields: Field[] = [
   { id: "alt", typeOptions: opts(["Hp", "Hg", "P"]), unitOptions: opts(["ft", "m", "km", "nm", "mi", "in"]), defaultType: "Hp", defaultUnit: "ft", placeholder: "Altitude", defaultValue: "0" },
   { id: "temp", typeOptions: opts(["Δ ISA", "OAT"]), unitOptions: opts(["°C", "°F", "K"]), defaultType: "OAT", defaultUnit: "°C", placeholder: "Temperature", defaultValue: "0" },
   { id: "spd", typeOptions: opts(["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"]), unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "CAS", defaultUnit: "kt", placeholder: "Speed", defaultValue: "0" },
   { id: "weight", typeOptions: opts(["Weight"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "1" },
-  { id: "sref", typeOptions: [{ value: "Sref", label: "S_ref_wing" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
-  { id: "cref", typeOptions: [{ value: "cref", label: "c_ref_wing" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
-  { id: "clmax", typeOptions: [{ value: "CLmax", label: "CLMAX" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1" },
-  { id: "nz", typeOptions: [{ value: "NzPullup", label: "Nz (Pull-up)" }, { value: "NzTurn", label: "Nz (Turn)" }, { value: "BankTurn", label: "Bank (Turn)" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
+  { id: "sref", typeOptions: [{ value: "Sref", label: "Wing Area S<sub>ref</sub>" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
+  { id: "cref", typeOptions: [{ value: "cref", label: "Wing Chord c<sub>ref</sub>" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
+  { id: "clmax", typeOptions: [{ value: "CLmax", label: "Flap 0 - CL<sub>MAX</sub>" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1" },
+  { id: "nz", typeOptions: [{ value: "NzPullup", label: "N<sub>Z</sub>&nbsp;(Pull-up)" }, { value: "NzTurn", label: "N<sub>Z</sub>&nbsp;(Turn)" }, { value: "BankTurn", label: "Bank Angle" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
   { id: "angle1", typeOptions: opts(["Track", "Heading"]), unitOptions: opts(["deg", "rad"]), defaultType: "Track", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "angle2", typeOptions: opts(["Sideslip", "Drift"]), unitOptions: opts(["deg", "rad"]), defaultType: "Sideslip", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "headWind", typeOptions: [{ value: "HeadWind", label: "HeadWind" }, { value: "Wind Speed", label: "Wind Speed" }], unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "HeadWind", defaultUnit: "kt", placeholder: "Wind", defaultValue: "0" },
   { id: "crossWind", typeOptions: [{ value: "CrossWind", label: "CrossWind" }], unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "CrossWind", defaultUnit: "kt", placeholder: "Crosswind", defaultValue: "0" },
   { id: "windRef", typeOptions: [{ value: "Runway Angle", label: "Runway Angle" }, { value: "Wind Direction", label: "Wind Direction" }], unitOptions: opts(["deg", "rad"]), defaultType: "Runway Angle", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
 ];
+
 
 const resultNames = [
   "Pressure Altitude", "Geometric Altitude", "Geopotencial Altitude", "Density Altitude", "Temperature Altitude",
@@ -165,11 +193,11 @@ app.innerHTML = `
     <header class="topbar">
       <div class="brand-row">
         <img class="brand-icon" src="${iconUrl}" alt="" />
-        <div class="brand">AeroCalculator</div>
+        <div class="brand">Aero Calculator</div>
         <button class="icon-button" id="add-profile" aria-label="Add airplane">+</button>
         <button class="icon-button" id="more-menu" aria-label="More options">⋮</button>
       </div>
-      <nav class="tabs" aria-label="AeroCalculator sections">
+      <nav class="tabs" aria-label="Aero Calculator sections">
         <button class="tab" data-page="airplanes" aria-selected="false">AIRPLANES</button>
         <button class="tab" data-page="inputs" aria-selected="true">INPUTS</button>
         <button class="tab" data-page="calculate" aria-selected="false">CALCULATE</button>
@@ -208,8 +236,8 @@ app.innerHTML = `
         </div>
         <div class="editor-scroll">
           <div class="editor-row"><label for="profile-name">Name</label><input id="profile-name" type="text" placeholder="Aircraft Name" /></div>
-          <div class="editor-row"><label for="profile-sref">S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
-          <div class="editor-row"><label for="profile-cref">c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
+          <div class="editor-row"><label for="profile-sref">Wing Area S<sub>ref</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
+          <div class="editor-row"><label for="profile-cref">Wing Chord c<sub>ref</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
           <section class="editor-section">
             <div class="editor-section-head"><strong>Weight</strong><select id="profile-weight-unit" aria-label="Aircraft weight unit"><option>kg</option><option>lb</option><option>ton</option><option>slug</option><option>oz</option></select></div>
             <div class="weight-grid"><label>MTOW<input id="profile-weight-MTOW" inputmode="decimal" placeholder="MTOW" /></label><label>MLW<input id="profile-weight-MLW" inputmode="decimal" placeholder="MLW" /></label><label>MZFW<input id="profile-weight-MZFW" inputmode="decimal" placeholder="MZFW" /></label><label>BOW<input id="profile-weight-BOW" inputmode="decimal" placeholder="BOW" /></label><label>Heavy<input id="profile-weight-Heavy" inputmode="decimal" placeholder="Heavy" /></label><label>Light<input id="profile-weight-Light" inputmode="decimal" placeholder="Light" /></label></div>
@@ -228,7 +256,7 @@ app.innerHTML = `
     <dialog class="simple-dialog" id="about-dialog">
       <div class="about-content">
         <img src="${iconUrl}" alt="" />
-        <h2>AeroCalculator</h2>
+        <h2>Aero Calculator</h2>
         <p>Browser edition</p>
         <p>Gustavo José Zambrano</p>
         <button type="button" data-close-dialog="about-dialog">OK</button>
@@ -236,21 +264,84 @@ app.innerHTML = `
     </dialog>
     <dialog class="settings-dialog simple-dialog" id="settings-dialog">
       <form id="settings-form">
-        <h2>Settings</h2>
-        <h3>Interface Options</h3>
-        <label>Theme<select id="setting-theme">
-          <option>Green Peace</option><option>Ancient Brown</option><option>Dark Shadows</option><option>Blue Sky</option><option>Red Alert</option><option>Orange Juice</option>
-        </select></label>
-        <h3>Output Units and Format</h3>
-        <label>Altitude Unit<select id="setting-altitude"><option>ft</option><option>m</option><option>km</option><option>nm</option><option>mi</option><option>in</option></select></label>
-        <label>Pressure Unit<select id="setting-pressure"><option>mbar</option><option>Pa</option><option>hPa</option><option>atm</option><option>mmHg</option><option>psi</option></select></label>
-        <label>Temperature Unit<select id="setting-temperature"><option>°C</option><option>°F</option><option>K</option></select></label>
-        <label>Speed Unit<select id="setting-speed"><option>kt</option><option>m/s</option><option>km/h</option><option>mph</option><option>ft/s</option></select></label>
-        <label>Angle Unit<select id="setting-angle"><option>deg</option><option>rad</option></select></label>
-        <label>Angle Interval<select id="setting-angle-format"><option value="0/360">0/360 (0/2π)</option><option value="-180/180">-180/180 (-π/π)</option></select></label>
-        <label class="check-row"><span>Increase one decimal place</span><input id="setting-extra-decimal" type="checkbox" /></label>
+        <div class="settings-header"><span>SETTINGS</span><button type="button" class="settings-close" id="settings-close" data-close-dialog="settings-dialog" aria-label="Close settings">&times;</button></div>
+        <h3>DISPLAY</h3>
+        <label>
+          <div class="setting-text">
+            <span class="setting-title">Theme</span>
+            <span class="setting-desc">App visual theme and color palette</span>
+          </div>
+          <select id="setting-theme">
+            <option>Green Peace</option><option>Ancient Brown</option><option>Dark Shadows</option><option>Blue Sky</option><option>Red Alert</option><option>Orange Juice</option>
+          </select>
+        </label>
+        <label class="check-row">
+          <div class="setting-text">
+            <span class="setting-title">Extra Decimal Place</span>
+            <span class="setting-desc">Increase output precision by one decimal</span>
+          </div>
+          <input id="setting-extra-decimal" type="checkbox" />
+        </label>
+        <h3>UNITS</h3>
+        <label>
+          <div class="setting-text">
+            <span class="setting-title">Altitude Unit</span>
+            <span class="setting-desc">Unit used for altitude in outputs</span>
+          </div>
+          <select id="setting-altitude"><option>ft</option><option>m</option><option>km</option><option>nm</option><option>mi</option><option>in</option></select>
+        </label>
+        <label>
+          <div class="setting-text">
+            <span class="setting-title">Pressure Unit</span>
+            <span class="setting-desc">Unit used for atmospheric pressure in outputs</span>
+          </div>
+          <select id="setting-pressure"><option>mbar</option><option>Pa</option><option>hPa</option><option>atm</option><option>mmHg</option><option>psi</option></select>
+        </label>
+        <label>
+          <div class="setting-text">
+            <span class="setting-title">Temperature Unit</span>
+            <span class="setting-desc">Unit used for temperature in outputs</span>
+          </div>
+          <select id="setting-temperature"><option>°C</option><option>°F</option><option>K</option></select>
+        </label>
+        <label>
+          <div class="setting-text">
+            <span class="setting-title">Speed Unit</span>
+            <span class="setting-desc">Unit used for airspeed in outputs</span>
+          </div>
+          <select id="setting-speed"><option>kt</option><option>m/s</option><option>km/h</option><option>mph</option><option>ft/s</option></select>
+        </label>
+        <label>
+          <div class="setting-text">
+            <span class="setting-title">Angle Unit</span>
+            <span class="setting-desc">Unit used for angular quantities in outputs</span>
+          </div>
+          <select id="setting-angle"><option>deg</option><option>rad</option></select>
+        </label>
+        <label>
+          <div class="setting-text">
+            <span class="setting-title">Angle Interval</span>
+            <span class="setting-desc">Angle output range definition</span>
+          </div>
+          <select id="setting-angle-format"><option value="0/360">0/360 (0/2π)</option><option value="-180/180">-180/180 (-π/π)</option></select>
+        </label>
+        <h3>DATA</h3>
+        <div class="setting-row">
+          <div class="setting-text">
+            <span class="setting-title">Aircraft Database</span>
+            <span class="setting-desc">Export stored airplane profiles</span>
+          </div>
+          <button type="button" class="setting-btn" id="setting-export-btn">Export</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-text">
+            <span class="setting-title">Clear Inputs</span>
+            <span class="setting-desc">Reset all flight inputs to defaults</span>
+          </div>
+          <button type="button" class="setting-btn" id="setting-clear-btn">Clear</button>
+        </div>
         <div class="dialog-buttons">
-          <button type="button" id="settings-cancel">Cancel</button>
+          <button type="button" id="settings-cancel" data-close-dialog="settings-dialog">Cancel</button>
           <button type="submit">Save</button>
         </div>
       </form>
@@ -277,13 +368,20 @@ document.querySelectorAll<HTMLButtonElement>(".tab").forEach((tab) => {
 
 document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control").forEach((el) => {
   el.addEventListener("input", () => {
-    if (el.id === "weight-value" && selectValue("weight-type") !== "Weight") select("weight-type").value = "Weight";
-    if (el.id === "clmax-value" && selectValue("clmax-type") !== "CLmax") select("clmax-type").value = "CLmax";
+    if (el.id === "weight-value" && selectValue("weight-type") !== "Weight") {
+      select("weight-type").value = "Weight";
+      updateTypeSelectDisplay(select("weight-type"));
+    }
+    if (el.id === "clmax-value" && selectValue("clmax-type") !== "CLmax") {
+      select("clmax-type").value = "CLmax";
+      updateTypeSelectDisplay(select("clmax-type"));
+    }
     persistInputState();
     recalculate();
   });
   el.addEventListener("change", () => {
     if (el instanceof HTMLSelectElement && el.id.endsWith("-type")) {
+      updateTypeSelectDisplay(el);
       handleTypeSelectionChange(el);
     } else if (el instanceof HTMLSelectElement && el.id.endsWith("-unit")) {
       convertInputForUnitChange(el);
@@ -325,6 +423,11 @@ document.querySelectorAll<HTMLButtonElement>("[data-close-dialog]").forEach((but
   button.addEventListener("click", () => (byId(button.dataset.closeDialog ?? "") as HTMLDialogElement).close());
 });
 byId("settings-cancel").addEventListener("click", () => (byId("settings-dialog") as HTMLDialogElement).close());
+byId("settings-close")?.addEventListener("click", () => (byId("settings-dialog") as HTMLDialogElement).close());
+byId("setting-export-btn")?.addEventListener("click", () => exportProfileFile());
+byId("setting-clear-btn")?.addEventListener("click", () => {
+  if (confirm("Are you sure you want to clear the inputs?")) clearInputs();
+});
 byId("settings-form").addEventListener("submit", (event) => {
   event.preventDefault();
   saveOutputSettings();
@@ -355,10 +458,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-function opts(values: string[]): SelectOption[] {
-  return values.map((value) => ({ value, label: value }));
-}
-
 function createAirplaneRow(): HTMLElement {
   const row = document.createElement("div");
   row.className = "input-row airplane-row";
@@ -381,18 +480,42 @@ function createAirplaneRow(): HTMLElement {
   return row;
 }
 
+function updateTypeSelectDisplay(selectEl: HTMLSelectElement): void {
+  const wrap = selectEl.closest(".field-select-wrap");
+  const display = wrap?.querySelector<HTMLElement>(".field-select-display");
+  if (!display) return;
+  const option = selectEl.selectedOptions[0];
+  if (!option) {
+    display.innerHTML = "";
+    return;
+  }
+  const rawLabel = DEFAULT_OPTION_LABELS[option.value] ?? option.label ?? option.value;
+  display.innerHTML = responsiveOptionLabel(option.value, rawLabel);
+}
+
 function createInputRow(field: Field): HTMLElement {
   const row = document.createElement("div");
   row.className = "input-row";
   row.dataset.field = field.id;
   if (field.id === "spd") row.classList.add("speed-row");
 
+  const wrap = document.createElement("div");
+  wrap.className = "field-select-wrap";
+
+  const display = document.createElement("div");
+  display.className = "field-select-display";
+  display.setAttribute("aria-hidden", "true");
+
   const type = document.createElement("select");
   type.id = `${field.id}-type`;
-  type.className = "field-select calc-control";
+  type.className = "field-select calc-control select-invisible";
   type.setAttribute("aria-label", `${field.id} quantity`);
   fillSelect(type, field.typeOptions, field.defaultType);
   setHelper(type, helperFor(field.id, field.defaultType));
+
+  wrap.append(type, display);
+  updateTypeSelectDisplay(type);
+  type.addEventListener("change", () => updateTypeSelectDisplay(type));
 
   const value = document.createElement("input");
   value.id = `${field.id}-value`;
@@ -410,6 +533,12 @@ function createInputRow(field: Field): HTMLElement {
   unit.setAttribute("aria-label", `${field.id} unit`);
   fillSelect(unit, field.unitOptions, field.defaultUnit);
   setHelper(unit, "Unit used for this input value. Changing the unit converts the current numeric value when applicable.");
+
+  if (field.unitOptions.length === 1 && field.unitOptions[0].value === "-") {
+    unit.disabled = true;
+    unit.style.cursor = "default";
+    unit.style.opacity = "0.7";
+  }
 
   const tail = document.createElement("div");
   tail.className = "input-tail";
@@ -438,11 +567,11 @@ function createInputRow(field: Field): HTMLElement {
     deltaLabel.addEventListener("click", () => delta.focus());
 
     tail.append(delta);
-    row.append(type, value, deltaLabel, tail);
+    row.append(wrap, value, deltaLabel, tail);
     return row;
   }
 
-  row.append(type, value, tail);
+  row.append(wrap, value, tail);
   return row;
 }
 
@@ -454,6 +583,7 @@ function updateInputHelpers(fieldId: string): void {
   const type = document.getElementById(`${fieldId}-type`) as HTMLSelectElement | null;
   const value = document.getElementById(`${fieldId}-value`) as HTMLInputElement | null;
   if (!type || !value) return;
+  updateTypeSelectDisplay(type);
   const helper = helperFor(fieldId, type.value);
   setHelper(type, helper);
   setHelper(value, helper);
@@ -582,18 +712,42 @@ function initializeSwipeNavigation(): void {
 }
 
 function responsiveOptionLabel(value: string, label: string): string {
-  if (!window.matchMedia("(max-width: 430px)").matches) return label;
-  if (value === "Ground Speed") return "Grd Spd";
+  if (!window.matchMedia("(max-width: 360px)").matches) return label;
+  if (value === "Hp") return "Hp";
+  if (value === "Hg") return "Hg";
+  if (value === "P") return "P";
+  if (value === "OAT") return "OAT";
+  if (value === "TAS") return "TAS";
+  if (value === "CAS") return "CAS";
+  if (value === "EAS") return "EAS";
+  if (value === "Vs Factor") return "VsFact";
+  if (value === "Ground Speed") return "GrSpd";
+  if (value === "Qdyn") return "Qdyn";
+  if (value === "Qc") return "Qc";
+  if (value === "Sref") return "S<sub>ref</sub>";
+  if (value === "cref") return "c<sub>ref</sub>";
+  if (value === "CLmax") return "CL<sub>MAX</sub>";
+  if (value === "NzTurn") return "N<sub>Z</sub>";
+  if (value === "BankTurn") return "Bank";
+  if (value === "Track") return "Track";
+  if (value === "Heading") return "Heading";
+  if (value === "Sideslip") return "Sideslip";
+  if (value === "Drift") return "Drift";
+  if (value === "HeadWind") return "HeadWnd";
+  if (value === "Wind Speed") return "WindSpd";
+  if (value === "CrossWind") return "CrossWnd";
   if (value === "Runway Angle") return "RwyAngle";
+  if (value === "Wind Direction") return "WindDir";
   return label;
 }
 
 function refreshResponsiveOptionLabels(): void {
   document.querySelectorAll<HTMLSelectElement>("select").forEach((selectElement) => {
     for (const option of selectElement.options) {
-      if (option.value === "Ground Speed") option.textContent = responsiveOptionLabel(option.value, "Ground Speed");
-      else if (option.value === "Runway Angle") option.textContent = responsiveOptionLabel(option.value, "Runway Angle");
+      const defaultLabel = DEFAULT_OPTION_LABELS[option.value] ?? option.value;
+      option.innerHTML = responsiveOptionLabel(option.value, defaultLabel);
     }
+    if (selectElement.id.endsWith("-type")) updateTypeSelectDisplay(selectElement);
   });
 }
 
@@ -601,7 +755,7 @@ function fillSelect(select: HTMLSelectElement, options: SelectOption[], selected
   select.replaceChildren(...options.map((item) => {
     const option = document.createElement("option");
     option.value = item.value;
-    option.textContent = responsiveOptionLabel(item.value, item.label);
+    option.innerHTML = responsiveOptionLabel(item.value, item.label);
     option.selected = item.value === selected;
     return option;
   }));
@@ -640,7 +794,7 @@ function renderProfiles(): void {
     row.draggable = true;
     row.addEventListener("dragstart", (event) => {
       const target = event.target as HTMLElement | null;
-      if (target?.closest(".airplane-duplicate-button, .airplane-edit-button")) {
+      if (target?.closest(".airplane-duplicate-button, .airplane-edit-button, .airplane-delete-button")) {
         event.preventDefault();
         return;
       }
@@ -678,7 +832,23 @@ function renderProfiles(): void {
     setHelper(editButton, "Edit this aircraft profile.");
     editButton.addEventListener("click", () => openProfileEditor(profile.id));
 
-    row.append(dragHandle, selectButton, duplicateButton, editButton);
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "airplane-delete-button";
+    deleteButton.textContent = "🗑";
+    deleteButton.setAttribute("aria-label", `Delete ${displayName}`);
+    deleteButton.title = "Delete airplane";
+    setHelper(deleteButton, "Delete this aircraft profile.");
+    deleteButton.addEventListener("click", () => {
+      if (!confirm(`Delete ${profile.name || "this aircraft"}?`)) return;
+      profiles = deleteProfile(profiles, profile.id);
+      saveProfiles(localStorage, profiles);
+      renderProfiles();
+      renderAirplaneSelector();
+      applyProfileSelection(selectedProfileId, false);
+    });
+
+    row.append(dragHandle, selectButton, duplicateButton, editButton, deleteButton);
     list.append(row);
   }
 }
@@ -1000,7 +1170,10 @@ function restoreInputState(): void {
   const typeIds = fields.map((field) => `${field.id}-type`);
   for (const id of typeIds) {
     const el = document.getElementById(id) as HTMLSelectElement | null;
-    if (el && state[id] && Array.from(el.options).some((option) => option.value === state[id])) el.value = state[id];
+    if (el && state[id] && Array.from(el.options).some((option) => option.value === state[id])) {
+      el.value = state[id];
+      updateTypeSelectDisplay(el);
+    }
   }
   normalizeDependentUnits();
 
@@ -1008,7 +1181,10 @@ function restoreInputState(): void {
     const saved = state[el.id];
     if (saved === undefined) return;
     if (el instanceof HTMLSelectElement) {
-      if (Array.from(el.options).some((option) => option.value === saved)) el.value = saved;
+      if (Array.from(el.options).some((option) => option.value === saved)) {
+        el.value = saved;
+        if (el.id.endsWith("-type")) updateTypeSelectDisplay(el);
+      }
     } else {
       el.value = saved;
     }
@@ -1575,6 +1751,7 @@ function lengthAnyToM(value: number, unit: string): number {
 function preserveSelect(el: HTMLSelectElement, values: string[], fallback: string): void {
   const current = el.value;
   fillSelect(el, opts(values), values.includes(current) ? current : fallback);
+  updateTypeSelectDisplay(el);
 }
 
 function num(id: string): number {

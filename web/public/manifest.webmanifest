@@ -1,6 +1,6 @@
 {
-  "name": "AeroCalculator",
-  "short_name": "AeroCalculator",
+  "name": "Aero Calculator",
+  "short_name": "AeroCalc",
   "description": "Aeronautics and flight-dynamics calculator.",
   "start_url": "./",
   "scope": "./",

@@ -90,3 +90,11 @@ tests/data/*.generated.json
 web/node_modules/
 web/dist/
 web/.vite/
+web/test-results/
+web/playwright-report/
+web/visual-audit/
+
+# Temporary test & screenshot artifacts
+artifacts/
+dump.xml
+

@@ -1,4 +1,4 @@
-﻿B4A=true
+B4A=true
 Group=Default Group
 ModulesStructureVersion=1
 Type=Activity
@@ -420,10 +420,11 @@ Sub CreateItem(ii As Int, He As Int)
 			lblName.TextColor = Main.ColorButText1
 			lblName.TextSize = 15
 			lblName.Typeface = Typeface.DEFAULT_BOLD
-			pnl1.AddView(lblName, 1%x, 8dip, 20%x, 34dip)
+			pnl1.AddView(lblName, 1%x, 8dip, 28%x, 34dip)
 			edtName.Initialize("edtName")
-		    pnl1.AddView(edtName,21%x, 8dip, 55%x, 34dip)
+		    pnl1.AddView(edtName,30%x, 8dip, 67%x, 34dip)
 			edtName.Hint = "Aircraft Name"	
+			edtName.Gravity = Gravity.CENTER
 			edtName.InputType = edtName.INPUT_TYPE_TEXT
 			edtName.ForceDoneButton = True
 			edtName.TextSize = 13
@@ -439,24 +440,25 @@ Sub CreateItem(ii As Int, He As Int)
 			lblSref.Gravity = Gravity.LEFT
 			lblSref.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			Dim rs1 As RichString
-			rs1.Initialize("S{T}{S}REF{T}{S}")
+			rs1.Initialize("Wing Area S{T}{S}ref{T}{S}")
 			rs1.Subscript2("{S}")
 			rs1.RelativeSize2(.7,"{T}")
 			lblSref.Text = rs1
 			lblSref.TextColor = Main.ColorButText1
-			lblSref.TextSize = 15
+			lblSref.TextSize = 13
 			lblSref.Typeface = Typeface.DEFAULT_BOLD
-			pnl2.AddView(lblSref, 1%x, 8dip, 20%x, 34dip)
+			pnl2.AddView(lblSref, 1%x, 8dip, 28%x, 34dip)
 			edtSref.Initialize("edtSref")
-		    pnl2.AddView(edtSref,21%x, 8dip, 55%x, 34dip)
+		    pnl2.AddView(edtSref,30%x, 8dip, 45%x, 34dip)
 			edtSref.Hint = "Reference Area"	
+			edtSref.Gravity = Gravity.CENTER
 			edtSref.InputType = edtSref.INPUT_TYPE_DECIMAL_NUMBERS
 			edtSref.ForceDoneButton = True
 			edtSref.TextSize = 13
 			filter.SetCustomFilter(edtSref, edtSref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnSrefUnit.Initialize("btnSrefUnit")
 			btnSrefUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorPnlTitle))
-		    pnl2.AddView(btnSrefUnit,77%x, 8dip, 20%x, 34dip)
+		    pnl2.AddView(btnSrefUnit,76%x, 8dip, 22%x, 34dip)
 		    btnSrefUnit.Text="m²"
 			btnSrefUnit.TextSize = 11
 			edtSref.TextColor = Main.ColorEdtText
@@ -472,24 +474,25 @@ Sub CreateItem(ii As Int, He As Int)
 			lblcref.Gravity = Gravity.LEFT
 			lblcref.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			Dim rs2 As RichString
-			rs2.Initialize("c{T}{S}REF{T}{S}")
+			rs2.Initialize("Wing Chord c{T}{S}ref{T}{S}")
 			rs2.Subscript2("{S}")
 			rs2.RelativeSize2(.7,"{T}")
 			lblcref.Text = rs2
 			lblcref.TextColor = Main.ColorButText1
-			lblcref.TextSize = 15
+			lblcref.TextSize = 13
 			lblcref.Typeface = Typeface.DEFAULT_BOLD
-			pnl3.AddView(lblcref, 1%x, 8dip, 20%x, 34dip)
+			pnl3.AddView(lblcref, 1%x, 8dip, 28%x, 34dip)
 			edtcref.Initialize("edtcref")
-		    pnl3.AddView(edtcref,21%x, 8dip, 55%x, 34dip)
+		    pnl3.AddView(edtcref,30%x, 8dip, 45%x, 34dip)
 			edtcref.Hint = "Reference Chord"	
+			edtcref.Gravity = Gravity.CENTER
 			edtcref.InputType = edtcref.INPUT_TYPE_DECIMAL_NUMBERS
 			edtcref.ForceDoneButton = True
 			edtcref.TextSize = 13
 			filter.SetCustomFilter(edtcref, edtcref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btncrefUnit.Initialize("btncrefUnit")
 			btncrefUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorPnlTitle))
-		    pnl3.AddView(btncrefUnit,77%x, 8dip, 20%x, 34dip)
+		    pnl3.AddView(btncrefUnit,76%x, 8dip, 22%x, 34dip)
 		    btncrefUnit.Text="m"
 			btncrefUnit.TextSize = 11
 			edtcref.TextColor = Main.ColorEdtText
@@ -528,6 +531,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight1.Initialize("edtWeight1")
 		    pnl4.AddView(edtWeight1,22%x, 50dip, 27%x, 34dip)
 			edtWeight1.Hint = "MTOW"	
+			edtWeight1.Gravity = Gravity.CENTER
 			edtWeight1.InputType = edtWeight1.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight1.ForceDoneButton = True
 			edtWeight1.TextSize = 13
@@ -546,6 +550,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight2.Initialize("edtWeight2")
 		    pnl4.AddView(edtWeight2,71%x, 50dip, 27%x, 34dip)
 			edtWeight2.Hint = "MLW"	
+			edtWeight2.Gravity = Gravity.CENTER
 			edtWeight2.InputType = edtWeight2.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight2.ForceDoneButton = True
 			edtWeight2.TextSize = 13
@@ -564,6 +569,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight3.Initialize("edtWeight3")
 		    pnl4.AddView(edtWeight3,22%x, 100dip, 27%x, 34dip)
 			edtWeight3.Hint = "MZFW"	
+			edtWeight3.Gravity = Gravity.CENTER
 			edtWeight3.InputType = edtWeight3.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight3.ForceDoneButton = True
 			edtWeight3.TextSize = 13
@@ -582,6 +588,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight4.Initialize("edtWeight4")
 		    pnl4.AddView(edtWeight4,71%x, 100dip, 27%x, 34dip)
 			edtWeight4.Hint = "BOW"	
+			edtWeight4.Gravity = Gravity.CENTER
 			edtWeight4.InputType = edtWeight4.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight4.ForceDoneButton = True
 			edtWeight4.TextSize = 13
@@ -600,6 +607,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight5.Initialize("edtWeight5")
 		    pnl4.AddView(edtWeight5,22%x, 150dip, 27%x, 34dip)
 			edtWeight5.Hint = "Heavy"	
+			edtWeight5.Gravity = Gravity.CENTER
 			edtWeight5.InputType = edtWeight5.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight5.ForceDoneButton = True
 			edtWeight5.TextSize = 13
@@ -618,6 +626,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtWeight6.Initialize("edtWeight6")
 		    pnl4.AddView(edtWeight6,71%x, 150dip, 27%x, 34dip)
 			edtWeight6.Hint = "Light"	
+			edtWeight6.Gravity = Gravity.CENTER
 			edtWeight6.InputType = edtWeight6.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight6.ForceDoneButton = True
 			edtWeight6.TextSize = 13
@@ -660,6 +669,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax0.Initialize("edtCLmax0")
 		    pnl5.AddView(edtCLmax0,lblCLmax0.Width+2%x, 50dip, bb, 34dip)
 			edtCLmax0.Hint = "Flap 0"	
+			edtCLmax0.Gravity = Gravity.CENTER
 			edtCLmax0.InputType = edtCLmax0.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax0.ForceDoneButton = True
 			edtCLmax0.TextSize = 13
@@ -678,6 +688,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax1.Initialize("edtCLmax1")
 		    pnl5.AddView(edtCLmax1,(lblCLmax1.Left+lblCLmax1.Width)+1%x, 50dip, bb, 34dip)
 			edtCLmax1.Hint = "Flap 1"	
+			edtCLmax1.Gravity = Gravity.CENTER
 			edtCLmax1.InputType = edtCLmax1.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax1.ForceDoneButton = True
 			edtCLmax1.TextSize = 13
@@ -696,6 +707,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax2.Initialize("edtCLmax2")
 		    pnl5.AddView(edtCLmax2,lblCLmax2.Width+2%x, 100dip, bb, 34dip)
 			edtCLmax2.Hint = "Flap 2"	
+			edtCLmax2.Gravity = Gravity.CENTER
 			edtCLmax2.InputType = edtCLmax2.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax2.ForceDoneButton = True
 			edtCLmax2.TextSize = 13
@@ -714,6 +726,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax3.Initialize("edtCLmax3")
 		    pnl5.AddView(edtCLmax3,(lblCLmax3.Left+lblCLmax3.Width)+1%x, 100dip, bb, 34dip)
 			edtCLmax3.Hint = "Flap 3"	
+			edtCLmax3.Gravity = Gravity.CENTER
 			edtCLmax3.InputType = edtCLmax3.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax3.ForceDoneButton = True
 			edtCLmax3.TextSize = 13
@@ -732,6 +745,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax4.Initialize("edtCLmax4")
 		    pnl5.AddView(edtCLmax4,lblCLmax4.Width+2%x, 150dip, bb, 34dip)
 			edtCLmax4.Hint = "Flap 4"	
+			edtCLmax4.Gravity = Gravity.CENTER
 			edtCLmax4.InputType = edtCLmax4.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax4.ForceDoneButton = True
 			edtCLmax4.TextSize = 13
@@ -750,6 +764,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax5.Initialize("edtCLmax5")
 		    pnl5.AddView(edtCLmax5,(lblCLmax5.Left+lblCLmax5.Width)+1%x, 150dip, bb, 34dip)
 			edtCLmax5.Hint = "Flap 5"	
+			edtCLmax5.Gravity = Gravity.CENTER
 			edtCLmax5.InputType = edtCLmax5.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax5.ForceDoneButton = True
 			edtCLmax5.TextSize = 13
@@ -768,6 +783,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax6.Initialize("edtCLmax6")
 		    pnl5.AddView(edtCLmax6,lblCLmax6.Width+2%x, 200dip, bb, 34dip)
 			edtCLmax6.Hint = "Flap 6"	
+			edtCLmax6.Gravity = Gravity.CENTER
 			edtCLmax6.InputType = edtCLmax6.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax6.ForceDoneButton = True
 			edtCLmax6.TextSize = 13
@@ -786,6 +802,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax7.Initialize("edtCLmax7")
 		    pnl5.AddView(edtCLmax7,(lblCLmax7.Left+lblCLmax7.Width)+1%x, 200dip, bb, 34dip)
 			edtCLmax7.Hint = "Flap 7"	
+			edtCLmax7.Gravity = Gravity.CENTER
 			edtCLmax7.InputType = edtCLmax7.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax7.ForceDoneButton = True
 			edtCLmax7.TextSize = 13
@@ -804,6 +821,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax8.Initialize("edtCLmax8")
 		    pnl5.AddView(edtCLmax8,lblCLmax8.Width+2%x, 250dip, bb, 34dip)
 			edtCLmax8.Hint = "Flap 8"	
+			edtCLmax8.Gravity = Gravity.CENTER
 			edtCLmax8.InputType = edtCLmax8.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax8.ForceDoneButton = True
 			edtCLmax8.TextSize = 13
@@ -822,6 +840,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax9.Initialize("edtCLmax9")
 		    pnl5.AddView(edtCLmax9,(lblCLmax9.Left+lblCLmax9.Width)+1%x, 250dip, bb, 34dip)
 			edtCLmax9.Hint = "Flap 9"	
+			edtCLmax9.Gravity = Gravity.CENTER
 			edtCLmax9.InputType = edtCLmax9.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax9.ForceDoneButton = True
 			edtCLmax9.TextSize = 13
@@ -840,6 +859,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax10.Initialize("edtCLmax10")
 		    pnl5.AddView(edtCLmax10,lblCLmax10.Width+2%x, 300dip, bb, 34dip)
 			edtCLmax10.Hint = "Flap 10"	
+			edtCLmax10.Gravity = Gravity.CENTER
 			edtCLmax10.InputType = edtCLmax10.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax10.ForceDoneButton = True
 			edtCLmax10.TextSize = 13
@@ -858,6 +878,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax11.Initialize("edtCLmax11")
 		    pnl5.AddView(edtCLmax11,(lblCLmax11.Left+lblCLmax11.Width)+1%x, 300dip, bb, 34dip)
 			edtCLmax11.Hint = "Flap 11"	
+			edtCLmax11.Gravity = Gravity.CENTER
 			edtCLmax11.InputType = edtCLmax11.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax11.ForceDoneButton = True
 			edtCLmax11.TextSize = 13
@@ -876,6 +897,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax12.Initialize("edtCLmax12")
 		    pnl5.AddView(edtCLmax12,lblCLmax12.Width+2%x, 350dip, bb, 34dip)
 			edtCLmax12.Hint = "Flap 12"	
+			edtCLmax12.Gravity = Gravity.CENTER
 			edtCLmax12.InputType = edtCLmax12.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax12.ForceDoneButton = True
 			edtCLmax12.TextSize = 13
@@ -894,6 +916,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtCLmax13.Initialize("edtCLmax13")
 		    pnl5.AddView(edtCLmax13,(lblCLmax13.Left+lblCLmax13.Width)+1%x, 350dip, bb, 34dip)
 			edtCLmax13.Hint = "Flap 13"	
+			edtCLmax13.Gravity = Gravity.CENTER
 			edtCLmax13.InputType = edtCLmax13.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax13.ForceDoneButton = True
 			edtCLmax13.TextSize = 13
@@ -1302,19 +1325,15 @@ Sub pnlTransp2_Touch (Action As Int, X As Float, Y As Float) As Boolean
 End Sub
 
 Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable
-    ' Define a GradientDrawable for Enabled state
     Dim gdwEnabled As GradientDrawable
-    gdwEnabled.Initialize("TOP_BOTTOM",ColorList)
-    gdwEnabled.CornerRadius = 4
-    ' Define a GradientDrawable for Pressed state
+    gdwEnabled.Initialize("TOP_BOTTOM", ColorList)
+    gdwEnabled.CornerRadius = 4dip
     Dim gdwPressed As GradientDrawable
-    gdwPressed.Initialize("BOTTOM_TOP",ColorList2)
-    gdwPressed.CornerRadius = 8
-    ' Define a GradientDrawable for Disabled state
+    gdwPressed.Initialize("BOTTOM_TOP", ColorList2)
+    gdwPressed.CornerRadius = 6dip
     Dim gdwDisabled As GradientDrawable
     gdwDisabled.Initialize("TOP_BOTTOM", Array As Int(Colors.LightGray, Colors.DarkGray))
-    gdwDisabled.CornerRadius = 4
-    ' Define a StateListDrawable
+    gdwDisabled.CornerRadius = 4dip
     Dim stdGradient As StateListDrawable
     stdGradient.Initialize
     stdGradient.AddState2(Array As Int(stdGradient.State_enabled, -stdGradient.State_Pressed), gdwEnabled)

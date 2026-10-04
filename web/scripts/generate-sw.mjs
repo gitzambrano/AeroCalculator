@@ -1,5 +1,6 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const dist = new URL("../dist/", import.meta.url);
 
@@ -14,7 +15,8 @@ async function listFiles(dir) {
   return files;
 }
 
-const distPath = dist.pathname;
+const distPath = fileURLToPath(dist);
+
 const files = await listFiles(distPath);
 const assets = files
   .map((file) => relative(distPath, file).split(sep).join("/"))

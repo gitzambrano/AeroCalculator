@@ -60,6 +60,13 @@ else {
     $iniText += [Environment]::NewLine + "AdditionalLibrariesFolder=" + $AdditionalLibrariesFolder + [Environment]::NewLine
 }
 
+if ($iniText -match 'MaxRamForDex=[^\r\n]*') {
+    $iniText = $iniText -replace 'MaxRamForDex=[^\r\n]*', "MaxRamForDex=1024"
+}
+else {
+    $iniText += [Environment]::NewLine + "MaxRamForDex=1024" + [Environment]::NewLine
+}
+
 $NoSign = $true
 if ($KeyFile) {
     if (-not (Test-Path $KeyFile)) {

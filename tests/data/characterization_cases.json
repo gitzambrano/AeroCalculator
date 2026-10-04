@@ -1,11 +1,12 @@
 {
   "kind": "source-characterization",
   "authority": "historical-structure-only",
-  "declared_modules": ["Airp", "ClsCheckList", "ClsExplorer"],
+  "declared_modules": ["Airp", "ClsCheckList", "ClsExplorer", "ClsBottomSheet"],
   "declared_libraries": [
     "ahviewpager",
     "rspopupmenu",
     "runtimepermissions",
+    "javaobject",
     "animation",
     "core",
     "gps",
