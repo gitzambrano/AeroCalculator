@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 31
-	#VersionName: 3.26
+	#VersionCode: 32
+	#VersionName: 3.27
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -3346,6 +3346,10 @@ End Sub
 
 Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
 	If KeyCode = KeyCodes.KEYCODE_BACK Then
+		If AeroSheet.IsInitialized And AeroSheet.IsShowing Then
+			AeroSheet.Dismiss
+			Return True
+		End If
 		If SettingsPopupOpen Then
 			CloseSettingsPopup
 			Return True
@@ -5554,9 +5558,31 @@ Public Sub TintImageView(iv As ImageView, clr As Int)
 End Sub
 
 #If Java
-public void tintImageView(android.widget.ImageView iv, int color) {
-    if (iv != null) {
-        iv.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
+public static void tintImageView(Object ivObj, int color) {
+    try {
+        if (ivObj instanceof anywheresoftware.b4a.objects.ImageViewWrapper) {
+            ivObj = ((anywheresoftware.b4a.objects.ImageViewWrapper)ivObj).getObject();
+        }
+        if (ivObj instanceof android.view.View) {
+            android.view.View v = (android.view.View) ivObj;
+            android.graphics.PorterDuffColorFilter filter = new android.graphics.PorterDuffColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
+            if (v.getBackground() != null) {
+                v.getBackground().setColorFilter(filter);
+            }
+            if (v instanceof android.widget.ImageView) {
+                android.widget.ImageView iv = (android.widget.ImageView) v;
+                if (iv.getDrawable() != null) {
+                    iv.getDrawable().setColorFilter(filter);
+                }
+                iv.setColorFilter(filter);
+            }
+            v.invalidate();
+            android.util.Log.i("AERO_TINT", "TintImageView success with color: " + color + " bg=" + (v.getBackground() != null));
+        } else {
+            android.util.Log.e("AERO_TINT", "ivObj is not a View: " + ivObj);
+        }
+    } catch (Exception e) {
+        android.util.Log.e("AERO_TINT", "Tint error: " + e.getMessage(), e);
     }
 }
 #End If

@@ -233,6 +233,10 @@ Public Sub Dismiss
 	CloseViews
 End Sub
 
+Public Sub getIsShowing As Boolean
+	Return mPending
+End Sub
+
 Private Sub pnlOverlay_Click
 	Dismiss
 End Sub

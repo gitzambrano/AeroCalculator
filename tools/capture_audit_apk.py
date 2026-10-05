@@ -93,7 +93,8 @@ class ApkScreenshotCapturer:
         self.tap(1000, 135, 1.2)        # 3-dot overflow menu
         self.tap(750, 690, 1.5)         # Settings menu item
         self.screencap(f"{theme_slug}_05_settings.png")
-        self.tap(900, 230, 1.0)         # Close Settings card ('x')
+        self.run_cmd(["shell", "input", "keyevent", "4"])  # Close Settings
+        time.sleep(1.0)
 
         # 5. Airplane Editor activity (Airp.bas)
         print("  5. Airplane editor")

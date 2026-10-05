@@ -80,6 +80,8 @@ Sub Globals
 	Dim indcrefUnit As Int
 	Dim indWeightUnit As Int
 	
+	Dim AeroSheet As ClsBottomSheet
+	
 	Dim ID As Int
 
 	'Android edge-to-edge safe content root
@@ -207,6 +209,8 @@ Sub Activity_Create (FirstTime As Boolean)
 	paneldiv.Color =  Colors.White
 	pnltitle.AddView(paneldiv,  50%x, 0, 1dip, pnltitle.Height)
 	
+	AeroSheet.Initialize(Me, "AeroSheet")
+	AeroSheet.SetColors(Main.ColorPnlTitle, Main.ColorPnlInput5, Main.ColorButText1, Main.ColorPnlLine, Main.ColorPnlLine3)
 End Sub
 
 Sub Activity_Resume
@@ -400,7 +404,7 @@ Sub Activity_Resume
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
-	
+	If AeroSheet.IsInitialized Then AeroSheet.Dismiss
 End Sub
 
 Sub CreateItem(ii As Int, He As Int)
@@ -1016,17 +1020,28 @@ Sub CreateItem(ii As Int, He As Int)
 
 End Sub
 
+Public Sub VibrateTap
+	Try
+		Dim jo As JavaObject = Activity
+		jo.RunMethod("performHapticFeedback", Array As Object(3)) ' 3 = KEYBOARD_TAP
+	Catch
+		Log("VibrateTap: " & LastException.Message)
+	End Try
+End Sub
+
 Sub btnSrefUnit_Click
-	Dim SrefUnits() As String
-	SrefUnits = Array As String("m²", "ft²", "in²", "cm²", "mm²")
+	VibrateTap
+	Dim items As List
+	items.Initialize
+	items.Add("m²|Square metres — SI unit")
+	items.Add("ft²|Square feet")
+	items.Add("in²|Square inches")
+	items.Add("cm²|Square centimetres")
+	items.Add("mm²|Square millimetres")
 	Dim record As Int = indSrefUnit
-	InputListAsync(SrefUnits, "Choose the Unit of Wing Area", record,True)
-	Wait For InputList_Result (Index As Int)
-	If Index=DialogResponse.Cancel Then
-		indSrefUnit = record
-	Else
-		indcrefUnit = Index
-	End If
+	Wait For (AeroSheet.Show(Activity, items, "Wing Area Unit", record)) Complete (idx As Int)
+	If idx < 0 Then Return
+	indSrefUnit = idx
 	SrefUnit
 End Sub
 
@@ -1046,16 +1061,18 @@ Sub SrefUnit
 End Sub
 
 Sub btncrefUnit_Click
-	Dim crefUnits() As String
-	crefUnits = Array As String("m", "ft", "in", "cm", "mm")
+	VibrateTap
+	Dim items As List
+	items.Initialize
+	items.Add("m|Metres — SI unit")
+	items.Add("ft|Feet")
+	items.Add("in|Inches")
+	items.Add("cm|Centimetres")
+	items.Add("mm|Millimetres")
 	Dim record As Int = indcrefUnit
-	InputListAsync(crefUnits, "Choose the Unit of Wing chord Lenght", record,True)
-	Wait For InputList_Result (Index As Int)
-	If Index=DialogResponse.Cancel Then
-		indcrefUnit = record
-	Else
-		indcrefUnit = Index
-	End If
+	Wait For (AeroSheet.Show(Activity, items, "Wing Chord Unit", record)) Complete (idx As Int)
+	If idx < 0 Then Return
+	indcrefUnit = idx
 	crefUnit
 End Sub
 
@@ -1075,16 +1092,18 @@ Sub crefUnit
 End Sub
 
 Sub btnWeightUnit_Click
-	Dim WeightUnits() As String
-	WeightUnits = Array As String("kg", "lb", "ton", "slug", "oz")
+	VibrateTap
+	Dim items As List
+	items.Initialize
+	items.Add("kg|Kilogram — SI unit")
+	items.Add("lb|Pound — US aviation")
+	items.Add("ton|Metric tonne (1000 kg)")
+	items.Add("slug|Slug — US customary")
+	items.Add("oz|Ounce")
 	Dim record As Int = indWeightUnit
-	InputListAsync(WeightUnits, "Choose the Unit of Mass", record,True)
-	Wait For InputList_Result (Index As Int)
-	If Index=DialogResponse.Cancel Then
-		indWeightUnit = record
-	Else
-		indWeightUnit = Index
-	End If
+	Wait For (AeroSheet.Show(Activity, items, "Aircraft Mass Unit", record)) Complete (idx As Int)
+	If idx < 0 Then Return
+	indWeightUnit = idx
 	WeightUnit
 End Sub
 
@@ -1216,6 +1235,10 @@ End Sub
 Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
     ' Tecla voltar vai para a pagina de Inputs
 	If KeyCode = KeyCodes.KEYCODE_BACK Then
+		If AeroSheet.IsInitialized And AeroSheet.IsShowing Then
+			AeroSheet.Dismiss
+			Return True
+		End If
 		DialogCancel
 		Return True 
 	Else

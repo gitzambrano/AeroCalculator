@@ -1,0 +1,14 @@
+<en-US>
+What's new in v3.27:
+• Modern unit selectors: Airplane editor units now use sleek bottom-sheet picker dialogs.
+• Dynamic icon tinting: Aircraft action icons automatically match the selected visual theme.
+• Haptic feedback: Subtle touch vibrations when selecting units in the airplane editor.
+• Performance and stability enhancements across all screens.
+</en-US>
+<pt-BR>
+Novidades da v3.27:
+• Seletores de unidades modernos: Unidades no editor de aviões agora usam modal inferior temático.
+• Ícones com cor do tema: Ícones de ação de aeronaves combinam dinamicamente com a paleta ativa.
+• Resposta tátil: Vibração sutil ao alternar unidades no editor de aeronaves.
+• Melhorias de desempenho e estabilidade em todas as telas.
+</pt-BR>
