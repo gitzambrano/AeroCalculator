@@ -533,7 +533,7 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   CL: "Lift coefficient",
   "Vs Factor": "Multiple of stall speed",
   "Ground Speed": "Speed over ground",
-  Qdyn: "q = 0.5 ρ V²",
+  Qdyn: "Dynamic pressure q = ½ ρ V²",
   Qc: "Total pressure minus static pressure",
 
   // Weight
@@ -546,7 +546,7 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   Light: "Light configuration weight",
 
   // Flaps / CLmax
-  CLmax: "Custom CLmax",
+  CLmax: "User-defined max lift coefficient",
   "Flap 0": "Flap 0 (clean configuration) CLmax",
 
   // Altitude
@@ -559,14 +559,14 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   OAT: "Outside air temperature",
 
   // Maneuver
-  NzPullup: "Pitch maneuver load factor",
-  NzTurn: "Banked turn load factor",
+  NzPullup: "Symmetric pull-up (Nz = L/W)",
+  NzTurn: "Coordinated turn load factor",
   BankTurn: "Coordinated turn bank angle",
 
   // Angles
   Track: "Course over ground (True North)",
   Heading: "Aircraft nose heading (True North)",
-  Sideslip: "Angle to relative wind",
+  Sideslip: "Angle between heading and wind",
   Drift: "Heading minus track angle",
 
   // Wind

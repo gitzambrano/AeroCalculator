@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 33
-	#VersionName: 3.28
+	#VersionCode: 34
+	#VersionName: 3.29
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -893,7 +893,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtCLmax.Typeface = Typeface.DEFAULT_BOLD
 			btnCLmax.TextColor = ColorButText1
 			CLmaxS.Initialize
-			CLmaxS.Add("Custom CLmax|Custom CLmax")
+			CLmaxS.Add("Custom CLmax|User-defined max lift coefficient")
 			'SetNinePatchButton2(edtCLmax, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 8
 		    btnNzType.Initialize("btnNzType")
@@ -2088,7 +2088,7 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 		End If
 		
 		CLmaxS.Clear
-		CLmaxS.Add("Custom CLmax|Custom CLmax")
+		CLmaxS.Add("Custom CLmax|User-defined max lift coefficient")
 		Dim f0,f1, f2, f3, f4,f5,f6,f7,f8,f9,f10,f11,f12,f13 As String
 		f0 = a.GetDefault(ID_inp & "_F0","")
 		f1 = a.GetDefault(ID_inp & "_F1","")
@@ -2188,7 +2188,7 @@ Sub btnAltUnit_Click
 	If indAltType = 0 Or indAltType = 1 Or indAltType = 2 Then
 		items.Add("ft|Feet — standard aviation")
 		items.Add("m|Meters — SI unit")
-		items.Add("km|Kilometres")
+		items.Add("km|Kilometers")
 		items.Add("nm|Nautical miles")
 		items.Add("mi|Statute miles")
 		items.Add("in|Inches")
@@ -2198,7 +2198,7 @@ Sub btnAltUnit_Click
 		items.Add("Pa|Pascal — SI unit")
 		items.Add("hPa|Hectopascal")
 		items.Add("atm|Standard atmosphere")
-		items.Add("mmHg|Millimetres of mercury")
+		items.Add("mmHg|Millimeters of mercury")
 		items.Add("psi|Pounds per square inch")
 		Wait For (AeroSheet.Show(Activity, items, "Pressure Unit", record)) Complete (idx As Int)
 	End If
@@ -2212,7 +2212,7 @@ Sub btnTempType_Click
 	Dim items As List
 	items.Initialize
 	items.Add("Δ ISA|Temperature deviation from ISA")
-	items.Add("Outside Air Temperature|Absolute OAT input")
+	items.Add("Outside Air Temperature|Outside air temperature (OAT)")
 	items.Add("Temperature from Sensor|Device thermal sensor")
 	Dim record As Int = indTempType
 	Wait For (AeroSheet.Show(Activity, items, "Temperature Type", record)) Complete (idx As Int)
@@ -2248,7 +2248,7 @@ Sub btnSpdType_Click
 	items.Add("Vs Factor|Multiple of stall speed")
 	items.Add("Ground Speed|Speed over ground")
 	items.Add("GroundSpeed from GPS|Speed over ground from GPS")
-	items.Add("Dynamic Pressure (Qdyn)|q = 0.5 ρ V²")
+	items.Add("Dynamic Pressure (Qdyn)|Dynamic pressure q = ½ ρ V²")
 	items.Add("Impact Pressure (Qc)|Total pressure minus static pressure")
 	Dim record As Int = indSpdType
 	Wait For (AeroSheet.Show(Activity, items, "Speed Type", record)) Complete (idx As Int)
@@ -2268,8 +2268,8 @@ Sub btnSpdUnit_Click
 	Dim record As Int = indSpdUnit
 	If indSpdType < 8 Then
 		items.Add("kt|Knots — aviation standard")
-		items.Add("m/s|Metres per second — SI unit")
-		items.Add("km/h|Kilometres per hour")
+		items.Add("m/s|Meters per second — SI unit")
+		items.Add("km/h|Kilometers per hour")
 		items.Add("mph|Miles per hour")
 		items.Add("ft/s|Feet per second")
 		Wait For (AeroSheet.Show(Activity, items, "Speed Unit", record)) Complete (idx As Int)
@@ -2278,7 +2278,7 @@ Sub btnSpdUnit_Click
 		items.Add("Pa|Pascal — SI unit")
 		items.Add("hPa|Hectopascal")
 		items.Add("atm|Standard atmosphere")
-		items.Add("mmHg|Millimetres of mercury")
+		items.Add("mmHg|Millimeters of mercury")
 		items.Add("psi|Pounds per square inch")
 		Wait For (AeroSheet.Show(Activity, items, "Pressure Unit", record)) Complete (idx As Int)
 	End If
@@ -2291,7 +2291,7 @@ Sub btnSpdDelta_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("ΔV (Vs Factor offset)|Calibrated airspeed added to Vs")
+	items.Add("ΔV (Vs Factor offset)|CAS offset added to stall speed")
 	Wait For (AeroSheet.Show(Activity, items, "Delta Speed", 0)) Complete (idx As Int)
 End Sub
 
@@ -2337,11 +2337,11 @@ Sub btnSrefUnit_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("m²|Square metres — SI unit")
+	items.Add("m²|Square meters — SI unit")
 	items.Add("ft²|Square feet")
 	items.Add("in²|Square inches")
-	items.Add("cm²|Square centimetres")
-	items.Add("mm²|Square millimetres")
+	items.Add("cm²|Square centimeters")
+	items.Add("mm²|Square millimeters")
 	Dim record As Int = indSrefUnit
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2366,11 +2366,11 @@ Sub btncrefUnit_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("m|Metres — SI unit")
+	items.Add("m|Meters — SI unit")
 	items.Add("ft|Feet")
 	items.Add("in|Inches")
-	items.Add("cm|Centimetres")
-	items.Add("mm|Millimetres")
+	items.Add("cm|Centimeters")
+	items.Add("mm|Millimeters")
 	Dim record As Int = indcrefUnit
 	Wait For (AeroSheet.Show(Activity, items, "Chord Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2397,8 +2397,8 @@ Sub btnNzType_Click
 	Dim items As List
 	items.Initialize
 	items.Add("Load Factor Nz (Pull-up)|Symmetric pull-up (Nz = L/W)")
-	items.Add("Load Factor Nz (Wind-up Turn)|Banked turn: enter Nz")
-	items.Add("Bank Angle (Wind-up Turn)|Banked turn: enter bank angle φ")
+	items.Add("Load Factor Nz (Wind-up Turn)|Coordinated turn: enter load factor")
+	items.Add("Bank Angle (Wind-up Turn)|Coordinated turn: enter bank angle φ")
 	Dim record As Int = indNzType
 	Wait For (AeroSheet.Show(Activity, items, "Maneuver Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2442,7 +2442,7 @@ Sub btnAngle2Type_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Sideslip Angle β|Angle to relative wind")
+	items.Add("Sideslip Angle β|Angle between heading and wind")
 	items.Add("Drift Angle|Angle between heading and track")
 	Dim record As Int = indAngle2Type
 	Wait For (AeroSheet.Show(Activity, items, "Lateral Angle Type", record)) Complete (idx As Int)
@@ -2506,8 +2506,8 @@ Sub btnHeadWindUnit_Click
 	Dim items As List
 	items.Initialize
 	items.Add("kt|Knots — aviation standard")
-	items.Add("m/s|Metres per second — SI unit")
-	items.Add("km/h|Kilometres per hour")
+	items.Add("m/s|Meters per second — SI unit")
+	items.Add("km/h|Kilometers per hour")
 	Dim record As Int = indHeadWindUnit
 	Wait For (AeroSheet.Show(Activity, items, "Wind Speed Unit", record)) Complete (idx As Int)
 	If idx >= 0 Then
@@ -4906,10 +4906,13 @@ End Sub
 Sub btnSettingAltUnit_Click
 	Dim items As List
 	items.Initialize
+	items.Add("ft|Feet — standard aviation")
+	items.Add("m|Meters — SI unit")
+	items.Add("km|Kilometers")
+	items.Add("nm|Nautical miles")
+	items.Add("mi|Statute miles")
+	items.Add("in|Inches")
 	Dim opts() As String = Array As String("ft","m","km","nm","mi","in")
-	For i2 = 0 To opts.Length-1
-		items.Add(opts(i2))
-	Next
 	Dim cur As String = manager.GetString("altitude")
 	Dim sel As Int = 0
 	For i2 = 0 To opts.Length-1
@@ -4925,10 +4928,13 @@ End Sub
 Sub btnSettingPressureUnit_Click
 	Dim items As List
 	items.Initialize
+	items.Add("mbar|Millibar (hPa)")
+	items.Add("Pa|Pascal — SI unit")
+	items.Add("hPa|Hectopascal")
+	items.Add("atm|Standard atmosphere")
+	items.Add("mmHg|Millimeters of mercury")
+	items.Add("psi|Pounds per square inch")
 	Dim opts() As String = Array As String("mbar","Pa","hPa","atm","mmHg","psi")
-	For i2 = 0 To opts.Length-1
-		items.Add(opts(i2))
-	Next
 	Dim cur As String = manager.GetString("pressure")
 	Dim sel As Int = 0
 	For i2 = 0 To opts.Length-1
@@ -4945,9 +4951,9 @@ Sub btnSettingTempUnit_Click
 	Dim items As List
 	items.Initialize
 	Dim opts() As String = Array As String("\u00b0C","\u00b0F","K")
-	For i2 = 0 To opts.Length-1
-		items.Add(opts(i2))
-	Next
+	items.Add(opts(0) & "|Degrees Celsius")
+	items.Add(opts(1) & "|Degrees Fahrenheit")
+	items.Add(opts(2) & "|Kelvin — absolute")
 	Dim cur As String = manager.GetString("temperature")
 	Dim sel As Int = 0
 	For i2 = 0 To opts.Length-1
@@ -4963,10 +4969,12 @@ End Sub
 Sub btnSettingSpdUnit_Click
 	Dim items As List
 	items.Initialize
+	items.Add("kt|Knots — aviation standard")
+	items.Add("m/s|Meters per second — SI unit")
+	items.Add("km/h|Kilometers per hour")
+	items.Add("mph|Miles per hour")
+	items.Add("ft/s|Feet per second")
 	Dim opts() As String = Array As String("kt","m/s","km/h","mph","ft/s")
-	For i2 = 0 To opts.Length-1
-		items.Add(opts(i2))
-	Next
 	Dim cur As String = manager.GetString("speed")
 	Dim sel As Int = 0
 	For i2 = 0 To opts.Length-1
@@ -4982,8 +4990,8 @@ End Sub
 Sub btnSettingAngleUnit_Click
 	Dim items As List
 	items.Initialize
-	items.Add("deg")
-	items.Add("rad")
+	items.Add("deg|Degrees")
+	items.Add("rad|Radians")
 	Dim cur As String = manager.GetString("angle")
 	Dim sel As Int = 0 : If cur = "rad" Then sel = 1
 	Wait For (AeroSheet.Show(Activity, items, "Angle Unit", sel)) Complete (idx As Int)
@@ -4997,8 +5005,8 @@ End Sub
 Sub btnSettingAngleFmt_Click
 	Dim items As List
 	items.Initialize
-	items.Add("0/360 (0/2\u03c0)")
-	items.Add("-180/180 (-\u03c0/\u03c0)")
+	items.Add("0/360 (0/2\u03c0)|Positive convention")
+	items.Add("-180/180 (-\u03c0/\u03c0)|Signed convention")
 	Dim cur As String = manager.GetString("angleformat")
 	Dim sel As Int = 0 : If cur.StartsWith("-180") Then sel = 1
 	Wait For (AeroSheet.Show(Activity, items, "Angle Interval", sel)) Complete (idx As Int)

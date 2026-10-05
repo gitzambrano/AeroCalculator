@@ -1,0 +1,14 @@
+<en-US>
+What's new in v3.29:
+• Standardized descriptors: Concise definitions for all modal options and settings.
+• American English: Unified unit spellings (meters, kilometers, millimeters).
+• Clear definitions: User-defined max CL, coordinated turn load factors, and relative wind angles.
+• Subtitles: Added helpful subtitles to settings pickers.
+</en-US>
+<pt-BR>
+Novidades da v3.29:
+• Descritivos padronizados: Definições concisas para todas as opções de modais e ajustes.
+• Inglês americano: Grafia uniforme de unidades (meters, kilometers, millimeters).
+• Definições claras: CLmax customizado, fatores de carga de curva e ângulos de vento relativo.
+• Subtítulos: Adicionadas descrições explicativas nas opções de configurações.
+</pt-BR>
