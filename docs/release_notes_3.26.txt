@@ -1,0 +1,14 @@
+<en-US>
+What's new in v3.26:
+• Theme switching fix: Aircraft profiles remain fully preserved and populated across all theme changes.
+• State persistence: Robust fallback and guarded storage for aircraft list ordering.
+• Rapid double-tap aircraft activation with touch-and-hold reordering.
+• Themed vector icons matching active color palette.
+</en-US>
+<pt-BR>
+Novidades da v3.26:
+• Correção na troca de temas: Perfis de aeronaves permanecem preservados e visíveis em todas as trocas de tema.
+• Persistência segura: Proteção e recuperação resiliente da ordenação de aeronaves salvas.
+• Ativação por duplo toque rápido e reordenação por toque longo.
+• Ícones vetoriais modernos integrados à paleta de cada tema.
+</pt-BR>

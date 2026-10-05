@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 30
-	#VersionName: 3.25
+	#VersionCode: 31
+	#VersionName: 3.26
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -1404,19 +1404,25 @@ Sub Activity_Resume
 				lst.ResizePanel
 			Else
 				ToastMessageShow("Recreating ID List.", False)
+				Dim tagL As List: tagL.Initialize
 				For ii= 1 To N
 					ID = ii
+					tagL.Add(ID)
 					He = 68dip
 					lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 				Next
+				File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", tagL)
 				lst.ResizePanel	
 			End If	
 		Else
+			Dim tagL As List: tagL.Initialize
 			For ii= 1 To N
 				ID = ii
+				tagL.Add(ID)
 				He = 68dip
 				lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 			Next
+			File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", tagL)
 			lst.ResizePanel
 		End If	
 	Else If Airp.add=1 And ID_edt = 0 Then
@@ -1526,10 +1532,14 @@ Sub Activity_Pause (UserClosed As Boolean)
 	File.WriteMap(File.DirInternal, "lastmod.txt", m)
 	
 	' Escreve ordem dos avioes da aba AIRPLANES no arquivo taglist.txt
-	Dim ListAirp As List
-	ListAirp.Initialize
-	ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
-	File.WriteList(rp.GetSafeDirDefaultExternal(""),"taglist.txt",ListAirp)
+	If lst.IsInitialized And lst.NumberOfItems > 0 Then
+		Dim ListAirp As List
+		ListAirp.Initialize
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+		If ListAirp.IsInitialized And ListAirp.Size > 0 Then
+			File.WriteList(rp.GetSafeDirDefaultExternal(""),"taglist.txt",ListAirp)
+		End If
+	End If
 	
 	'Grava para inicializacao
 	Airp.add = 0
@@ -1715,19 +1725,33 @@ Public Sub RefreshAirplanesList
 	ListAirp.Initialize
 	If lst.NumberOfItems > 0 Then
 		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems - 1)
+	End If
+	If ListAirp.IsInitialized = False Or ListAirp.Size = 0 Then
+		If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
+			ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
+		End If
+	End If
+	If ListAirp.IsInitialized = False Or ListAirp.Size = 0 Then
+		Dim N As Int = 0
+		If a.IsInitialized And a.ContainsKey("N") Then
+			N = a.Get("N")
+		End If
+		For ii = 1 To N
+			ListAirp.Add(ii)
+		Next
+	End If
+	If ListAirp.IsInitialized And ListAirp.Size > 0 Then
 		Do While lst.NumberOfItems > 0
 			lst.RemoveItemAt(0)
 		Loop
-	Else If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
-		ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
+		Dim He As Int = 68dip
+		For ii = 0 To ListAirp.Size - 1
+			Dim ID As Int = ListAirp.Get(ii)
+			lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
+		Next
+		lst.ResizePanel
+		lst.DividerColor = ColorPnlLine3
 	End If
-	Dim He As Int = 68dip
-	For ii = 0 To ListAirp.Size - 1
-		Dim ID As Int = ListAirp.Get(ii)
-		lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
-	Next
-	lst.ResizePanel
-	lst.DividerColor = ColorPnlLine3
 End Sub
 
 Sub pnlTransp2_Touch (Action As Int, X As Float, Y As Float) As Boolean
@@ -4870,8 +4894,8 @@ Sub btnSettingTheme_Click
 	End If
 	manager.SetString("theme", themes(idx))
 	CloseSettingsPopup
-	Activity.RemoveAllViews
-	Activity_Create(False)
+	StartActivity(Me)
+	Activity.Finish
 End Sub
 
 Sub btnSettingAltUnit_Click
