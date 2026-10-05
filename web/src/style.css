@@ -207,10 +207,17 @@ sub {
   position: relative;
   width: 100%;
   height: 100%;
+  cursor: pointer;
+}
+.field-select-wrap:focus-visible {
+  outline: 2px solid var(--accent, #009183);
+  outline-offset: 1px;
+  border-radius: 6px;
 }
 .field-select-wrap > .field-select {
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 .field-select-display {
   position: absolute;
@@ -324,16 +331,21 @@ sub {
 }
 .profile-select {
   width: 100%;
-  padding: 0 34px 0 12px;
+  padding: 0 24px;
   font-size: 15px;
+  text-align: center;
+  text-align-last: center;
   color: var(--button-text, #111);
   background:
-    linear-gradient(45deg, transparent 50%, var(--accent, #555) 50%) right 16px center / 5px 5px no-repeat,
-    linear-gradient(135deg, var(--accent, #555) 50%, transparent 50%) right 11px center / 5px 5px no-repeat,
+    linear-gradient(45deg, transparent 50%, var(--accent, #555) 50%) right 14px center / 4px 4px no-repeat,
+    linear-gradient(135deg, var(--accent, #555) 50%, transparent 50%) right 10px center / 4px 4px no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 4px;
   cursor: pointer;
+}
+.profile-select option {
+  text-align: center;
 }
 
 .field-tooltip {
@@ -909,6 +921,116 @@ sub {
   margin: 0.2em 0;
 }
 
+/* Modal Option Selector (Themed Bottom-Sheet Picker) */
+#modal-options-selector {
+  align-items: flex-end;
+  padding: 0;
+}
+@media (min-width: 601px) {
+  #modal-options-selector {
+    align-items: center;
+    padding: 16px;
+  }
+}
+.options-modal-card {
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 56px);
+  max-height: calc(100dvh - 56px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px 16px 0 0;
+}
+@media (min-width: 601px) {
+  .options-modal-card {
+    border-radius: 16px;
+  }
+}
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--divider, #ccc);
+  border-radius: 2px;
+  margin: 8px auto 2px;
+}
+.options-modal-body {
+  padding: 0;
+  max-height: calc(100vh - 120px);
+  max-height: calc(100dvh - 120px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.options-list {
+  display: flex;
+  flex-direction: column;
+}
+.option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--divider, #e8e8e8);
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.15s ease;
+  user-select: none;
+}
+.option-item:last-child {
+  border-bottom: none;
+}
+.option-item:hover, .option-item:active {
+  background: var(--button-b, rgba(0, 0, 0, 0.04));
+}
+.option-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  text-align: left;
+}
+.option-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--field-text, #111);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.option-desc {
+  font-size: 12px;
+  color: var(--muted, #666);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.option-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--divider, #ccc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+.option-item.selected .option-radio {
+  border-color: var(--title, #009183);
+}
+.option-radio-inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+}
+.option-item.selected .option-radio-inner {
+  background: var(--title, #009183);
+}
+.option-item.selected .option-label {
+  font-weight: 700;
+  color: var(--title, #009183);
+}
 
 @media (max-width: 480px) {
   .settings-dialog {

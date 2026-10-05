@@ -1,0 +1,16 @@
+<en-US>
+What's new in v3.28:
+• Optimized selection sheets: Quantity pickers fit on screen without vertical scrolling.
+• Standard definitions: Concise definitions for speeds (TAS, CAS, EAS, Mach, CL, Qc) and weights (MTOW, MLW, MZFW, BOW).
+• Flap nomenclature: Flap 0 (clean) and detent CLmax settings.
+• Inputs: Centered aircraft name and subtle themed arrow.
+• Stability: Fixed app exit on theme change.
+</en-US>
+<pt-BR>
+Novidades da v3.28:
+• Modais otimizados: Seletores de grandezas ajustados para evitar rolagem vertical.
+• Definições padronizadas: Definições concisas para velocidades (TAS, CAS, EAS, Mach, CL, Qc) e massas (MTOW, MLW, MZFW, BOW).
+• Nomenclatura de flaps: Flap 0 (clean) e configurações CLmax numeradas.
+• Inputs: Nome do avião centralizado e seta discreta do tema.
+• Estabilidade: Correção ao alternar temas visuais.
+</pt-BR>

@@ -86,21 +86,21 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	lblTitle.Padding = Array As Int(20dip, 0, 20dip, 0)
 	pnlSheet.AddView(lblTitle, 0, 16dip, 100%x, 40dip)
 	
-	' Calculate sheet height: title + items, capped at 75% screen
+	' Calculate sheet height: title + items, capped below app header
 	Dim itemCount As Int = items.Size
 	Dim totalItemsH As Int = 0
 	Dim i As Int
 	For i = 0 To itemCount - 1
 		Dim rawItem As String = items.Get(i)
 		If rawItem.Contains("|") Then
-			totalItemsH = totalItemsH + 54dip
+			totalItemsH = totalItemsH + 50dip
 		Else
-			totalItemsH = totalItemsH + 48dip
+			totalItemsH = totalItemsH + 46dip
 		End If
 	Next
 	Dim scvH As Int = totalItemsH + 8dip
 	Dim contentHeight As Int = 56dip + scvH + 16dip
-	Dim maxHeight As Int = 75%y
+	Dim maxHeight As Int = 100%y - 56dip
 	Dim sheetHeight As Int = Min(contentHeight, maxHeight)
 	
 	act.AddView(pnlSheet, 0, 100%y - sheetHeight, 100%x, sheetHeight)
@@ -109,7 +109,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	Dim scrollHeight As Int = sheetHeight - 56dip - 8dip
 	scvItems.Initialize(scvH)
 	pnlSheet.AddView(scvItems, 0, 56dip, 100%x, scrollHeight)
-	scvItems.Panel.Height = scvH
+	scvItems.Panel.Height = Max(scvH, scrollHeight)
 	
 	' Create item rows
 	Dim yItem As Int = 0
@@ -121,8 +121,8 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 		If parts.Length > 1 Then sec = parts(1).Trim
 		Dim sel As Boolean = (i = selectedIndex)
 		
-		Dim thisHeight As Int = 48dip
-		If sec.Length > 0 Then thisHeight = 54dip
+		Dim thisHeight As Int = 46dip
+		If sec.Length > 0 Then thisHeight = 50dip
 		
 		Dim pnlItem As Panel
 		pnlItem.Initialize("pnlItem")
@@ -161,7 +161,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 				lblPrim.Typeface = Typeface.DEFAULT
 			End If
 			lblPrim.Gravity = Gravity.CENTER_VERTICAL
-			pnlItem.AddView(lblPrim, 46dip, 6dip, 100%x - 58dip, 22dip)
+			pnlItem.AddView(lblPrim, 46dip, 4dip, 100%x - 58dip, 22dip)
 			
 			Dim lblSub As Label
 			lblSub.Initialize("pnlItem")
@@ -176,7 +176,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 			Dim ta As JavaObject
 			ta.InitializeStatic("android.text.TextUtils$TruncateAt")
 			joSub.RunMethod("setEllipsize", Array(ta.GetField("END")))
-			pnlItem.AddView(lblSub, 46dip, 28dip, 100%x - 58dip, 20dip)
+			pnlItem.AddView(lblSub, 46dip, 25dip, 100%x - 58dip, 20dip)
 		Else
 			Dim lblPrimOnly As Label
 			lblPrimOnly.Initialize("pnlItem")

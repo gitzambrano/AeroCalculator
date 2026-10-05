@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 32
-	#VersionName: 3.27
+	#VersionCode: 33
+	#VersionName: 3.28
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -794,7 +794,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnWeight.TextColor = ColorButText1
 			btnWeightUnit.TextColor = ColorButText1
 			WeightS.Initialize
-			WeightS.Add("Custom Weight")
+			WeightS.Add("Custom Mass|Manual mass entry")
 			'SetNinePatchButton2(edtWeight, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 5
 			btnSref.Initialize("btnSref")
@@ -893,7 +893,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtCLmax.Typeface = Typeface.DEFAULT_BOLD
 			btnCLmax.TextColor = ColorButText1
 			CLmaxS.Initialize
-			CLmaxS.Add("Custom CLmax")
+			CLmaxS.Add("Custom CLmax|Custom CLmax")
 			'SetNinePatchButton2(edtCLmax, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 8
 		    btnNzType.Initialize("btnNzType")
@@ -2016,14 +2016,15 @@ Sub SpinnerCreate
 	spnAirp.TextColor = ColorEdtText
 	spnAirp.DropdownTextColor = ColorEdtText
 	spnAirp.DropdownBackgroundColor = ColorPnlInput5
+	ConfigureAirplaneSpinner(spnAirp)
 
 	Dim lblSpnChevron As Label
 	lblSpnChevron.Initialize("lblSpnChevron")
 	lblSpnChevron.Text = Chr(9662)
-	lblSpnChevron.TextSize = 13 * sc
+	lblSpnChevron.TextSize = 10 * sc
 	lblSpnChevron.TextColor = ColorEdtText
 	lblSpnChevron.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.CENTER_HORIZONTAL)
-	panelspn.AddView(lblSpnChevron, panelspn.Width - 22dip * sc, 0, 20dip * sc, panelspn.Height)
+	panelspn.AddView(lblSpnChevron, panelspn.Width - 18dip * sc, 0, 16dip * sc, panelspn.Height)
 End Sub
 
 Sub lblSpnChevron_Click
@@ -2049,6 +2050,7 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 	End If
 	
 	spinnerPos = Position
+	ConfigureAirplaneSpinner(spnAirp)
 	
 	If Position = 0 Then
 	Else
@@ -2058,7 +2060,7 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 		edtcref.Text = a.Get(ID_inp & "_c")
 	
 		WeightS.Clear
-		WeightS.Add("Custom Mass")
+		WeightS.Add("Custom Mass|Manual mass entry")
 		Dim w1, w2, w3, w4, w5, w6 As String
 		w1 = a.GetDefault(ID_inp & "_W1","")
 		w2 = a.GetDefault(ID_inp & "_W2","")
@@ -2067,26 +2069,26 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 		w5 = a.GetDefault(ID_inp & "_W5","")
 		w6 = a.GetDefault(ID_inp & "_W6","")
 		If w1.CompareTo("")<>0 Then
-			WeightS.Add("MTOW")
+			WeightS.Add("MTOW|Maximum takeoff weight")
 		End If
 		If w2.CompareTo("")<>0 Then
-			WeightS.Add("MLW")
+			WeightS.Add("MLW|Maximum landing weight")
 		End If
 		If w3.CompareTo("")<>0 Then
-			WeightS.Add("MZFW")
+			WeightS.Add("MZFW|Maximum zero fuel weight")
 		End If
 		If w4.CompareTo("")<>0 Then
-			WeightS.Add("BOW")
+			WeightS.Add("BOW|Basic operational weight")
 		End If
 		If w5.CompareTo("")<>0 Then
-			WeightS.Add("Heavy")
+			WeightS.Add("Heavy|Heavy configuration weight")
 		End If
 		If w6.CompareTo("")<>0 Then
-			WeightS.Add("Light")
+			WeightS.Add("Light|Light configuration weight")
 		End If
 		
 		CLmaxS.Clear
-		CLmaxS.Add("Custom CLmax")
+		CLmaxS.Add("Custom CLmax|Custom CLmax")
 		Dim f0,f1, f2, f3, f4,f5,f6,f7,f8,f9,f10,f11,f12,f13 As String
 		f0 = a.GetDefault(ID_inp & "_F0","")
 		f1 = a.GetDefault(ID_inp & "_F1","")
@@ -2104,46 +2106,46 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 		f13 = a.GetDefault(ID_inp & "_F13","")
 
 		If f0.CompareTo("")<>0 And f0.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 0")
+			CLmaxS.Add("Flap 0 (clean)|Flap 0 (clean configuration) CLmax")
 		End If
 		If f1.CompareTo("")<>0 And f1.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 1")
+			CLmaxS.Add("Flap 1|Flap 1 CLmax")
 		End If
 		If f2.CompareTo("")<>0 And f2.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 2")
+			CLmaxS.Add("Flap 2|Flap 2 CLmax")
 		End If
 		If f3.CompareTo("")<>0 And f3.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 3")
+			CLmaxS.Add("Flap 3|Flap 3 CLmax")
 		End If
 		If f4.CompareTo("")<>0 And f4.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 4")
+			CLmaxS.Add("Flap 4|Flap 4 CLmax")
 		End If
 		If f5.CompareTo("")<>0 And f5.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 5")
+			CLmaxS.Add("Flap 5|Flap 5 CLmax")
 		End If
 		If f6.CompareTo("")<>0 And f6.CompareTo("null")<>0  Then
-			CLmaxS.Add("Flap 6")
+			CLmaxS.Add("Flap 6|Flap 6 CLmax")
 		End If
 		If f7.CompareTo("")<>0 And f7.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 7")
+			CLmaxS.Add("Flap 7|Flap 7 CLmax")
 		End If
 		If f8.CompareTo("")<>0 And f8.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 8")
+			CLmaxS.Add("Flap 8|Flap 8 CLmax")
 		End If
 		If f9.CompareTo("")<>0 And f9.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 9")
+			CLmaxS.Add("Flap 9|Flap 9 CLmax")
 		End If
 		If f10.CompareTo("")<>0 And f10.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 10")
+			CLmaxS.Add("Flap 10|Flap 10 CLmax")
 		End If
 		If f11.CompareTo("")<>0 And f11.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 11")
+			CLmaxS.Add("Flap 11|Flap 11 CLmax")
 		End If
 		If f12.CompareTo("")<>0 And f12.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 12")
+			CLmaxS.Add("Flap 12|Flap 12 CLmax")
 		End If
 		If f13.CompareTo("")<>0 And f13.CompareTo("null")<>0 Then
-			CLmaxS.Add("Flap 13")
+			CLmaxS.Add("Flap 13|Flap 13 CLmax")
 		End If
 		
 		indSrefUnit = a.Get(ID_inp & "_Sunit")
@@ -2238,16 +2240,16 @@ Sub btnSpdType_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("True Airspeed|TAS — relative to airmass")
-	items.Add("Calibrated Airspeed|CAS — pitot-static indicated")
-	items.Add("Equivalent Airspeed|EAS — compressibility corrected")
+	items.Add("TAS|True airspeed")
+	items.Add("CAS|Calibrated airspeed")
+	items.Add("EAS|Equivalent airspeed")
 	items.Add("Mach|TAS / speed of sound")
-	items.Add("Lift Coefficient CL|Direct lift coefficient")
+	items.Add("CL|Lift coefficient")
 	items.Add("Vs Factor|Multiple of stall speed")
 	items.Add("Ground Speed|Speed over ground")
 	items.Add("GroundSpeed from GPS|Speed over ground from GPS")
-	items.Add("Dynamic Pressure|q = 0.5 ρ V²")
-	items.Add("Impact Pressure|qc = Pt − Ps")
+	items.Add("Dynamic Pressure (Qdyn)|q = 0.5 ρ V²")
+	items.Add("Impact Pressure (Qc)|Total pressure minus static pressure")
 	Dim record As Int = indSpdType
 	Wait For (AeroSheet.Show(Activity, items, "Speed Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -4898,8 +4900,7 @@ Sub btnSettingTheme_Click
 	End If
 	manager.SetString("theme", themes(idx))
 	CloseSettingsPopup
-	StartActivity(Me)
-	Activity.Finish
+	RestartActivity
 End Sub
 
 Sub btnSettingAltUnit_Click
@@ -5557,7 +5558,60 @@ Public Sub TintImageView(iv As ImageView, clr As Int)
 	End Try
 End Sub
 
+Public Sub RestartActivity
+	Try
+		Dim joMe As JavaObject = Me
+		joMe.RunMethod("restartActivity", Null)
+	Catch
+		Log("RestartActivity: " & LastException.Message)
+	End Try
+End Sub
+
+Public Sub ConfigureAirplaneSpinner(spn As Spinner)
+	Try
+		Dim joMe As JavaObject = Me
+		joMe.RunMethod("configureAirplaneSpinner", Array(spn))
+	Catch
+		Log("ConfigureAirplaneSpinner: " & LastException.Message)
+	End Try
+End Sub
+
 #If Java
+public static void restartActivity() {
+    try {
+        if (mostCurrent != null) {
+            mostCurrent.recreate();
+        }
+    } catch (Exception e) {
+        android.util.Log.e("AERO_RESTART", "restartActivity error: " + e.getMessage(), e);
+    }
+}
+
+public static void configureAirplaneSpinner(Object spnObj) {
+    try {
+        if (spnObj instanceof anywheresoftware.b4a.objects.SpinnerWrapper) {
+            final android.widget.Spinner spn = (android.widget.Spinner) ((anywheresoftware.b4a.objects.SpinnerWrapper)spnObj).getObject();
+            spn.setBackground(null);
+            spn.setOnHierarchyChangeListener(new android.view.ViewGroup.OnHierarchyChangeListener() {
+                @Override
+                public void onChildViewAdded(android.view.View parent, android.view.View child) {
+                    if (child instanceof android.widget.TextView) {
+                        ((android.widget.TextView) child).setGravity(android.view.Gravity.CENTER);
+                    }
+                }
+                @Override
+                public void onChildViewRemoved(android.view.View parent, android.view.View child) {}
+            });
+            android.view.View selected = spn.getSelectedView();
+            if (selected instanceof android.widget.TextView) {
+                ((android.widget.TextView) selected).setGravity(android.view.Gravity.CENTER);
+            }
+        }
+    } catch (Exception e) {
+        android.util.Log.e("AERO_SPN", "configureAirplaneSpinner error: " + e.getMessage(), e);
+    }
+}
+
 public static void tintImageView(Object ivObj, int color) {
     try {
         if (ivObj instanceof anywheresoftware.b4a.objects.ImageViewWrapper) {

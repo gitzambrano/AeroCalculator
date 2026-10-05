@@ -429,6 +429,20 @@ app.innerHTML = `
         </div>
       </div>
     </div>
+
+    <!-- MODAL: FIELD OPTION SELECTOR (Bottom Sheet Picker) -->
+    <div class="modal-overlay" id="modal-options-selector">
+      <div class="modal-card options-modal-card">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+          <div class="modal-title" id="options-selector-title">Select Option</div>
+          <button type="button" class="modal-close-btn" id="modal-options-close" data-close="modal-options-selector" aria-label="Close">&times;</button>
+        </div>
+        <div class="options-modal-body">
+          <div class="options-list" id="options-selector-list"></div>
+        </div>
+      </div>
+    </div>
   </main>
 `;
 
@@ -493,6 +507,174 @@ document.addEventListener("keydown", (e) => {
     closeTooltipModal();
   }
 });
+
+const FIELD_MODAL_TITLES: Record<string, string> = {
+  spd: "Speed Type",
+  weight: "Aircraft Mass",
+  clmax: "Maximum Lift Coefficient",
+  alt: "Altitude Type",
+  temp: "Temperature Type",
+  nz: "Maneuver Type",
+  angle1: "Heading / Track",
+  angle2: "Lateral Angle Type",
+  headWind: "Wind Input Type",
+  windRef: "Reference Angle",
+  sref: "Wing Reference Area",
+  cref: "Wing Reference Chord",
+  crossWind: "Wind Input Type",
+};
+
+const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
+  // Speed
+  TAS: "True airspeed",
+  CAS: "Calibrated airspeed",
+  EAS: "Equivalent airspeed",
+  Mach: "TAS / speed of sound",
+  CL: "Lift coefficient",
+  "Vs Factor": "Multiple of stall speed",
+  "Ground Speed": "Speed over ground",
+  Qdyn: "q = 0.5 ρ V²",
+  Qc: "Total pressure minus static pressure",
+
+  // Weight
+  Weight: "Manual mass entry",
+  MTOW: "Maximum takeoff weight",
+  MLW: "Maximum landing weight",
+  MZFW: "Maximum zero fuel weight",
+  BOW: "Basic operational weight",
+  Heavy: "Heavy configuration weight",
+  Light: "Light configuration weight",
+
+  // Flaps / CLmax
+  CLmax: "Custom CLmax",
+  "Flap 0": "Flap 0 (clean configuration) CLmax",
+
+  // Altitude
+  Hp: "Barometric altitude (HP), ISA",
+  Hg: "True height above MSL",
+  P: "Direct static pressure input",
+
+  // Temperature
+  "Δ ISA": "Temperature deviation from ISA",
+  OAT: "Outside air temperature",
+
+  // Maneuver
+  NzPullup: "Pitch maneuver load factor",
+  NzTurn: "Banked turn load factor",
+  BankTurn: "Coordinated turn bank angle",
+
+  // Angles
+  Track: "Course over ground (True North)",
+  Heading: "Aircraft nose heading (True North)",
+  Sideslip: "Angle to relative wind",
+  Drift: "Heading minus track angle",
+
+  // Wind
+  HeadWind: "Runway wind components directly",
+  "Wind Speed": "Total wind speed magnitude",
+  "Runway Angle": "Runway heading (True North)",
+  "Wind Direction": "Direction wind blows from (True North)",
+
+  // Geometry
+  Sref: "Theoretical wing planform area",
+  cref: "Mean aerodynamic chord",
+  CrossWind: "Runway crosswind component directly",
+};
+
+const closeOptionsModal = () => {
+  byId("modal-options-selector")?.classList.remove("open");
+};
+byId("modal-options-close")?.addEventListener("click", closeOptionsModal);
+byId("modal-options-selector")?.addEventListener("click", (e) => {
+  if (e.target === byId("modal-options-selector")) closeOptionsModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && byId("modal-options-selector")?.classList.contains("open")) {
+    closeOptionsModal();
+  }
+});
+
+function openFieldOptionPicker(fieldId: string): void {
+  const typeSelect = document.getElementById(`${fieldId}-type`) as HTMLSelectElement | null;
+  if (!typeSelect || typeSelect.disabled) return;
+
+  const modal = byId("modal-options-selector");
+  const titleEl = byId("options-selector-title");
+  const listEl = byId("options-selector-list");
+  if (!modal || !titleEl || !listEl) return;
+
+  const title = FIELD_MODAL_TITLES[fieldId] ?? "Select Option";
+  titleEl.textContent = title;
+
+  listEl.innerHTML = "";
+  const currentValue = typeSelect.value;
+
+  Array.from(typeSelect.options).forEach((opt) => {
+    const val = opt.value;
+    let label = opt.label || val;
+    if (fieldId === "weight" && val === "Weight") label = "Custom Mass";
+    else if (fieldId === "clmax" && val === "CLmax") label = "Custom CL<sub>MAX</sub>";
+    else if (fieldId === "clmax" && val === "Flap 0") label = "Flap 0 (clean)";
+    else if (fieldId === "spd" && val === "Qc") label = "Impact Pressure (Qc)";
+    else if (fieldId === "spd" && val === "Qdyn") label = "Dynamic Pressure (Qdyn)";
+    else if (DEFAULT_OPTION_LABELS[val]) label = DEFAULT_OPTION_LABELS[val];
+
+    let desc = FIELD_OPTION_DESCRIPTIONS[val];
+    if (!desc && val.startsWith("Flap ")) {
+      const flapNum = val.slice(5);
+      desc = `Flap ${flapNum} CLmax`;
+    }
+
+    const itemEl = document.createElement("div");
+    itemEl.className = `option-item${val === currentValue ? " selected" : ""}`;
+    itemEl.tabIndex = 0;
+    itemEl.setAttribute("role", "button");
+
+    const textGroup = document.createElement("div");
+    textGroup.className = "option-text-group";
+
+    const labelEl = document.createElement("div");
+    labelEl.className = "option-label";
+    labelEl.innerHTML = label;
+    textGroup.appendChild(labelEl);
+
+    if (desc) {
+      const descEl = document.createElement("div");
+      descEl.className = "option-desc";
+      descEl.textContent = desc;
+      textGroup.appendChild(descEl);
+    }
+
+    const radio = document.createElement("div");
+    radio.className = "option-radio";
+    const radioInner = document.createElement("div");
+    radioInner.className = "option-radio-inner";
+    radio.appendChild(radioInner);
+
+    itemEl.append(textGroup, radio);
+
+    const selectThis = () => {
+      vibrateTap();
+      if (typeSelect.value !== val) {
+        typeSelect.value = val;
+        typeSelect.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      closeOptionsModal();
+    };
+
+    itemEl.addEventListener("click", selectThis);
+    itemEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        selectThis();
+      }
+    });
+
+    listEl.appendChild(itemEl);
+  });
+
+  modal.classList.add("open");
+}
 
 const inputList = byId("input-list");
 inputList.append(createAirplaneRow());
@@ -679,8 +861,22 @@ function createInputRow(field: Field): HTMLElement {
 
   wrap.append(type, display);
   updateTypeSelectDisplay(type);
-  wrap.addEventListener("click", () => vibrateTap());
-  type.addEventListener("click", () => vibrateTap());
+  wrap.tabIndex = 0;
+  wrap.setAttribute("role", "button");
+  wrap.setAttribute("aria-haspopup", "dialog");
+  wrap.setAttribute("aria-label", `${field.id} quantity options`);
+  wrap.addEventListener("click", () => {
+    if (held) return;
+    vibrateTap();
+    openFieldOptionPicker(field.id);
+  });
+  wrap.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+      e.preventDefault();
+      vibrateTap();
+      openFieldOptionPicker(field.id);
+    }
+  });
   type.addEventListener("change", () => {
     vibrateTap();
     updateTypeSelectDisplay(type);
