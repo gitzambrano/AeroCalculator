@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 29
-	#VersionName: 3.24
+	#VersionCode: 30
+	#VersionName: 3.25
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -306,6 +306,8 @@ Sub Globals
 	Dim ID_inp As Int
 	Dim ID_rem As Int
 	Dim ID_add As Int
+	Dim lastAirpClickTime As Long
+	Dim lastAirpClickID As Int
 
 	'Variaveis globais de Inputs
 	Dim scvMain1 As ScrollView
@@ -594,8 +596,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	pnlBack0.Color = ColorPnlInput5
     scvMain0.Initialize(3000)
 	pnlBack0.AddView(scvMain0, 0, 0, root.Width, root.Height-HeaderHeight)
-	lst.Initialize(Me, scvMain0, "", "", "lst_LongClick", 1dip)
+	lst.Initialize(Me, scvMain0, "", "lst_Click", "lst_LongClick", 1dip)
 	lst.DividerColor = ColorPnlLine3
+	lastAirpClickTime = 0
+	lastAirpClickID = -1
 	container.AddPage(pnlBack0,"Airplanes")
 	
 	' Inicializando variaveis para definir se vamos editar ou adicionar um aviao.
@@ -1341,9 +1345,46 @@ Sub Activity_Resume
 	a.Initialize
 	If File.Exists(rp.GetSafeDirDefaultExternal(""), "airplanes.txt") Then
 		a = File.ReadMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt")
-		N = a.GetDefault("N",0)
+		N = a.GetDefault("N", 0)
 	Else
 		N = 0
+	End If
+	If N = 0 Then
+		N = 2
+		a.Put("N", 2)
+		a.Put("1_Name", "Boeing 737-800")
+		a.Put("1_S", "124.6")
+		a.Put("1_c", "4.17")
+		a.Put("1_Sunit", 0)
+		a.Put("1_cunit", 0)
+		a.Put("1_Wunit", 0)
+		a.Put("1_W1", "79015")
+		a.Put("1_W2", "66361")
+		a.Put("1_W3", "62731")
+		a.Put("1_W4", "41413")
+		a.Put("1_F0", "1.8")
+		a.Put("1_F1", "1.9")
+		a.Put("1_F2", "2.0")
+		a.Put("1_F3", "2.2")
+		
+		a.Put("2_Name", "Airbus A320-200")
+		a.Put("2_S", "122.6")
+		a.Put("2_c", "4.19")
+		a.Put("2_Sunit", 0)
+		a.Put("2_cunit", 0)
+		a.Put("2_Wunit", 0)
+		a.Put("2_W1", "78000")
+		a.Put("2_W2", "66000")
+		a.Put("2_W3", "62500")
+		a.Put("2_W4", "42600")
+		a.Put("2_F0", "1.75")
+		a.Put("2_F1", "1.85")
+		a.Put("2_F2", "2.1")
+		a.Put("2_F3", "2.3")
+		File.WriteMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt", a)
+		Dim tagL As List: tagL.Initialize
+		tagL.Add(1): tagL.Add(2)
+		File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", tagL)
 	End If
 	
 	Dim ListAirp As List
@@ -1352,11 +1393,12 @@ Sub Activity_Resume
 	If (Airp.add=0 And ID_edt = 0) And lst.NumberOfItems=0 Then
 		If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
 			ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
+			If ID_use = 0 And ListAirp.Size > 0 Then ID_use = ListAirp.Get(0)
 			If ListAirp.Size = N Then
 				'Inicializar e criar lista de avioes na aba Airplanes
 				For ii= 1 To N
 					ID = ListAirp.Get(ii-1)
-					He = 62dip
+					He = 68dip
 					lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 				Next
 				lst.ResizePanel
@@ -1364,7 +1406,7 @@ Sub Activity_Resume
 				ToastMessageShow("Recreating ID List.", False)
 				For ii= 1 To N
 					ID = ii
-					He = 62dip
+					He = 68dip
 					lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 				Next
 				lst.ResizePanel	
@@ -1372,7 +1414,7 @@ Sub Activity_Resume
 		Else
 			For ii= 1 To N
 				ID = ii
-				He = 62dip
+				He = 68dip
 				lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 			Next
 			lst.ResizePanel
@@ -1381,7 +1423,7 @@ Sub Activity_Resume
 		init=lst.NumberOfItems
 		For ii= init+1 To N
 			ID = ii
-			He = 62dip
+			He = 68dip
 			lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 		Next
 		lst.ResizePanel
@@ -1495,6 +1537,7 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Sub Pager_PageChanged (Position As Int)
+	VibrateTap
 	CurrentPage = Position
 	
 	' Fazer calculos se pagina de Outputs for selecionada e setar  painel marcador
@@ -1532,12 +1575,10 @@ Sub Pager_PageChanged (Position As Int)
 End Sub
 
 Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
-	
-	'Criar panels e labes com nomes dos avioes
+	' Criar panels e labes com nomes dos avioes
 	Dim pnl As Panel: pnl.Initialize("")
-	Dim lbl1 As Label: lbl1.Initialize("")
-	lbl1.Gravity = Gravity.CENTER_VERTICAL
-	lbl1.Tag = ID 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
+	pnl.Tag = ID
+	
 	Dim planeName As String = a.GetDefault(ID & "_Name", "")
 	Dim srefVal As String = a.GetDefault(ID & "_S", "")
 	If srefVal.Length = 0 Then srefVal = a.GetDefault(ID & "_Sref", "")
@@ -1552,132 +1593,141 @@ Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
 	Dim cUnitStr As String = "m"
 	If crefUnitIdx >= 0 And crefUnitIdx < cUnits.Length Then cUnitStr = cUnits(crefUnitIdx)
 
-	Dim cs As CSBuilder
-	cs.Initialize.Bold.Append(planeName).Pop
+	Dim wVal As String = a.GetDefault(ID & "_W1", "")
+	If wVal.Length = 0 Then wVal = a.GetDefault(ID & "_Weight1", "")
+	If wVal.Length = 0 Then wVal = a.GetDefault(ID & "_W2", "")
+	If wVal.Length = 0 Then wVal = a.GetDefault(ID & "_W3", "")
+	If wVal.Length = 0 Then wVal = a.GetDefault(ID & "_W4", "")
+	Dim wUnitIdx As Int = a.GetDefault(ID & "_Wunit", 0)
+	Dim wUnits() As String = Array As String("kg", "lb", "ton", "slug", "oz")
+	Dim wUnitStr As String = "kg"
+	If wUnitIdx >= 0 And wUnitIdx < wUnits.Length Then wUnitStr = wUnits(wUnitIdx)
+
+	Dim subStr As String = ""
+	If srefVal.Length > 0 Then subStr = srefVal & " " & sUnitStr
+	If wVal.Length > 0 Then
+		If subStr.Length > 0 Then subStr = subStr & "  •  " & wVal & " " & wUnitStr Else subStr = wVal & " " & wUnitStr
+	Else If crefVal.Length > 0 Then
+		If subStr.Length > 0 Then subStr = subStr & "  •  " & crefVal & " " & cUnitStr Else subStr = crefVal & " " & cUnitStr
+	End If
+
+	' TWO dedicated labels for pixel-perfect vertical hierarchy and clean spacing:
+	Dim lblTitle As Label: lblTitle.Initialize("")
+	Dim lblSub As Label: lblSub.Initialize("")
+
+	lblTitle.Tag = ID
+	lblSub.Tag = ID
+
+	Dim csTitle As CSBuilder
+	csTitle.Initialize.Bold.Append(planeName).Pop
 	If ID = ID_use Then
-		cs.Append("  ").Bold.Color(ColorEdtText).Append("ACTIVE").Pop.Pop
+		csTitle.Append("   ").Bold.Color(ColorEdtText).RelativeSize(0.72).Append("ACTIVE").Pop.Pop.Pop
 	End If
-	If srefVal.Length > 0 And crefVal.Length > 0 Then
-		cs.Append(CRLF).RelativeSize(0.78).Color(ColorEdtHint).Append(srefVal & " " & sUnitStr & "  •  " & crefVal & " " & cUnitStr).Pop
-	End If
-	lbl1.Text = cs
-	lbl1.TextColor = ColorButText1
-	lbl1.TextSize = 14
-	lbl1.SingleLine = False
-	pnl.AddView(lbl1, 14dip, 0, root.Width - 4.0 * He - 18dip, He)
-	pnl.Background = EditGradient(ColorPnlInput2, ColorPnlLine3)
+	lblTitle.Text = csTitle
+	lblTitle.TextColor = ColorButText1
+	lblTitle.TextSize = 15
+	lblTitle.Gravity = Gravity.CENTER_VERTICAL
+	lblTitle.SingleLine = True
+
+	lblSub.Text = subStr
+	lblSub.TextColor = ColorEdtHint
+	lblSub.TextSize = 12.5
+	lblSub.Gravity = Gravity.CENTER_VERTICAL
+	lblSub.SingleLine = True
+
+	Try
+		Dim joT As JavaObject = lblTitle
+		joT.RunMethod("setClickable", Array As Object(False))
+		joT.RunMethod("setFocusable", Array As Object(False))
+		joT.RunMethod("setLongClickable", Array As Object(False))
+		Dim joS As JavaObject = lblSub
+		joS.RunMethod("setClickable", Array As Object(False))
+		joS.RunMethod("setFocusable", Array As Object(False))
+		joS.RunMethod("setLongClickable", Array As Object(False))
+	Catch
+		Log("lbl touch pass-through skipped: " & LastException.Message)
+	End Try
+
+	' Layout buttons & labels:
+	' Right margin of 10dip so Delete button is never truncated at right edge of screen
+	Dim rightMargin As Int = 10dip
+	Dim btnW As Int = 42dip
+	Dim iconSz As Int = 26dip
+	Dim labelW As Int = root.Width - rightMargin - 3 * btnW - 18dip
+
+	pnl.AddView(lblTitle, 16dip, 11dip, labelW, 23dip)
+	pnl.AddView(lblSub, 16dip, 37dip, labelW, 18dip)
 
 	If ID = ID_use Then
+		pnl.Background = EditGradient(ColorEdt, ColorPnlLine3)
 		Dim pnlActiveBar As Panel
 		pnlActiveBar.Initialize("")
-		pnlActiveBar.Color = ColorPnlLine
+		pnlActiveBar.Color = ColorEdtText
 		pnl.AddView(pnlActiveBar, 0, 0, 4dip, He)
+	Else
+		pnl.Background = EditGradient(ColorPnlInput2, ColorPnlLine3)
 	End If
 
-	'Criar paineis transparentes para botoes de cada aviao
-	Dim pnlTransp1 As Panel
+	' 3 action buttons: Delete (rightmost), Edit (middle), Duplicate (left)
 	Dim pnlTransp2 As Panel
 	Dim pnlTransp3 As Panel
 	Dim pnlTransp4 As Panel
-	pnlTransp1.Initialize("pnlTransp1")
-	pnlTransp1.Color = Colors.Transparent
 	pnlTransp2.Initialize("pnlTransp2")
 	pnlTransp2.Color = Colors.Transparent
 	pnlTransp3.Initialize("pnlTransp3")
 	pnlTransp3.Color = Colors.Transparent
 	pnlTransp4.Initialize("pnlTransp4")
 	pnlTransp4.Color = Colors.Transparent
-	pnl.AddView(pnlTransp1,  root.Width-1.0*He, 0, 1.0*He, He)
-	pnl.AddView(pnlTransp2,  root.Width-1.0*He*2, 0, 1.0*He, He)
-	pnl.AddView(pnlTransp3,  root.Width-1.0*He*3, 0, 1.0*He, He)
-	pnl.AddView(pnlTransp4,  root.Width-1.0*He*4, 0, 1.0*He, He)
-	
-	Dim im1 As ImageView
-	Dim im2 As ImageView
-	Dim im3 As ImageView
-	Dim im4 As ImageView
-	Dim bmpImage1 As Bitmap
-	Dim bmpImage2 As Bitmap
-	Dim bmpImage3 As Bitmap
-	Dim bmpImage4 As Bitmap
-	bmpImage1.Initialize(File.DirAssets,"icon_right_arrow.png")
-	im1.Initialize("im1")
-	im1.Bitmap = bmpImage1
-	im1.Gravity=Gravity.FILL
-	bmpImage2.Initialize(File.DirAssets,"icon_delete.png")
-	im2.Initialize("im2")
-	im2.Bitmap = bmpImage2
+
+	pnl.AddView(pnlTransp2, root.Width - rightMargin - 1 * btnW, 0, btnW, He)
+	pnl.AddView(pnlTransp3, root.Width - rightMargin - 2 * btnW, 0, btnW, He)
+	pnl.AddView(pnlTransp4, root.Width - rightMargin - 3 * btnW, 0, btnW, He)
+
+	Dim im2 As ImageView: im2.Initialize("im2")
+	Dim im3 As ImageView: im3.Initialize("im3")
+	Dim im4 As ImageView: im4.Initialize("im4")
+	im2.Bitmap = LoadBitmap(File.DirAssets, "icon_delete.png")
 	im2.Gravity = Gravity.FILL
-	bmpImage3.Initialize(File.DirAssets,"icon_edit.png")
-	im3.Initialize("im3")
-	im3.Bitmap = bmpImage3
+	im3.Bitmap = LoadBitmap(File.DirAssets, "icon_edit.png")
 	im3.Gravity = Gravity.FILL
-	bmpImage4.Initialize(File.DirAssets,"icon_duplicate.png")
-	im4.Initialize("im4")
-	im4.Bitmap = bmpImage4
+	im4.Bitmap = LoadBitmap(File.DirAssets, "icon_duplicate.png")
 	im4.Gravity = Gravity.FILL
 
-	Dim iconSz As Int = 24dip
 	Dim iconTop As Int = (He - iconSz) / 2
-	pnlTransp1.AddView(im1, (pnlTransp1.Width - iconSz) / 2, iconTop, iconSz, iconSz)
-	pnlTransp2.AddView(im2, (pnlTransp2.Width - iconSz) / 2, iconTop, iconSz, iconSz)
-	pnlTransp3.AddView(im3, (pnlTransp3.Width - iconSz) / 2, iconTop, iconSz, iconSz)
-	pnlTransp4.AddView(im4, (pnlTransp4.Width - iconSz) / 2, iconTop, iconSz, iconSz)
+	pnlTransp2.AddView(im2, (btnW - iconSz) / 2, iconTop, iconSz, iconSz)
+	pnlTransp3.AddView(im3, (btnW - iconSz) / 2, iconTop, iconSz, iconSz)
+	pnlTransp4.AddView(im4, (btnW - iconSz) / 2, iconTop, iconSz, iconSz)
 
-	Try
-		Dim jo1 As JavaObject = im1 : jo1.RunMethod("setColorFilter", Array As Object(ColorButText1))
-		Dim jo2 As JavaObject = im2 : jo2.RunMethod("setColorFilter", Array As Object(ColorButText1))
-		Dim jo3 As JavaObject = im3 : jo3.RunMethod("setColorFilter", Array As Object(ColorButText1))
-		Dim jo4 As JavaObject = im4 : jo4.RunMethod("setColorFilter", Array As Object(ColorButText1))
-	Catch
-		Log("Icon tinting skipped: " & LastException.Message)
-	End Try
+	TintImageView(im2, ColorEdtText)
+	TintImageView(im3, ColorEdtText)
+	TintImageView(im4, ColorEdtText)
 
-	pnlTransp1.Tag = ID
 	pnlTransp2.Tag = ID
 	pnlTransp3.Tag = ID
 	pnlTransp4.Tag = ID
-	
-	'Criar separador de botoes
-	Dim pnlSep1 As Panel
-	Dim pnlSep2 As Panel
-	Dim pnlSep3 As Panel
-	Dim pnlSep4 As Panel
-	pnlSep1.Initialize("")
-	pnlSep1.Color = ColorPnlLine3
-	pnlSep2.Initialize("")
-	pnlSep2.Color = ColorPnlLine3
-	pnlSep3.Initialize("")
-	pnlSep3.Color = ColorPnlLine3
-	pnlSep4.Initialize("")
-	pnlSep4.Color = ColorPnlLine3
-	pnl.AddView(pnlSep1,  pnlTransp1.Left, 6dip, 1dip, He-12dip)
-	pnl.AddView(pnlSep2,  pnlTransp2.Left, 6dip, 1dip, He-12dip)
-	pnl.AddView(pnlSep3,  pnlTransp3.Left, 6dip, 1dip, He-12dip)
-	pnl.AddView(pnlSep4,  pnlTransp4.Left, 6dip, 1dip, He-12dip)
-	
+
 	Return pnl
 End Sub
 
-Sub pnlTransp1_Touch (Action As Int, X As Float, Y As Float) As Boolean	
-	Dim pp As Panel
-	pp = Sender
-	ID_use = pp.Tag
-	Select Action
-	Case Activity.ACTION_DOWN
-		pp.Color = ColorPnlLine2
-		pager.GotoPage(1, True)		
-		Dim ListAirp As List
-		Dim position As Int
-		ListAirp.Initialize
-		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
-		position = ListAirp.IndexOf(ID_use)
-		spnAirp.SelectedIndex=position+1
-		spnAirp_ItemClick(position+1,spnAirp)
-	Case Activity.ACTION_UP
-		pp.Color = Colors.Transparent
-	End Select
-	Return True
+Public Sub RefreshAirplanesList
+	If lst.IsInitialized = False Then Return
+	Dim ListAirp As List
+	ListAirp.Initialize
+	If lst.NumberOfItems > 0 Then
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems - 1)
+		Do While lst.NumberOfItems > 0
+			lst.RemoveItemAt(0)
+		Loop
+	Else If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
+		ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
+	End If
+	Dim He As Int = 68dip
+	For ii = 0 To ListAirp.Size - 1
+		Dim ID As Int = ListAirp.Get(ii)
+		lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
+	Next
+	lst.ResizePanel
+	lst.DividerColor = ColorPnlLine3
 End Sub
 
 Sub pnlTransp2_Touch (Action As Int, X As Float, Y As Float) As Boolean
@@ -1772,7 +1822,7 @@ Sub Timer1_tick
 	Next
 	For ii = 0 To NewList.Size-1
 			ID = NewList.Get(ii)
-			He = 50dip
+			He = 68dip
 			lst.AddCustomItem(ID, CreateItem(ii, He, ID), He)
 	Next	
 	lst.ResizePanel
@@ -1837,7 +1887,7 @@ Sub pnlTransp4_Touch (Action As Int, X As Float, Y As Float) As Boolean
 		Dim ii As Int
 		Dim N As Int
 		Dim He As Int		
-		He = 50dip
+		He = 68dip
 		N = a.Get("N")
 		ii = N + 1
 		
@@ -1890,11 +1940,49 @@ Sub pnlTransp4_Touch (Action As Int, X As Float, Y As Float) As Boolean
 End Sub
 
 Sub lst_LongClick(pnl As Panel, ID As Object)
+	VibrateTap
 	lst.StartDragAndDrop(pnl, "lst_AfterDrop")
 End Sub
 
 Sub lst_AfterDrop(StartPosition As Int, EndPosition As Int)
+	Dim ListAirp As List
+	ListAirp.Initialize
+	If lst.NumberOfItems > 0 Then
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems - 1)
+		File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", ListAirp)
+	End If
+	RefreshAirplanesList
+End Sub
 
+Sub lst_Click(pnl As Panel, ID As Object)
+	Dim now As Long = DateTime.Now
+	Dim thisID As Int = ID
+	If thisID = lastAirpClickID And (now - lastAirpClickTime) < 400 Then
+		lastAirpClickTime = 0
+		lastAirpClickID = -1
+		SelectAirplane(thisID)
+	Else
+		lastAirpClickTime = now
+		lastAirpClickID = thisID
+	End If
+End Sub
+
+Public Sub SelectAirplane(ID As Int)
+	Dim ListAirp As List
+	ListAirp.Initialize
+	If lst.NumberOfItems > 0 Then
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems - 1)
+	Else If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
+		ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
+	End If
+	Dim pos As Int = ListAirp.IndexOf(ID)
+	If pos >= 0 Then
+		spnAirp.SelectedIndex = pos + 1
+		spnAirp_ItemClick(pos + 1, spnAirp.SelectedItem)
+		VibrateTap
+		RefreshAirplanesList
+		pager.GotoPage(1, True)
+	End If
 End Sub
 
 Sub SpinnerCreate
@@ -1941,6 +2029,7 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 	If Position = 0 Then
 	Else
 		ID_inp = ListAirp.Get(Position-1)
+		ID_use = ID_inp
 		edtSref.Text = a.Get(ID_inp & "_S")
 		edtcref.Text = a.Get(ID_inp & "_c")
 	
@@ -2043,14 +2132,20 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 
 End Sub
 
+Sub btnAirplane_Click
+	VibrateTap
+	pager.GotoPage(0, True)
+End Sub
+
 Sub btnAltType_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Pressure Altitude|Barometric altitude (HP), corrected to standard atmosphere")
-	items.Add("Geometric Altitude|True height above MSL (requires non-ISA correction)")
-	items.Add("Altitude from GPS|Geometric altitude read from GPS receiver")
-	items.Add("Pressure|Direct static pressure input instead of altitude")
-	items.Add("Pressure from Sensor|Static pressure from device barometric sensor")
+	items.Add("Pressure Altitude|Barometric altitude (HP), ISA")
+	items.Add("Geometric Altitude|True height above MSL")
+	items.Add("Altitude from GPS|Geometric height from GPS")
+	items.Add("Pressure|Direct static pressure input")
+	items.Add("Pressure from Sensor|Device barometric sensor")
 	Dim record As Int = indAltType
 	Wait For (AeroSheet.Show(Activity, items, "Altitude Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2060,11 +2155,12 @@ Sub btnAltType_Click
 End Sub
 
 Sub btnAltUnit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	Dim record As Int = indAltUnit
 	If indAltType = 0 Or indAltType = 1 Or indAltType = 2 Then
-		items.Add("ft|Feet — standard in aviation")
+		items.Add("ft|Feet — standard aviation")
 		items.Add("m|Meters — SI unit")
 		items.Add("km|Kilometres")
 		items.Add("nm|Nautical miles")
@@ -2072,9 +2168,9 @@ Sub btnAltUnit_Click
 		items.Add("in|Inches")
 		Wait For (AeroSheet.Show(Activity, items, "Altitude Unit", record)) Complete (idx As Int)
 	Else
-		items.Add("mbar|Millibar (hPa) — standard meteorological unit")
+		items.Add("mbar|Millibar (hPa)")
 		items.Add("Pa|Pascal — SI unit")
-		items.Add("hPa|Hectopascal (= mbar)")
+		items.Add("hPa|Hectopascal")
 		items.Add("atm|Standard atmosphere")
 		items.Add("mmHg|Millimetres of mercury")
 		items.Add("psi|Pounds per square inch")
@@ -2086,11 +2182,12 @@ Sub btnAltUnit_Click
 End Sub
 
 Sub btnTempType_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Δ ISA|Temperature deviation from ISA standard (Δ = OAT − ISA)")
-	items.Add("Outside Air Temperature|Absolute OAT entered directly")
-	items.Add("Temperature from Sensor|OAT read from device thermal sensor")
+	items.Add("Δ ISA|Temperature deviation from ISA")
+	items.Add("Outside Air Temperature|Absolute OAT input")
+	items.Add("Temperature from Sensor|Device thermal sensor")
 	Dim record As Int = indTempType
 	Wait For (AeroSheet.Show(Activity, items, "Temperature Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2100,11 +2197,12 @@ Sub btnTempType_Click
 End Sub
 
 Sub btnTempUnit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	items.Add("°C|Degrees Celsius")
 	items.Add("°F|Degrees Fahrenheit")
-	items.Add("K|Kelvin — absolute temperature")
+	items.Add("K|Kelvin — absolute")
 	Dim record As Int = indTempUnit
 	Wait For (AeroSheet.Show(Activity, items, "Temperature Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2113,18 +2211,19 @@ Sub btnTempUnit_Click
 End Sub
 
 Sub btnSpdType_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("True Airspeed|TAS — actual speed relative to air mass")
-	items.Add("Calibrated Airspeed|CAS — pitot-static reading corrected for instrument error")
-	items.Add("Equivalent Airspeed|EAS — CAS corrected for compressibility")
-	items.Add("Mach|Ratio of TAS to local speed of sound")
-	items.Add("Lift Coefficient CL|Direct aerodynamic lift coefficient input")
-	items.Add("Vs Factor|Multiple of stall speed (e.g. 1.3 Vs)")
-	items.Add("Ground Speed|Speed over ground (wind not accounted for)")
-	items.Add("GroundSpeed from GPS|Ground speed from GPS receiver")
-	items.Add("Dynamic Pressure|q = 0.5 ρ V² — pitot minus static")
-	items.Add("Impact Pressure|qc = Pt − Ps — compressible dynamic pressure")
+	items.Add("True Airspeed|TAS — relative to airmass")
+	items.Add("Calibrated Airspeed|CAS — pitot-static indicated")
+	items.Add("Equivalent Airspeed|EAS — compressibility corrected")
+	items.Add("Mach|TAS / speed of sound")
+	items.Add("Lift Coefficient CL|Direct lift coefficient")
+	items.Add("Vs Factor|Multiple of stall speed")
+	items.Add("Ground Speed|Speed over ground")
+	items.Add("GroundSpeed from GPS|Speed over ground from GPS")
+	items.Add("Dynamic Pressure|q = 0.5 ρ V²")
+	items.Add("Impact Pressure|qc = Pt − Ps")
 	Dim record As Int = indSpdType
 	Wait For (AeroSheet.Show(Activity, items, "Speed Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2137,11 +2236,12 @@ Sub btnSpdType_Click
 End Sub
 
 Sub btnSpdUnit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	Dim record As Int = indSpdUnit
 	If indSpdType < 8 Then
-		items.Add("kt|Knots — standard aviation speed unit")
+		items.Add("kt|Knots — aviation standard")
 		items.Add("m/s|Metres per second — SI unit")
 		items.Add("km/h|Kilometres per hour")
 		items.Add("mph|Miles per hour")
@@ -2150,7 +2250,7 @@ Sub btnSpdUnit_Click
 	Else
 		items.Add("mbar|Millibar (hPa)")
 		items.Add("Pa|Pascal — SI unit")
-		items.Add("hPa|Hectopascal (= mbar)")
+		items.Add("hPa|Hectopascal")
 		items.Add("atm|Standard atmosphere")
 		items.Add("mmHg|Millimetres of mercury")
 		items.Add("psi|Pounds per square inch")
@@ -2162,13 +2262,15 @@ Sub btnSpdUnit_Click
 End Sub
 
 Sub btnSpdDelta_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("ΔV (Vs Factor offset)|Calibrated airspeed added to Vs Factor × Vs. Always in knots.")
+	items.Add("ΔV (Vs Factor offset)|Calibrated airspeed added to Vs")
 	Wait For (AeroSheet.Show(Activity, items, "Delta Speed", 0)) Complete (idx As Int)
 End Sub
 
 Sub btnWeight_Click
+	VibrateTap
 	Dim record As Int = indWeightType
 	Wait For (AeroSheet.Show(Activity, WeightS, "Aircraft Mass", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2177,12 +2279,13 @@ Sub btnWeight_Click
 End Sub
 
 Sub btnWeightUnit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	items.Add("kg|Kilogram — SI unit")
-	items.Add("lb|Pound — common in US aviation")
-	items.Add("ton|Metric tonne (1 ton = 1000 kg)")
-	items.Add("slug|Slug — US customary mass unit")
+	items.Add("lb|Pound — US aviation")
+	items.Add("ton|Metric tonne (1000 kg)")
+	items.Add("slug|Slug — US customary")
 	items.Add("oz|Ounce")
 	Dim record As Int = indWeightUnit
 	Wait For (AeroSheet.Show(Activity, items, "Mass Unit", record)) Complete (idx As Int)
@@ -2192,9 +2295,10 @@ Sub btnWeightUnit_Click
 End Sub
 
 Sub btnSref_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Wing Reference Area Sref|Theoretical wing planform area used as aerodynamic reference. Includes fuselage carve-out in some conventions.")
+	items.Add("Wing Reference Area Sref|Theoretical wing planform area")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area", 0)) Complete (idx As Int)
 	If xx > 340dip Or sc > 1 Then
 		btnSref.Text = MakeSubscript("Area S", "REF", "")
@@ -2204,10 +2308,11 @@ Sub btnSref_Click
 End Sub
 
 Sub btnSrefUnit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	items.Add("m²|Square metres — SI unit")
-	items.Add("ft²|Square feet — common in US aviation")
+	items.Add("ft²|Square feet")
 	items.Add("in²|Square inches")
 	items.Add("cm²|Square centimetres")
 	items.Add("mm²|Square millimetres")
@@ -2219,9 +2324,10 @@ Sub btnSrefUnit_Click
 End Sub
 
 Sub btncref_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Mean Aerodynamic Chord cref|Wing MAC — reference length for pitching moments and Reynolds number. Also called the standard mean chord (SMC).")
+	items.Add("Mean Aerodynamic Chord cref|Wing MAC reference length")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Chord", 0)) Complete (idx As Int)
 	If xx > 340dip Or sc > 1 Then
 		btncref.Text = MakeSubscript("Chord c", "REF", "")
@@ -2231,6 +2337,7 @@ Sub btncref_Click
 End Sub
 
 Sub btncrefUnit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	items.Add("m|Metres — SI unit")
@@ -2246,6 +2353,7 @@ Sub btncrefUnit_Click
 End Sub
 
 Sub btnCLmax_Click
+	VibrateTap
 	Dim record As Int = indCLmaxType
 	Wait For (AeroSheet.Show(Activity, CLmaxS, "Maximum Lift Coefficient", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2254,15 +2362,17 @@ Sub btnCLmax_Click
 End Sub
 
 Sub btnCLmaxUnit_Click
+	VibrateTap
 	' Dimensionless — no unit change
 End Sub
 
 Sub btnNzType_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Load Factor Nz (Pull-up)|Symmetric pull-up: Nz = L/W. Normal acceleration perpendicular to flight path.")
-	items.Add("Load Factor Nz (Wind-up Turn)|Banked level turn: Nz = 1/cos(φ). Enter load factor directly.")
-	items.Add("Bank Angle (Wind-up Turn)|Banked level turn: enter bank angle φ. Nz computed from angle.")
+	items.Add("Load Factor Nz (Pull-up)|Symmetric pull-up (Nz = L/W)")
+	items.Add("Load Factor Nz (Wind-up Turn)|Banked turn: enter Nz")
+	items.Add("Bank Angle (Wind-up Turn)|Banked turn: enter bank angle φ")
 	Dim record As Int = indNzType
 	Wait For (AeroSheet.Show(Activity, items, "Maneuver Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2271,11 +2381,16 @@ Sub btnNzType_Click
 	NzType_Click
 End Sub
 
+Sub btnNzUnit_Click
+	VibrateTap
+End Sub
+
 Sub btnAngle1Type_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Track Angle (Course)|Direction of the aircraft path over ground (True North reference)")
-	items.Add("Heading Angle|Direction the aircraft nose points (True North reference)")
+	items.Add("Track Angle (Course)|Course over ground (True North)")
+	items.Add("Heading Angle|Aircraft nose heading (True North)")
 	Dim record As Int = indAngle1Type
 	Wait For (AeroSheet.Show(Activity, items, "Heading / Track", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2285,6 +2400,7 @@ Sub btnAngle1Type_Click
 End Sub
 
 Sub btnAngle1Unit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	items.Add("deg|Degrees (0 to 360)")
@@ -2297,10 +2413,11 @@ Sub btnAngle1Unit_Click
 End Sub
 
 Sub btnAngle2Type_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Sideslip Angle β|Angle between aircraft longitudinal axis and relative wind in the horizontal plane")
-	items.Add("Drift Angle|Angle between aircraft heading and track — caused by crosswind")
+	items.Add("Sideslip Angle β|Angle to relative wind")
+	items.Add("Drift Angle|Angle between heading and track")
 	Dim record As Int = indAngle2Type
 	Wait For (AeroSheet.Show(Activity, items, "Lateral Angle Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2310,6 +2427,7 @@ Sub btnAngle2Type_Click
 End Sub
 
 Sub btnAngle2Unit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	items.Add("deg|Degrees")
@@ -2322,10 +2440,11 @@ Sub btnAngle2Unit_Click
 End Sub
 
 Sub btnHeadWind_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Headwind / Crosswind|Enter runway headwind and crosswind components directly")
-	items.Add("WindSpeed / WindDirection|Enter total wind speed and its direction. Components calculated automatically.")
+	items.Add("Headwind / Crosswind|Runway wind components directly")
+	items.Add("WindSpeed / WindDirection|Total wind speed and direction")
 	Dim record As Int = indWindType
 	Wait For (AeroSheet.Show(Activity, items, "Wind Input Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
@@ -2339,26 +2458,29 @@ Sub btnHeadWind_Click
 End Sub
 
 Sub btnCrossWind_Click
+	VibrateTap
 	btnHeadWind_Click
 End Sub
 
 Sub btnWindRefAngle_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	If indWindType = 0 Then
-		items.Add("Runway Reference Angle|True heading of the runway in use. Used to decompose wind into headwind and crosswind components.")
+		items.Add("Runway Reference Angle|Runway heading (True North)")
 		Wait For (AeroSheet.Show(Activity, items, "Runway Angle", 0)) Complete (idx As Int)
 	Else
-		items.Add("Wind Direction|Direction FROM which the wind blows. True North reference.")
+		items.Add("Wind Direction|Direction wind blows from (True North)")
 		Wait For (AeroSheet.Show(Activity, items, "Wind Direction", 0)) Complete (idx As Int)
 	End If
 End Sub
 
 Sub btnHeadWindUnit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("kt|Knots")
-	items.Add("m/s|Metres per second")
+	items.Add("kt|Knots — aviation standard")
+	items.Add("m/s|Metres per second — SI unit")
 	items.Add("km/h|Kilometres per hour")
 	Dim record As Int = indHeadWindUnit
 	Wait For (AeroSheet.Show(Activity, items, "Wind Speed Unit", record)) Complete (idx As Int)
@@ -2369,10 +2491,12 @@ Sub btnHeadWindUnit_Click
 End Sub
 
 Sub btnCrossWindUnit_Click
+	VibrateTap
 	btnHeadWindUnit_Click
 End Sub
 
 Sub btnWindRefAngleUnit_Click
+	VibrateTap
 	Dim items As List
 	items.Initialize
 	items.Add("deg|Degrees")
@@ -4548,6 +4672,15 @@ Private Sub MakeSubscript(baseText As String, subText As String, extraText As St
 	Return cs
 End Sub
 
+Public Sub VibrateTap
+	Try
+		Dim jo As JavaObject = Activity
+		jo.RunMethod("performHapticFeedback", Array As Object(3)) ' 3 = KEYBOARD_TAP
+	Catch
+		Log("VibrateTap: " & LastException.Message)
+	End Try
+End Sub
+
 Private Sub ModernizeButton(btn As Button)
 	Try
 		Dim jo As JavaObject = btn
@@ -4626,16 +4759,15 @@ Private Sub OpenSettingsPopup
 	SettingsPopupOpen = True
 	pnlSettingsPopup.BringToFront
 
-	Dim cardW As Int = root.Width - 24dip
-	If cardW > 540dip Then cardW = 540dip
+	Dim cardW As Int = root.Width
+	Dim cardH As Int = root.Height
+	Dim cardLeft As Int = 0
+	Dim cardTop As Int = 0
 	Dim rowH As Int = 80dip
 	Dim hdrH As Int = 40dip
 	Dim nRows As Int = 8
 	Dim nHdr As Int = 2
 	Dim contentH As Int = 10dip + nHdr * hdrH + nRows * rowH + 12dip
-	Dim cardH As Int = Min(52dip + contentH, root.Height - 24dip)
-	Dim cardLeft As Int = (root.Width - cardW) / 2
-	Dim cardTop As Int = (root.Height - cardH) / 2
 	Dim card As Panel
 	card.Initialize("")
 	card.Color = ColorPnlInput2
@@ -4718,12 +4850,12 @@ End Sub
 Sub btnSettingTheme_Click
 	Dim items As List
 	items.Initialize
-	items.Add("Green Peace|Teal, clean daylight interface")
-	items.Add("Ancient Brown|Warm sepia parchment tones")
-	items.Add("Dark Shadows|Cockpit stealth dark with cyan accents")
-	items.Add("Blue Sky|Navy midnight blue with cyan accents")
-	items.Add("Red Alert|Dark crimson aviation alert")
-	items.Add("Orange Juice|Cockpit amber warm tones")
+	items.Add("Green Peace|Teal daylight interface")
+	items.Add("Ancient Brown|Warm sepia parchment")
+	items.Add("Dark Shadows|Cockpit dark cyan")
+	items.Add("Blue Sky|Midnight blue cyan")
+	items.Add("Red Alert|Dark crimson alert")
+	items.Add("Orange Juice|Cockpit amber warm")
 	Dim themes() As String = Array As String("Green Peace","Ancient Brown","Dark Shadows","Blue Sky","Red Alert","Orange Juice")
 	Dim current As String = manager.GetString("theme")
 	Dim sel As Int = 0
@@ -5387,5 +5519,22 @@ End Sub
 Sub btnAirplane_LongClick
 	ShowTechnicalHelp("airplane")
 End Sub
+
+Public Sub TintImageView(iv As ImageView, clr As Int)
+	Try
+		Dim joMe As JavaObject = Me
+		joMe.RunMethod("tintImageView", Array(iv, clr))
+	Catch
+		Log("TintImageView: " & LastException.Message)
+	End Try
+End Sub
+
+#If Java
+public void tintImageView(android.widget.ImageView iv, int color) {
+    if (iv != null) {
+        iv.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
+    }
+}
+#End If
 
 

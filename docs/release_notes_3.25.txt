@@ -1,0 +1,16 @@
+<en-US>
+What's new in v3.25:
+• Aircraft selection: Rapid double-tap activation prevents accidental touches with smooth navigation.
+• Visual alignment: Generous typography spacing between aircraft name and area/mass metrics.
+• Themed vector icons: New vector duplicate, edit, and delete glyphs matching app palette.
+• Discreet active indicator: Streamlined active badge and accent bar.
+• Touch-and-hold aircraft reordering.
+</en-US>
+<pt-BR>
+Novidades da v3.25:
+• Seleção de aeronaves: Duplo toque rápido evita trocas acidentais com navegação suave.
+• Alinhamento visual: Espaçamento físico entre o nome da aeronave e os dados de área e peso.
+• Ícones vetoriais: Novos glifos de duplicar, editar e excluir fiéis às cores do tema.
+• Indicador ativo discreto: Faixa e etiqueta de aeronave ativa refinadas.
+• Reordenação por toque longo e arrasto.
+</pt-BR>

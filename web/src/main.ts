@@ -62,6 +62,18 @@ type Field = {
 
 const PAGE_ORDER = ["airplanes", "inputs", "calculate"] as const;
 
+let lastVibrateTime = 0;
+function vibrateTap(): void {
+  const now = typeof performance !== "undefined" ? performance.now() : Date.now();
+  if (now - lastVibrateTime < 50) return;
+  lastVibrateTime = now;
+  if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+    try {
+      navigator.vibrate(12);
+    } catch (_) {}
+  }
+}
+
 const FIELD_HELPERS: Record<string, string> = {
   "Hp": "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
   "Hg": "Geometric altitude: physical height above mean sea level.",
@@ -282,7 +294,7 @@ app.innerHTML = `
           <button type="button" id="profile-cancel">✕&nbsp;&nbsp;Cancel</button>
         </div>
         <div class="editor-scroll">
-          <div class="editor-row"><label for="profile-name">Name</label><input id="profile-name" type="text" placeholder="Aircraft Name" /></div>
+          <div class="editor-row editor-name-row"><label for="profile-name">Name</label><input id="profile-name" type="text" placeholder="Aircraft Name" /></div>
           <div class="editor-row"><label for="profile-sref">Area S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
           <div class="editor-row"><label for="profile-cref">Chord c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
           <section class="editor-section">
@@ -499,7 +511,10 @@ for (const name of resultNames) {
 }
 
 document.querySelectorAll<HTMLButtonElement>(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => activatePage(tab.dataset.page ?? "inputs"));
+  tab.addEventListener("click", () => {
+    vibrateTap();
+    activatePage(tab.dataset.page ?? "inputs");
+  });
 });
 
 document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control").forEach((el) => {
@@ -517,9 +532,11 @@ document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control")
   });
   el.addEventListener("change", () => {
     if (el instanceof HTMLSelectElement && el.id.endsWith("-type")) {
+      vibrateTap();
       updateTypeSelectDisplay(el);
       handleTypeSelectionChange(el);
     } else if (el instanceof HTMLSelectElement && el.id.endsWith("-unit")) {
+      vibrateTap();
       convertInputForUnitChange(el);
     }
     normalizeDependentUnits();
@@ -603,7 +620,10 @@ function createAirplaneRow(): HTMLElement {
   label.className = "field-button";
   label.textContent = "Airplane";
   setHelper(label, "Open the aircraft-profile list to create, edit or select stored aircraft geometry.");
-  label.addEventListener("click", () => activatePage("airplanes"));
+  label.addEventListener("click", () => {
+    vibrateTap();
+    activatePage("airplanes");
+  });
   label.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     showContextualHelp("Aircraft Profile");
@@ -614,7 +634,11 @@ function createAirplaneRow(): HTMLElement {
   picker.className = "profile-select";
   picker.setAttribute("aria-label", "Airplane profile");
   setHelper(picker, "Select a stored aircraft profile. Its reference geometry, named weights and CLmax flap values become available in Inputs.");
-  picker.addEventListener("change", () => applyProfileSelection(picker.value));
+  picker.addEventListener("click", () => vibrateTap());
+  picker.addEventListener("change", () => {
+    vibrateTap();
+    applyProfileSelection(picker.value);
+  });
 
   row.append(label, picker);
   return row;
@@ -655,7 +679,12 @@ function createInputRow(field: Field): HTMLElement {
 
   wrap.append(type, display);
   updateTypeSelectDisplay(type);
-  type.addEventListener("change", () => updateTypeSelectDisplay(type));
+  wrap.addEventListener("click", () => vibrateTap());
+  type.addEventListener("click", () => vibrateTap());
+  type.addEventListener("change", () => {
+    vibrateTap();
+    updateTypeSelectDisplay(type);
+  });
 
   let timer: number | undefined;
   let held = false;
@@ -690,6 +719,8 @@ function createInputRow(field: Field): HTMLElement {
   unit.setAttribute("aria-label", `${field.id} unit`);
   fillSelect(unit, field.unitOptions, field.defaultUnit);
   setHelper(unit, "Unit used for this input value. Changing the unit converts the current numeric value when applicable.");
+  unit.addEventListener("click", () => vibrateTap());
+  unit.addEventListener("change", () => vibrateTap());
 
   if (field.unitOptions.length === 1 && field.unitOptions[0].value === "-") {
     unit.disabled = true;
@@ -721,7 +752,10 @@ function createInputRow(field: Field): HTMLElement {
     delta.hidden = true;
     delta.setAttribute("aria-label", "Vs Factor delta speed in knots");
     setHelper(delta, "Additional calibrated speed in knots added after multiplying the 1-g stall speed by Vs Factor.");
-    deltaLabel.addEventListener("click", () => delta.focus());
+    deltaLabel.addEventListener("click", () => {
+      vibrateTap();
+      delta.focus();
+    });
 
     tail.append(delta);
     row.append(wrap, value, deltaLabel, tail);
@@ -868,6 +902,7 @@ function initializeSwipeNavigation(): void {
     event.preventDefault();
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     byId("main-menu").hidden = true;
+    vibrateTap();
     activatePage(PAGE_ORDER[nextIndex], dx < 0 ? "left" : "right");
   };
 
@@ -929,6 +964,7 @@ function fillSelect(select: HTMLSelectElement, options: SelectOption[], selected
 }
 
 function activatePage(page: string, swipeDirection?: "left" | "right"): void {
+  vibrateTap();
   document.querySelectorAll<HTMLElement>(".page").forEach((el) => {
     el.classList.toggle("active", el.id === `page-${page}`);
     el.classList.remove("swipe-in-left", "swipe-in-right");
@@ -980,10 +1016,24 @@ function renderProfiles(): void {
     selectButton.type = "button";
     selectButton.className = "airplane-name-button";
     const activeBadge = isActive ? `<span class="active-badge">ACTIVE</span>` : "";
-    selectButton.innerHTML = `<strong>${escapeHtml(displayName)}${activeBadge}</strong><span>${profile.sref} ${profile.srefUnit} · ${profile.cref} ${profile.crefUnit}</span>`;
-    selectButton.addEventListener("click", () => {
+    const primaryWeight = profile.weights?.MTOW ?? Object.values(profile.weights ?? {})[0];
+    const weightText = primaryWeight != null ? ` · ${primaryWeight} ${profile.weightUnit}` : (profile.cref ? ` · ${profile.cref} ${profile.crefUnit}` : "");
+    selectButton.innerHTML = `<strong>${escapeHtml(displayName)}${activeBadge}</strong><span>${profile.sref} ${profile.srefUnit}${weightText}</span>`;
+    selectButton.title = "Double click to select airplane";
+    let lastTapTime = 0;
+    const activateProfile = () => {
+      vibrateTap();
       applyProfileSelection(profile.id);
       activatePage("inputs");
+    };
+    selectButton.addEventListener("dblclick", activateProfile);
+    selectButton.addEventListener("touchend", (event) => {
+      const now = Date.now();
+      if (now - lastTapTime < 350) {
+        event.preventDefault();
+        activateProfile();
+      }
+      lastTapTime = now;
     });
 
     const duplicateButton = document.createElement("button");

@@ -93,7 +93,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	For i = 0 To itemCount - 1
 		Dim rawItem As String = items.Get(i)
 		If rawItem.Contains("|") Then
-			totalItemsH = totalItemsH + 58dip
+			totalItemsH = totalItemsH + 54dip
 		Else
 			totalItemsH = totalItemsH + 48dip
 		End If
@@ -122,7 +122,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 		Dim sel As Boolean = (i = selectedIndex)
 		
 		Dim thisHeight As Int = 48dip
-		If sec.Length > 0 Then thisHeight = 58dip
+		If sec.Length > 0 Then thisHeight = 54dip
 		
 		Dim pnlItem As Panel
 		pnlItem.Initialize("pnlItem")
@@ -152,6 +152,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 			lblPrim.Tag = i
 			lblPrim.Text = prim
 			lblPrim.TextSize = 15
+			lblPrim.SingleLine = True
 			If sel Then
 				lblPrim.TextColor = mSelectedTextColor
 				lblPrim.Typeface = Typeface.DEFAULT_BOLD
@@ -160,16 +161,22 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 				lblPrim.Typeface = Typeface.DEFAULT
 			End If
 			lblPrim.Gravity = Gravity.CENTER_VERTICAL
-			pnlItem.AddView(lblPrim, 46dip, 5dip, 100%x - 58dip, 24dip)
+			pnlItem.AddView(lblPrim, 46dip, 6dip, 100%x - 58dip, 22dip)
 			
-			Dim lblSec As Label
-			lblSec.Initialize("pnlItem")
-			lblSec.Tag = i
-			lblSec.Text = sec
-			lblSec.TextSize = 12
-			lblSec.TextColor = Colors.ARGB(160, Bit.And(Bit.ShiftRight(mTextColor, 16), 0xFF), Bit.And(Bit.ShiftRight(mTextColor, 8), 0xFF), Bit.And(mTextColor, 0xFF))
-			lblSec.Gravity = Gravity.TOP
-			pnlItem.AddView(lblSec, 46dip, 29dip, 100%x - 58dip, 24dip)
+			Dim lblSub As Label
+			lblSub.Initialize("pnlItem")
+			lblSub.Tag = i
+			lblSub.Text = sec
+			lblSub.TextSize = 12
+			lblSub.TextColor = Colors.ARGB(160, Bit.And(Bit.ShiftRight(mTextColor, 16), 0xFF), Bit.And(Bit.ShiftRight(mTextColor, 8), 0xFF), Bit.And(mTextColor, 0xFF))
+			lblSub.Gravity = Gravity.CENTER_VERTICAL
+			lblSub.SingleLine = True
+			Dim joSub As JavaObject = lblSub
+			joSub.RunMethod("setMaxLines", Array(1))
+			Dim ta As JavaObject
+			ta.InitializeStatic("android.text.TextUtils$TruncateAt")
+			joSub.RunMethod("setEllipsize", Array(ta.GetField("END")))
+			pnlItem.AddView(lblSub, 46dip, 28dip, 100%x - 58dip, 20dip)
 		Else
 			Dim lblPrimOnly As Label
 			lblPrimOnly.Initialize("pnlItem")
