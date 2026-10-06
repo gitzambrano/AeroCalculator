@@ -193,49 +193,49 @@ const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string
 };
 
 const RESULT_HELPERS: Record<string, string> = {
-  "Pressure Altitude": "Pressure altitude (Hp): ISA altitude corresponding to static pressure.\nEquation: pISA(Hp) = p\nUnit: m / ft",
-  "Geometric Altitude": "Geometric altitude (h): physical height above mean sea level.\nEquation: h = r H / (r - H)\nUnit: m / ft",
-  "Geopotential Altitude": "Geopotential altitude (H): effective gravitational altitude used by standard atmosphere.\nEquation: H = r h / (r + h)\nUnit: m / ft",
-  "Density Altitude": "Density altitude (Hρ): ISA altitude with the same air density.\nEquation: ρISA(Hρ) = ρ\nUnit: m / ft",
-  "Temperature Altitude": "Temperature altitude (HT): altitude in ISA with the same temperature.\nEquation: TISA(HT) = T\nUnit: m / ft",
-  "Pressure": "Static atmospheric pressure (p).\nEquation: p = ρ R T\nUnit: Pa / mbar / psi",
-  "Density": "Air density (ρ): mass of air per unit volume.\nEquation: ρ = p / (R T)\nUnit: kg/m³",
-  "Temperature": "Outside air temperature (T).\nEquation: T = TISA(Hp) + ΔT\nUnit: °C / °F / K",
-  "Delta ISA": "ISA temperature deviation (ΔT): OAT minus standard ISA temperature.\nEquation: ΔT = T - TISA(Hp)\nUnit: °C / K",
-  "Total Temperature": "Total temperature (Tt): isentropic stagnation temperature.\nEquation: Tt = T (1 + (γ-1) M²/2)\nUnit: °C / °F / K",
-  "Viscosity": "Dynamic air viscosity (μ) from Sutherland correlation.\nUnit: Pa·s",
-  "Sound Speed": "Speed of sound (a): local sonic speed in ideal gas.\nEquation: a = √(γ R T)\nUnit: m/s / kt",
-  "True Airspeed": "True airspeed (TAS): speed relative to surrounding air mass.\nEquation: TAS = M a\nUnit: kt / m/s / km/h",
-  "Calibrated Airspeed": "Calibrated airspeed (CAS): pitot-static reading corrected for errors.\nUnit: kt / m/s / km/h",
-  "Equivalent Airspeed": "Equivalent airspeed (EAS): speed producing dynamic pressure at sea level.\nEquation: EAS = TAS √(ρ/ρ0)\nUnit: kt / m/s",
-  "Ground Speed": "Ground speed (GS): aircraft speed relative to ground surface.\nEquation: Vground = Vair + Vwind\nUnit: kt / m/s / km/h",
-  "Stall Speed Vs": "Reference 1-g stall speed (Vs).\nEquation: Vs,TAS = √(2 m g0 / (ρ S CLmax))\nUnit: kt / m/s",
-  "Vs Factor": "Stall speed multiplier factor.\nEquation: CAS = factor × Vs + ΔV",
-  "Lift Coefficient CL": "Required lift coefficient.\nEquation: CL = n m g0 / (q S)",
-  "Mach": "Mach number (M): TAS divided by local speed of sound.\nEquation: M = TAS / a",
-  "Reynolds": "Reynolds number (Re) based on mean aerodynamic chord.\nEquation: Re = ρ TAS cref / μ",
-  "Pressure Ratio δ": "Static pressure ratio.\nEquation: δ = p / p0",
-  "Density Ratio σ": "Air density ratio.\nEquation: σ = ρ / ρ0",
-  "Temperature Ratio θ": "Temperature ratio.\nEquation: θ = T / T0",
-  "Dynamic Pressure": "Dynamic pressure (q).\nEquation: q = ½ ρ TAS²\nUnit: Pa / mbar / psi",
-  "Impact Pressure": "Impact pressure (qc = pt - p).\nUnit: Pa / mbar / psi",
-  "Total Pressure": "Total pressure (pt = p + qc).\nUnit: Pa / mbar / psi",
-  "DynPressure * S / g": "Dynamic pressure force equivalent (q S / g0).\nUnit: kgf",
-  "Lift Force": "Total required aerodynamic lift (L = n m g0).\nUnit: kgf",
-  "Weight/Delta W/δ": "Aircraft weight normalized by pressure ratio (W / δ).\nUnit: kgf",
-  "Load Factor Nz": "Normal load factor (Nz = L / W).\nUnit: g",
-  "Bank Angle φ": "Coordinated level turn bank angle.\nEquation: n = 1 / cos φ\nUnit: deg / rad",
-  "Turn Radius": "Coordinated level turn radius.\nEquation: r = TAS² / (g0 tan φ)\nUnit: m / km",
-  "Turn Rate": "Coordinated level turn angular rate.\nEquation: ω = g0 tan φ / TAS\nUnit: deg/s / rad/s",
-  "Track Angle": "Ground track course angle.\nUnit: deg / rad",
-  "Heading Angle Ψ": "Aircraft nose heading angle.\nUnit: deg / rad",
-  "Drift Angle": "Drift angle: heading minus track.\nUnit: deg / rad",
-  "Sideslip Angle β": "Sideslip angle between aircraft axis and relative wind.\nUnit: deg / rad",
-  "Wind Speed": "Total horizontal wind speed magnitude.\nUnit: kt / m/s / km/h",
-  "Wind Direction": "Direction from which the wind blows (True North).\nUnit: deg / rad",
-  "AlongTrack Headwind": "Headwind component along ground track.\nUnit: kt / m/s",
-  "AlongTrack Crosswind": "Crosswind component perpendicular to ground track.\nUnit: kt / m/s",
-};
+  "Pressure Altitude": "Pressure altitude Hₚ: ISA altitude corresponding to static pressure.",
+  "Geometric Altitude": "Geometric altitude: physical height above mean sea level.",
+  "Geopotential Altitude": "Geopotential altitude used by the standard-atmosphere model.",
+  "Density Altitude": "ISA altitude with the same air density as the current condition.",
+  "Temperature Altitude": "Altitude returned by the documented ISA temperature-altitude convention.",
+  "Pressure": "Static atmospheric pressure.",
+  "Density": "Air density: mass of air per unit volume.",
+  "Temperature": "Outside air temperature.",
+  "Delta ISA": "Temperature deviation from the ISA temperature at the current pressure altitude.",
+  "Total Temperature": "Total temperature Tₜ for the documented isentropic model.",
+  "Viscosity": "Dynamic air viscosity from the documented temperature correlation.",
+  "Sound Speed": "Local speed of sound in the ideal-gas model.",
+  "True Airspeed": "Aircraft speed relative to the surrounding air mass.",
+  "Calibrated Airspeed": "Calibrated airspeed from the documented pitot-static model.",
+  "Equivalent Airspeed": "Airspeed at standard sea-level density with the same dynamic pressure.",
+  "Ground Speed": "Aircraft speed relative to the ground.",
+  "Stall Speed Vs": "Reference 1-g stall speed Vₛ.",
+  "Vs Factor": "Multiplier applied to the reference 1-g stall speed.",
+  "Lift Coefficient CL": "Required lift coefficient for the selected condition.",
+  "Mach": "True airspeed divided by the local speed of sound.",
+  "Reynolds": "Reynolds number based on the reference chord.",
+  "Pressure Ratio δ": "Static pressure divided by standard sea-level pressure.",
+  "Density Ratio σ": "Air density divided by standard sea-level density.",
+  "Temperature Ratio θ": "Absolute temperature divided by standard sea-level temperature.",
+  "Dynamic Pressure": "Dynamic pressure for the current density and true airspeed.",
+  "Impact Pressure": "Total pressure minus static pressure.",
+  "Total Pressure": "Stagnation pressure for the documented subsonic model.",
+  "DynPressure * S / g": "Dynamic-pressure force equivalent for the selected reference area.",
+  "Lift Force": "Aerodynamic lift required by the selected condition.",
+  "Weight/Delta W/δ": "Aircraft weight normalized by pressure ratio.",
+  "Load Factor Nz": "Normal load factor N_z for the selected maneuver.",
+  "Bank Angle φ": "Bank angle for the coordinated level-turn relation.",
+  "Turn Radius": "Signed coordinated level-turn radius.",
+  "Turn Rate": "Signed coordinated level-turn angular rate.",
+  "Track Angle": "Ground-track course angle.",
+  "Heading Angle Ψ": "Aircraft nose heading angle.",
+  "Drift Angle": "Heading minus track angle.",
+  "Sideslip Angle β": "Angle between aircraft heading and relative wind.",
+  "Wind Speed": "Horizontal wind-vector magnitude.",
+  "Wind Direction": "Meteorological direction from which the wind blows.",
+  "AlongTrack Headwind": "Wind component along the ground track.",
+  "AlongTrack Crosswind": "Wind component perpendicular to the ground track.",
+}
 
 const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) throw new Error("Missing #app");
@@ -950,8 +950,8 @@ function createInputRow(field: Field): HTMLElement {
     deltaLabel.id = "spdDelta-label";
     deltaLabel.className = "speed-delta-label";
     deltaLabel.textContent = "+ Δ";
-    deltaLabel.setAttribute("aria-label", "Delta speed relative to Vs Factor");
-    setHelper(deltaLabel, "Additional calibrated speed added to Vs Factor × Vs. This Δ term is always entered in knots.");
+    deltaLabel.setAttribute("aria-label", "Delta speed relative to stall-speed factor");
+    setHelper(deltaLabel, "Additional calibrated speed added after applying the stall-speed factor. This Δ term is always entered in knots.");
     deltaLabel.hidden = true;
 
     const delta = document.createElement("input");
@@ -962,8 +962,8 @@ function createInputRow(field: Field): HTMLElement {
     delta.placeholder = "+ Δkt";
     delta.value = "0";
     delta.hidden = true;
-    delta.setAttribute("aria-label", "Vs Factor delta speed in knots");
-    setHelper(delta, "Additional calibrated speed in knots added after multiplying the 1-g stall speed by Vs Factor.");
+    delta.setAttribute("aria-label", "Stall-speed-factor delta in knots");
+    setHelper(delta, "Additional calibrated speed in knots added after multiplying the 1-g stall speed by the selected factor.");
     deltaLabel.addEventListener("click", () => {
       vibrateTap();
       delta.focus();
