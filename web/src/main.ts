@@ -1251,7 +1251,7 @@ function renderProfiles(): void {
     const activeBadge = isActive ? `<span class="active-badge">ACTIVE</span>` : "";
     const primaryWeight = profile.weights?.MTOW ?? Object.values(profile.weights ?? {})[0];
     const weightText = primaryWeight != null ? ` · ${primaryWeight} ${profile.weightUnit}` : (profile.cref ? ` · ${profile.cref} ${profile.crefUnit}` : "");
-    selectButton.innerHTML = `<span class="airplane-name-line"><strong>${escapeHtml(displayName)}</strong>${activeBadge}</span><span>${profile.sref} ${profile.srefUnit}${weightText}</span>`;
+    selectButton.innerHTML = `<span class="airplane-name-line"><strong>${escapeHtml(displayName)}</strong>${activeBadge}</span><span class="airplane-meta">${profile.sref} ${profile.srefUnit}${weightText}</span>`;
     selectButton.title = "Double click to select airplane";
     let lastTapTime = 0;
     const activateProfile = () => {
