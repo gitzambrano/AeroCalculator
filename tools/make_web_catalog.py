@@ -1,6 +1,24 @@
 import json
 from pathlib import Path
 
+WEB_SHORT_MARKUP = {
+    "Hp": "H<sub>p</sub>",
+    "Hg": "H<sub>g</sub>",
+    "Sref": "S<sub>ref</sub>",
+    "cref": "c<sub>ref</sub>",
+    "CLmax": "C<sub>L,max</sub>",
+    "NzPullup": "N<sub>z</sub> (Pull-up)",
+    "NzTurn": "N<sub>z</sub> (Turn)",
+    "Pressure Altitude": "H<sub>p</sub>",
+    "Geometric Altitude": "H<sub>g</sub>",
+    "Density Altitude": "H<sub>ρ</sub>",
+    "Temperature Altitude": "H<sub>T</sub>",
+    "Total Temperature": "T<sub>t</sub>",
+    "Stall Speed Vs": "V<sub>s</sub>",
+    "Vs Factor": "V<sub>s</sub> Factor",
+    "Lift Coefficient CL": "C<sub>L</sub>",
+}
+
 def main():
     catalog_path = Path("docs/quantity_catalog.json")
     if not catalog_path.exists():
@@ -30,7 +48,8 @@ def main():
             seen.add(k)
             full = v.get("full", k)
             short = v.get("short", k)
-            title = f"{full} • {short}"
+            display_short = WEB_SHORT_MARKUP.get(k, WEB_SHORT_MARKUP.get(short, short))
+            title = f"{full} • {display_short}"
             desc = v.get("definition", "")
             eq = v.get("equation", "")
             model = v.get("limits", "")
