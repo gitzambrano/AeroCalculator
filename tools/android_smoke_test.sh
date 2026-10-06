@@ -159,7 +159,7 @@ exercise_portrait() {
   scroll_down_repeatedly "$width" "$height" 18
   capture_state "$dir" "portrait-outputs-bottom"
   assert_alive_foreground_and_clean "$dir" "portrait-outputs-bottom"
-  assert_dump_contains "$dir" "portrait-outputs-bottom" 'AlongTrack Crosswind'
+  assert_dump_contains "$dir" "portrait-outputs-bottom" 'Along[- ]Track Crosswind'
   tap_text "AIRPLANES"
   capture_state "$dir" "portrait-airplanes"
   assert_alive_foreground_and_clean "$dir" "portrait-airplanes"
