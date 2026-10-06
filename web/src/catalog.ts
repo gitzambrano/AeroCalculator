@@ -16,7 +16,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m",
   },
   "Geometric Altitude": {
-    title: "Geometric altitude \u2022 H<sub>g</sub>",
+    title: "Geometric altitude \u2022 H<sub>geom</sub>",
     desc: "Geometric altitude: physical height above mean sea level.",
     eq: "h = r H / (r \u2212 H)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
@@ -156,7 +156,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "rad",
   },
   "Geopotential Altitude": {
-    title: "Geopotential altitude \u2022 H",
+    title: "Geopotential altitude \u2022 H<sub>geop</sub>",
     desc: "Effective gravitational altitude used by the standard atmosphere.",
     eq: "H = r h / (r + h); for Hp/P input, H = Hp \u2212 29.271247 \u0394T ln(p/p0)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
@@ -310,10 +310,24 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m",
   },
   "Hg": {
-    title: "Geometric altitude \u2022 H<sub>g</sub>",
+    title: "Geometric altitude \u2022 H<sub>geom</sub>",
     desc: "Geometric altitude: physical height above mean sea level.",
     eq: "H = r h / (r + h)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
+    unit: "m",
+  },
+  "Hgeom": {
+    title: "Geometric altitude \u2022 H<sub>geom</sub>",
+    desc: "Geometric altitude: physical height above mean sea level.",
+    eq: "H = r h / (r + h)",
+    model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
+    unit: "m",
+  },
+  "Hgeop": {
+    title: "Geopotential altitude \u2022 H<sub>geop</sub>",
+    desc: "Effective gravitational altitude used by the standard atmosphere.",
+    eq: "H = r h / (r + h); for Hp/P input, H = Hp \u2212 29.271247 \u0394T ln(p/p0)",
+    model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
     unit: "m",
   },
   "P": {

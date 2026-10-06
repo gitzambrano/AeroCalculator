@@ -150,7 +150,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 			Dim lblPrim As Label
 			lblPrim.Initialize("pnlItem")
 			lblPrim.Tag = i
-			lblPrim.Text = prim
+			lblPrim.Text = FormatScriptedText(prim)
 			lblPrim.TextSize = 15
 			lblPrim.SingleLine = True
 			If sel Then
@@ -166,7 +166,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 			Dim lblSub As Label
 			lblSub.Initialize("pnlItem")
 			lblSub.Tag = i
-			lblSub.Text = sec
+			lblSub.Text = FormatScriptedText(sec)
 			lblSub.TextSize = 12
 			lblSub.TextColor = Colors.ARGB(160, Bit.And(Bit.ShiftRight(mTextColor, 16), 0xFF), Bit.And(Bit.ShiftRight(mTextColor, 8), 0xFF), Bit.And(mTextColor, 0xFF))
 			lblSub.Gravity = Gravity.CENTER_VERTICAL
@@ -181,7 +181,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 			Dim lblPrimOnly As Label
 			lblPrimOnly.Initialize("pnlItem")
 			lblPrimOnly.Tag = i
-			lblPrimOnly.Text = prim
+			lblPrimOnly.Text = FormatScriptedText(prim)
 			lblPrimOnly.TextSize = 15
 			If sel Then
 				lblPrimOnly.TextColor = mSelectedTextColor

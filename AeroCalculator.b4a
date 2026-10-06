@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 34
-	#VersionName: 3.29
+	#VersionCode: 35
+	#VersionName: 3.30
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -562,16 +562,28 @@ Sub Activity_Create(FirstTime As Boolean)
 	root.Color = ColorPnlInput5
 
 	'Tamanho e numero de paineis de inputs
-	ib = 8dip
-	tb = 40dip
 	Dim PanelNb As Int
 	PanelNb = 14
-
-	'Escalonamento com a area util (exclui status/navigation bars).
-	Dim hh, yy As Double
-	hh = 99dip + PanelNb * (ib * 2 + tb) + PanelNb * 1dip + 1dip
 	yy = root.Height
 	xx = root.Width
+
+	If root.Width > root.Height Then
+		ib = 8dip
+		tb = 40dip
+	Else
+		Dim rowSpace As Double = (yy - 105dip) / PanelNb - 1dip
+		If rowSpace < 56dip Then
+			tb = Max(36dip, rowSpace - 10dip)
+			ib = Max(4dip, (rowSpace - tb) / 2)
+		Else
+			ib = 8dip
+			tb = 40dip
+		End If
+	End If
+
+	'Escalonamento com a area util (exclui status/navigation bars).
+	Dim hh As Double
+	hh = 99dip + PanelNb * (ib * 2 + tb) + PanelNb * 1dip + 1dip
 
 	sc = yy / hh
 	If sc<1 Then
@@ -1049,7 +1061,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	    Case 13
 		    btnWindRefAngle.Initialize("btnWindRefAngle")
 		    pnlInput.AddView(btnWindRefAngle, 3%x, ib*sc, 44%x, tb*sc)
-			If xx > 400dip Or sc > 1 Or ld = 1 Then
+			If xx >= 340dip Or sc > 1 Or ld = 1 Then
 				btnWindRefAngle.Text = "Runway Angle"
 			Else
 				btnWindRefAngle.Text = "Rnwy Angle"
@@ -1059,7 +1071,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtWindRefAngle.Initialize("edtWindRefAngle")
 		    pnlInput.AddView(edtWindRefAngle, 50%x, ib*sc, 27%x, tb*sc)
 			edtWindRefAngle.Hint="Reference Dir"
-			If sc > 1 Or ld = 1 Or xx>400dip Then
+			If sc > 1 Or ld = 1 Or xx>=340dip Then
 				edtWindRefAngle.Hint="Reference Direction"	
 			End If
 			edtWindRefAngle.Gravity = Gravity.CENTER
@@ -1082,7 +1094,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		End Select
 	Next
 
-	scvMain1.Panel.Height = (PanelNb * (ib*2+tb) + PanelNb* 1dip + 3dip)*sc
+	scvMain1.Panel.Height = (PanelNb * (ib*2+tb) + PanelNb* 1dip + 24dip)*sc
 	container.AddPage(pnlBack1,"Inputs")
 
 ' Criando pagina de outputs
@@ -2171,7 +2183,7 @@ Sub btnAltType_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Pressure Altitude|Barometric altitude (HP), ISA")
+	items.Add("Pressure Altitude|Barometric altitude (H_p), ISA")
 	items.Add("Geometric Altitude|True height above MSL")
 	items.Add("Altitude from GPS|Geometric height from GPS")
 	items.Add("Pressure|Direct static pressure input")
@@ -2577,15 +2589,15 @@ Sub AltType_Click
 			End If
 		Else If indAltType=1 Then
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "g", "")
+				btnAltType.Text = MakeSubscript("Altitude H", "geom", "")
 			Else
-				btnAltType.Text = MakeSubscript("H", "g", "")
+				btnAltType.Text = MakeSubscript("H", "geom", "")
 			End If
 		Else If indAltType=2 Then
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "g", "")
+				btnAltType.Text = MakeSubscript("Altitude H", "geom", "")
 			Else
-				btnAltType.Text = MakeSubscript("H", "g", "")	
+				btnAltType.Text = MakeSubscript("H", "geom", "")	
 			End If
 		End If
 		edtAlt.Hint = "Altitude"
@@ -2896,7 +2908,7 @@ Sub SpdType_Click
 		edtSpd.Width = 13%x
 		edtSpdDelta.Visible = True
 	Else If indSpdType = 6 Then
-		If xx > 340dip Or sc > 1 Then
+		If xx >= 320dip Or sc > 1 Then
 			btnSpdType.Text = "Ground Speed"
 		Else
 			btnSpdType.Text = "Grnd Speed"
@@ -2907,7 +2919,7 @@ Sub SpdType_Click
 		edtSpd.Width = 27%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 7 Then
-		If xx > 340dip Or sc > 1 Then
+		If xx >= 320dip Or sc > 1 Then
 			btnSpdType.Text = "Ground Speed"
 		Else
 			btnSpdType.Text = "Grnd Speed"
@@ -3216,7 +3228,7 @@ Sub WindType
 	If indWindType < 0 Then
 	Else If indWindType=0 Or indWindType=1 Then
 		If indWindType=0 Then
-			scvMain1.Panel.Height = (14 * (ib * 2 + tb) +14dip+3dip)*sc
+			scvMain1.Panel.Height = (14 * (ib * 2 + tb) + 14dip + 24dip) * sc
 			pnlv1 = scvMain1.Panel.GetView (24)
 			pnlv1.Visible=True
 			pnlv2 = scvMain1.Panel.GetView (26)
@@ -3224,12 +3236,12 @@ Sub WindType
 			btnHeadWind.Text = "HeadWind"
 			edtHeadWind.Hint = "HeadWind"
 			edtWindRefAngle.Hint="Reference Dir."
-			If xx > 400dip Or sc > 1 Or ld = 1 Then
+			If xx >= 340dip Or sc > 1 Or ld = 1 Then
 				btnWindRefAngle.Text = "Runway Angle"
 			Else
 				btnWindRefAngle.Text = "Rnwy Angle"
 			End If
-			If xx > 400dip Or sc > 1 Or ld = 1 Then
+			If xx >= 340dip Or sc > 1 Or ld = 1 Then
 				edtHeadWind.Hint = "HeadWind Speed"
 				edtWindRefAngle.Hint="Reference Direction"
 			End If
@@ -4079,13 +4091,13 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 1
-		lblVar.Text = MakeSubscript("Geometric Altitude H", "g", "")
+		lblVar.Text = MakeSubscript("Geometric Altitude H", "geom", "")
 		lblRes.Text = NumberFormat2(Hgeom * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeom) Or IsInf(Hgeom) Then
 			lblRes.Text = "----"
 		End If
 	Case 2
-		lblVar.Text = "Geopotential Altitude H"
+		lblVar.Text = MakeSubscript("Geopotential Altitude H", "geop", "")
 		lblRes.Text = NumberFormat2(Hgeop * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeop) Or IsInf(Hgeop) Then
 			lblRes.Text = "----"
@@ -5594,6 +5606,10 @@ End Sub
 
 Public Sub ConfigureAirplaneSpinner(spn As Spinner)
 	Try
+		Dim joSpn As JavaObject = spn
+		joSpn.RunMethod("setBackground", Array(Null))
+		joSpn.RunMethod("setBackgroundResource", Array(0))
+		joSpn.RunMethod("setPadding", Array(0, 0, 0, 0))
 		Dim joMe As JavaObject = Me
 		joMe.RunMethod("configureAirplaneSpinner", Array(spn))
 	Catch
@@ -5615,23 +5631,72 @@ public static void restartActivity() {
 public static void configureAirplaneSpinner(Object spnObj) {
     try {
         if (spnObj instanceof anywheresoftware.b4a.objects.SpinnerWrapper) {
-            final android.widget.Spinner spn = (android.widget.Spinner) ((anywheresoftware.b4a.objects.SpinnerWrapper)spnObj).getObject();
-            spn.setBackground(null);
-            spn.setOnHierarchyChangeListener(new android.view.ViewGroup.OnHierarchyChangeListener() {
-                @Override
-                public void onChildViewAdded(android.view.View parent, android.view.View child) {
-                    if (child instanceof android.widget.TextView) {
-                        ((android.widget.TextView) child).setGravity(android.view.Gravity.CENTER);
+            spnObj = ((anywheresoftware.b4a.objects.SpinnerWrapper)spnObj).getObject();
+        }
+        if (!(spnObj instanceof android.widget.Spinner)) {
+            android.util.Log.w("AERO_SPN", "Unknown spnObj type: " + (spnObj != null ? spnObj.getClass().getName() : "null"));
+            return;
+        }
+        final android.widget.Spinner spn = (android.widget.Spinner) spnObj;
+        spn.setBackground(null);
+        spn.setBackgroundResource(0);
+        spn.setPadding(0, 0, 0, 0);
+
+        final Runnable styleSelected = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    spn.setBackground(null);
+                    spn.setBackgroundResource(0);
+                    spn.setPadding(0, 0, 0, 0);
+                    android.view.View selected = spn.getSelectedView();
+                    if (selected instanceof android.widget.TextView) {
+                        android.widget.TextView tv = (android.widget.TextView) selected;
+                        tv.setGravity(android.view.Gravity.CENTER);
+                        tv.setTextAlignment(android.view.View.TEXT_ALIGNMENT_CENTER);
+                        tv.setPadding(0, 0, 0, 0);
+                        android.view.ViewGroup.LayoutParams lp = tv.getLayoutParams();
+                        if (lp != null) {
+                            lp.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+                            tv.setLayoutParams(lp);
+                        }
+                    }
+                } catch (Exception ex) {
+                    android.util.Log.e("AERO_SPN", "styleSelected error: " + ex.getMessage(), ex);
+                }
+            }
+        };
+
+        spn.post(styleSelected);
+
+        android.view.View.OnLayoutChangeListener layoutListener = new android.view.View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(android.view.View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                styleSelected.run();
+            }
+        };
+        spn.removeOnLayoutChangeListener(layoutListener);
+        spn.addOnLayoutChangeListener(layoutListener);
+
+        spn.setOnHierarchyChangeListener(new android.view.ViewGroup.OnHierarchyChangeListener() {
+            @Override
+            public void onChildViewAdded(android.view.View parent, android.view.View child) {
+                if (child instanceof android.widget.TextView) {
+                    android.widget.TextView tv = (android.widget.TextView) child;
+                    tv.setGravity(android.view.Gravity.CENTER);
+                    tv.setTextAlignment(android.view.View.TEXT_ALIGNMENT_CENTER);
+                    tv.setPadding(0, 0, 0, 0);
+                    android.view.ViewGroup.LayoutParams lp = tv.getLayoutParams();
+                    if (lp != null) {
+                        lp.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+                        tv.setLayoutParams(lp);
                     }
                 }
-                @Override
-                public void onChildViewRemoved(android.view.View parent, android.view.View child) {}
-            });
-            android.view.View selected = spn.getSelectedView();
-            if (selected instanceof android.widget.TextView) {
-                ((android.widget.TextView) selected).setGravity(android.view.Gravity.CENTER);
             }
-        }
+            @Override
+            public void onChildViewRemoved(android.view.View parent, android.view.View child) {}
+        });
     } catch (Exception e) {
         android.util.Log.e("AERO_SPN", "configureAirplaneSpinner error: " + e.getMessage(), e);
     }

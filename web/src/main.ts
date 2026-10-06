@@ -127,7 +127,7 @@ function helperFor(fieldId: string, typeValue: string): string {
 
 const DEFAULT_OPTION_LABELS: Record<string, string> = {
   Hp: "Altitude H<sub>p</sub>",
-  Hg: "Altitude H<sub>g</sub>",
+  Hg: "Altitude H<sub>geom</sub>",
   P: "Static Pressure",
   OAT: "Temperature OAT",
   TAS: "Airspeed TAS",
@@ -184,8 +184,8 @@ const resultNames = [
 // Static trusted markup is used here only for mathematical subscript typography.
 const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
   "Pressure Altitude": "Pressure Altitude H<sub>p</sub>",
-  "Geometric Altitude": "Geometric Altitude H<sub>g</sub>",
-  "Geopotential Altitude": "Geopotential Altitude H",
+  "Geometric Altitude": "Geometric Altitude H<sub>geom</sub>",
+  "Geopotential Altitude": "Geopotential Altitude H<sub>geop</sub>",
   "Density Altitude": "Density Altitude H<sub>ρ</sub>",
   "Temperature Altitude": "Temperature Altitude H<sub>T</sub>",
   "Pressure": "Pressure p",
@@ -1149,14 +1149,14 @@ function initializeSwipeNavigation(): void {
 function responsiveOptionLabel(value: string, label: string): string {
   if (!window.matchMedia("(max-width: 430px)").matches) return label;
   if (value === "Hp") return "H<sub>p</sub>";
-  if (value === "Hg") return "H<sub>g</sub>";
+  if (value === "Hg") return "H<sub>geom</sub>";
   if (value === "P") return "p";
   if (value === "OAT") return "OAT";
   if (value === "TAS") return "TAS";
   if (value === "CAS") return "CAS";
   if (value === "EAS") return "EAS";
   if (value === "Vs Factor") return "V<sub>s</sub> Fact";
-  if (value === "Ground Speed") return "Grnd Speed";
+  if (value === "Ground Speed") return window.matchMedia("(max-width: 330px)").matches ? "Grnd Speed" : "Ground Speed";
   if (value === "Qdyn") return "q";
   if (value === "Qc") return "q<sub>c</sub>";
   if (value === "Sref") return "S<sub>ref</sub>";
@@ -1171,7 +1171,7 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "HeadWind") return "HeadWnd";
   if (value === "Wind Speed") return "WindSpd";
   if (value === "CrossWind") return "CrossWnd";
-  if (value === "Runway Angle") return "Rnwy Angle";
+  if (value === "Runway Angle") return window.matchMedia("(max-width: 330px)").matches ? "Rnwy Angle" : "Runway Angle";
   if (value === "Wind Direction") return "WindDir";
   return label;
 }

@@ -97,4 +97,6 @@ web/visual-audit/
 # Temporary test & screenshot artifacts
 artifacts/
 dump.xml
+audit-local/
+smoke-results/
 
