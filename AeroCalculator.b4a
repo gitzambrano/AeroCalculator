@@ -3056,8 +3056,8 @@ Sub CLmax_Click
 	Else
 		For ii=1 To 14
 			w = a.GetDefault(ID_inp & "_F" & (ii-1),"")
-			If w.CompareTo("") <> 0 Then
-			count = count + 1
+			If w.CompareTo("") <> 0 And w.CompareTo("null") <> 0 Then
+				count = count + 1
 			End If
 			If count=indCLmaxType Then Exit
 		Next
