@@ -4,6 +4,7 @@ set -euo pipefail
 APK_PATH="${1:?Usage: android_smoke_test.sh <apk> <api-level>}"
 API_LEVEL="${2:-unknown}"
 PACKAGE_NAME="flightdyn.aerocalculator"
+PRIMARY_ALTITUDE_PATTERN='text="(Hp|H[Pp]|Altitude H[Pp])"'
 OUT_ROOT="smoke-results/api-${API_LEVEL}"
 mkdir -p "$OUT_ROOT"
 
@@ -143,10 +144,10 @@ scroll_down_repeatedly() {
 exercise_portrait() {
   local dir="$1" width="$2" height="$3"
   adb shell am force-stop "$PACKAGE_NAME" || true; adb logcat -c; launch_app
-  wait_for_ui_text 'text="Hp"'
+  wait_for_ui_text "$PRIMARY_ALTITUDE_PATTERN"
   capture_state "$dir" "portrait-inputs-top"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-top"
-  assert_dump_contains "$dir" "portrait-inputs-top" 'text="Hp"'
+  assert_dump_contains "$dir" "portrait-inputs-top" "$PRIMARY_ALTITUDE_PATTERN"
   scroll_down_repeatedly "$width" "$height" 8
   capture_state "$dir" "portrait-inputs-bottom"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-bottom"
@@ -167,7 +168,7 @@ exercise_portrait() {
 exercise_landscape() {
   local dir="$1" width="$2" height="$3"
   adb shell am force-stop "$PACKAGE_NAME" || true; adb logcat -c; launch_app
-  wait_for_ui_text 'text="Hp"'
+  wait_for_ui_text "$PRIMARY_ALTITUDE_PATTERN"
   capture_state "$dir" "landscape-inputs-top"
   assert_alive_foreground_and_clean "$dir" "landscape-inputs-top"
   assert_landscape_window "$dir" "landscape-inputs-top" "$width" "$height"
