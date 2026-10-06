@@ -179,7 +179,7 @@ const resultNames = [
   "Sideslip Angle β", "Wind Speed", "Wind Direction", "AlongTrack Headwind", "AlongTrack Crosswind",
 ] as const;
 
-const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
+// Static trusted markup is used here only for mathematical subscript typography.\nconst RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
   "Pressure Altitude": "Pressure Altitude H<sub>p</sub>",
   "Geometric Altitude": "Geometric Altitude H<sub>g</sub>",
   "Geopotencial Altitude": "Geopotential Altitude H",
