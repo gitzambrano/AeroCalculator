@@ -31,6 +31,23 @@ def bounds(s):
 def center(n):
  x1,y1,x2,y2=bounds(n.attrib['bounds']); return (x1+x2)//2,(y1+y2)//2
 def norm(s): return re.sub(r'[^a-z0-9]+','',(s or '').lower())
+
+DISPLAY_ALIASES = {
+ 'hp': {'hp','altitudehp'},
+ 'hg': {'hg','altitudehg'},
+ 'oat': {'oat','temperatureoat'},
+ 'tas': {'tas','airspeedtas'},
+ 'cas': {'cas','airspeedcas'},
+ 'eas': {'eas','airspeedeas'},
+ 'sref': {'sref','areasref'},
+ 'cref': {'cref','chordcref'},
+ 'clmax': {'clmax','flap0clmax','customclmax'},
+ 'nz': {'nz','nzpullup','nzturn'},
+}
+
+def equivalent_texts(t):
+ q=norm(t)
+ return DISPLAY_ALIASES.get(q,{q})
 def dump(name):
  adb('shell','uiautomator','dump','/sdcard/window.xml',check=False); p=OUT/f'{name}.xml'; run('adb','pull','/sdcard/window.xml',str(p),check=False)
  return ET.parse(p).getroot()
@@ -43,8 +60,8 @@ def texts(root,app_only=True):
  src=nodes(root) if app_only else allnodes(root)
  return [n.attrib.get('text','').strip() for n in src if n.attrib.get('text','').strip()]
 def find(root,t,app_only=True):
- q=norm(t); src=nodes(root) if app_only else allnodes(root)
- return next((n for n in src if norm(n.attrib.get('text',''))==q),None)
+ qs=equivalent_texts(t); src=nodes(root) if app_only else allnodes(root)
+ return next((n for n in src if norm(n.attrib.get('text','')) in qs),None)
 def find_contains(root,t,app_only=True):
  q=norm(t); src=nodes(root) if app_only else allnodes(root)
  return next((n for n in src if q and q in norm(n.attrib.get('text',''))),None)
