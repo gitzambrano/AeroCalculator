@@ -1252,22 +1252,13 @@ function renderProfiles(): void {
     const primaryWeight = profile.weights?.MTOW ?? Object.values(profile.weights ?? {})[0];
     const weightText = primaryWeight != null ? ` · ${primaryWeight} ${profile.weightUnit}` : (profile.cref ? ` · ${profile.cref} ${profile.crefUnit}` : "");
     selectButton.innerHTML = `<span class="airplane-name-line"><strong>${escapeHtml(displayName)}</strong>${activeBadge}</span><span class="airplane-meta">${profile.sref} ${profile.srefUnit}${weightText}</span>`;
-    selectButton.title = "Double click to select airplane";
-    let lastTapTime = 0;
+    selectButton.title = "Select airplane";
     const activateProfile = () => {
       vibrateTap();
       applyProfileSelection(profile.id);
       activatePage("inputs");
     };
-    selectButton.addEventListener("dblclick", activateProfile);
-    selectButton.addEventListener("touchend", (event) => {
-      const now = Date.now();
-      if (now - lastTapTime < 350) {
-        event.preventDefault();
-        activateProfile();
-      }
-      lastTapTime = now;
-    });
+    selectButton.addEventListener("click", activateProfile);
 
     const duplicateButton = document.createElement("button");
     duplicateButton.type = "button";
