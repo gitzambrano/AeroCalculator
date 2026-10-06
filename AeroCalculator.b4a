@@ -2998,7 +2998,7 @@ Sub Weight_Click
 	Else
 		For ii=1 To 6
 			w = a.GetDefault(ID_inp & "_W" & ii,"")
-			If w.CompareTo("") <> 0 Then
+			If w.CompareTo("") <> 0 And w.CompareTo("null") <> 0 Then
 			count = count + 1
 			End If
 			If count=indWeightType Then Exit
