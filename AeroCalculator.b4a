@@ -656,9 +656,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnAltType.Initialize("btnAltType")
 			pnlInput.AddView(btnAltType, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "P", "")
+				btnAltType.Text = MakeSubscript("Altitude H", "p", "")
 			Else
-				btnAltType.Text = MakeSubscript("H", "P", "")
+				btnAltType.Text = MakeSubscript("H", "p", "")
 			End If
 			btnAltType.TextSize = 15*sc
 			btnAltType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
@@ -800,9 +800,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSref.Initialize("btnSref")
 		    pnlInput.AddView(btnSref, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btnSref.Text = MakeSubscript("Area S", "REF", "")
+				btnSref.Text = MakeSubscript("Area S", "ref", "")
 			Else
-				btnSref.Text = MakeSubscript("S", "REF", "")
+				btnSref.Text = MakeSubscript("S", "ref", "")
 			End If
 			btnSref.TextSize = 15*sc
 			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
@@ -833,9 +833,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			btncref.Initialize("btncref")
 		    pnlInput.AddView(btncref, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btncref.Text = MakeSubscript("Chord c", "REF", "")
+				btncref.Text = MakeSubscript("Chord c", "ref", "")
 			Else
-				btncref.Text = MakeSubscript("c", "REF", "")
+				btncref.Text = MakeSubscript("c", "ref", "")
 			End If
 			btncref.TextSize = 15*sc
 			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
@@ -866,9 +866,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnCLmax.Initialize("btnCLmax")
 		    pnlInput.AddView(btnCLmax, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btnCLmax.Text = MakeSubscript("Flap 0 - CL", "MAX", "")
+				btnCLmax.Text = MakeSubscript("Flap 0 - C", "L,max", "")
 			Else
-				btnCLmax.Text = MakeSubscript("CL", "MAX", "")
+				btnCLmax.Text = MakeSubscript("C", "L,max", "")
 			End If
 			btnCLmax.TextSize = 15*sc
 			btnCLmax.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
@@ -898,14 +898,14 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 8
 		    btnNzType.Initialize("btnNzType")
 		    pnlInput.AddView(btnNzType, 3%x, ib*sc, 44%x, tb*sc)
-			btnNzType.Text = MakeSubscript("N", "Z", " (Pull-up)")
+			btnNzType.Text = MakeSubscript("N", "z", " (Pull-up)")
 			btnNzType.TextSize = 15*sc
 			btnNzType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
 			edtNz.Initialize("edtNz")
 		    pnlInput.AddView(edtNz, 50%x, ib*sc, 27%x, tb*sc)
-			edtNz.Hint = "Nz"
+			edtNz.Hint = "Load Factor"
 			If sc > 1 Or ld = 1 Or xx>300dip Then
-				edtNz.Hint = "Pull-up Nz"	
+				edtNz.Hint = "Pull-up Load Factor"	
 			End If
 			edtNz.Gravity = Gravity.CENTER
 			edtNz.TextSize = 13*sc
@@ -2324,12 +2324,12 @@ Sub btnSref_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Wing Reference Area Sref|Theoretical wing planform area")
+	items.Add("Wing Reference Area|Theoretical wing planform area")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area", 0)) Complete (idx As Int)
 	If xx > 340dip Or sc > 1 Then
-		btnSref.Text = MakeSubscript("Area S", "REF", "")
+		btnSref.Text = MakeSubscript("Area S", "ref", "")
 	Else
-		btnSref.Text = MakeSubscript("S", "REF", "")
+		btnSref.Text = MakeSubscript("S", "ref", "")
 	End If
 End Sub
 
@@ -2353,12 +2353,12 @@ Sub btncref_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Mean Aerodynamic Chord cref|Wing MAC reference length")
+	items.Add("Mean Aerodynamic Chord|Wing MAC reference length")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Chord", 0)) Complete (idx As Int)
 	If xx > 340dip Or sc > 1 Then
-		btncref.Text = MakeSubscript("Chord c", "REF", "")
+		btncref.Text = MakeSubscript("Chord c", "ref", "")
 	Else
-		btncref.Text = MakeSubscript("c", "REF", "")
+		btncref.Text = MakeSubscript("c", "ref", "")
 	End If
 End Sub
 
@@ -2396,8 +2396,8 @@ Sub btnNzType_Click
 	VibrateTap
 	Dim items As List
 	items.Initialize
-	items.Add("Load Factor Nz (Pull-up)|Symmetric pull-up (Nz = L/W)")
-	items.Add("Load Factor Nz (Wind-up Turn)|Coordinated turn: enter load factor")
+	items.Add("Normal Load Factor (Pull-up)|Symmetric pull-up: n = L/W")
+	items.Add("Normal Load Factor (Wind-up Turn)|Coordinated turn: enter load factor")
 	items.Add("Bank Angle (Wind-up Turn)|Coordinated turn: enter bank angle φ")
 	Dim record As Int = indNzType
 	Wait For (AeroSheet.Show(Activity, items, "Maneuver Type", record)) Complete (idx As Int)
@@ -2567,21 +2567,21 @@ Sub AltType_Click
 	Else If indAltType=0 Or indAltType=1 Or indAltType=2 Then
 		If indAltType=0 Then
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "P", "")
+				btnAltType.Text = MakeSubscript("Altitude H", "p", "")
 			Else
-				btnAltType.Text = MakeSubscript("H", "P", "")
+				btnAltType.Text = MakeSubscript("H", "p", "")
 			End If
 		Else If indAltType=1 Then
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "G", "")
+				btnAltType.Text = MakeSubscript("Altitude H", "g", "")
 			Else
-				btnAltType.Text = MakeSubscript("H", "G", "")
+				btnAltType.Text = MakeSubscript("H", "g", "")
 			End If
 		Else If indAltType=2 Then
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "G", "")
+				btnAltType.Text = MakeSubscript("Altitude H", "g", "")
 			Else
-				btnAltType.Text = MakeSubscript("H", "G", "")	
+				btnAltType.Text = MakeSubscript("H", "g", "")	
 			End If
 		End If
 		edtAlt.Hint = "Altitude"
@@ -3048,9 +3048,9 @@ Sub CLmax_Click
 	Dim ii As Int
 	If indCLmaxType = 0 Then
 		If xx > 340dip Or sc > 1 Then
-			btnCLmax.Text = MakeSubscript("Flap 0 - CL", "MAX", "")
+			btnCLmax.Text = MakeSubscript("Flap 0 - C", "L,max", "")
 		Else
-			btnCLmax.Text = MakeSubscript("CL", "MAX", "")
+			btnCLmax.Text = MakeSubscript("C", "L,max", "")
 		End If
 		edtCLmax.Text = ""
 	Else
@@ -3062,9 +3062,9 @@ Sub CLmax_Click
 			If count=indCLmaxType Then Exit
 		Next
 		If xx > 340dip Or sc > 1 Then
-			btnCLmax.Text = MakeSubscript("Flap " & (ii-1) & " - CL", "MAX", "")
+			btnCLmax.Text = MakeSubscript("Flap " & (ii-1) & " - C", "L,max", "")
 		Else
-			btnCLmax.Text = MakeSubscript("CL", "MAX", " F" & (ii-1))
+			btnCLmax.Text = MakeSubscript("C", "L,max", " F" & (ii-1))
 		End If
 		edtCLmax.Text = a.GetDefault(ID_inp & "_F" & (ii-1),"")
 	End If
@@ -3114,16 +3114,16 @@ Sub NzType_Click
 	If indNzType < 0 Then
 	Else 
 		If indNzType=0 Then
-			btnNzType.Text = MakeSubscript("N", "Z", " (Pull-up)")
-			edtNz.Hint = "Nz (Pull-up)"
+			btnNzType.Text = MakeSubscript("N", "z", " (Pull-up)")
+			edtNz.Hint = "Load Factor (Pull-up)"
 			btnNzUnit.Text = "g"
 		Else If indNzType=1 Then
 			If xx > 340dip Or sc > 1 Or ld = 1 Then
-				btnNzType.Text = MakeSubscript("N", "Z", " (Turn)")
-				edtNz.Hint = "Nz (Turn)"
+				btnNzType.Text = MakeSubscript("N", "z", " (Turn)")
+				edtNz.Hint = "Load Factor (Turn)"
 			Else
-				btnNzType.Text = MakeSubscript("N", "Z", "")
-				edtNz.Hint = "Nz"
+				btnNzType.Text = MakeSubscript("N", "z", "")
+				edtNz.Hint = "Load Factor"
 			End If
 			btnNzUnit.Text = "g"
 		Else If indNzType=2 Then
@@ -4078,7 +4078,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 2
-		lblVar.Text = "Geopotencial Altitude"
+		lblVar.Text = "Geopotential Altitude"
 		lblRes.Text = NumberFormat2(Hgeop * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeop) Or IsInf(Hgeop) Then
 			lblRes.Text = "----"
@@ -4166,7 +4166,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 16
-		lblVar.Text = "Stall Speed Vs"
+		lblVar.Text = MakeSubscript("Stall Speed V", "s", "")
 		lblRes.Text = NumberFormat2(Vs_cas * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
 		If IsNan(Vs_cas) Or IsInf(Vs_cas) Then
 			lblRes.Text = "----"
@@ -4178,7 +4178,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 18
-		lblVar.Text = "Lift Coefficient CL"
+		lblVar.Text = MakeSubscript("Lift Coefficient C", "L", "")
 		lblRes.Text = NumberFormat2(CL, 1, 3 + d, 3 + d, False)
 		If IsNan(CL) Or IsInf(CL) Then
 			lblRes.Text = "----"
@@ -4254,7 +4254,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 30
-		lblVar.Text = "Load Factor Nz"
+		lblVar.Text = MakeSubscript("Load Factor N", "z", "")
 		lblRes.Text = NumberFormat2(Nz, 1, 2 + d, 2 + d, False) & " g"
 		If IsNan(Nz) Or IsInf(Nz) Then
 			lblRes.Text = "----"
@@ -5101,9 +5101,9 @@ Sub edtCLmax_TextChanged (Old As String, New As String)
 	If New.CompareTo(text)<>0 Then
 		indCLmaxType = 0
 		If xx > 340dip Or sc > 1 Then
-			btnCLmax.Text = MakeSubscript("Flap 0 - CL", "MAX", "")
+			btnCLmax.Text = MakeSubscript("Flap 0 - C", "L,max", "")
 		Else
-			btnCLmax.Text = MakeSubscript("CL", "MAX", "")
+			btnCLmax.Text = MakeSubscript("C", "L,max", "")
 		End If
 	End If
 End Sub
