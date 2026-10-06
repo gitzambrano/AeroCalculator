@@ -562,28 +562,16 @@ Sub Activity_Create(FirstTime As Boolean)
 	root.Color = ColorPnlInput5
 
 	'Tamanho e numero de paineis de inputs
+	ib = 8dip
+	tb = 40dip
 	Dim PanelNb As Int
 	PanelNb = 14
-	yy = root.Height
-	xx = root.Width
-
-	If root.Width > root.Height Then
-		ib = 8dip
-		tb = 40dip
-	Else
-		Dim rowSpace As Double = (yy - 105dip) / PanelNb - 1dip
-		If rowSpace < 56dip Then
-			tb = Max(36dip, rowSpace - 10dip)
-			ib = Max(4dip, (rowSpace - tb) / 2)
-		Else
-			ib = 8dip
-			tb = 40dip
-		End If
-	End If
 
 	'Escalonamento com a area util (exclui status/navigation bars).
-	Dim hh As Double
+	Dim hh, yy As Double
 	hh = 99dip + PanelNb * (ib * 2 + tb) + PanelNb * 1dip + 1dip
+	yy = root.Height
+	xx = root.Width
 
 	sc = yy / hh
 	If sc<1 Then
@@ -1094,7 +1082,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		End Select
 	Next
 
-	scvMain1.Panel.Height = (PanelNb * (ib*2+tb) + PanelNb* 1dip + 24dip)*sc
+	scvMain1.Panel.Height = (PanelNb * (ib*2+tb) + PanelNb* 1dip + 3dip)*sc
 	container.AddPage(pnlBack1,"Inputs")
 
 ' Criando pagina de outputs
@@ -3228,7 +3216,7 @@ Sub WindType
 	If indWindType < 0 Then
 	Else If indWindType=0 Or indWindType=1 Then
 		If indWindType=0 Then
-			scvMain1.Panel.Height = (14 * (ib * 2 + tb) + 14dip + 24dip) * sc
+			scvMain1.Panel.Height = (14 * (ib * 2 + tb) +14dip+3dip)*sc
 			pnlv1 = scvMain1.Panel.GetView (24)
 			pnlv1.Visible=True
 			pnlv2 = scvMain1.Panel.GetView (26)
@@ -4097,7 +4085,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 2
-		lblVar.Text = MakeSubscript("Geopotential Altitude H", "geop", "")
+		lblVar.Text = MakeSubscript("Geopotential Altitude H", "g", "")
 		lblRes.Text = NumberFormat2(Hgeop * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeop) Or IsInf(Hgeop) Then
 			lblRes.Text = "----"
