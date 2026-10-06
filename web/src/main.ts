@@ -170,7 +170,7 @@ const fields: Field[] = [
 
 
 const resultNames = [
-  "Pressure Altitude", "Geometric Altitude", "Geopotencial Altitude", "Density Altitude", "Temperature Altitude",
+  "Pressure Altitude", "Geometric Altitude", "Geopotential Altitude", "Density Altitude", "Temperature Altitude",
   "Pressure", "Density", "Temperature", "Delta ISA", "Total Temperature", "Viscosity", "Sound Speed",
   "True Airspeed", "Calibrated Airspeed", "Equivalent Airspeed", "Ground Speed", "Stall Speed Vs", "Vs Factor",
   "Lift Coefficient CL", "Mach", "Reynolds", "Pressure Ratio δ", "Density Ratio σ", "Temperature Ratio θ",
@@ -183,7 +183,7 @@ const resultNames = [
 const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
   "Pressure Altitude": "Pressure Altitude H<sub>p</sub>",
   "Geometric Altitude": "Geometric Altitude H<sub>g</sub>",
-  "Geopotencial Altitude": "Geopotential Altitude H",
+  "Geopotential Altitude": "Geopotential Altitude H",
   "Density Altitude": "Density Altitude H<sub>ρ</sub>",
   "Temperature Altitude": "Temperature Altitude H<sub>T</sub>",
   "Total Temperature": "Total Temperature T<sub>t</sub>",
@@ -195,7 +195,7 @@ const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string
 const RESULT_HELPERS: Record<string, string> = {
   "Pressure Altitude": "Pressure altitude (Hp): ISA altitude corresponding to static pressure.\nEquation: pISA(Hp) = p\nUnit: m / ft",
   "Geometric Altitude": "Geometric altitude (h): physical height above mean sea level.\nEquation: h = r H / (r - H)\nUnit: m / ft",
-  "Geopotencial Altitude": "Geopotential altitude (H): effective gravitational altitude used by standard atmosphere.\nEquation: H = r h / (r + h)\nUnit: m / ft",
+  "Geopotential Altitude": "Geopotential altitude (H): effective gravitational altitude used by standard atmosphere.\nEquation: H = r h / (r + h)\nUnit: m / ft",
   "Density Altitude": "Density altitude (Hρ): ISA altitude with the same air density.\nEquation: ρISA(Hρ) = ρ\nUnit: m / ft",
   "Temperature Altitude": "Temperature altitude (HT): altitude in ISA with the same temperature.\nEquation: TISA(HT) = T\nUnit: m / ft",
   "Pressure": "Static atmospheric pressure (p).\nEquation: p = ρ R T\nUnit: Pa / mbar / psi",
@@ -1961,7 +1961,7 @@ function recalculate(): void {
     const outputs: Record<string, string> = {
       "Pressure Altitude": formatLength(pressureAltitudeM),
       "Geometric Altitude": formatLength(geometricAltitudeM),
-      "Geopotencial Altitude": formatLength(geopotentialAltitudeM),
+      "Geopotential Altitude": formatLength(geopotentialAltitudeM),
       "Density Altitude": formatLength(densityAltitudeM),
       "Temperature Altitude": formatLength(temperatureAltitudeM),
       "Pressure": formatPressure(atmosphere.pressurePa),
