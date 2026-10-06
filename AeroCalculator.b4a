@@ -4236,7 +4236,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 27
-		lblVar.Text = MakeSubscript("Dynamic Pressure × S / g", "0", "")
+		lblVar.Text = MakeSubscript("q S / g", "0", "")
 		lblRes.Text = NumberFormat2(Qd * Sref / 9.80665, 1, 1 + d, 1 + d, False) & " kgf"
 		If IsNan(Qd * Sref / 9.80665) Or IsInf(Qd * Sref / 9.80665) Then
 			lblRes.Text = "----"
