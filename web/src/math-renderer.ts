@@ -8,7 +8,7 @@ export const KEY_EQUATIONS_LATEX: Record<string, string> = {
   "Pressure Altitude": "p_{\\mathrm{ISA}}(H_p) = p",
   "Hg": "h = \\frac{r_0 \\, H}{r_0 - H}, \\quad H = \\frac{r_0 \\, h}{r_0 + h}",
   "Geometric Altitude": "h = \\frac{r_0 \\, H}{r_0 - H}",
-  "Geopotencial Altitude": "H = \\frac{r_0 \\, h}{r_0 + h}",
+  "Geopotential Altitude": "H = \\frac{r_0 \\, h}{r_0 + h}",
   "H": "H = \\frac{r_0 \\, h}{r_0 + h}",
   "Density Altitude": "\\rho_{\\mathrm{ISA}}(H_\\rho) = \\rho",
   "Hρ": "\\rho_{\\mathrm{ISA}}(H_\\rho) = \\rho",
