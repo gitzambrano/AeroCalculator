@@ -78,7 +78,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	
 	' Title
 	lblTitle.Initialize("")
-	lblTitle.Text = title
+	lblTitle.Text = FormatScriptedText(title)
 	lblTitle.TextSize = 16
 	lblTitle.TextColor = mTitleColor
 	lblTitle.Typeface = Typeface.DEFAULT_BOLD
@@ -255,6 +255,43 @@ Private Sub pnlSheet_Click
 	' Consume click
 End Sub
 
+' Render compact mathematical identifiers such as H_p, S_{ref}, C_{L,max}, and m²
+' without exposing markup characters in native Android labels.
+Private Sub FormatScriptedText(Value As String) As CSBuilder
+	Dim cs As CSBuilder
+	cs.Initialize
+	Dim pos As Int = 0
+	Do While pos < Value.Length
+		Dim marker As Int = Value.IndexOf2("_", pos)
+		If marker < 0 Then
+			cs.Append(Value.SubString(pos))
+			Exit
+		End If
+		If marker > pos Then cs.Append(Value.SubString2(pos, marker))
+		Dim subStart As Int = marker + 1
+		If subStart >= Value.Length Then
+			cs.Append("_")
+			Exit
+		End If
+		Dim subEnd As Int
+		If Value.SubString2(subStart, subStart + 1) = "{" Then
+			Dim closeBrace As Int = Value.IndexOf2("}", subStart + 1)
+			If closeBrace < 0 Then
+				cs.Append(Value.SubString(marker))
+				Exit
+			End If
+			subStart = subStart + 1
+			subEnd = closeBrace
+			pos = closeBrace + 1
+		Else
+			subEnd = Min(subStart + 1, Value.Length)
+			pos = subEnd
+		End If
+		cs.VerticalAlign(4dip).RelativeSize(0.68).Append(Value.SubString2(subStart, subEnd)).Pop.Pop
+	Loop
+	Return cs
+End Sub
+
 Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	Dismiss
 	mActivity = act
@@ -314,7 +351,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 
 	' Header title
 	lblTitle.Initialize("")
-	lblTitle.Text = headerTitle
+	lblTitle.Text = FormatScriptedText(headerTitle)
 	lblTitle.TextSize = 16
 	lblTitle.TextColor = mTitleColor
 	lblTitle.Typeface = Typeface.DEFAULT_BOLD
