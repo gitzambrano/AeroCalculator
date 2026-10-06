@@ -4066,13 +4066,13 @@ Sub WriteText
 	' Escrever Outputs nos Paineis
 	Select i
 	Case 0
-		lblVar.Text = "Pressure Altitude"
+		lblVar.Text = MakeSubscript("Pressure Altitude H", "p", "")
 		lblRes.Text = NumberFormat2(Hp_ft * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hp_ft) Or IsInf(Hp_ft) Then
 			lblRes.Text = "----"
 		End If
 	Case 1
-		lblVar.Text = "Geometric Altitude"
+		lblVar.Text = MakeSubscript("Geometric Altitude H", "g", "")
 		lblRes.Text = NumberFormat2(Hgeom * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeom) Or IsInf(Hgeom) Then
 			lblRes.Text = "----"
@@ -4084,43 +4084,43 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 3
-		lblVar.Text = "Density Altitude"
+		lblVar.Text = MakeSubscript("Density Altitude H", "ρ", "")
 		lblRes.Text = NumberFormat2(Hd * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hd) Or IsInf(Hd) Then
 			lblRes.Text = "----"
 		End If
 	Case 4
-		lblVar.Text = "Temperature Altitude"
+		lblVar.Text = MakeSubscript("Temperature Altitude H", "T", "")
 		lblRes.Text = NumberFormat2(Htemp * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Htemp) Or IsInf(Htemp) Then
 			lblRes.Text = "----"
 		End If	
 	Case 5
-		lblVar.Text = "Pressure"
+		lblVar.Text = "Pressure p"
 		lblRes.Text = NumberFormat2(P * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
 		If IsNan(P) Or IsInf(P) Then
 			lblRes.Text = "----"
 		End If
 	Case 6
-		lblVar.Text = "Density"
+		lblVar.Text = "Density ρ"
 		lblRes.Text = NumberFormat2(Rho, 1, 3 + d, 3 + d, False) & " kg/m³"
 		If IsNan(Rho) Or IsInf(Rho) Then
 			lblRes.Text = "----"
 		End If
 	Case 7
-		lblVar.Text = "Temperature"
+		lblVar.Text = "Temperature T"
 		lblRes.Text = NumberFormat2(T_degC * k2temp + c2temp, 1, 2 + d, 2 + d, False) & " " & manager.GetString("temperature")
 		If IsNan(T_degC) Or IsInf(T_degC) Then
 			lblRes.Text = "----"
 		End If
 	Case 8	
-		lblVar.Text = "Delta ISA"
+		lblVar.Text = "Δ ISA"
 		lblRes.Text = NumberFormat2(isa * k2temp, 1, 2 + d, 2 + d, False) & " " & manager.GetString("temperature")
 		If IsNan(isa) Or IsInf(isa) Then
 			lblRes.Text = "----"
 		End If
 	Case 9
-		lblVar.Text = "Total Temperature"
+		lblVar.Text = MakeSubscript("Total Temperature T", "t", "")
 		lblRes.Text = NumberFormat2(Ttot_degC * k2temp + c2temp, 1, 2 + d, 2 + d, False) & " " & manager.GetString("temperature")
 		If IsNan(Ttot_degC) Or IsInf(Ttot_degC) Then
 			lblRes.Text = "----"
@@ -4130,13 +4130,13 @@ Sub WriteText
 		rs.Initialize(NumberFormat2(mu * 100000, 1, 3 + d, 3 + d, False) & " × 10{T}{S}-5{S}{T} kg/m/s")
 		rs.Superscript2("{S}")
 		rs.RelativeSize2(.7,"{T}")
-		lblVar.Text = "Viscosity"
+		lblVar.Text = "Viscosity μ"
 		lblRes.Text = rs
 		If IsNan(mu) Or IsInf(mu) Then
 			lblRes.Text = "----"
 		End If
 	Case 11
-		lblVar.Text = "Sound Speed"
+		lblVar.Text = "Sound Speed a"
 		lblRes.Text = NumberFormat2(Vsound * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
 		If IsNan(Vsound) Or IsInf(Vsound) Then
 			lblRes.Text = "----"
@@ -4172,7 +4172,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 17
-		lblVar.Text = "Vs Factor"
+		lblVar.Text = MakeSubscript("V", "s", " Factor")
 		lblRes.Text = NumberFormat2(VsFact, 1, 3 + d, 3 + d, False)
 		If IsNan(VsFact) Or IsInf(VsFact) Then
 			lblRes.Text = "----"
@@ -4194,7 +4194,7 @@ Sub WriteText
 		rs1.Initialize(NumberFormat2(re / 1000000, 1, 2 + d, 2 + d, False) & " × 10{T}{S}6{T}{S}")
 		rs1.Superscript2("{S}")
 		rs1.RelativeSize2(.7,"{T}")
-		lblVar.Text = "Reynolds"
+		lblVar.Text = "Reynolds Re"
 		lblRes.Text = rs1
 		If IsNan(re) Or IsInf(re) Then
 			lblRes.Text = "----"
@@ -4218,25 +4218,25 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 24
-		lblVar.Text = "Dynamic Pressure"
+		lblVar.Text = "Dynamic Pressure q"
 		lblRes.Text = NumberFormat2(Qd * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
 		If IsNan(Qd) Or IsInf(Qd) Then
 			lblRes.Text = "----"
 		End If
 	Case 25
-		lblVar.Text = "Impact Pressure"
+		lblVar.Text = MakeSubscript("Impact Pressure q", "c", "")
 		lblRes.Text = NumberFormat2(Qc * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
 		If IsNan(Qc) Or IsInf(Qc) Then
 			lblRes.Text = "----"
 		End If
 	Case 26
-		lblVar.Text = "Total Pressure"
+		lblVar.Text = MakeSubscript("Total Pressure p", "t", "")
 		lblRes.Text = NumberFormat2(Ptot * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
 		If IsNan(Ptot) Or IsInf(Ptot) Then
 			lblRes.Text = "----"
 		End If
 	Case 27
-		lblVar.Text = "DynPressure * S / g"
+		lblVar.Text = MakeSubscript("Dynamic Pressure × S / g", "0", "")
 		lblRes.Text = NumberFormat2(Qd * Sref / 9.80665, 1, 1 + d, 1 + d, False) & " kgf"
 		If IsNan(Qd * Sref / 9.80665) Or IsInf(Qd * Sref / 9.80665) Then
 			lblRes.Text = "----"
@@ -4248,7 +4248,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 29
-		lblVar.Text = "Weight/Delta W/δ"
+		lblVar.Text = "Weight / δ"
 		lblRes.Text = NumberFormat2(weight / P_P0, 1, 1 + d, 1 + d, False) & " kgf"
 		If IsNan(weight / P_P0) Or IsInf(weight / P_P0) Then
 			lblRes.Text = "----"
@@ -4267,7 +4267,7 @@ Sub WriteText
 		End If
 	Case 32
 		lblVar.Text = "Turn Radius"
-		lblRes.Text = NumberFormat2(tas*tas/(9.80665*Tan(Bank)*1000), 1, 3 + d, 3 + d, False) & " Km"
+		lblRes.Text = NumberFormat2(tas*tas/(9.80665*Tan(Bank)*1000), 1, 3 + d, 3 + d, False) & " km"
 		If IsNan(tas*tas/(9.80665*Tan(Bank)*1000)) Or IsInf(tas*tas/(9.80665*Tan(Bank)*1000)) Then
 			lblRes.Text = "----"
 		End If
@@ -4314,13 +4314,13 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 40
-		lblVar.Text = "AlongTrack Headwind"
+		lblVar.Text = "Along-Track Headwind"
 		lblRes.Text = NumberFormat2(HW * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
 		If IsNan(HW) Or IsInf(HW) Then
 			lblRes.Text = "----"
 		End If
 	Case 41
-		lblVar.Text = "AlongTrack Crosswind"
+		lblVar.Text = "Along-Track Crosswind"
 		lblRes.Text = NumberFormat2(CW * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
 		If IsNan(CW) Or IsInf(CW) Then
 			lblRes.Text = "----"
