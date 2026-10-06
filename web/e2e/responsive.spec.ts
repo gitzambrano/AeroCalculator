@@ -37,7 +37,12 @@ async function assertCriticalTextNotClipped(page: Page): Promise<void> {
         const rect = el.getBoundingClientRect();
         return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
       })
-      .filter((el) => el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 2)
+      .filter((el) => {
+        const style = getComputedStyle(el);
+        const verticalIsClipped = (style.overflowY === "hidden" || style.overflowY === "clip")
+          && el.scrollHeight > el.clientHeight + 2;
+        return el.scrollWidth > el.clientWidth + 1 || verticalIsClipped;
+      })
       .map((el) => ({
         text: el.textContent?.trim(),
         className: el.className,
