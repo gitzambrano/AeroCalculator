@@ -155,7 +155,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     model: "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
     unit: "rad",
   },
-  "Geopotencial Altitude": {
+  "Geopotential Altitude": {
     title: "Geopotential altitude \u2022 H",
     desc: "Effective gravitational altitude used by the standard atmosphere.",
     eq: "H = r h / (r + h); for Hp/P input, H = Hp \u2212 29.271247 \u0394T ln(p/p0)",
