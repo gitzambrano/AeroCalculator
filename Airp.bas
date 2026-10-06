@@ -445,7 +445,7 @@ Sub CreateItem(ii As Int, He As Int)
 			lblSref.Gravity = Gravity.LEFT
 			lblSref.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			Dim rs1 As RichString
-			rs1.Initialize("Area S{T}{S}REF{T}{S}")
+			rs1.Initialize("Area S{T}{S}ref{T}{S}")
 			rs1.Subscript2("{S}")
 			rs1.RelativeSize2(.7,"{T}")
 			lblSref.Text = rs1
@@ -481,7 +481,7 @@ Sub CreateItem(ii As Int, He As Int)
 			lblcref.Gravity = Gravity.LEFT
 			lblcref.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			Dim rs2 As RichString
-			rs2.Initialize("Chord c{T}{S}REF{T}{S}")
+			rs2.Initialize("Chord c{T}{S}ref{T}{S}")
 			rs2.Subscript2("{S}")
 			rs2.RelativeSize2(.7,"{T}")
 			lblcref.Text = rs2
@@ -526,7 +526,7 @@ Sub CreateItem(ii As Int, He As Int)
 			btnWeightUnit.Initialize("btnWeightUnit")
 			btnWeightUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorPnlTitle))
 		    pnl4.AddView(btnWeightUnit,77%x, 8dip, 20%x, 34dip)
-		    btnWeightUnit.Text="Kg"
+		    btnWeightUnit.Text="kg"
 			btnWeightUnit.TextSize = 11
 			ModernizeButton(btnWeightUnit)
 			btnWeightUnit.TextColor = Main.ColorButText1
@@ -657,7 +657,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView (pnldiv,0,pnl5.Height-1dip,100%x,1dip)
 			
 			Dim rs3 As RichString
-			rs3.Initialize("CL{T}{S}MAX{T}{S}")
+			rs3.Initialize("C{T}{S}L,max{T}{S}")
 			rs3.Subscript2("{S}")
 			rs3.RelativeSize2(.7,"{T}")
 			lblCLmax.Initialize("")
