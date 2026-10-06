@@ -572,7 +572,7 @@
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Wind Direction"
     },
-    "Geopotencial Altitude": {
+    "Geopotential Altitude": {
       "full": "Geopotential altitude",
       "short": "H",
       "symbol": "H",
