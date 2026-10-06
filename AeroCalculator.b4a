@@ -881,7 +881,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnCLmaxUnit.TextSize = 15*sc
 			btnCLmaxUnit.TextColor = ColorButText1
 			btnCLmaxUnit.Enabled = True
-			edtCLmax.Hint="CLmax"
+			edtCLmax.Hint="Max Lift Coeff."
 			edtCLmax.Gravity = Gravity.CENTER
 			edtCLmax.TextSize = 13*sc
 			edtCLmax.InputType = edtCLmax.INPUT_TYPE_DECIMAL_NUMBERS
@@ -5094,11 +5094,21 @@ Sub edtWeight_TextChanged (Old As String, New As String)
 End Sub
 
 Sub edtCLmax_TextChanged (Old As String, New As String)
-	Dim text As String
-	For ii=0 To 13
-		If (btnCLmax.text.CompareTo("CLMAX - " & "F" & ii)=0 Or btnCLmax.text.CompareTo("CLMAX " & "F" & ii)=0) Then text = a.GetDefault(ID_inp & "_F" & ii,"")
-	Next
-	If New.CompareTo(text)<>0 Then
+	Dim text As String = ""
+	If indCLmaxType > 0 Then
+		Dim count As Int = 0
+		For ii = 0 To 13
+			Dim stored As String = a.GetDefault(ID_inp & "_F" & ii, "")
+			If stored.CompareTo("") <> 0 And stored.CompareTo("null") <> 0 Then
+				count = count + 1
+				If count = indCLmaxType Then
+					text = stored
+					Exit
+				End If
+			End If
+		Next
+	End If
+	If New.CompareTo(text) <> 0 Then
 		indCLmaxType = 0
 		If xx > 340dip Or sc > 1 Then
 			btnCLmax.Text = MakeSubscript("Flap 0 - C", "L,max", "")
