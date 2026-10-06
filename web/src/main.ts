@@ -2012,7 +2012,7 @@ function recalculate(): void {
       "Weight/Delta W/δ": formatScalarWithUnit(mass / pressureRatio, 1, "kgf"),
       "Load Factor Nz": formatScalarWithUnit(nz, 2, "g"),
       "Bank Angle φ": formatPlainAngle(bank),
-      "Turn Radius": Number.isFinite(turnRadiusM) ? `${fmt(turnRadiusM / 1000, 3)} Km` : "----",
+      "Turn Radius": Number.isFinite(turnRadiusM) ? `${fmt(turnRadiusM / 1000, 3)} km` : "----",
       "Turn Rate": Number.isFinite(turnRate) ? formatAngleRate(turnRate) : "----",
       "Track Angle": angleText(windSolution.trackRad),
       "Heading Angle Ψ": angleText(windSolution.headingRad),
