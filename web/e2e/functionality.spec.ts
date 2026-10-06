@@ -210,7 +210,7 @@ test("aircraft profile create, select and Android-compatible export work end to 
   await page.locator("#profile-save").click();
 
   await expect(page.locator(".airplane-name-button strong")).toHaveText("Test Jet");
-  await page.locator(".airplane-name-button").dblclick();
+  await page.locator(".airplane-name-button").click();
   await expect(page.locator("#airplane-select")).toHaveValue(/.+/);
   await expect(page.locator("#sref-value")).toHaveValue("42");
   await select(page, "weight-type", "MTOW");
