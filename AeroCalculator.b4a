@@ -4085,7 +4085,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 2
-		lblVar.Text = "Geopotential Altitude"
+		lblVar.Text = "Geopotential Altitude H"
 		lblRes.Text = NumberFormat2(Hgeop * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeop) Or IsInf(Hgeop) Then
 			lblRes.Text = "----"
