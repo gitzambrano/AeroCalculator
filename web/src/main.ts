@@ -87,8 +87,8 @@ const FIELD_HELPERS: Record<string, string> = {
   "CL": "Lift coefficient. With mass, load factor and reference area, it defines the required dynamic pressure.",
   "Vs Factor": "Multiplier applied to the 1-g calibrated stall speed. The optional +Δ term is added in knots.",
   "Ground Speed": "Aircraft speed relative to the ground. Wind and direction inputs are used to recover the air-relative velocity.",
-  "Qdyn": "Dynamic pressure q = ½ρV².",
-  "Qc": "Impact pressure qc = total pressure minus static pressure for the documented subsonic model.",
+  "Qdyn": "Dynamic pressure for the current air density and true airspeed.",
+  "Qc": "Impact pressure: total pressure minus static pressure for the documented subsonic model.",
   "Weight": "Aircraft mass used for lift, stall-speed and maneuver calculations.",
   "Sref": "Wing reference area used in aerodynamic force and coefficient calculations.",
   "cref": "Wing reference chord used to calculate Reynolds number.",
@@ -648,8 +648,8 @@ function openFieldOptionPicker(fieldId: string): void {
     if (fieldId === "weight" && val === "Weight") label = "Custom Mass";
     else if (fieldId === "clmax" && val === "CLmax") label = "Custom C<sub>L,max</sub>";
     else if (fieldId === "clmax" && val === "Flap 0") label = "Flap 0 (clean)";
-    else if (fieldId === "spd" && val === "Qc") label = "Impact Pressure (Qc)";
-    else if (fieldId === "spd" && val === "Qdyn") label = "Dynamic Pressure (Qdyn)";
+    else if (fieldId === "spd" && val === "Qc") label = "Impact Pressure q<sub>c</sub>";
+    else if (fieldId === "spd" && val === "Qdyn") label = "Dynamic Pressure q";
     else if (DEFAULT_OPTION_LABELS[val]) label = DEFAULT_OPTION_LABELS[val];
 
     let desc = FIELD_OPTION_DESCRIPTIONS[val];
@@ -1146,15 +1146,15 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (!window.matchMedia("(max-width: 360px)").matches) return label;
   if (value === "Hp") return "H<sub>p</sub>";
   if (value === "Hg") return "H<sub>g</sub>";
-  if (value === "P") return "P";
+  if (value === "P") return "p";
   if (value === "OAT") return "OAT";
   if (value === "TAS") return "TAS";
   if (value === "CAS") return "CAS";
   if (value === "EAS") return "EAS";
-  if (value === "Vs Factor") return "VsFact";
+  if (value === "Vs Factor") return "V<sub>s</sub> Fact";
   if (value === "Ground Speed") return "GrSpd";
-  if (value === "Qdyn") return "Qdyn";
-  if (value === "Qc") return "Qc";
+  if (value === "Qdyn") return "q";
+  if (value === "Qc") return "q<sub>c</sub>";
   if (value === "Sref") return "S<sub>ref</sub>";
   if (value === "cref") return "c<sub>ref</sub>";
   if (value === "CLmax") return "C<sub>L,max</sub>";
