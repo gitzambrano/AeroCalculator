@@ -1147,7 +1147,7 @@ function initializeSwipeNavigation(): void {
 }
 
 function responsiveOptionLabel(value: string, label: string): string {
-  if (!window.matchMedia("(max-width: 360px)").matches) return label;
+  if (!window.matchMedia("(max-width: 430px)").matches) return label;
   if (value === "Hp") return "H<sub>p</sub>";
   if (value === "Hg") return "H<sub>g</sub>";
   if (value === "P") return "p";
