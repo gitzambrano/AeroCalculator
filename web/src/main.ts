@@ -94,8 +94,8 @@ const FIELD_HELPERS: Record<string, string> = {
   "cref": "Wing reference chord used to calculate Reynolds number.",
   "CLmax": "Maximum lift coefficient used to calculate the 1-g stall speed.",
   "NzPullup": "Normal load factor for a pull-up maneuver. Bank angle is zero.",
-  "NzTurn": "Normal load factor in a coordinated level turn. Bank angle is derived from Nz = 1/cos(φ).",
-  "BankTurn": "Bank angle for a coordinated level turn. Load factor is derived from Nz = 1/cos(φ).",
+  "NzTurn": "Normal load factor in a coordinated level turn. Bank angle is derived from n = 1/cos(φ).",
+  "BankTurn": "Bank angle for a coordinated level turn. Load factor is derived from n = 1/cos(φ).",
   "Track": "Track angle: direction of the ground-velocity vector.",
   "Heading": "Heading angle: direction the aircraft longitudinal axis points.",
   "Sideslip": "Sideslip angle β: angle between the aircraft heading and the air-relative velocity direction.",
@@ -159,7 +159,7 @@ const fields: Field[] = [
   { id: "weight", typeOptions: opts(["Weight"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "1" },
   { id: "sref", typeOptions: [{ value: "Sref", label: "Area S<sub>ref</sub>" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
   { id: "cref", typeOptions: [{ value: "cref", label: "Chord c<sub>ref</sub>" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
-  { id: "clmax", typeOptions: [{ value: "CLmax", label: "Flap 0 - C<sub>L,max</sub>" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1" },
+  { id: "clmax", typeOptions: [{ value: "CLmax", label: "Flap 0 - C<sub>L,max</sub>" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "Maximum lift coefficient", defaultValue: "1" },
   { id: "nz", typeOptions: [{ value: "NzPullup", label: "N<sub>z</sub>&nbsp;(Pull-up)" }, { value: "NzTurn", label: "N<sub>z</sub>&nbsp;(Turn)" }, { value: "BankTurn", label: "Bank Angle" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
   { id: "angle1", typeOptions: opts(["Track", "Heading"]), unitOptions: opts(["deg", "rad"]), defaultType: "Track", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "angle2", typeOptions: opts(["Sideslip", "Drift"]), unitOptions: opts(["deg", "rad"]), defaultType: "Sideslip", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
@@ -315,7 +315,7 @@ app.innerHTML = `
             <div class="weight-grid"><label>MTOW<input id="profile-weight-MTOW" inputmode="decimal" placeholder="MTOW" /></label><label>MLW<input id="profile-weight-MLW" inputmode="decimal" placeholder="MLW" /></label><label>MZFW<input id="profile-weight-MZFW" inputmode="decimal" placeholder="MZFW" /></label><label>BOW<input id="profile-weight-BOW" inputmode="decimal" placeholder="BOW" /></label><label>Heavy<input id="profile-weight-Heavy" inputmode="decimal" placeholder="Heavy" /></label><label>Light<input id="profile-weight-Light" inputmode="decimal" placeholder="Light" /></label></div>
           </section>
           <section class="editor-section">
-            <div class="editor-section-head"><strong>C<sub>L,max</sub></strong><button type="button" id="add-flap" class="add-flap" aria-label="Add flap CLmax">＋</button></div>
+            <div class="editor-section-head"><strong>C<sub>L,max</sub></strong><button type="button" id="add-flap" class="add-flap" aria-label="Add flap maximum lift coefficient">＋</button></div>
             <div class="flap-grid" id="flap-grid"><label data-flap-row="0" hidden>Flap 0<input id="profile-flap-0" inputmode="decimal" placeholder="Flap 0" /></label><label data-flap-row="1" hidden>Flap 1<input id="profile-flap-1" inputmode="decimal" placeholder="Flap 1" /></label><label data-flap-row="2" hidden>Flap 2<input id="profile-flap-2" inputmode="decimal" placeholder="Flap 2" /></label><label data-flap-row="3" hidden>Flap 3<input id="profile-flap-3" inputmode="decimal" placeholder="Flap 3" /></label><label data-flap-row="4" hidden>Flap 4<input id="profile-flap-4" inputmode="decimal" placeholder="Flap 4" /></label><label data-flap-row="5" hidden>Flap 5<input id="profile-flap-5" inputmode="decimal" placeholder="Flap 5" /></label><label data-flap-row="6" hidden>Flap 6<input id="profile-flap-6" inputmode="decimal" placeholder="Flap 6" /></label><label data-flap-row="7" hidden>Flap 7<input id="profile-flap-7" inputmode="decimal" placeholder="Flap 7" /></label><label data-flap-row="8" hidden>Flap 8<input id="profile-flap-8" inputmode="decimal" placeholder="Flap 8" /></label><label data-flap-row="9" hidden>Flap 9<input id="profile-flap-9" inputmode="decimal" placeholder="Flap 9" /></label><label data-flap-row="10" hidden>Flap 10<input id="profile-flap-10" inputmode="decimal" placeholder="Flap 10" /></label><label data-flap-row="11" hidden>Flap 11<input id="profile-flap-11" inputmode="decimal" placeholder="Flap 11" /></label><label data-flap-row="12" hidden>Flap 12<input id="profile-flap-12" inputmode="decimal" placeholder="Flap 12" /></label><label data-flap-row="13" hidden>Flap 13<input id="profile-flap-13" inputmode="decimal" placeholder="Flap 13" /></label></div>
           </section>
           <div class="editor-actions" id="profile-delete-wrap" hidden>
@@ -563,10 +563,10 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
 
   // Flaps / CLmax
   CLmax: "User-defined max lift coefficient",
-  "Flap 0": "Flap 0 (clean configuration) CLmax",
+  "Flap 0": "Flap 0 (clean configuration) maximum lift coefficient",
 
   // Altitude
-  Hp: "Barometric altitude (HP), ISA",
+  Hp: "Barometric altitude, ISA",
   Hg: "True height above MSL",
   P: "Direct static pressure input",
 
@@ -575,7 +575,7 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   OAT: "Outside air temperature",
 
   // Maneuver
-  NzPullup: "Symmetric pull-up (Nz = L/W)",
+  NzPullup: "Symmetric pull-up (n = L/W)",
   NzTurn: "Coordinated turn load factor",
   BankTurn: "Coordinated turn bank angle",
 
@@ -638,7 +638,7 @@ function openFieldOptionPicker(fieldId: string): void {
     let desc = FIELD_OPTION_DESCRIPTIONS[val];
     if (!desc && val.startsWith("Flap ")) {
       const flapNum = val.slice(5);
-      desc = `Flap ${flapNum} CLmax`;
+      desc = `Flap ${flapNum} maximum lift coefficient`;
     }
 
     const itemEl = document.createElement("div");
@@ -831,7 +831,7 @@ function createAirplaneRow(): HTMLElement {
   picker.id = "airplane-select";
   picker.className = "profile-select";
   picker.setAttribute("aria-label", "Airplane profile");
-  setHelper(picker, "Select a stored aircraft profile. Its reference geometry, named weights and CLmax flap values become available in Inputs.");
+  setHelper(picker, "Select a stored aircraft profile. Its reference geometry, named weights and flap maximum-lift-coefficient values become available in Inputs.");
   picker.addEventListener("click", () => vibrateTap());
   picker.addEventListener("change", () => {
     vibrateTap();
@@ -1127,8 +1127,8 @@ function initializeSwipeNavigation(): void {
 
 function responsiveOptionLabel(value: string, label: string): string {
   if (!window.matchMedia("(max-width: 360px)").matches) return label;
-  if (value === "Hp") return "Hp";
-  if (value === "Hg") return "Hg";
+  if (value === "Hp") return "H<sub>p</sub>";
+  if (value === "Hg") return "H<sub>g</sub>";
   if (value === "P") return "P";
   if (value === "OAT") return "OAT";
   if (value === "TAS") return "TAS";
@@ -1254,7 +1254,7 @@ function renderProfiles(): void {
     duplicateButton.textContent = "⧉";
     duplicateButton.setAttribute("aria-label", `Duplicate ${displayName}`);
     duplicateButton.title = "Duplicate airplane";
-    setHelper(duplicateButton, "Duplicate this aircraft immediately below the original, including geometry, weights and CLmax values.");
+    setHelper(duplicateButton, "Duplicate this aircraft immediately below the original, including geometry, weights and maximum lift coefficient values.");
     duplicateButton.addEventListener("click", () => duplicateStoredProfile(profile.id));
 
     const editButton = document.createElement("button");
@@ -2005,7 +2005,7 @@ function recalculate(): void {
 
     renderResults(outputs);
     setStatus(
-      `Valid solution · Hp = ${fmt(pressureAltitudeM, 1)} m · M = ${fmt(mach, 3)} · GS = ${fmt(windSolution.groundSpeedMS / (1852 / 3600), 1)} kt`,
+      `Valid solution · Hₚ = ${fmt(pressureAltitudeM, 1)} m · M = ${fmt(mach, 3)} · GS = ${fmt(windSolution.groundSpeedMS / (1852 / 3600), 1)} kt`,
       false,
     );
   } catch (error) {
@@ -2075,7 +2075,7 @@ function resolveTas(atmosphere: Atmosphere, mass: number, nz: number, sref: numb
     tas = Math.sqrt(2 * q / atmosphere.densityKgM3);
   } else if (type === "Vs Factor") {
     if (value < 0) throw new Error("Vs Factor cannot be negative.");
-    if (!Number.isFinite(vsCas)) throw new Error("Vs Factor requires valid mass, reference area, and CLmax.");
+    if (!Number.isFinite(vsCas)) throw new Error("Vs Factor requires valid mass, reference area, and maximum lift coefficient.");
     const deltaCas = units.speedToMS(num("spdDelta-value"), "kt");
     const targetCas = value * vsCas + deltaCas;
     if (targetCas < 0) throw new Error("Vs Factor plus Δ speed produces a negative CAS.");
