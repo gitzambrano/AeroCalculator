@@ -91,7 +91,7 @@ test("every visible control and label has a usable accessible identity", async (
   await auditVisibleControls();
 
   await page.getByRole("button", { name: "Add airplane" }).click();
-  for (let i = 0; i < 14; i += 1) await page.getByRole("button", { name: "Add flap CLmax" }).click();
+  for (let i = 0; i < 14; i += 1) await page.getByRole("button", { name: "Add flap maximum lift coefficient" }).click();
   await expect(page.locator("[data-flap-row]:visible")).toHaveCount(14);
   await auditVisibleControls();
 
@@ -351,11 +351,11 @@ test("aircraft editor exercises every unit, weight, flap, save, edit and delete 
   }
 
   for (let i = 0; i < 14; i += 1) {
-    await page.getByRole("button", { name: "Add flap CLmax" }).click();
+    await page.getByRole("button", { name: "Add flap maximum lift coefficient" }).click();
     await fill(page, "profile-flap-" + i, (1.4 + i * 0.05).toFixed(2));
   }
   await expect(page.locator("[data-flap-row]:visible")).toHaveCount(14);
-  await expect(page.getByRole("button", { name: "Add flap CLmax" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Add flap maximum lift coefficient" })).toBeDisabled();
 
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.locator(".airplane-name-button strong")).toHaveText("Full Audit Jet");
