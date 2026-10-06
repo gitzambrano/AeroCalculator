@@ -43,7 +43,7 @@ for (const viewport of cases) {
     await expect(page.locator(".app-shell")).toBeVisible();
 
     await shot(page, dir, "01-inputs-viewport");
-    await page.locator("#spd-type").hover();
+    await page.locator('[data-field="spd"] .field-select-wrap').hover();
     await expect(page.locator("#field-tooltip")).toBeVisible();
     await shot(page, dir, "02-speed-helper");
     await page.mouse.move(1, 1);
