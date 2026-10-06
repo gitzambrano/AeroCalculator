@@ -126,8 +126,8 @@ function helperFor(fieldId: string, typeValue: string): string {
 }
 
 const DEFAULT_OPTION_LABELS: Record<string, string> = {
-  Hp: "Altitude H<sub>P</sub>",
-  Hg: "Altitude H<sub>G</sub>",
+  Hp: "Altitude H<sub>p</sub>",
+  Hg: "Altitude H<sub>g</sub>",
   P: "Static Pressure",
   OAT: "Temperature OAT",
   TAS: "Airspeed TAS",
@@ -135,11 +135,11 @@ const DEFAULT_OPTION_LABELS: Record<string, string> = {
   EAS: "Airspeed EAS",
   Qdyn: "Dynamic Pressure",
   Qc: "Impact Pressure",
-  Sref: "Area S<sub>REF</sub>",
-  cref: "Chord c<sub>REF</sub>",
-  CLmax: "Flap 0 - CL<sub>MAX</sub>",
-  NzPullup: "N<sub>Z</sub>&nbsp;(Pull-up)",
-  NzTurn: "N<sub>Z</sub>&nbsp;(Turn)",
+  Sref: "Area S<sub>ref</sub>",
+  cref: "Chord c<sub>ref</sub>",
+  CLmax: "Flap 0 - C<sub>L,max</sub>",
+  NzPullup: "N<sub>z</sub>&nbsp;(Pull-up)",
+  NzTurn: "N<sub>z</sub>&nbsp;(Turn)",
   BankTurn: "Bank Angle",
   Track: "Track Angle",
   Heading: "Heading Angle",
@@ -157,10 +157,10 @@ const fields: Field[] = [
   { id: "temp", typeOptions: opts(["Δ ISA", "OAT"]), unitOptions: opts(["°C", "°F", "K"]), defaultType: "OAT", defaultUnit: "°C", placeholder: "Temperature", defaultValue: "0" },
   { id: "spd", typeOptions: opts(["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"]), unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "CAS", defaultUnit: "kt", placeholder: "Speed", defaultValue: "0" },
   { id: "weight", typeOptions: opts(["Weight"]), unitOptions: opts(["kg", "lb", "ton", "slug", "oz"]), defaultType: "Weight", defaultUnit: "kg", placeholder: "Mass", defaultValue: "1" },
-  { id: "sref", typeOptions: [{ value: "Sref", label: "Area S<sub>REF</sub>" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
-  { id: "cref", typeOptions: [{ value: "cref", label: "Chord c<sub>REF</sub>" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
-  { id: "clmax", typeOptions: [{ value: "CLmax", label: "Flap 0 - CL<sub>MAX</sub>" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1" },
-  { id: "nz", typeOptions: [{ value: "NzPullup", label: "N<sub>Z</sub>&nbsp;(Pull-up)" }, { value: "NzTurn", label: "N<sub>Z</sub>&nbsp;(Turn)" }, { value: "BankTurn", label: "Bank Angle" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
+  { id: "sref", typeOptions: [{ value: "Sref", label: "Area S<sub>ref</sub>" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
+  { id: "cref", typeOptions: [{ value: "cref", label: "Chord c<sub>ref</sub>" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
+  { id: "clmax", typeOptions: [{ value: "CLmax", label: "Flap 0 - C<sub>L,max</sub>" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "CLmax", defaultValue: "1" },
+  { id: "nz", typeOptions: [{ value: "NzPullup", label: "N<sub>z</sub>&nbsp;(Pull-up)" }, { value: "NzTurn", label: "N<sub>z</sub>&nbsp;(Turn)" }, { value: "BankTurn", label: "Bank Angle" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
   { id: "angle1", typeOptions: opts(["Track", "Heading"]), unitOptions: opts(["deg", "rad"]), defaultType: "Track", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "angle2", typeOptions: opts(["Sideslip", "Drift"]), unitOptions: opts(["deg", "rad"]), defaultType: "Sideslip", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "headWind", typeOptions: [{ value: "HeadWind", label: "HeadWind" }, { value: "Wind Speed", label: "Wind Speed" }], unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "HeadWind", defaultUnit: "kt", placeholder: "Wind", defaultValue: "0" },
@@ -178,6 +178,18 @@ const resultNames = [
   "Load Factor Nz", "Bank Angle φ", "Turn Radius", "Turn Rate", "Track Angle", "Heading Angle Ψ", "Drift Angle",
   "Sideslip Angle β", "Wind Speed", "Wind Direction", "AlongTrack Headwind", "AlongTrack Crosswind",
 ] as const;
+
+const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
+  "Pressure Altitude": "Pressure Altitude H<sub>p</sub>",
+  "Geometric Altitude": "Geometric Altitude H<sub>g</sub>",
+  "Geopotencial Altitude": "Geopotential Altitude H",
+  "Density Altitude": "Density Altitude H<sub>ρ</sub>",
+  "Temperature Altitude": "Temperature Altitude H<sub>T</sub>",
+  "Total Temperature": "Total Temperature T<sub>t</sub>",
+  "Stall Speed Vs": "Stall Speed V<sub>s</sub>",
+  "Lift Coefficient CL": "Lift Coefficient C<sub>L</sub>",
+  "Load Factor Nz": "Load Factor N<sub>z</sub>",
+};
 
 const RESULT_HELPERS: Record<string, string> = {
   "Pressure Altitude": "Pressure altitude (Hp): ISA altitude corresponding to static pressure.\nEquation: pISA(Hp) = p\nUnit: m / ft",
@@ -295,14 +307,14 @@ app.innerHTML = `
         </div>
         <div class="editor-scroll">
           <div class="editor-row editor-name-row"><label for="profile-name">Name</label><input id="profile-name" type="text" placeholder="Aircraft Name" /></div>
-          <div class="editor-row"><label for="profile-sref">Area S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
-          <div class="editor-row"><label for="profile-cref">Chord c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
+          <div class="editor-row"><label for="profile-sref">Area S<sub>ref</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
+          <div class="editor-row"><label for="profile-cref">Chord c<sub>ref</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
           <section class="editor-section">
             <div class="editor-section-head"><strong>Weight</strong><select id="profile-weight-unit" aria-label="Aircraft weight unit"><option>kg</option><option>lb</option><option>ton</option><option>slug</option><option>oz</option></select></div>
             <div class="weight-grid"><label>MTOW<input id="profile-weight-MTOW" inputmode="decimal" placeholder="MTOW" /></label><label>MLW<input id="profile-weight-MLW" inputmode="decimal" placeholder="MLW" /></label><label>MZFW<input id="profile-weight-MZFW" inputmode="decimal" placeholder="MZFW" /></label><label>BOW<input id="profile-weight-BOW" inputmode="decimal" placeholder="BOW" /></label><label>Heavy<input id="profile-weight-Heavy" inputmode="decimal" placeholder="Heavy" /></label><label>Light<input id="profile-weight-Light" inputmode="decimal" placeholder="Light" /></label></div>
           </section>
           <section class="editor-section">
-            <div class="editor-section-head"><strong>CL<sub>MAX</sub></strong><button type="button" id="add-flap" class="add-flap" aria-label="Add flap CLmax">＋</button></div>
+            <div class="editor-section-head"><strong>C<sub>L,max</sub></strong><button type="button" id="add-flap" class="add-flap" aria-label="Add flap CLmax">＋</button></div>
             <div class="flap-grid" id="flap-grid"><label data-flap-row="0" hidden>Flap 0<input id="profile-flap-0" inputmode="decimal" placeholder="Flap 0" /></label><label data-flap-row="1" hidden>Flap 1<input id="profile-flap-1" inputmode="decimal" placeholder="Flap 1" /></label><label data-flap-row="2" hidden>Flap 2<input id="profile-flap-2" inputmode="decimal" placeholder="Flap 2" /></label><label data-flap-row="3" hidden>Flap 3<input id="profile-flap-3" inputmode="decimal" placeholder="Flap 3" /></label><label data-flap-row="4" hidden>Flap 4<input id="profile-flap-4" inputmode="decimal" placeholder="Flap 4" /></label><label data-flap-row="5" hidden>Flap 5<input id="profile-flap-5" inputmode="decimal" placeholder="Flap 5" /></label><label data-flap-row="6" hidden>Flap 6<input id="profile-flap-6" inputmode="decimal" placeholder="Flap 6" /></label><label data-flap-row="7" hidden>Flap 7<input id="profile-flap-7" inputmode="decimal" placeholder="Flap 7" /></label><label data-flap-row="8" hidden>Flap 8<input id="profile-flap-8" inputmode="decimal" placeholder="Flap 8" /></label><label data-flap-row="9" hidden>Flap 9<input id="profile-flap-9" inputmode="decimal" placeholder="Flap 9" /></label><label data-flap-row="10" hidden>Flap 10<input id="profile-flap-10" inputmode="decimal" placeholder="Flap 10" /></label><label data-flap-row="11" hidden>Flap 11<input id="profile-flap-11" inputmode="decimal" placeholder="Flap 11" /></label><label data-flap-row="12" hidden>Flap 12<input id="profile-flap-12" inputmode="decimal" placeholder="Flap 12" /></label><label data-flap-row="13" hidden>Flap 13<input id="profile-flap-13" inputmode="decimal" placeholder="Flap 13" /></label></div>
           </section>
           <div class="editor-actions" id="profile-delete-wrap" hidden>
@@ -613,7 +625,7 @@ function openFieldOptionPicker(fieldId: string): void {
     const val = opt.value;
     let label = opt.label || val;
     if (fieldId === "weight" && val === "Weight") label = "Custom Mass";
-    else if (fieldId === "clmax" && val === "CLmax") label = "Custom CL<sub>MAX</sub>";
+    else if (fieldId === "clmax" && val === "CLmax") label = "Custom C<sub>L,max</sub>";
     else if (fieldId === "clmax" && val === "Flap 0") label = "Flap 0 (clean)";
     else if (fieldId === "spd" && val === "Qc") label = "Impact Pressure (Qc)";
     else if (fieldId === "spd" && val === "Qdyn") label = "Dynamic Pressure (Qdyn)";
@@ -687,7 +699,7 @@ for (const name of resultNames) {
   li.tabIndex = 0;
   li.dataset.helper = RESULT_HELPERS[name] ?? name;
   li.dataset.name = name;
-  li.innerHTML = `<span class="result-name">${name}</span><span class="result-value na" data-result="${name}">----</span>`;
+  li.innerHTML = `<span class="result-name">${RESULT_DISPLAY_LABELS[name] ?? name}</span><span class="result-value na" data-result="${name}">----</span>`;
   li.addEventListener("click", () => showContextualHelp(name));
   resultsList.append(li);
 }
@@ -1122,10 +1134,10 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "Ground Speed") return "GrSpd";
   if (value === "Qdyn") return "Qdyn";
   if (value === "Qc") return "Qc";
-  if (value === "Sref") return "S<sub>REF</sub>";
-  if (value === "cref") return "c<sub>REF</sub>";
-  if (value === "CLmax") return "CL<sub>MAX</sub>";
-  if (value === "NzTurn") return "N<sub>Z</sub>";
+  if (value === "Sref") return "S<sub>ref</sub>";
+  if (value === "cref") return "c<sub>ref</sub>";
+  if (value === "CLmax") return "C<sub>L,max</sub>";
+  if (value === "NzTurn") return "N<sub>z</sub>";
   if (value === "BankTurn") return "Bank";
   if (value === "Track") return "Track";
   if (value === "Heading") return "Heading";
