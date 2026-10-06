@@ -156,7 +156,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "rad",
   },
   "Geopotential Altitude": {
-    title: "Geopotential altitude \u2022 H<sub>geop</sub>",
+    title: "Geopotential altitude \u2022 H<sub>g</sub>",
     desc: "Effective gravitational altitude used by the standard atmosphere.",
     eq: "H = r h / (r + h); for Hp/P input, H = Hp \u2212 29.271247 \u0394T ln(p/p0)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
@@ -324,7 +324,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m",
   },
   "Hgeop": {
-    title: "Geopotential altitude \u2022 H<sub>geop</sub>",
+    title: "Geopotential altitude \u2022 H<sub>g</sub>",
     desc: "Effective gravitational altitude used by the standard atmosphere.",
     eq: "H = r h / (r + h); for Hp/P input, H = Hp \u2212 29.271247 \u0394T ln(p/p0)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
