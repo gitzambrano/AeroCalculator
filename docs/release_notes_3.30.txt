@@ -1,6 +1,6 @@
 <en-US>
 What's new in v3.30:
-• Altitudes: H_geom for Geometric and H_g for Geopotential Altitude.
+• Altitudes: Geometric and Geopotential Altitude symbols are now clearly distinguished.
 • Notation: Proper subscript typography for pressure altitude (H_p).
 • Aircraft: Centered airplane selector and clean themed dropdown indicator.
 • Responsive labels: Full Ground Speed and Runway Angle with compact fallbacks.
@@ -8,7 +8,7 @@ What's new in v3.30:
 </en-US>
 <pt-BR>
 Novidades da v3.30:
-• Altitudes: H_geom para Geométrica e H_g para Geopotencial.
+• Altitudes: símbolos de Altitude Geométrica e Geopotencial agora são claramente distintos.
 • Notação: Tipografia com subscrito correto para altitude de pressão (H_p).
 • Aeronave: Seletor centralizado com indicador limpo na cor do tema.
 • Rótulos: Exibição completa de Ground Speed e Runway Angle com fallbacks.
