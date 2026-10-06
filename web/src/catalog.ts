@@ -9,14 +9,14 @@ export interface CatalogItem {
 
 export const CATALOG: Record<string, CatalogItem> = {
   "Pressure Altitude": {
-    title: "Pressure altitude \u2022 Hp",
+    title: "Pressure altitude \u2022 H<sub>p</sub>",
     desc: "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
     eq: "pISA(Hp) = p",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
     unit: "m",
   },
   "Geometric Altitude": {
-    title: "Geometric altitude \u2022 Hg",
+    title: "Geometric altitude \u2022 H<sub>g</sub>",
     desc: "Geometric altitude: physical height above mean sea level.",
     eq: "h = r H / (r \u2212 H)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
@@ -128,7 +128,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m/s",
   },
   "Vs Factor": {
-    title: "Stall speed factor \u2022 Vs Factor",
+    title: "Stall speed factor \u2022 V<sub>s</sub> Factor",
     desc: "Multiplier applied to the 1-g calibrated stall speed. The optional +\u0394 term is added in knots.",
     eq: "CAS = factor \u00d7 Vs,CAS + \u0394CAS",
     model: "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
@@ -163,14 +163,14 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m",
   },
   "Density Altitude": {
-    title: "Density altitude \u2022 H\u03c1",
+    title: "Density altitude \u2022 H<sub>\u03c1</sub>",
     desc: "ISA altitude with the same density as the current condition.",
     eq: "\u03c1ISA(H\u03c1) = \u03c1",
     model: "Within the documented model. Unavailable values are not plotted.",
     unit: "m",
   },
   "Temperature Altitude": {
-    title: "Temperature altitude \u2022 HT",
+    title: "Temperature altitude \u2022 H<sub>T</sub>",
     desc: "Altitude returned by the documented temperature-altitude convention. Temperature alone is not a unique altitude across all layers.",
     eq: "TISA(HT) = T",
     model: "Within the documented model. Unavailable values are not plotted.",
@@ -184,7 +184,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "kg/m\u00b3",
   },
   "Total Temperature": {
-    title: "Total temperature \u2022 Tt",
+    title: "Total temperature \u2022 T<sub>t</sub>",
     desc: "Isentropic stagnation temperature for a calorically perfect gas.",
     eq: "Tt = T (1 + (\u03b3\u22121) M\u00b2/2)",
     model: "Within the documented model. Unavailable values are not plotted.",
@@ -303,14 +303,14 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m/s",
   },
   "Hp": {
-    title: "Pressure altitude \u2022 Hp",
+    title: "Pressure altitude \u2022 H<sub>p</sub>",
     desc: "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
     eq: "pISA(Hp) = p",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
     unit: "m",
   },
   "Hg": {
-    title: "Geometric altitude \u2022 Hg",
+    title: "Geometric altitude \u2022 H<sub>g</sub>",
     desc: "Geometric altitude: physical height above mean sea level.",
     eq: "H = r h / (r + h)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
