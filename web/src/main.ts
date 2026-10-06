@@ -1152,7 +1152,7 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "CAS") return "CAS";
   if (value === "EAS") return "EAS";
   if (value === "Vs Factor") return "V<sub>s</sub> Fact";
-  if (value === "Ground Speed") return "GrSpd";
+  if (value === "Ground Speed") return "Grnd Speed";
   if (value === "Qdyn") return "q";
   if (value === "Qc") return "q<sub>c</sub>";
   if (value === "Sref") return "S<sub>ref</sub>";
@@ -1167,7 +1167,7 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "HeadWind") return "HeadWnd";
   if (value === "Wind Speed") return "WindSpd";
   if (value === "CrossWind") return "CrossWnd";
-  if (value === "Runway Angle") return "RwyAngle";
+  if (value === "Runway Angle") return "Rnwy Angle";
   if (value === "Wind Direction") return "WindDir";
   return label;
 }
