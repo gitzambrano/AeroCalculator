@@ -359,7 +359,7 @@ test("aircraft editor exercises every unit, weight, flap, save, edit and delete 
 
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.locator(".airplane-name-button strong")).toHaveText("Full Audit Jet");
-  await page.locator(".airplane-name-button").click();
+  await page.locator(".airplane-name-button").dblclick();
 
   await expect(page.locator("#weight-type option")).toHaveCount(7);
   for (let i = 0; i < weights.length; i += 1) {
