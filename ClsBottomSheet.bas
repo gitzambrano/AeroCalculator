@@ -552,10 +552,7 @@ Private Sub ConfigureWebView(wv As WebView)
 End Sub
 
 Private Sub ToSafeKey(k As String) As String
-	' Compatibility with the pre-generated asset filename from releases before the spelling fix.
-	Dim sourceKey As String = k
-	If sourceKey = "Geopotential Altitude" Then sourceKey = "Geopotencial Altitude"
-	Dim s As String = sourceKey.Replace("Δ", "Delta").Replace("δ", "delta").Replace("σ", "sigma").Replace("θ", "theta")
+	Dim s As String = k.Replace("Δ", "Delta").Replace("δ", "delta").Replace("σ", "sigma").Replace("θ", "theta")
 	s = s.Replace("φ", "phi").Replace("Ψ", "psi").Replace("β", "beta").Replace("ρ", "rho").Replace("μ", "mu")
 	Dim sb As StringBuilder
 	sb.Initialize
