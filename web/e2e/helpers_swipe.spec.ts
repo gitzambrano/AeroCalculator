@@ -34,7 +34,7 @@ test.describe("helpers and swipe navigation", () => {
   test("quantity selector and numeric value expose contextual helpers", async ({ page }) => {
     await page.goto("/");
 
-    await page.locator("#spd-type").hover();
+    await page.locator('[data-field="spd"] .field-select-wrap').hover();
     await expect(page.locator("#field-tooltip")).toBeVisible();
     await expect(page.locator("#field-tooltip")).toContainText("Calibrated Airspeed");
 
@@ -52,7 +52,7 @@ test.describe("helpers and swipe navigation", () => {
     expect(rect!.x).toBeGreaterThanOrEqual(0);
     expect(rect!.x + rect!.width).toBeLessThanOrEqual(390);
 
-    await page.locator("#windRef-type").focus();
+    await page.locator('[data-field="windRef"] .field-select-wrap').focus();
     await expect(page.locator("#field-tooltip")).toContainText("Reference direction");
   });
 
