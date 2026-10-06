@@ -22,5 +22,9 @@ let css = await readFile(stylePath, "utf8");
 css = css.replace(/<\/style/gi, "<\\/style");
 html = html.replace(styleMatch[0], () => `<style>\n${css}\n</style>`);
 
-// Use replacement callbacks because minified assets can contain JavaScript replacement tokens.\nif (html.includes(scriptMatch[0])) throw new Error("External module script survived asset inlining.");\nif (html.includes(styleMatch[0])) throw new Error("External stylesheet survived asset inlining.");\n\nawait writeFile(indexUrl, html, "utf8");
+// Use replacement callbacks because minified assets can contain JavaScript replacement tokens.
+if (html.includes(scriptMatch[0])) throw new Error("External module script survived asset inlining.");
+if (html.includes(styleMatch[0])) throw new Error("External stylesheet survived asset inlining.");
+
+await writeFile(indexUrl, html, "utf8");
 await rm(new URL("assets/", dist), { recursive: true, force: true });
