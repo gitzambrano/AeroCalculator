@@ -408,6 +408,14 @@ sub {
   font-weight: 500;
   text-align: left;
   overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+.result-name sub,
+.field-select-display sub,
+.editor-row sub,
+.editor-section-head sub {
+  font-size: 0.72em;
+  line-height: 0;
 }
 .result-value {
   font-size: 15px;
@@ -493,8 +501,15 @@ sub {
   padding: 8px 10px;
   color: var(--button-text);
 }
+.airplane-name-line {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  max-width: 100%;
+}
 .airplane-name-button strong {
   display: block;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
