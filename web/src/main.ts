@@ -468,7 +468,10 @@ export function showContextualHelp(key: string): void {
   };
 
   const titleEl = byId("result-tooltip-title");
-  if (titleEl) titleEl.textContent = item.title;
+  if (titleEl) {
+    if (CATALOG[key]) titleEl.innerHTML = item.title;
+    else titleEl.textContent = item.title;
+  }
 
   const descEl = byId("result-tooltip-desc");
   if (descEl) descEl.textContent = item.desc;
