@@ -101,7 +101,7 @@ Public Sub Help(Key As String) As String
         Return "Drift angle / drift" & CRLF & CRLF & "Definition: Drift angle: heading minus track." & CRLF & CRLF & "Equation: \mathrm{drift} = \psi - \chi" & CRLF & CRLF & "SI/reference unit: rad" & CRLF & CRLF & "Model: Within the documented atmosphere and subsonic model. No aircraft operating limit is implied."
     Case "Sideslip Angle β"
         Return "Sideslip angle / β" & CRLF & CRLF & "Definition: Sideslip angle β: angle between the aircraft heading and the air-relative velocity direction." & CRLF & CRLF & "Equation: \beta = \text{sideslip angle}" & CRLF & CRLF & "SI/reference unit: rad" & CRLF & CRLF & "Model: Within the documented atmosphere and subsonic model. No aircraft operating limit is implied."
-    Case "Geopotencial Altitude", "Geopotential Altitude"
+    Case "Geopotential Altitude"
         Return "Geopotential altitude / H" & CRLF & CRLF & "Definition: Effective gravitational altitude used by the standard atmosphere." & CRLF & CRLF & "Equation: H = \frac{r_0 \, h}{r_0 + h}" & CRLF & CRLF & "SI/reference unit: m" & CRLF & CRLF & "Model: Pressure-altitude model: −5 to 84.852 km geopotential. See the documented geometric-altitude temperature convention."
     Case "Density Altitude"
         Return "Density altitude / H_ρ" & CRLF & CRLF & "Definition: ISA altitude with the same density as the current condition." & CRLF & CRLF & "Equation: \rho_{\mathrm{ISA}}(H_\rho) = \rho" & CRLF & CRLF & "SI/reference unit: m" & CRLF & CRLF & "Model: Within the documented model. Unavailable values are not plotted."
