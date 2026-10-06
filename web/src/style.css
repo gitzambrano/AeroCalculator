@@ -506,6 +506,9 @@ sub {
   align-items: baseline;
   min-width: 0;
   max-width: 100%;
+  margin: 0;
+  font-size: inherit;
+  color: inherit;
 }
 .airplane-name-button strong {
   display: block;
@@ -517,7 +520,7 @@ sub {
   font-weight: 500;
   color: var(--button-text);
 }
-.airplane-name-button span:not(.active-badge) { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); }
+.airplane-name-button .airplane-meta { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); }
 .airplane-duplicate-button,
 .airplane-edit-button,
 .airplane-delete-button {
