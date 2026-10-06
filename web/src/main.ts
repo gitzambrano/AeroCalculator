@@ -185,7 +185,7 @@ const resultNames = [
 const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
   "Pressure Altitude": "Pressure Altitude H<sub>p</sub>",
   "Geometric Altitude": "Geometric Altitude H<sub>geom</sub>",
-  "Geopotential Altitude": "Geopotential Altitude H<sub>geop</sub>",
+  "Geopotential Altitude": "Geopotential Altitude H<sub>g</sub>",
   "Density Altitude": "Density Altitude H<sub>ρ</sub>",
   "Temperature Altitude": "Temperature Altitude H<sub>T</sub>",
   "Pressure": "Pressure p",
