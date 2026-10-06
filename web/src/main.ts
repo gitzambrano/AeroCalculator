@@ -202,7 +202,7 @@ const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string
   "Dynamic Pressure": "Dynamic Pressure q",
   "Impact Pressure": "Impact Pressure q<sub>c</sub>",
   "Total Pressure": "Total Pressure p<sub>t</sub>",
-  "DynPressure * S / g": "Dynamic Pressure × S / g₀",
+  "DynPressure * S / g": "q S / g₀",
   "Weight/Delta W/δ": "Weight / δ",
   "Load Factor Nz": "Load Factor N<sub>z</sub>",
   "AlongTrack Headwind": "Along-Track Headwind",
