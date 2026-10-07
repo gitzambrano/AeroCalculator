@@ -334,11 +334,11 @@ test("every settings option saves and reformats the corresponding output", async
   }
 
   await openSettings(page);
-  await page.locator("#setting-extra-decimal").check();
+  await selectSetting(page, "setting-number-format", "+1 decimal");
   await saveSettings(page);
   await openSettings(page);
-  await expect(page.locator("#setting-extra-decimal")).toBeChecked();
-  await page.locator("#setting-extra-decimal").uncheck();
+  await expect(page.locator("#setting-number-format")).toHaveValue("+1 decimal");
+  await selectSetting(page, "setting-number-format", "Standard");
   await saveSettings(page);
 });
 
