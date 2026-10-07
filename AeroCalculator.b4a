@@ -121,6 +121,8 @@ Sub Process_Globals
 	' Tema de cores
 	Dim ColorBut1 As Int
 	Dim ColorBut2 As Int
+	Dim ColorButPressed As Int
+	Dim ColorButBorder As Int
 	Dim ColorBut3 As Int
 	Dim ColorBut4 As Int
 	Dim ColorButText1 As Int
@@ -408,26 +410,28 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	'Themes
 	If manager.GetString("theme").CompareTo("Ancient Brown")=0 Then	
-		ColorPnlTitle =  Colors.RGB(140, 90, 43)       ' #8C5A2B Warm Leather Sepia
+		ColorButPressed = Colors.RGB(230, 221, 209)   ' #E6DDD1
+		ColorButBorder = Colors.RGB(203, 187, 168)    ' #CBBBA8
+		ColorPnlTitle = Colors.RGB(140, 90, 43)       ' #8C5A2B Warm leather
 		ColorTitleText = Colors.White
-		ColorPnlLine =   Colors.White
-		ColorPnlLine2 =  Colors.RGB(221, 210, 192)     ' #DDD2C0
-		ColorPnlLine3 =  Colors.RGB(231, 222, 206)     ' #E7DECE
-		ColorBut3 =      Colors.Transparent
-		ColorBut4 = 	 Colors.Transparent
-		ColorButText2 =  Colors.RGB(245, 239, 235)
-		ColorButText3 =  Colors.White
-		ColorBut1 = 	 Colors.RGB(237, 229, 216)     ' #EDE5D8
-		ColorBut2 =      Colors.RGB(228, 219, 208)     ' #E4DBD0
-		ColorButText1 =  Colors.RGB(45, 35, 25)        ' #2D2319
-		ColorEdt =       Colors.RGB(240, 233, 220)     ' #F0E9DC Field Fill
-		ColorEdtText =   Colors.RGB(140, 90, 43)       ' #8C5A2B Field Text
-		ColorEdtHint =   Colors.RGB(140, 128, 112)     ' #8C8070
-		ColorPnlInput1 = Colors.RGB(250, 246, 238)     ' #FAF6EE Row 1
-		ColorPnlInput2 = Colors.RGB(244, 239, 230)     ' #F4EFE6 Row 2
-		ColorPnlInput3 = Colors.RGB(250, 246, 238)	
-		ColorPnlInput4 = Colors.RGB(244, 239, 230)
-		ColorPnlInput5 = Colors.RGB(234, 227, 213)     ' #EAE3D5 Canvas
+		ColorPnlLine = Colors.White
+		ColorPnlLine2 = Colors.RGB(203, 187, 168)     ' #CBBBA8 Control border
+		ColorPnlLine3 = Colors.RGB(229, 217, 202)     ' #E5D9CA Divider
+		ColorBut3 = Colors.Transparent
+		ColorBut4 = Colors.Transparent
+		ColorButText2 = Colors.RGB(245, 239, 235)
+		ColorButText3 = Colors.White
+		ColorBut1 = Colors.RGB(242, 236, 227)         ' #F2ECE3
+		ColorBut2 = Colors.RGB(238, 231, 221)         ' #EEE7DD subtle gradient
+		ColorButText1 = Colors.RGB(48, 40, 32)        ' #302820
+		ColorEdt = Colors.RGB(251, 248, 243)          ' #FBF8F3 Field
+		ColorEdtText = Colors.RGB(140, 90, 43)        ' #8C5A2B
+		ColorEdtHint = Colors.RGB(122, 110, 95)       ' #7A6E5F
+		ColorPnlInput1 = Colors.RGB(250, 248, 244)    ' #FAF8F4
+		ColorPnlInput2 = Colors.RGB(244, 240, 234)    ' #F4F0EA
+		ColorPnlInput3 = Colors.RGB(250, 248, 244)
+		ColorPnlInput4 = Colors.RGB(244, 240, 234)
+		ColorPnlInput5 = Colors.RGB(234, 229, 221)    ' #EAE5DD Canvas
 '	Else If manager.GetString("theme").CompareTo("Green Peace")=0 Then
 '			ColorPnlTitle =  Colors.RGB(0, 150, 136)
 '			ColorTitleText = Colors.White
@@ -451,6 +455,8 @@ Sub Activity_Create(FirstTime As Boolean)
 '			ColorPnlInput4 = Colors.RGB(222, 242, 241)
 '			ColorPnlInput5 = Colors.RGB(222, 242, 241)
 	Else If manager.GetString("theme").CompareTo("Green Peace")=0 Then
+		ColorButPressed = Colors.RGB(0, 105, 120)     ' preserve existing pressed state
+		ColorButBorder = Colors.Transparent            ' preserve existing rendering
 		ColorPnlTitle =  Colors.RGB(0, 105, 120)       ' #006978 Deep Teal Cyan
 		ColorTitleText = Colors.White
 		ColorPnlLine =   Colors.White
@@ -472,6 +478,8 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlInput4 = Colors.RGB(247, 249, 252)
 		ColorPnlInput5 = Colors.RGB(241, 244, 248)     ' #F1F4F8 Canvas	
 	Else If manager.GetString("theme").CompareTo("Dark Shadows")=0 Then
+		ColorButPressed = Colors.RGB(13, 18, 27)      ' preserve existing pressed state
+		ColorButBorder = Colors.Transparent            ' preserve existing rendering
 		ColorPnlTitle =  Colors.RGB(13, 18, 27)        ' #0D121B Header
 		ColorTitleText = Colors.White
 		ColorPnlLine =   Colors.RGB(0, 229, 255)       ' #00E5FF Aero Cyan indicator!
@@ -493,17 +501,19 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlInput4 = Colors.RGB(14, 19, 28)
 		ColorPnlInput5 = Colors.RGB(7, 9, 14)          ' #07090E Canvas
 	Else If manager.GetString("theme").CompareTo("Blue Sky")=0 Then
+		ColorButPressed = Colors.RGB(13, 26, 52)      ' #0D1A34
+		ColorButBorder = Colors.RGB(42, 71, 118)      ' #2A4776
 		ColorPnlTitle =  Colors.RGB(11, 23, 48)        ' #0B1730 Navy Header
 		ColorTitleText = Colors.White
 		ColorPnlLine =   Colors.RGB(34, 211, 238)      ' #22D3EE Electric Cyan
-		ColorPnlLine2 =  Colors.RGB(24, 43, 82)        ' #182B52
+		ColorPnlLine2 = Colors.RGB(42, 71, 118)       ' #2A4776 clearer control border
 		ColorPnlLine3 =  Colors.RGB(38, 59, 99)        ' #263B63
 		ColorBut3 =      Colors.Transparent
 		ColorBut4 = 	 Colors.Transparent
 		ColorButText2 =  Colors.RGB(162, 181, 216)     ' #A2B5D8
 		ColorButText3 =  Colors.RGB(34, 211, 238)      ' #22D3EE
-		ColorBut1 = 	 Colors.RGB(19, 37, 71)        ' #132547
-		ColorBut2 =      Colors.RGB(15, 29, 58)        ' #0F1D3A
+		ColorBut1 = Colors.RGB(19, 37, 71)            ' #132547
+		ColorBut2 = Colors.RGB(17, 33, 63)            ' #11213F subtle gradient
 		ColorButText1 =  Colors.RGB(241, 246, 255)     ' #F1F6FF
 		ColorEdt =       Colors.RGB(14, 32, 64)        ' #0E2040
 		ColorEdtText =   Colors.RGB(34, 211, 238)      ' #22D3EE Electric Cyan text
@@ -514,47 +524,51 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlInput4 = Colors.RGB(19, 37, 71)
 		ColorPnlInput5 = Colors.RGB(10, 20, 40)        ' #0A1428 Canvas
 	Else If manager.GetString("theme").CompareTo("Red Alert")=0 Then
-		ColorPnlTitle = Colors.RGB(183, 28, 28)
+		ColorButPressed = Colors.RGB(233, 221, 222)    ' #E9DDDE
+		ColorButBorder = Colors.RGB(205, 174, 177)     ' #CDAEB1
+		ColorPnlTitle = Colors.RGB(139, 30, 36)        ' #8B1E24 Crimson
 		ColorTitleText = Colors.White
 		ColorPnlLine = Colors.White
-		ColorPnlLine2 = Colors.RGB(239, 154, 154)
-		ColorPnlLine3 = Colors.RGB(255, 205, 210)
+		ColorPnlLine2 = Colors.RGB(205, 174, 177)      ' #CDAEB1 Control border
+		ColorPnlLine3 = Colors.RGB(229, 216, 218)      ' #E5D8DA Divider
 		ColorBut3 = Colors.Transparent
 		ColorBut4 = Colors.Transparent
-		ColorButText2 = Colors.RGB(255, 235, 238)
+		ColorButText2 = Colors.RGB(248, 237, 239)
 		ColorButText3 = Colors.White
-		ColorBut1 = Colors.RGB(255, 235, 238)
-		ColorBut2 = Colors.RGB(255, 205, 210)
-		ColorButText1 = Colors.RGB(74, 10, 10)
-		ColorEdt = Colors.RGB(255, 245, 245)
-		ColorEdtText = Colors.RGB(183, 28, 28)
-		ColorEdtHint = Colors.RGB(180, 120, 120)
-		ColorPnlInput1 = Colors.RGB(255, 225, 225)
-		ColorPnlInput2 = Colors.RGB(255, 235, 238)
-		ColorPnlInput3 = Colors.RGB(255, 245, 245)
-		ColorPnlInput4 = Colors.RGB(255, 225, 225)
-		ColorPnlInput5 = Colors.RGB(255, 215, 215)
+		ColorBut1 = Colors.RGB(245, 239, 239)          ' #F5EFEF
+		ColorBut2 = Colors.RGB(241, 233, 233)          ' #F1E9E9 subtle gradient
+		ColorButText1 = Colors.RGB(48, 33, 35)         ' #302123
+		ColorEdt = Colors.RGB(252, 249, 249)           ' #FCF9F9 Field
+		ColorEdtText = Colors.RGB(168, 33, 39)         ' #A82127
+		ColorEdtHint = Colors.RGB(140, 114, 117)       ' #8C7275
+		ColorPnlInput1 = Colors.RGB(250, 248, 248)     ' #FAF8F8
+		ColorPnlInput2 = Colors.RGB(245, 241, 241)     ' #F5F1F1
+		ColorPnlInput3 = Colors.RGB(250, 248, 248)
+		ColorPnlInput4 = Colors.RGB(245, 241, 241)
+		ColorPnlInput5 = Colors.RGB(238, 234, 234)     ' #EEEAEA Canvas
 	Else If manager.GetString("theme").CompareTo("Orange Juice")=0 Then
-		ColorPnlTitle = Colors.RGB(230, 81, 0)
+		ColorButPressed = Colors.RGB(232, 222, 209)    ' #E8DED1
+		ColorButBorder = Colors.RGB(210, 189, 164)     ' #D2BDA4
+		ColorPnlTitle = Colors.RGB(181, 83, 24)        ' #B55318 Burnt orange
 		ColorTitleText = Colors.White
 		ColorPnlLine = Colors.White
-		ColorPnlLine2 = Colors.RGB(255, 204, 128)
-		ColorPnlLine3 = Colors.RGB(255, 224, 178)
+		ColorPnlLine2 = Colors.RGB(210, 189, 164)      ' #D2BDA4 Control border
+		ColorPnlLine3 = Colors.RGB(229, 217, 202)      ' #E5D9CA Divider
 		ColorBut3 = Colors.Transparent
 		ColorBut4 = Colors.Transparent
-		ColorButText2 = Colors.RGB(255, 243, 224)
+		ColorButText2 = Colors.RGB(250, 240, 229)
 		ColorButText3 = Colors.White
-		ColorBut1 = Colors.RGB(255, 248, 225)
-		ColorBut2 = Colors.RGB(255, 236, 179)
-		ColorButText1 = Colors.RGB(93, 64, 0)
-		ColorEdt = Colors.RGB(255, 253, 231)
-		ColorEdtText = Colors.RGB(230, 81, 0)
-		ColorEdtHint = Colors.RGB(176, 149, 117)
-		ColorPnlInput1 = Colors.RGB(255, 243, 205)
-		ColorPnlInput2 = Colors.RGB(255, 248, 225)
-		ColorPnlInput3 = Colors.RGB(255, 253, 231)
-		ColorPnlInput4 = Colors.RGB(255, 243, 205)
-		ColorPnlInput5 = Colors.RGB(255, 238, 186)
+		ColorBut1 = Colors.RGB(246, 241, 233)          ' #F6F1E9
+		ColorBut2 = Colors.RGB(241, 234, 224)          ' #F1EAE0 subtle gradient
+		ColorButText1 = Colors.RGB(52, 42, 35)         ' #342A23
+		ColorEdt = Colors.RGB(252, 249, 245)           ' #FCF9F5 Field
+		ColorEdtText = Colors.RGB(188, 88, 24)         ' #BC5818
+		ColorEdtHint = Colors.RGB(138, 117, 99)        ' #8A7563
+		ColorPnlInput1 = Colors.RGB(250, 248, 244)     ' #FAF8F4
+		ColorPnlInput2 = Colors.RGB(245, 241, 235)     ' #F5F1EB
+		ColorPnlInput3 = Colors.RGB(250, 248, 244)
+		ColorPnlInput4 = Colors.RGB(245, 241, 235)
+		ColorPnlInput5 = Colors.RGB(238, 234, 228)     ' #EEEAE4 Canvas
 	End If
 
 	'Color shown behind transparent system bars on edge-to-edge Android versions.
@@ -644,7 +658,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnAirplane.Text = "Airplane"
 			btnAirplane.TextSize = 15*sc
 			btnAirplane.TextColor = ColorButText1
-			btnAirplane.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnAirplane.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			panelspn.Initialize("panelspn")
 			pnlInput.AddView(panelspn, 50%x, ib * sc, 47%x, tb * sc)
 			panelspn.Background = EditGradient(ColorEdt, ColorPnlLine2)
@@ -661,7 +675,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				btnAltType.Text = MakeSubscript("H", "p", "")
 			End If
 			btnAltType.TextSize = 15*sc
-			btnAltType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnAltType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAlt.Initialize("edtAlt")
 		    pnlInput.AddView(edtAlt, 50%x, ib*sc, 27%x, tb*sc)
 			edtAlt.Hint="Altitude"
@@ -672,7 +686,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtAlt.TextSize = 13*sc
 			filter.SetCustomFilter(edtAlt, edtAlt.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnAltUnit.Initialize("btnAltUnit")
-			btnAltUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnAltUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnAltUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnAltUnit.Text="ft"
 			btnAltUnit.TextSize = 15*sc
@@ -688,7 +702,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		    pnlInput.AddView(btnTempType, 3%x, ib*sc, 44%x, tb*sc)
 			btnTempType.Text="Δ ISA"
 			btnTempType.TextSize = 15*sc
-			btnTempType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnTempType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtTemp.Initialize("edtTemp")
 		    pnlInput.AddView(edtTemp, 50%x, ib*sc, 27%x, tb*sc)
 			edtTemp.Hint="Temperature"
@@ -699,7 +713,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtTemp.TextSize = 13*sc
 			filter.SetCustomFilter(edtTemp, edtTemp.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnTempUnit.Initialize("btnTempUnit")
-			btnTempUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnTempUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnTempUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnTempUnit.Text="°C"
 			btnTempUnit.TextSize = 15*sc
@@ -719,7 +733,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				btnSpdType.Text="CAS"
 			End If
 			btnSpdType.TextSize = 15*sc
-			btnSpdType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnSpdType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtSpd.Initialize("edtSpd")
 		    pnlInput.AddView(edtSpd, 50%x, ib*sc, 27%x, tb*sc)
 			edtSpd.Hint="Speed"
@@ -730,7 +744,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtSpd.ForceDoneButton = True
 			filter.SetCustomFilter(edtSpd, edtSpd.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnSpdUnit.Initialize("btnSpdUnit")
-			btnSpdUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnSpdUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnSpdUnit, 80%x, ib*sc, 17%x, tb*sc)
 			btnSpdUnit.Text="kt"
 			btnSpdUnit.TextSize = 15*sc
@@ -744,7 +758,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				btnSpdDelta.Text = rs4
 			End If
 			btnSpdDelta.TextSize = 15*sc
-			btnSpdDelta.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnSpdDelta.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			btnSpdDelta.Visible = False
 			edtSpdDelta.Initialize("edtSpdDelta")
 		    pnlInput.AddView(edtSpdDelta, 81%x, ib*sc, 16%x, tb*sc)
@@ -777,7 +791,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		    pnlInput.AddView(btnWeight, 3%x, ib*sc, 44%x, tb*sc)
 			btnWeight.Text="Weight"
 			btnWeight.TextSize = 15*sc
-			btnWeight.Background =ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnWeight.Background =ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtWeight.Initialize("edtWeight")
 		    pnlInput.AddView(edtWeight, 50%x, ib*sc, 27%x, tb*sc)
 			edtWeight.Hint="Weight"
@@ -788,7 +802,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtWeight.ForceDoneButton = True
 			filter.SetCustomFilter(edtWeight, edtWeight.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnWeightUnit.Initialize("btnWeightUnit")
-			btnWeightUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnWeightUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnWeightUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnWeightUnit.Text="kg"
 			btnWeightUnit.TextSize = 15*sc
@@ -810,7 +824,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				btnSref.Text = MakeSubscript("S", "ref", "")
 			End If
 			btnSref.TextSize = 15*sc
-			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtSref.Initialize("edtSref")
 		    pnlInput.AddView(edtSref, 50%x, ib*sc, 27%x, tb*sc)
 			edtSref.Hint = "Ref. Area"
@@ -824,7 +838,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtSref.ForceDoneButton = True
 			filter.SetCustomFilter(edtSref, edtSref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnSrefUnit.Initialize("btnSrefUnit")
-			btnSrefUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnSrefUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnSrefUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnSrefUnit.Text="m²"
 			btnSrefUnit.TextSize = 15*sc
@@ -844,7 +858,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				btncref.Text = MakeSubscript("c", "ref", "")
 			End If
 			btncref.TextSize = 15*sc
-			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtcref.Initialize("edtcref")
 		    pnlInput.AddView(edtcref, 50%x, ib*sc, 27%x, tb*sc)
 			edtcref.Hint = "Ref. Chord"
@@ -858,7 +872,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtcref.ForceDoneButton = True
 			filter.SetCustomFilter(edtcref, edtcref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btncrefUnit.Initialize("btncrefUnit")
-			btncrefUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btncrefUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btncrefUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btncrefUnit.Text="m"
 			btncrefUnit.TextSize = 15*sc
@@ -878,11 +892,11 @@ Sub Activity_Create(FirstTime As Boolean)
 				btnCLmax.Text = MakeSubscript("C", "L,max", "")
 			End If
 			btnCLmax.TextSize = 15*sc
-			btnCLmax.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnCLmax.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtCLmax.Initialize("edtCLmax")
 		    pnlInput.AddView(edtCLmax, 50%x, ib*sc, 27%x, tb*sc)
 			btnCLmaxUnit.Initialize("btnCLmaxUnit")
-			btnCLmaxUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnCLmaxUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnCLmaxUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnCLmaxUnit.Text = Chr(8212) ' — em dash
 			btnCLmaxUnit.TextSize = 15*sc
@@ -908,7 +922,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		    pnlInput.AddView(btnNzType, 3%x, ib*sc, 44%x, tb*sc)
 			btnNzType.Text = MakeSubscript("N", "z", " (Pull-up)")
 			btnNzType.TextSize = 15*sc
-			btnNzType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnNzType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtNz.Initialize("edtNz")
 		    pnlInput.AddView(edtNz, 50%x, ib*sc, 27%x, tb*sc)
 			edtNz.Hint = "Load Factor"
@@ -922,7 +936,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtNz.ForceDoneButton = True
 			filter.SetCustomFilter(edtNz, edtNz.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnNzUnit.Initialize("btnNzUnit")
-			btnNzUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnNzUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnNzUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnNzUnit.Text="g"
 			btnNzUnit.TextSize = 15*sc
@@ -938,7 +952,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			pnlInput.AddView(btnAngle1Type, 3%x, ib*sc, 44%x, tb*sc)
 		    btnAngle1Type.Text="Track Angle"
 			btnAngle1Type.TextSize = 15*sc
-			btnAngle1Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnAngle1Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAngle1.Initialize("edtAngle1")
 		    pnlInput.AddView(edtAngle1, 50%x, ib*sc, 27%x, tb*sc)
 			edtAngle1.Hint = "Track"
@@ -952,7 +966,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtAngle1.ForceDoneButton = True
 			filter.SetCustomFilter(edtAngle1, edtAngle1.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnAngle1Unit.Initialize("btnAngle1Unit")
-			btnAngle1Unit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnAngle1Unit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnAngle1Unit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnAngle1Unit.Text="deg"
 			btnAngle1Unit.TextSize = 15*sc
@@ -968,7 +982,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			pnlInput.AddView(btnAngle2Type, 3%x, ib*sc, 44%x, tb*sc)
 		    btnAngle2Type.Text="Sideslip Angle"
 			btnAngle2Type.TextSize = 15*sc
-			btnAngle2Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnAngle2Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAngle2.Initialize("edtAngle2")
 		    pnlInput.AddView(edtAngle2, 50%x, ib*sc, 27%x, tb*sc)
 			edtAngle2.Hint = "Sideslip"
@@ -982,7 +996,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtAngle2.ForceDoneButton = True
 			filter.SetCustomFilter(edtAngle2, edtAngle2.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnAngle2Unit.Initialize("btnAngle2Unit")
-			btnAngle2Unit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnAngle2Unit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnAngle2Unit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnAngle2Unit.Text="deg"
 			btnAngle2Unit.TextSize = 15*sc
@@ -1001,7 +1015,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				btnHeadWind.Text = "HeadWind"
 			End If
 			btnHeadWind.TextSize = 15*sc
-			btnHeadWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnHeadWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtHeadWind.Initialize("edtHeadWind")
 		    pnlInput.AddView(edtHeadWind, 50%x, ib*sc, 27%x, tb*sc)
 			edtHeadWind.Hint = "HeadWind"
@@ -1015,7 +1029,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtHeadWind.ForceDoneButton = True
 			filter.SetCustomFilter(edtHeadWind, edtHeadWind.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 	        btnHeadWindUnit.Initialize("btnHeadWindUnit")
-			btnHeadWindUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnHeadWindUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnHeadWindUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnHeadWindUnit.Text="kt"
 			btnHeadWindUnit.TextSize = 15*sc
@@ -1034,7 +1048,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				btnCrossWind.Text = "CrossWind"
 			End If
 			btnCrossWind.TextSize = 15*sc
-			btnCrossWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnCrossWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtCrossWind.Initialize("edtCrossWind")
 		    pnlInput.AddView(edtCrossWind, 50%x, ib*sc, 27%x, tb*sc)
 			edtCrossWind.Hint = "CrossWind"
@@ -1048,7 +1062,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtCrossWind.ForceDoneButton = True
 			filter.SetCustomFilter(edtCrossWind, edtCrossWind.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 	        btnCrossWindUnit.Initialize("btnCrossWindUnit")
-			btnCrossWindUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnCrossWindUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnCrossWindUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnCrossWindUnit.Text="kt"
 			btnCrossWindUnit.TextSize = 15*sc
@@ -1068,7 +1082,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				btnWindRefAngle.Text = "Rnwy Angle"
 			End If
 			btnWindRefAngle.TextSize = 15*sc
-			btnWindRefAngle.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnWindRefAngle.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtWindRefAngle.Initialize("edtWindRefAngle")
 		    pnlInput.AddView(edtWindRefAngle, 50%x, ib*sc, 27%x, tb*sc)
 			edtWindRefAngle.Hint="Reference Dir"
@@ -1082,7 +1096,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtWindRefAngle.ForceDoneButton = True
 			filter.SetCustomFilter(edtWindRefAngle, edtWindRefAngle.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 	        btnWindRefAngleUnit.Initialize("btnWindRefAngleUnit")
-			btnWindRefAngleUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorPnlTitle))
+			btnWindRefAngleUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnWindRefAngleUnit, 80%x, ib*sc, 17%x, tb*sc)
 		    btnWindRefAngleUnit.Text="deg"
 			btnWindRefAngleUnit.TextSize = 15*sc
@@ -4373,6 +4387,18 @@ Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable
     Dim gdwDisabled As GradientDrawable
     gdwDisabled.Initialize("TOP_BOTTOM", ColorList)
     gdwDisabled.CornerRadius = 4dip
+    If ColorButBorder <> Colors.Transparent Then
+        Try
+            Dim joEnabled As JavaObject = gdwEnabled
+            Dim joPressed As JavaObject = gdwPressed
+            Dim joDisabled As JavaObject = gdwDisabled
+            joEnabled.RunMethod("setStroke", Array As Object(1dip, ColorButBorder))
+            joPressed.RunMethod("setStroke", Array As Object(1dip, ColorEdtText))
+            joDisabled.RunMethod("setStroke", Array As Object(1dip, ColorButBorder))
+        Catch
+            Log("Button border skipped: " & LastException.Message)
+        End Try
+    End If
     Dim stdGradient As StateListDrawable
     stdGradient.Initialize
     stdGradient.AddState2(Array As Int(stdGradient.State_enabled, -stdGradient.State_Pressed), gdwEnabled)
@@ -4792,7 +4818,7 @@ Private Sub SettingsAddRow(parent As Panel, cardW As Int, y As Int, rowH As Int,
 	b.Typeface = Typeface.DEFAULT_BOLD
 	b.TextSize = 13
 	b.SingleLine = True
-	b.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2), Array As Int(ColorBut1, ColorPnlTitle))
+	b.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2), Array As Int(ColorBut1, ColorButPressed))
 	parent.AddView(b, cardW * 0.57, y + (rowH - 44dip) / 2, cardW * 0.39, 44dip)
 	ModernizeButton(b)
 	Return b
