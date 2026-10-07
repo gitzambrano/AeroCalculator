@@ -1076,10 +1076,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	    Case 13
 		    btnWindRefAngle.Initialize("btnWindRefAngle")
 		    pnlInput.AddView(btnWindRefAngle, 3%x, ib*sc, 44%x, tb*sc)
-			If ld = 0 And xx <= 430dip Then
-				btnWindRefAngle.Text = "Rnwy Angle"
-			Else
+			If xx >= 340dip Or sc > 1 Or ld = 1 Then
 				btnWindRefAngle.Text = "Runway Angle"
+			Else
+				btnWindRefAngle.Text = "Rnwy Angle"
 			End If
 			btnWindRefAngle.TextSize = 15*sc
 			btnWindRefAngle.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
@@ -2924,10 +2924,10 @@ Sub SpdType_Click
 		edtSpd.Width = 13%x
 		edtSpdDelta.Visible = True
 	Else If indSpdType = 6 Then
-		If ld = 0 And xx <= 430dip Then
-			btnSpdType.Text = "Grnd Speed"
-		Else
+		If xx >= 320dip Or sc > 1 Then
 			btnSpdType.Text = "Ground Speed"
+		Else
+			btnSpdType.Text = "Grnd Speed"
 		End If
 		edtSpd.Hint = "Speed"
 		btnSpdUnit.Visible = True
@@ -2935,10 +2935,10 @@ Sub SpdType_Click
 		edtSpd.Width = 27%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 7 Then
-		If ld = 0 And xx <= 430dip Then
-			btnSpdType.Text = "Grnd Speed"
-		Else
+		If xx >= 320dip Or sc > 1 Then
 			btnSpdType.Text = "Ground Speed"
+		Else
+			btnSpdType.Text = "Grnd Speed"
 		End If
 		btnSpdUnit.Visible = True
 		edtSpd.Text = NumberFormat2(GPSspeed / kSpd, 1, 1, 1, False)
@@ -3252,10 +3252,10 @@ Sub WindType
 			btnHeadWind.Text = "HeadWind"
 			edtHeadWind.Hint = "HeadWind"
 			edtWindRefAngle.Hint="Reference Dir."
-			If ld = 0 And xx <= 430dip Then
-				btnWindRefAngle.Text = "Rnwy Angle"
-			Else
+			If xx >= 340dip Or sc > 1 Or ld = 1 Then
 				btnWindRefAngle.Text = "Runway Angle"
+			Else
+				btnWindRefAngle.Text = "Rnwy Angle"
 			End If
 			If xx >= 340dip Or sc > 1 Or ld = 1 Then
 				edtHeadWind.Hint = "HeadWind Speed"
