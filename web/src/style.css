@@ -268,7 +268,7 @@ sub.hp-sub {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 16px 0 8px;
+  padding: 0 12px 0 8px;
   pointer-events: none;
   font-size: 15px;
   color: var(--button-text, #111);
@@ -287,12 +287,12 @@ sub.hp-sub {
   min-width: 0;
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 6px;
-  padding: 0 20px 0 10px;
+  /* Match the Android selector: a 6x4 chevron 4px from the edge, 2px from the text. */
+  padding: 0 12px 0 10px;
   font-size: 15px;
   color: var(--button-text, #111);
   background:
-    linear-gradient(45deg, transparent 50%, #555 50%) right 13px center / 5px 5px no-repeat,
-    linear-gradient(135deg, #555 50%, transparent 50%) right 8px center / 5px 5px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4'%3E%3Cpath d='M0 0h6L3 4z' fill='%23737b7a'/%3E%3C/svg%3E") right 4px center / 6px 4px no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
@@ -381,7 +381,7 @@ sub.hp-sub {
 }
 .unit-select { text-align: center; text-align-last: center; padding-left: 8px; }
 .unit-select:disabled {
-  background-image: none, none, linear-gradient(var(--button-a), var(--button-b));
+  background-image: none, linear-gradient(var(--button-a), var(--button-b));
   padding-right: 8px;
 }
 
@@ -420,8 +420,7 @@ sub.hp-sub {
   text-align-last: center;
   color: var(--button-text, #111);
   background:
-    linear-gradient(45deg, transparent 50%, var(--accent, #555) 50%) right 14px center / 4px 4px no-repeat,
-    linear-gradient(135deg, var(--accent, #555) 50%, transparent 50%) right 10px center / 4px 4px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4'%3E%3Cpath d='M0 0h6L3 4z' fill='%23737b7a'/%3E%3C/svg%3E") right 8px center / 6px 4px no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 4px;
@@ -1310,8 +1309,8 @@ sub.hp-sub {
   .input-row { grid-template-columns: minmax(0, 39fr) minmax(0, 32fr) minmax(0, 17fr); min-height: 56px; }
   .airplane-row { grid-template-columns: minmax(0, 39fr) minmax(0, 52fr); }
   .field-select, .unit-select, .value-input, .field-select-display { font-size: 14px; padding-left: 8px; padding-right: 8px; }
-  .field-select { padding-right: 16px; background-position: right 8px center, right 4px center, center; }
-  .field-select-display { padding-right: 16px; }
+  .field-select { padding-right: 12px; background-position: right 4px center, center; }
+  .field-select-display { padding-right: 12px; }
   .result-row { padding-left: 4px; padding-right: 4px; }
   .profile-dialog {
     width: calc(100% - 16px);
@@ -1343,11 +1342,11 @@ sub.hp-sub {
     padding-right: 5px;
   }
   .field-select {
-    padding-right: 14px;
-    background-position: right 7px center, right 3px center, center;
+    padding-right: 12px;
+    background-position: right 4px center, center;
   }
   .field-select-display {
-    padding-right: 14px;
+    padding-right: 12px;
   }
   .unit-select { padding-left: 3px; }
   .result-name, .result-value { font-size: 13px; padding-left: 3px; }
