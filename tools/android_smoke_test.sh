@@ -19,6 +19,8 @@ fi
 printf '%s\n' "$resolved" > "$OUT_ROOT/resolved-activity.txt"
 
 profiles=(
+  "tiny:560x1120:320"
+  "narrow:640x1280:320"
   "compact:720x1280:320"
   "dense-compact:1080x1920:480"
   "modern:1080x2340:440"
