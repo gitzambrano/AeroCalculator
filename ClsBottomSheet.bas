@@ -296,7 +296,10 @@ Private Sub FormatScriptedText(Value As String) As CSBuilder
 			subEnd = Min(subStart + 1, Value.Length)
 			pos = subEnd
 		End If
-		cs.VerticalAlign(4dip).RelativeSize(0.68).Append(Value.SubString2(subStart, subEnd)).Pop.Pop
+		Dim subValue As String = Value.SubString2(subStart, subEnd)
+		Dim subShift As Int = 4dip
+		If subValue = "p" And marker > 0 And Value.SubString2(marker - 1, marker) = "H" Then subShift = 3dip
+		cs.VerticalAlign(subShift).RelativeSize(0.68).Append(subValue).Pop.Pop
 	Loop
 	Return cs
 End Sub
