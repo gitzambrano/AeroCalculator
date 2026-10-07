@@ -110,7 +110,7 @@ for (const viewport of cases) {
     await page.getByRole("button", { name: "More options" }).click();
     await page.getByRole("button", { name: "About" }).click();
     await shot(page, dir, "11-about");
-    await page.locator('[data-close-dialog="about-dialog"]').click();
+    await page.getByRole("button", { name: "Close about" }).click();
 
     await page.getByRole("button", { name: "AIRPLANES" }).click();
     await shot(page, dir, "12-airplanes-empty");
