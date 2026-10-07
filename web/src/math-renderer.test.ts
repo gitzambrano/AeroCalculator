@@ -34,4 +34,14 @@ describe("math-renderer with KaTeX", () => {
       expect(rendered).toContain("katex");
     }
   });
+  it("renders standardized Greek and runway notation without raw LaTeX", () => {
+    const keys = ["Delta ISA", "BankTurn", "Sideslip", "Pressure Ratio δ", "Density Ratio σ", "Temperature Ratio θ", "Runway Angle"];
+    for (const key of keys) {
+      const html = renderEquationLaTeX(key);
+      expect(html).toContain("katex");
+      expect(html).not.toContain("\\\\text");
+    }
+    expect(renderEquationLaTeX("Runway Angle")).toContain("RWY");
+  });
+
 });
