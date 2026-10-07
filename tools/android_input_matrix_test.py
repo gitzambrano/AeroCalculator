@@ -279,6 +279,16 @@ def exercise_profile(label,size,density):
   for j,choice in enumerate(spec["choices"]):
    choose(dirp,spec["buttons"],spec["expected"],choice,f"{key}-{j}-{norm(choice)[:28]}")
 
+ # Capture one composite state that exposes the width-dependent fallback labels.
+ choose(dirp,FIELDS["alt"]["buttons"],FIELDS["alt"]["expected"],"Pressure","fallback-pressure")
+ choose(dirp,FIELDS["temp"]["buttons"],FIELDS["temp"]["expected"],"Outside Air Temperature","fallback-temperature")
+ choose(dirp,FIELDS["speed"]["buttons"],FIELDS["speed"]["expected"],"Dynamic Pressure","fallback-dynamic-pressure")
+ choose(dirp,FIELDS["wind"]["buttons"],FIELDS["wind"]["expected"],"WindSpeed / WindDirection","fallback-wind-vector")
+ top(dirp)
+ fallback=dump(dirp,"fallback-labels")
+ record(label,"fallback-labels",fallback)
+ shot(dirp,"fallback-labels",force=True)
+
  fill_vsfactor(dirp)
 
  choose(dirp,FIELDS["alt"]["buttons"],FIELDS["alt"]["expected"],"Pressure Altitude","alt-length-mode")
