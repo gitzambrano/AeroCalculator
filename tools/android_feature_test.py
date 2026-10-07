@@ -55,7 +55,8 @@ def dump(name):
  return ET.parse(p).getroot()
 def shot(name):
  run('adb','exec-out','screencap','-p',text=False,check=False); time.sleep(.45)
- (OUT/f'{name}.png').write_bytes(run('adb','exec-out','screencap','-p',text=False))
+ p=OUT/f'{name}.png'; p.parent.mkdir(parents=True,exist_ok=True)
+ p.write_bytes(run('adb','exec-out','screencap','-p',text=False))
 def nodes(root): return [n for n in root.iter('node') if n.attrib.get('package')==PKG]
 def allnodes(root): return list(root.iter('node'))
 def texts(root,app_only=True):
@@ -67,6 +68,11 @@ def find(root,t,app_only=True):
 def find_contains(root,t,app_only=True):
  q=norm(t); src=nodes(root) if app_only else allnodes(root)
  return next((n for n in src if q and q in norm(n.attrib.get('text',''))),None)
+def find_any(root,names,app_only=True):
+ for name in names:
+  n=find(root,name,app_only)
+  if n is not None:return n
+ return None
 def parents(root): return {c:p for p in root.iter() for c in p}
 def tap(n):
  x,y=center(n); adb('shell','input','tap',str(x),str(y)); time.sleep(.8)
@@ -164,6 +170,87 @@ def return_to_main(stage):
  foreground(stage,'.main')
  return r
 
+def choose_option(current_names, option, stage):
+ r,n,_=until(current_names,stage+'-find',12)
+ rec('selector-current:'+stage,n is not None,str(texts(r)[:80]))
+ tap(n)
+ d,o=wait_text(option,stage+'-sheet',timeout=8)
+ rec('selector-option:'+stage,o is not None,str(texts(d)[:100]))
+ tap(o); time.sleep(.45)
+ state=dump(stage+'-state'); layout(state,stage); shot('input-audit/'+stage)
+ return state
+
+def audit_all_input_modes():
+ if str(API) != '36': return
+ profiles=[
+  ('280dp','560x1120','320'),
+  ('320dp','640x1280','320'),
+  ('360dp','720x1280','320'),
+  ('393dp','1080x2340','440'),
+  ('411dp','1080x2400','420'),
+ ]
+ for label,size,density in profiles:
+  adb('shell','wm','size',size); adb('shell','wm','density',density)
+  adb('shell','cmd','window','user-rotation','lock','0',check=False)
+  adb('shell','pm','clear',PKG,check=False); adb('logcat','-c',check=False)
+  adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(2.2)
+  foreground('audit-'+label,'.main')
+  wait_text('INPUTS','audit-'+label+'-ready')
+  shot('input-audit/'+label+'-baseline')
+
+  # Altitude: exercise all computational modes; verify hardware/GPS choices are present.
+  r=dump('audit-'+label+'-alt-start'); cur=['HP','Altitude HP']
+  tap(find_any(r,cur)); d,_=wait_text('Pressure Altitude','audit-'+label+'-alt-sheet')
+  for option in ['Geometric Altitude','Altitude from GPS','Pressure','Pressure from Sensor']:
+   if find(d,option) is None:
+    try: d,_,_=until([option],'audit-'+label+'-alt-option-'+norm(option),8)
+    except Exception: pass
+   rec('alt-option-present:'+label+':'+option,find(d,option) is not None,str(texts(d)[:100]))
+  tap(find(d,'Pressure Altitude')); time.sleep(.3)
+  choose_option(['HP','Altitude HP'],'Geometric Altitude',label+'-alt-geometric'); cur=['HG','Altitude HG']
+  choose_option(cur,'Pressure',label+'-alt-pressure'); cur=['P','Static Pressure','Pressure']
+  choose_option(cur,'Pressure Altitude',label+'-alt-pressure-altitude')
+
+  # Temperature: computational modes plus sensor option discoverability.
+  choose_option(['OAT','Temperature OAT'],'Δ ISA',label+'-temp-delta-isa')
+  r=dump('audit-'+label+'-temp-delta'); n=find_any(r,['Δ ISA']); tap(n)
+  d,_=wait_text('Outside Air Temperature','audit-'+label+'-temp-sheet')
+  rec('temp-sensor-present:'+label,find(d,'Temperature from Sensor') is not None,str(texts(d)[:80]))
+  tap(find(d,'Outside Air Temperature')); time.sleep(.3); shot('input-audit/'+label+'-temp-oat')
+
+  # Speed: every non-hardware mode; GPS mode must be present in the picker.
+  speed_states=[
+   (['CAS','Airspeed CAS'],'TAS',['TAS','Airspeed TAS'],'tas'),
+   (['TAS','Airspeed TAS'],'CAS',['CAS','Airspeed CAS'],'cas'),
+   (['CAS','Airspeed CAS'],'EAS',['EAS','Airspeed EAS'],'eas'),
+   (['EAS','Airspeed EAS'],'Mach',['Mach'],'mach'),
+   (['Mach'],'Lift Coefficient',['CL','Lift Coefficient'],'cl'),
+   (['CL','Lift Coefficient'],'Stall-Speed Factor',['VS Factor','VS Fact'],'vs-factor'),
+   (['VS Factor','VS Fact'],'Ground Speed',['Ground Speed','Grnd Speed'],'ground-speed'),
+   (['Ground Speed','Grnd Speed'],'Dynamic Pressure',['Dynamic Pressure','q'],'dynamic-pressure'),
+   (['Dynamic Pressure','q'],'Impact Pressure',['Impact Pressure','qc'],'impact-pressure'),
+  ]
+  for current,opt,next_names,slug in speed_states:
+   choose_option(current,opt,label+'-spd-'+slug)
+  r,spdbtn,_=until(['Impact Pressure','qc'],'audit-'+label+'-spd-gps-check',12); tap(spdbtn)
+  d,_,_=until(['GroundSpeed from GPS'],'audit-'+label+'-spd-gps-option',10)
+  rec('gps-speed-option-present:'+label,find(d,'GroundSpeed from GPS') is not None,str(texts(d)[:120]))
+  cancel=find(d,'Cancel'); tap(cancel) if cancel is not None else back(); time.sleep(.3)
+
+  # Maneuver / angular modes.
+  choose_option(['NZ (Pull-up)','NZ','N Z (Pull-up)'],'Normal Load Factor (Wind-up Turn)',label+'-nz-turn')
+  choose_option(['NZ (Turn)','NZ'],'Bank Angle (Wind-up Turn)',label+'-nz-bank')
+  choose_option(['Bank Angle','Bank'],'Normal Load Factor (Pull-up)',label+'-nz-pullup')
+  choose_option(['Track Angle','Track'],'Heading Angle',label+'-angle-heading')
+  choose_option(['Heading Angle','Heading'],'Track Angle (Course)',label+'-angle-track')
+  choose_option(['Sideslip Angle','Sideslip'],'Drift Angle',label+'-lateral-drift')
+  choose_option(['Drift Angle','Drift'],'Sideslip Angle β',label+'-lateral-sideslip')
+
+  # Wind representation modes.
+  choose_option(['HeadWind','HeadWnd'],'WindSpeed / WindDirection',label+'-wind-vector')
+  choose_option(['Wind Speed','Wind Spd','WindSpd'],'Headwind / Crosswind',label+'-wind-components')
+  foreground('audit-finish-'+label,'.main')
+
 def main():
  adb('install','-r',APK); adb('shell','wm','size','1080x2340'); adb('shell','wm','density','440'); adb('shell','cmd','window','user-rotation','lock','0',check=False); adb('shell','pm','clear',PKG,check=False); adb('logcat','-c',check=False)
  adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(3); foreground('launch','.main')
@@ -176,8 +263,13 @@ def main():
 
  for lab,val in [('HP','0'),('OAT','15'),('CAS','100'),('Weight','1000'),('SREF','16'),('cREF','1.5'),('CL,MAX','1.5'),('NZ (Pull-up)','1')]: edit(lab,val)
  top(); taptext('CALCULATE'); time.sleep(1); foreground('calculate','.main'); r=dump('outputs-top'); layout(r,'outputs-top'); shot('outputs-top')
+ helper_label=find(r,'Pressure Altitude')
+ if helper_label is not None:
+  tap(helper_label); time.sleep(.6); hd=dump('output-helper')
+  rec('output-helper-open',find_contains(hd,'MODEL / ASSUMPTIONS') is not None or find_contains(hd,'Definition') is not None,str(texts(hd)[:100]))
+  shot('output-helper'); back(); time.sleep(.5)
  for lab,exp,tol in [('Pressure',1013.25,1),('Temperature',15,.2),('Density',1.225,.03),('Calibrated Airspeed',100,.5)]:
-  s=result(lab); v=num(s); rec('calc:'+lab,abs(v-exp)<=tol,f'{s} expected {exp}±{tol}')
+  sv=result(lab); v=num(sv); rec('calc:'+lab,abs(v-exp)<=tol,f'{sv} expected {exp}±{tol}')
  r,_,seen=until(['AlongTrack Crosswind'],'outputs-bottom',18); rec('outputs-bottom',True,str(seen[-20:])); shot('outputs-bottom')
 
  taptext('INPUTS'); taptext('AIRPLANES'); foreground('airplanes','.main'); r=dump('airplanes'); layout(r,'airplanes'); shot('airplanes')
@@ -209,6 +301,7 @@ def main():
 
  select_menu('Import Airplanes','import'); time.sleep(1.2); d=dump('import-system-chooser'); rec('import-system-chooser',bool(texts(d,app_only=False)),str(texts(d,app_only=False)[:80])); shot('import-system-chooser'); back(); return_to_main('import-return')
 
+ audit_all_input_modes()
  report(); print(json.dumps(R,indent=2))
 
 try: main()
