@@ -42,9 +42,9 @@ For web work, run:
 
 `cd web && npm test && npm run build && npm run test:e2e`
 
-The visual-audit Playwright cases are skipped in quick mode.
+Quick mode runs a small representative visual set (280/320/360/390/411 px) and saves only key screenshots. It does not generate the complete visual-audit corpus.
 
-For Android work, the normal `android-build-smoke` workflow runs a reduced representative viewport matrix plus the mechanical smoke, input-matrix, and feature checks. The input matrix still exercises all calculator choices and units, but with fewer viewport profiles and without bulk screenshot capture.
+For Android work, the normal `android-build-smoke` workflow runs a reduced representative viewport matrix plus the mechanical smoke, input-matrix, and feature checks. The input matrix still exercises all calculator choices and units, but with fewer viewport profiles and only a small set of key screenshots; bulk screenshot capture remains exclusive to full mode.
 
 A quick check must be green before reporting a normal change as complete.
 
