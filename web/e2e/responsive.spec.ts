@@ -83,6 +83,20 @@ for (const viewport of viewports) {
       await assertCriticalTextNotClipped(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
 
+      await page.locator('[data-field="crossWind"] .field-select-wrap').click();
+      await expect(page.locator("#modal-options-selector")).toBeVisible();
+      await expect(page.locator("#options-selector-title")).toHaveText("Wind Input Type");
+      await expect(page.locator("#modal-options-selector .option-item")).toHaveCount(2);
+      await expect(page.locator("#modal-options-selector")).toContainText("Headwind / Crosswind");
+      await expect(page.locator("#modal-options-selector")).toContainText("WindSpeed / WindDirection");
+      await page.locator("#options-selector-cancel").click();
+
+      await page.locator("#alt-unit").click();
+      await expect(page.locator("#modal-options-selector")).toBeVisible();
+      await expect(page.locator("#options-selector-title")).toHaveText("Altitude Unit");
+      await expect(page.locator("#modal-options-selector .option-item")).toHaveCount(6);
+      await page.locator("#options-selector-cancel").click();
+
       if (viewport.width <= 430) {
         const widths = await page.locator(".input-row:not([hidden]) > .field-select-wrap, .input-row:not([hidden]) > .field-select, .airplane-row > .field-button").evaluateAll((elements) =>
           elements
