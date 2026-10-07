@@ -375,14 +375,6 @@ app.innerHTML = `
             </select>
             <button type="button" class="setting-choice" data-setting-select="setting-theme" data-setting-title="Theme"></button>
           </div>
-          <div class="setting-row check-row">
-            <div class="setting-text">
-              <span class="setting-title">Extra Decimal Place</span>
-              <span class="setting-desc">Increase result precision by one decimal</span>
-            </div>
-            <input id="setting-extra-decimal" type="checkbox" aria-label="Extra Decimal Place" />
-          </div>
-
           <h3>OUTPUT UNITS</h3>
           <div class="setting-row">
             <div class="setting-text"><span class="setting-title">Altitude Unit</span><span class="setting-desc">Unit used for altitude in calculated outputs</span></div>
@@ -414,15 +406,20 @@ app.innerHTML = `
             <select id="setting-angle-format" class="setting-native-select" aria-label="Angle Interval"><option value="0/360">0/360 (0/2π)</option><option value="-180/180">-180/180 (-π/π)</option></select>
             <button type="button" class="setting-choice" data-setting-select="setting-angle-format" data-setting-title="Angle Interval"></button>
           </div>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Number Format</span><span class="setting-desc">Standard precision or one extra decimal place</span></div>
+            <select id="setting-number-format" class="setting-native-select" aria-label="Number Format"><option>Standard</option><option>+1 decimal</option></select>
+            <button type="button" class="setting-choice" data-setting-select="setting-number-format" data-setting-title="Number Format"></button>
+          </div>
 
           <h3>AIRCRAFT DATA</h3>
           <div class="setting-row">
-            <div class="setting-text"><span class="setting-title">Export Airplanes</span><span class="setting-desc">Back up all saved aircraft profiles</span></div>
-            <button type="button" class="setting-btn" id="setting-export-btn">Export</button>
+            <div class="setting-text"><span class="setting-title">Import Airplanes</span><span class="setting-desc">Restore or merge aircraft profiles from a backup</span></div>
+            <button type="button" class="setting-btn" id="setting-import-btn">Import</button>
           </div>
           <div class="setting-row">
-            <div class="setting-text"><span class="setting-title">Clear Inputs</span><span class="setting-desc">Reset all flight-condition entries</span></div>
-            <button type="button" class="setting-btn" id="setting-clear-btn">Clear</button>
+            <div class="setting-text"><span class="setting-title">Export Airplanes</span><span class="setting-desc">Back up all saved aircraft profiles</span></div>
+            <button type="button" class="setting-btn" id="setting-export-btn">Export</button>
           </div>
           </div>
           <div class="dialog-buttons settings-footer">
@@ -923,6 +920,7 @@ const SETTING_OPTION_DESCRIPTIONS: Record<string, Record<string, string>> = {
   "setting-speed": { kt: "Knots — aviation standard", "m/s": "Meters per second — SI unit", "km/h": "Kilometers per hour", mph: "Miles per hour", "ft/s": "Feet per second" },
   "setting-angle": { deg: "Degrees", rad: "Radians" },
   "setting-angle-format": { "0/360": "Positive convention", "-180/180": "Signed convention" },
+  "setting-number-format": { Standard: "Default decimal places", "+1 decimal": "One extra decimal place in results" },
 };
 
 function syncSettingChoiceButtons(): void {
@@ -1096,10 +1094,11 @@ document.querySelectorAll<HTMLButtonElement>(".setting-choice").forEach((button)
     button.dataset.settingTitle ?? "Select Option",
   ));
 });
-byId("setting-export-btn")?.addEventListener("click", () => exportProfileFile());
-byId("setting-clear-btn")?.addEventListener("click", () => {
-  if (confirm("Are you sure you want to clear the inputs?")) clearInputs();
+byId("setting-import-btn")?.addEventListener("click", () => {
+  setOverlayOpen("settings-dialog", false);
+  (byId("profile-import") as HTMLInputElement).click();
 });
+byId("setting-export-btn")?.addEventListener("click", () => exportProfileFile());
 byId("settings-form").addEventListener("submit", (event) => {
   event.preventDefault();
   saveOutputSettings();
@@ -2113,7 +2112,7 @@ function openSettings(): void {
   (byId("setting-speed") as HTMLSelectElement).value = settings.speed;
   (byId("setting-angle") as HTMLSelectElement).value = settings.angle;
   (byId("setting-angle-format") as HTMLSelectElement).value = settings.angleFormat;
-  (byId("setting-extra-decimal") as HTMLInputElement).checked = settings.extraDecimal;
+  (byId("setting-number-format") as HTMLSelectElement).value = settings.extraDecimal ? "+1 decimal" : "Standard";
   syncSettingChoiceButtons();
   setOverlayOpen("settings-dialog", true);
 }
@@ -2127,7 +2126,7 @@ function saveOutputSettings(): void {
     speed: (byId("setting-speed") as HTMLSelectElement).value,
     angle: (byId("setting-angle") as HTMLSelectElement).value as "deg" | "rad",
     angleFormat: (byId("setting-angle-format") as HTMLSelectElement).value as "0/360" | "-180/180",
-    extraDecimal: (byId("setting-extra-decimal") as HTMLInputElement).checked,
+    extraDecimal: (byId("setting-number-format") as HTMLSelectElement).value === "+1 decimal",
   };
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   applyTheme();
