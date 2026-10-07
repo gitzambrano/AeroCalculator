@@ -113,7 +113,8 @@ for (const viewport of cases) {
       for (const theme of themes) {
         await page.getByRole("button", { name: "More options" }).click();
         await page.getByRole("button", { name: "Settings" }).click();
-        await page.locator("#setting-theme").selectOption(theme);
+        await page.locator('[data-setting-select="setting-theme"]').click();
+        await page.locator("#options-selector-list .option-item").filter({ hasText: theme }).first().click();
         await page.locator("#settings-form").getByRole("button", { name: "Save" }).click();
         await shot(page, dir, `${index}-theme-${theme.toLowerCase().replaceAll(" ", "-")}`);
         index += 1;
