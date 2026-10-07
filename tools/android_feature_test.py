@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, re, subprocess, sys, time, xml.etree.ElementTree as ET
+import json, os, re, subprocess, sys, time, xml.etree.ElementTree as ET
 from pathlib import Path
 
 # ==============================================================================
@@ -7,13 +7,14 @@ from pathlib import Path
 # ==============================================================================
 DEFAULT_APK_PATH = Path("Objects/AeroCalculator.apk")
 DEFAULT_API_LEVEL = "36"
+FULL_VISUAL_AUDIT = os.environ.get("AEROCALC_FULL_VISUAL_AUDIT", "0") == "1"
 
 APK = sys.argv[1] if len(sys.argv) > 1 else str(DEFAULT_APK_PATH)
 API = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_API_LEVEL
 PKG = 'flightdyn.aerocalculator'
 OUT = Path(f'smoke-results/api-{API}/feature-regression')
 OUT.mkdir(parents=True, exist_ok=True)
-R = {'api': API, 'checks': []}
+R = {'api': API, 'mode': 'full-visual' if FULL_VISUAL_AUDIT else 'quick', 'checks': []}
 
 def run(*a,check=True,text=True):
  p=subprocess.run(a,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=text)
@@ -53,7 +54,8 @@ def equivalent_texts(t):
 def dump(name):
  adb('shell','uiautomator','dump','/sdcard/window.xml',check=False); p=OUT/f'{name}.xml'; run('adb','pull','/sdcard/window.xml',str(p),check=False)
  return ET.parse(p).getroot()
-def shot(name):
+def shot(name, force=False):
+ if not FULL_VISUAL_AUDIT and not force: return
  run('adb','exec-out','screencap','-p',text=False,check=False); time.sleep(.45)
  p=OUT/f'{name}.png'; p.parent.mkdir(parents=True,exist_ok=True)
  p.write_bytes(run('adb','exec-out','screencap','-p',text=False))
@@ -301,15 +303,16 @@ def main():
 
  select_menu('Import Airplanes','import'); time.sleep(1.2); d=dump('import-system-chooser'); rec('import-system-chooser',bool(texts(d,app_only=False)),str(texts(d,app_only=False)[:80])); shot('import-system-chooser'); back(); return_to_main('import-return')
 
- # Mandatory visual/state sweep: exercise every non-hardware calculator mode at representative phone widths.
- audit_all_input_modes()
+ # Full visual/state sweep is intentionally opt-in; quick CI remains mechanical and compact.
+ if FULL_VISUAL_AUDIT:
+  audit_all_input_modes()
 
  report(); print(json.dumps(R,indent=2))
 
 try: main()
 except Exception as e:
  R['error']=f'{type(e).__name__}: {e}'; report()
- try: shot('failure')
+ try: shot('failure', force=True)
  except Exception: pass
  raise
 finally:
