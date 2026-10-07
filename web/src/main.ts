@@ -862,6 +862,9 @@ byId("more-menu").addEventListener("click", (event) => {
   setOverlayOpen("main-menu", true);
 });
 byId("main-menu-close")?.addEventListener("click", () => setOverlayOpen("main-menu", false));
+byId("main-menu").addEventListener("click", (event) => {
+  if (event.target === byId("main-menu")) setOverlayOpen("main-menu", false);
+});
 document.addEventListener("click", (event) => {
   const menu = byId("main-menu");
   if (!menu.classList.contains("open")) return;
