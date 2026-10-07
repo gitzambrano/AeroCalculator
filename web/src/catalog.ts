@@ -9,7 +9,7 @@ export interface CatalogItem {
 
 export const CATALOG: Record<string, CatalogItem> = {
   "Pressure Altitude": {
-    title: "Pressure altitude \u2022 H<sub>p</sub>",
+    title: "Pressure altitude \u2022 H<sub class='hp-sub'>p</sub>",
     desc: "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
     eq: "pISA(Hp) = p",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
@@ -303,7 +303,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m/s",
   },
   "Hp": {
-    title: "Pressure altitude \u2022 H<sub>p</sub>",
+    title: "Pressure altitude \u2022 H<sub class='hp-sub'>p</sub>",
     desc: "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
     eq: "pISA(Hp) = p",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
