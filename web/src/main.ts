@@ -1157,7 +1157,7 @@ function createInputRow(field: Field): HTMLElement {
     delta.className = "value-input calc-control speed-delta";
     delta.inputMode = "decimal";
     delta.autocomplete = "off";
-    delta.placeholder = "";
+    delta.placeholder = "kt";
     delta.value = "0";
     delta.hidden = true;
     delta.setAttribute("aria-label", "Stall-speed-factor delta in knots");
