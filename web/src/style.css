@@ -151,6 +151,10 @@ sub {
   vertical-align: baseline;
   bottom: -0.38em;
 }
+/* p has a descender: pressure-altitude labels get slightly more bottom clearance. */
+.pressure-altitude-label sub {
+  bottom: -0.30em;
+}
 
 .app-shell {
   width: min(100%, 860px);
@@ -913,6 +917,12 @@ sub {
   pointer-events: auto;
   visibility: visible;
   transition: opacity 0.2s ease, visibility 0s linear 0s;
+}
+.modal-overlay.menu-overlay,
+.modal-overlay.settings-overlay {
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
 }
 
 .modal-card {
