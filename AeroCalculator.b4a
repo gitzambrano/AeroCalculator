@@ -4975,11 +4975,11 @@ Sub btnSettingTheme_Click
 	Dim items As List
 	items.Initialize
 	items.Add("Green Peace|Teal daylight interface")
-	items.Add("Ancient Brown|Warm sepia parchment")
-	items.Add("Dark Shadows|Cockpit dark cyan")
-	items.Add("Blue Sky|Midnight blue cyan")
-	items.Add("Red Alert|Dark crimson alert")
-	items.Add("Orange Juice|Cockpit amber warm")
+	items.Add("Ancient Brown|Warm leather and sepia surfaces")
+	items.Add("Dark Shadows|Cockpit stealth, high contrast")
+	items.Add("Blue Sky|Midnight navy with cyan accents")
+	items.Add("Red Alert|Crimson avionics on neutral surfaces")
+	items.Add("Orange Juice|Warm cockpit amber")
 	Dim themes() As String = Array As String("Green Peace","Ancient Brown","Dark Shadows","Blue Sky","Red Alert","Orange Juice")
 	Dim current As String = manager.GetString("theme")
 	Dim sel As Int = 0
@@ -4988,10 +4988,7 @@ Sub btnSettingTheme_Click
 	Next
 	Wait For (AeroSheet.Show(Activity, items, "Theme", sel)) Complete (idx As Int)
 	If idx < 0 Then Return
-	If themes(idx) = current Then
-		CloseSettingsPopup
-		Return
-	End If
+	If themes(idx) = current Then Return
 	manager.SetString("theme", themes(idx))
 	CloseSettingsPopup
 	RestartActivity
