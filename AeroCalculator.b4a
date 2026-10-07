@@ -655,13 +655,13 @@ Sub Activity_Create(FirstTime As Boolean)
 		Select j
 		Case 0
 			btnAirplane.Initialize("btnAirplane")
-			pnlInput.AddView(btnAirplane, 3%x, ib*sc, 44%x, tb*sc)
+			pnlInput.AddView(btnAirplane, 3%x, ib*sc, 39%x, tb*sc)
 			btnAirplane.Text = "Airplane"
 			btnAirplane.TextSize = 15*sc
 			btnAirplane.TextColor = ColorButText1
 			btnAirplane.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			panelspn.Initialize("panelspn")
-			pnlInput.AddView(panelspn, 50%x, ib * sc, 47%x, tb * sc)
+			pnlInput.AddView(panelspn, 45%x, ib * sc, 52%x, tb * sc)
 			panelspn.Background = EditGradient(ColorEdt, ColorPnlLine2)
 			spnAirp.Initialize("spnAirp")
 			spnAirp.TextSize = 14*sc
@@ -669,7 +669,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchDrawable(spnAirp, "spinner_ab_default_holo_light_am")
 		Case 1
 		    btnAltType.Initialize("btnAltType")
-			pnlInput.AddView(btnAltType, 3%x, ib*sc, 44%x, tb*sc)
+			pnlInput.AddView(btnAltType, 3%x, ib*sc, 39%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
 				btnAltType.Text = MakePressureAltitude("Altitude H")
 			Else
@@ -678,7 +678,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnAltType.TextSize = 15*sc
 			btnAltType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAlt.Initialize("edtAlt")
-		    pnlInput.AddView(edtAlt, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtAlt, 45%x, ib*sc, 32%x, tb*sc)
 			edtAlt.Hint = ""
 			edtAlt.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtAlt)
@@ -700,12 +700,12 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtAlt, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 2
 		    btnTempType.Initialize("btnTempType")
-		    pnlInput.AddView(btnTempType, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnTempType, 3%x, ib*sc, 39%x, tb*sc)
 			btnTempType.Text="Δ ISA"
 			btnTempType.TextSize = 15*sc
 			btnTempType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtTemp.Initialize("edtTemp")
-		    pnlInput.AddView(edtTemp, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtTemp, 45%x, ib*sc, 32%x, tb*sc)
 			edtTemp.Hint = ""
 			edtTemp.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtTemp)
@@ -727,7 +727,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtTemp, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 3
 		    btnSpdType.Initialize("btnSpdType")
-		    pnlInput.AddView(btnSpdType, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnSpdType, 3%x, ib*sc, 39%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
 				btnSpdType.Text="Airspeed CAS"
 			Else
@@ -736,7 +736,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSpdType.TextSize = 15*sc
 			btnSpdType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtSpd.Initialize("edtSpd")
-		    pnlInput.AddView(edtSpd, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtSpd, 45%x, ib*sc, 32%x, tb*sc)
 			edtSpd.Hint = ""
 			edtSpd.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtSpd)
@@ -780,12 +780,12 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtSpdDelta, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 4
 		    btnWeight.Initialize("btnWeight")
-		    pnlInput.AddView(btnWeight, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnWeight, 3%x, ib*sc, 39%x, tb*sc)
 			btnWeight.Text="Weight"
 			btnWeight.TextSize = 15*sc
 			btnWeight.Background =ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtWeight.Initialize("edtWeight")
-		    pnlInput.AddView(edtWeight, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtWeight, 45%x, ib*sc, 32%x, tb*sc)
 			edtWeight.Hint = ""
 			edtWeight.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtWeight)
@@ -809,7 +809,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtWeight, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 5
 			btnSref.Initialize("btnSref")
-		    pnlInput.AddView(btnSref, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnSref, 3%x, ib*sc, 39%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
 				btnSref.Text = MakeSubscript("Area S", "REF", "")
 			Else
@@ -818,7 +818,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSref.TextSize = 15*sc
 			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtSref.Initialize("edtSref")
-		    pnlInput.AddView(edtSref, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtSref, 45%x, ib*sc, 32%x, tb*sc)
 			edtSref.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 			edtSref.Hint = ""
@@ -843,7 +843,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtSref, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 6
 			btncref.Initialize("btncref")
-		    pnlInput.AddView(btncref, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btncref, 3%x, ib*sc, 39%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
 				btncref.Text = MakeSubscript("Chord c", "REF", "")
 			Else
@@ -852,7 +852,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btncref.TextSize = 15*sc
 			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtcref.Initialize("edtcref")
-		    pnlInput.AddView(edtcref, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtcref, 45%x, ib*sc, 32%x, tb*sc)
 			edtcref.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>320dip Then
 			edtcref.Hint = ""
@@ -877,12 +877,12 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtcref, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 7
 			btnCLmax.Initialize("btnCLmax")
-		    pnlInput.AddView(btnCLmax, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnCLmax, 3%x, ib*sc, 39%x, tb*sc)
 			btnCLmax.Text = MakeSubscript("C", "L,MAX", "")
 			btnCLmax.TextSize = 15*sc
 			btnCLmax.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtCLmax.Initialize("edtCLmax")
-		    pnlInput.AddView(edtCLmax, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtCLmax, 45%x, ib*sc, 32%x, tb*sc)
 			btnCLmaxUnit.Initialize("btnCLmaxUnit")
 			btnCLmaxUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 		    pnlInput.AddView(btnCLmaxUnit, 80%x, ib*sc, 17%x, tb*sc)
@@ -907,12 +907,12 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtCLmax, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 8
 		    btnNzType.Initialize("btnNzType")
-		    pnlInput.AddView(btnNzType, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnNzType, 3%x, ib*sc, 39%x, tb*sc)
 			btnNzType.Text = MakeSubscript("N", "Z", " (Pull-up)")
 			btnNzType.TextSize = 15*sc
 			btnNzType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtNz.Initialize("edtNz")
-		    pnlInput.AddView(edtNz, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtNz, 45%x, ib*sc, 32%x, tb*sc)
 			edtNz.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 				edtNz.Hint = ""
@@ -937,12 +937,12 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtNz, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 9
 		    btnAngle1Type.Initialize("btnAngle1Type")
-			pnlInput.AddView(btnAngle1Type, 3%x, ib*sc, 44%x, tb*sc)
+			pnlInput.AddView(btnAngle1Type, 3%x, ib*sc, 39%x, tb*sc)
 		    btnAngle1Type.Text="Track Angle"
 			btnAngle1Type.TextSize = 15*sc
 			btnAngle1Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAngle1.Initialize("edtAngle1")
-		    pnlInput.AddView(edtAngle1, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtAngle1, 45%x, ib*sc, 32%x, tb*sc)
 			edtAngle1.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 				edtAngle1.Hint = ""
@@ -967,12 +967,12 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtAngle1, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 10
 		    btnAngle2Type.Initialize("btnAngle2Type")
-			pnlInput.AddView(btnAngle2Type, 3%x, ib*sc, 44%x, tb*sc)
+			pnlInput.AddView(btnAngle2Type, 3%x, ib*sc, 39%x, tb*sc)
 		    btnAngle2Type.Text="Sideslip Angle"
 			btnAngle2Type.TextSize = 15*sc
 			btnAngle2Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAngle2.Initialize("edtAngle2")
-		    pnlInput.AddView(edtAngle2, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtAngle2, 45%x, ib*sc, 32%x, tb*sc)
 			edtAngle2.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 				edtAngle2.Hint = ""
@@ -997,7 +997,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtAngle2, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 11
 		    btnHeadWind.Initialize("btnHeadWind")
-		    pnlInput.AddView(btnHeadWind, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnHeadWind, 3%x, ib*sc, 39%x, tb*sc)
 			btnHeadWind.Text = "HeadWnd"
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 				btnHeadWind.Text = "HeadWind"
@@ -1005,7 +1005,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnHeadWind.TextSize = 15*sc
 			btnHeadWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtHeadWind.Initialize("edtHeadWind")
-		    pnlInput.AddView(edtHeadWind, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtHeadWind, 45%x, ib*sc, 32%x, tb*sc)
 			edtHeadWind.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>340dip Then
 				edtHeadWind.Hint = ""
@@ -1030,7 +1030,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtHeadWind, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 		Case 12	
 			btnCrossWind.Initialize("btnCrossWind")
-		    pnlInput.AddView(btnCrossWind, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnCrossWind, 3%x, ib*sc, 39%x, tb*sc)
 			btnCrossWind.Text = "CrossWnd"
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 				btnCrossWind.Text = "CrossWind"
@@ -1038,7 +1038,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnCrossWind.TextSize = 15*sc
 			btnCrossWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtCrossWind.Initialize("edtCrossWind")
-		    pnlInput.AddView(edtCrossWind, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtCrossWind, 45%x, ib*sc, 32%x, tb*sc)
 			edtCrossWind.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>340dip Then
 				edtCrossWind.Hint = ""
@@ -1063,7 +1063,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			'SetNinePatchButton2(edtCrossWind, "apptheme_textfield_default_holo_light","","", "apptheme_textfield_activated_holo_light","")
 	    Case 13
 		    btnWindRefAngle.Initialize("btnWindRefAngle")
-		    pnlInput.AddView(btnWindRefAngle, 3%x, ib*sc, 44%x, tb*sc)
+		    pnlInput.AddView(btnWindRefAngle, 3%x, ib*sc, 39%x, tb*sc)
 			If xx >= 340dip Or sc > 1 Or ld = 1 Then
 				btnWindRefAngle.Text = "Runway Angle"
 			Else
@@ -1072,7 +1072,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnWindRefAngle.TextSize = 15*sc
 			btnWindRefAngle.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtWindRefAngle.Initialize("edtWindRefAngle")
-		    pnlInput.AddView(edtWindRefAngle, 50%x, ib*sc, 27%x, tb*sc)
+		    pnlInput.AddView(edtWindRefAngle, 45%x, ib*sc, 32%x, tb*sc)
 			edtWindRefAngle.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>=340dip Then
 				edtWindRefAngle.Hint = ""
@@ -2897,7 +2897,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x 
+		edtSpd.Width = 32%x 
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 1 Then
 		If xx > 340dip Or sc > 1 Then
@@ -2908,7 +2908,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x
+		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 2 Then
 		If xx > 340dip Or sc > 1 Then
@@ -2919,7 +2919,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x
+		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 3 Then
 		btnSpdType.Text = "Mach"
@@ -2928,7 +2928,7 @@ Sub SpdType_Click
 		btnSpdUnit.Enabled = True
 		btnSpdUnit.Text = Chr(8212) ' em dash: dimensionless
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x
+		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 4 Then
 		edtSpd.Hint = ""
@@ -2937,7 +2937,7 @@ Sub SpdType_Click
 		btnSpdUnit.Enabled = True
 		btnSpdUnit.Text = Chr(8212) ' em dash: dimensionless
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x
+		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 5 Then
 		If xx > 340dip Or sc > 1 Then
@@ -2949,8 +2949,8 @@ Sub SpdType_Click
 		End If
 		btnSpdUnit.Visible = False
 		btnSpdDelta.Visible = True
-		' Keep the standard 44/27/17 column alignment: reuse the unit column for +Δ and Δ.
-		edtSpd.Width = 27%x
+		' Keep the standard 39/32/17 column alignment: reuse the unit column for +Δ and Δ.
+		edtSpd.Width = 32%x
 		btnSpdDelta.Left = 80%x
 		btnSpdDelta.Width = 8%x
 		edtSpdDelta.Left = 89%x
@@ -2966,7 +2966,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x
+		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 7 Then
 		If xx >= 320dip Or sc > 1 Then
@@ -2977,7 +2977,7 @@ Sub SpdType_Click
 		btnSpdUnit.Visible = True
 		edtSpd.Text = NumberFormat2(GPSspeed / kSpd, 1, 1, 1, False)
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x
+		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 8 Then
 		If xx > 340dip Or sc > 1 Then
@@ -2989,7 +2989,7 @@ Sub SpdType_Click
 		End If
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x
+		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 9 Then
 		If xx > 340dip Or sc > 1 Then
@@ -3001,7 +3001,7 @@ Sub SpdType_Click
 		End If
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 27%x
+		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	End If
 	SpdUnit_Click
