@@ -2697,8 +2697,10 @@ Sub AltType_Click
 	Else If indAltType = 3 Then
 		If UsePressureFullLabels Then
 			btnAltType.Text = "Static Pressure"
-		Else
+		Else If UseLongInputLabels Then
 			btnAltType.Text = "Pressure"
+		Else
+			btnAltType.Text = "P"
 		End If
 		edtAlt.Hint = ""
 		pa.StopListening
@@ -2732,8 +2734,10 @@ Sub AltType_Click
 		End If
 		If UsePressureFullLabels Then
 			btnAltType.Text = "Sensor Pressure"
-		Else
+		Else If UseLongInputLabels Then
 			btnAltType.Text = "Pressure"
+		Else
+			btnAltType.Text = "P"
 		End If
 		btnAltUnit.Text = "mbar"
 		kPres = 100
@@ -2984,7 +2988,7 @@ Sub SpdType_Click
 		edtSpdDelta.Visible = True
 		SetVsDeltaHint(True)
 	Else If indSpdType = 6 Then
-		If UseMediumInputLabels Then
+		If UseGroundFullLabels Then
 			btnSpdType.Text = "Ground Speed"
 		Else
 			btnSpdType.Text = "Grnd Spd"
@@ -2995,7 +2999,7 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 7 Then
-		If UseMediumInputLabels Then
+		If UseGroundFullLabels Then
 			btnSpdType.Text = "Ground Speed"
 		Else
 			btnSpdType.Text = "Grnd Spd"
@@ -3008,8 +3012,10 @@ Sub SpdType_Click
 	Else If indSpdType = 8 Then
 		If UseFullInputLabels Then
 			btnSpdType.Text = "Dynamic Pressure"
-		Else
+		Else If UseLongInputLabels Then
 			btnSpdType.Text = "Dyn Press"
+		Else
+			btnSpdType.Text = "q"
 		End If
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
@@ -3019,8 +3025,10 @@ Sub SpdType_Click
 	Else If indSpdType = 9 Then
 		If UseImpactFullLabels Then
 			btnSpdType.Text = "Impact Pressure"
-		Else
+		Else If UseLongInputLabels Then
 			btnSpdType.Text = "Imp Press"
+		Else
+			btnSpdType.Text = MakeSubscript("q", "c", "")
 		End If
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
@@ -3320,9 +3328,12 @@ Sub WindType
 			If UseFullWindVectorLabels Then
 				btnHeadWind.Text = "Wind Speed"
 				btnWindRefAngle.Text = "Wind Direction"
-			Else
+			Else If UseLongInputLabels Then
 				btnHeadWind.Text = "Wind Spd"
 				btnWindRefAngle.Text = "Wind Dir"
+			Else
+				btnHeadWind.Text = "WindSpd"
+				btnWindRefAngle.Text = "WindDir"
 			End If
 			edtHeadWind.Hint = ""
 			edtWindRefAngle.Hint = ""
@@ -4852,19 +4863,19 @@ Private Sub SetVsDeltaHint(ShowHint As Boolean)
 End Sub
 
 Private Sub UseFullInputLabels As Boolean
-	Return xx >= 355dip
+	Return xx >= 380dip
 End Sub
 
 Private Sub UseImpactFullLabels As Boolean
-	Return xx >= 330dip
+	Return xx >= 380dip
 End Sub
 
 Private Sub UsePressureFullLabels As Boolean
-	Return xx >= 330dip
+	Return xx >= 380dip
 End Sub
 
 Private Sub UseTemperatureFullLabels As Boolean
-	Return xx >= 350dip
+	Return xx >= 380dip
 End Sub
 
 Private Sub UseFlapFullLabels As Boolean
@@ -4875,8 +4886,12 @@ Private Sub UseGeometryFullLabels As Boolean
 	Return xx >= 325dip
 End Sub
 
+Private Sub UseGroundFullLabels As Boolean
+	Return xx >= 380dip
+End Sub
+
 Private Sub UseMediumInputLabels As Boolean
-	Return xx >= 300dip
+	Return xx >= 320dip
 End Sub
 
 Private Sub UseLongInputLabels As Boolean
@@ -4888,15 +4903,15 @@ Private Sub UseAirspeedFullLabels As Boolean
 End Sub
 
 Private Sub UseTemperatureWord As Boolean
-	Return xx >= 270dip
+	Return xx >= 340dip
 End Sub
 
 Private Sub UseFullWindVectorLabels As Boolean
-	Return xx >= 320dip
+	Return xx >= 380dip
 End Sub
 
 Private Sub UseHeadCrossFullLabels As Boolean
-	Return xx >= 260dip
+	Return xx >= 300dip
 End Sub
 
 Public Sub VibrateTap
