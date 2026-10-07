@@ -41,6 +41,7 @@ fi
 capture_state() {
   local dir="$1" name="$2"
   mkdir -p "$dir"
+  adb shell rm -f /sdcard/window.xml >/dev/null 2>&1 || true
   adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
   adb pull /sdcard/window.xml "$dir/${name}.xml" >/dev/null 2>&1 || true
   if [[ "$FULL_VISUAL_AUDIT" == "1" ]]; then
@@ -91,6 +92,7 @@ assert_dump_contains() {
 wait_for_ui_text() {
   local pattern="$1" tries="${2:-20}" tmp="$OUT_ROOT/wait-ui.xml"
   for _ in $(seq 1 "$tries"); do
+    rm -f "$tmp"
     adb shell uiautomator dump /sdcard/wait-ui.xml >/dev/null 2>&1 || true
     adb pull /sdcard/wait-ui.xml "$tmp" >/dev/null 2>&1 || true
     if [[ -s "$tmp" ]] && grep -E -q "$pattern" "$tmp"; then
@@ -122,8 +124,20 @@ launch_app() {
 
 tap_text() {
   local text="$1" tmp="$OUT_ROOT/tap-node.xml" xy
-  adb shell uiautomator dump /sdcard/tap-node.xml >/dev/null 2>&1
-  adb pull /sdcard/tap-node.xml "$tmp" >/dev/null 2>&1
+  # Never reuse a dump from an earlier profile: a failed dump would otherwise
+  # tap stale coordinates from a different screen size.
+  for _ in 1 2 3; do
+    rm -f "$tmp"
+    adb shell rm -f /sdcard/tap-node.xml >/dev/null 2>&1 || true
+    adb shell uiautomator dump /sdcard/tap-node.xml >/dev/null 2>&1 || true
+    adb pull /sdcard/tap-node.xml "$tmp" >/dev/null 2>&1 || true
+    [[ -s "$tmp" ]] && break
+    sleep 0.6
+  done
+  if [[ ! -s "$tmp" ]]; then
+    echo "uiautomator dump failed while looking for: $text" >&2
+    return 1
+  fi
   xy="$(python - "$tmp" "$text" <<'PY'
 import re, sys, xml.etree.ElementTree as ET
 path, wanted = sys.argv[1], sys.argv[2]
@@ -142,6 +156,7 @@ PY
     return 1
   fi
   read -r x y <<< "$xy"
+  echo "tap '$text' at $x,$y"
   adb shell input tap "$x" "$y"
   sleep 1
 }
@@ -172,6 +187,7 @@ scroll_until_text() {
   local width="$1" height="$2" count="$3" pattern="$4" extra="${5:-12}" tmp="$OUT_ROOT/scroll-ui.xml"
   scroll_down_repeatedly "$width" "$height" "$count"
   for _ in $(seq 1 "$extra"); do
+    rm -f "$tmp"
     adb shell uiautomator dump /sdcard/scroll-ui.xml >/dev/null 2>&1 || true
     adb pull /sdcard/scroll-ui.xml "$tmp" >/dev/null 2>&1 || true
     if [[ -s "$tmp" ]] && grep -E -q "$pattern" "$tmp"; then

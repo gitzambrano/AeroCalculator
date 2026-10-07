@@ -233,9 +233,27 @@ def cycle_units(dirp,label_candidates,options,state):
   if unit is None: raise AssertionError(f"{state}: unit control missing")
   tap(unit); time.sleep(.25)
   d=dump(dirp,f"{state}-unit-{idx}-sheet")
-  missing=[x for x in options if find_sheet_text(d,x) is None]
+  # Narrow sheets do not show every unit at once. Scroll the sheet list to
+  # collect the options, then reopen it and scroll to the one to select.
+  seen=set()
+  for i in range(8):
+   seen.update(x for x in options if find_sheet_text(d,x) is not None)
+   if len(seen)==len(options): break
+   swipe_sheet_list(d,options)
+   d=dump(dirp,f"{state}-unit-{idx}-sheet-{i}")
+  missing=[x for x in options if x not in seen]
   if missing: raise AssertionError(f"{state}: missing units {missing}")
   n=find_sheet_text(d,opt)
+  if n is None:
+   adb("shell","input","keyevent","4",check=False); time.sleep(.3)
+   r,_=reachable(dirp,label_candidates)
+   tap(row_unit_node(r,label_candidates)); time.sleep(.25)
+   d=dump(dirp,f"{state}-unit-{idx}-reopen")
+   for i in range(8):
+    n=find_sheet_text(d,opt)
+    if n is not None: break
+    swipe_sheet_list(d,options)
+    d=dump(dirp,f"{state}-unit-{idx}-reopen-{i}")
   if n is None: raise AssertionError(f"{state}: cannot select {opt}")
   tap(n); time.sleep(.3)
   rr=dump(dirp,f"{state}-unit-{idx}")
