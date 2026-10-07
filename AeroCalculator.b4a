@@ -479,7 +479,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlInput5 = Colors.RGB(241, 244, 248)     ' #F1F4F8 Canvas	
 	Else If manager.GetString("theme").CompareTo("Dark Shadows")=0 Then
 		ColorButPressed = Colors.RGB(13, 18, 27)      ' preserve existing pressed state
-		ColorButBorder = Colors.Transparent            ' preserve existing rendering
+		ColorButBorder = Colors.RGB(42, 54, 79)       ' #2A364F subtle selector border
 		ColorPnlTitle =  Colors.RGB(13, 18, 27)        ' #0D121B Header
 		ColorTitleText = Colors.White
 		ColorPnlLine =   Colors.RGB(0, 229, 255)       ' #00E5FF Aero Cyan indicator!
@@ -1076,10 +1076,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	    Case 13
 		    btnWindRefAngle.Initialize("btnWindRefAngle")
 		    pnlInput.AddView(btnWindRefAngle, 3%x, ib*sc, 44%x, tb*sc)
-			If xx >= 340dip Or sc > 1 Or ld = 1 Then
-				btnWindRefAngle.Text = "Runway Angle"
-			Else
+			If ld = 0 And xx <= 430dip Then
 				btnWindRefAngle.Text = "Rnwy Angle"
+			Else
+				btnWindRefAngle.Text = "Runway Angle"
 			End If
 			btnWindRefAngle.TextSize = 15*sc
 			btnWindRefAngle.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
@@ -2924,10 +2924,10 @@ Sub SpdType_Click
 		edtSpd.Width = 13%x
 		edtSpdDelta.Visible = True
 	Else If indSpdType = 6 Then
-		If xx >= 320dip Or sc > 1 Then
-			btnSpdType.Text = "Ground Speed"
-		Else
+		If ld = 0 And xx <= 430dip Then
 			btnSpdType.Text = "Grnd Speed"
+		Else
+			btnSpdType.Text = "Ground Speed"
 		End If
 		edtSpd.Hint = "Speed"
 		btnSpdUnit.Visible = True
@@ -2935,10 +2935,10 @@ Sub SpdType_Click
 		edtSpd.Width = 27%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 7 Then
-		If xx >= 320dip Or sc > 1 Then
-			btnSpdType.Text = "Ground Speed"
-		Else
+		If ld = 0 And xx <= 430dip Then
 			btnSpdType.Text = "Grnd Speed"
+		Else
+			btnSpdType.Text = "Ground Speed"
 		End If
 		btnSpdUnit.Visible = True
 		edtSpd.Text = NumberFormat2(GPSspeed / kSpd, 1, 1, 1, False)
@@ -3252,10 +3252,10 @@ Sub WindType
 			btnHeadWind.Text = "HeadWind"
 			edtHeadWind.Hint = "HeadWind"
 			edtWindRefAngle.Hint="Reference Dir."
-			If xx >= 340dip Or sc > 1 Or ld = 1 Then
-				btnWindRefAngle.Text = "Runway Angle"
-			Else
+			If ld = 0 And xx <= 430dip Then
 				btnWindRefAngle.Text = "Rnwy Angle"
+			Else
+				btnWindRefAngle.Text = "Runway Angle"
 			End If
 			If xx >= 340dip Or sc > 1 Or ld = 1 Then
 				edtHeadWind.Hint = "HeadWind Speed"
