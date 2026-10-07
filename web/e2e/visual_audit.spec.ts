@@ -43,10 +43,35 @@ for (const viewport of cases) {
     await expect(page.locator(".app-shell")).toBeVisible();
 
     await shot(page, dir, "01-inputs-viewport");
-    await page.locator('[data-field="spd"] .field-select-wrap').hover();
-    await expect(page.locator("#field-tooltip")).toBeVisible();
-    await shot(page, dir, "02-speed-helper");
-    await page.mouse.move(1, 1);
+    const speedSelector = page.locator('[data-field="spd"] .field-select-wrap');
+    if (viewport.width <= 430) {
+      // Mobile parity with the APK: long-press opens contextual help.
+      await speedSelector.dispatchEvent("pointerdown", {
+        pointerId: 31,
+        pointerType: "touch",
+        isPrimary: true,
+        clientX: 80,
+        clientY: 240,
+        bubbles: true,
+      });
+      await page.waitForTimeout(650);
+      await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
+      await shot(page, dir, "02-speed-helper");
+      await speedSelector.dispatchEvent("pointerup", {
+        pointerId: 31,
+        pointerType: "touch",
+        isPrimary: true,
+        clientX: 80,
+        clientY: 240,
+        bubbles: true,
+      });
+      await page.locator("#modal-tooltip-close").click();
+    } else {
+      await speedSelector.hover();
+      await expect(page.locator("#field-tooltip")).toBeVisible();
+      await shot(page, dir, "02-speed-helper");
+      await page.mouse.move(1, 1);
+    }
     await shot(page, dir, "03-inputs-full", true);
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await shot(page, dir, "04-inputs-bottom");
