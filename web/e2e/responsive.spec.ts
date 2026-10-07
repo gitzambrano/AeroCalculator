@@ -255,7 +255,7 @@ for (const viewport of viewports) {
 
 
 test("output values stay on one line across mobile widths with long formatting", async ({ browser }) => {
-  const widths = [280, 300, 319, 320, 339, 340, 360, 375, 390, 412, 430, 480];
+  const widths = [260, 280, 300, 319, 320, 329, 330, 339, 340, 349, 350, 354, 355, 360, 375, 390, 412, 430, 480];
   const context = await browser.newContext({ viewport: { width: 480, height: 900 } });
   const page = await context.newPage();
   await page.goto("/");
@@ -296,7 +296,7 @@ test("output values stay on one line across mobile widths with long formatting",
 
 test("every input type stays readable across mobile widths", async ({ browser }) => {
   test.setTimeout(180_000);
-  const widths = [280, 300, 319, 320, 339, 340, 360, 375, 390, 412, 430, 480];
+  const widths = [260, 280, 300, 319, 320, 329, 330, 339, 340, 349, 350, 354, 355, 360, 375, 390, 412, 430, 480];
   const typeCases: Record<string, readonly string[]> = {
     alt: ["Hp", "Hg", "P"],
     temp: ["Δ ISA", "OAT"],
