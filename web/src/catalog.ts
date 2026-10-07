@@ -184,7 +184,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "kg/m\u00b3",
   },
   "Total Temperature": {
-    title: "Total temperature \u2022 T<sub>t</sub>",
+    title: "Total air temperature \u2022 TAT",
     desc: "Isentropic stagnation temperature for a calorically perfect gas.",
     eq: "Tt = T (1 + (\u03b3\u22121) M\u00b2/2)",
     model: "Within the documented model. Unavailable values are not plotted.",
