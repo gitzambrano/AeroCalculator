@@ -651,7 +651,7 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   CL: "Aerodynamic lift coefficient",
   "Vs Factor": "Multiple of reference stall speed",
   "Ground Speed": "Speed over ground",
-  Qdyn: "q = ½ ρ V²",
+  Qdyn: "q = ½ ρ TAS²",
   Qc: "Total pressure minus static pressure",
 
   // Weight
@@ -2182,7 +2182,7 @@ function loadOutputSettings(): OutputSettings {
     pressure: "mbar",
     temperature: "°C",
     speed: "kt",
-    angle: "rad",
+    angle: "deg",
     angleFormat: "0/360",
     extraDecimal: false,
     theme: "Green Peace",
@@ -2553,7 +2553,8 @@ function recalculate(): void {
       "Drift Angle": signedAngleText(windSolution.driftRad),
       "Sideslip Angle β": signedAngleText(windSolution.sideslipRad),
       "Wind Speed": formatSpeed(windSolution.windSpeedMS),
-      "Wind Direction": angleText(windSolution.windDirectionRad),
+      // UI-1: direction is undefined without wind.
+      "Wind Direction": windSolution.windSpeedMS < 1e-9 ? "----" : angleText(windSolution.windDirectionRad),
       "AlongTrack Headwind": formatSpeed(windSolution.alongTrackHeadwindMS),
       "AlongTrack Crosswind": formatSpeed(windSolution.alongTrackCrosswindMS),
     };

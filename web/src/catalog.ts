@@ -74,7 +74,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Dynamic Pressure": {
     title: "Dynamic pressure \u2022 Qdyn",
-    desc: "Dynamic pressure q = \u00bd\u03c1V\u00b2.",
+    desc: "Dynamic pressure q = \u00bd\u03c1\u00b7TAS\u00b2.",
     eq: "q = \u00bd \u03c1 TAS\u00b2",
     model: "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
     unit: "Pa",
@@ -382,7 +382,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Qdyn": {
     title: "Dynamic pressure \u2022 Qdyn",
-    desc: "Dynamic pressure q = \u00bd\u03c1V\u00b2.",
+    desc: "Dynamic pressure q = \u00bd\u03c1\u00b7TAS\u00b2.",
     eq: "q = \u00bd \u03c1 TAS\u00b2",
     model: "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
     unit: "Pa",

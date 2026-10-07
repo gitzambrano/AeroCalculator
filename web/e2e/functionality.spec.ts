@@ -150,7 +150,8 @@ test("altitude, temperature and maneuver modes are wired correctly", async ({ pa
 
   await select(page, "nz-type", "NzTurn");
   await fill(page, "nz-value", "2");
-  expect(Number.parseFloat(await resultText(page, "Bank Angle φ"))).toBeCloseTo(Math.PI / 3, 2);
+  // Output angles default to degrees.
+  expect(Number.parseFloat(await resultText(page, "Bank Angle φ"))).toBeCloseTo(60, 2);
 
   await select(page, "nz-type", "BankTurn");
   await fill(page, "nz-value", "60");
@@ -190,6 +191,22 @@ test("both wind input modes and angle combinations remain solvable", async ({ pa
       expect(await resultText(page, "Heading Angle Ψ"), `${angle1}/${angle2}`).not.toBe("----");
     }
   }
+});
+
+test("fresh output angles use degrees and zero wind has no direction", async ({ page }) => {
+  await setupBaseline(page);
+  await select(page, "spd-type", "TAS");
+  await fill(page, "spd-value", "100");
+
+  // A first run shows output angles in degrees, like the input defaults.
+  await expect(page.locator('[data-result="Bank Angle φ"]')).toHaveText(/deg$/);
+
+  // UI-1: wind direction is undefined without wind and shows as unavailable.
+  expect(await resultText(page, "Wind Speed")).toMatch(/^0\.00 /);
+  expect(await resultText(page, "Wind Direction")).toBe("----");
+
+  await fill(page, "headWind-value", "10");
+  await expect(page.locator('[data-result="Wind Direction"]')).toHaveText(/deg$/);
 });
 
 test("output settings change formatting without changing the calculation", async ({ page }) => {

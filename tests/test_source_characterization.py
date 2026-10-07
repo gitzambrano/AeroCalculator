@@ -65,3 +65,24 @@ class TestSourceCharacterization(unittest.TestCase):
         self.assertIn('m.Put("var35", ID_use)', text)
         self.assertIn('restoredAirplaneID = m.GetDefault("var35", 0)', text)
         self.assertIn("ListAirp.IndexOf(ID_use)", text)
+
+    def test_android_output_angle_defaults_and_zero_wind_direction(self):
+        text = (ROOT / "AeroCalculator.b4a").read_text(encoding="utf-8-sig")
+
+        # First-run output angles match the degree input defaults.
+        match = re.search(r"(?ms)^Sub SetDefaults\b(.*?)^End Sub", text)
+        self.assertIsNotNone(match)
+        self.assertIn('manager.SetString("angle", "deg")', match.group(1))
+
+        # UI-1: wind direction is unavailable when wind speed is zero.
+        self.assertIn("If IsNan(WD) Or IsInf(WD) Or Abs(WS) < 0.000000001 Then", text)
+
+    def test_android_narrow_total_temperature_label(self):
+        text = (ROOT / "AeroCalculator.b4a").read_text(encoding="utf-8-sig")
+
+        # Below 340 dp the full TAT label touches its value; use the short form.
+        self.assertIn(
+            'If UseTemperatureWord Then lblVar.Text = "Total Air Temperature TAT" '
+            'Else lblVar.Text = "Total Air Temp TAT"',
+            text,
+        )
