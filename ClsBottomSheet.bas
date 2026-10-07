@@ -103,7 +103,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	btnClose.Initialize("btnSheetClose")
 	btnClose.Text = Chr(215)
 	btnClose.TextSize = 24
-	btnClose.TextColor = mDividerColor
+	btnClose.TextColor = mTextColor
 	btnClose.Color = Colors.Transparent
 	pnlSheet.AddView(btnClose, 100%x - 52dip, 18dip, 44dip, 40dip)
 
