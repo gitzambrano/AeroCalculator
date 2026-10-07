@@ -9,14 +9,14 @@ export interface CatalogItem {
 
 export const CATALOG: Record<string, CatalogItem> = {
   "Pressure Altitude": {
-    title: "Pressure altitude \u2022 H<sub class='hp-sub'>p</sub>",
+    title: "Pressure altitude \u2022 H<sub class='hp-sub'>P</sub>",
     desc: "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
     eq: "pISA(Hp) = p",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
     unit: "m",
   },
   "Geometric Altitude": {
-    title: "Geometric altitude \u2022 H<sub>geom</sub>",
+    title: "Geometric altitude \u2022 H<sub>GEOM</sub>",
     desc: "Geometric altitude: physical height above mean sea level.",
     eq: "h = r H / (r \u2212 H)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
@@ -128,7 +128,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m/s",
   },
   "Vs Factor": {
-    title: "Stall speed factor \u2022 V<sub>s</sub> Factor",
+    title: "Stall speed factor \u2022 V<sub>S</sub> Factor",
     desc: "Multiplier applied to the 1-g calibrated stall speed. The optional +\u0394 term is added in knots.",
     eq: "CAS = factor \u00d7 Vs,CAS + \u0394CAS",
     model: "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
@@ -156,7 +156,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "rad",
   },
   "Geopotential Altitude": {
-    title: "Geopotential altitude \u2022 H<sub>g</sub>",
+    title: "Geopotential altitude \u2022 H<sub>G</sub>",
     desc: "Effective gravitational altitude used by the standard atmosphere.",
     eq: "H = r h / (r + h); for Hp/P input, H = Hp \u2212 29.271247 \u0394T ln(p/p0)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
@@ -205,7 +205,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m/s",
   },
   "Stall Speed Vs": {
-    title: "Reference stall speed \u2022 V<sub>s</sub>",
+    title: "Reference stall speed \u2022 V<sub>S</sub>",
     desc: "1-g reference stall speed displayed as CAS, independent of maneuver load factor.",
     eq: "Vs,TAS = \u221a(2 m g0 / (\u03c1 S CLmax)); displayed Vs,CAS = CAS(Vs,TAS)",
     model: "Within the documented model. Unavailable values are not plotted.",
@@ -303,28 +303,28 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "m/s",
   },
   "Hp": {
-    title: "Pressure altitude \u2022 H<sub class='hp-sub'>p</sub>",
+    title: "Pressure altitude \u2022 H<sub class='hp-sub'>P</sub>",
     desc: "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
     eq: "pISA(Hp) = p",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
     unit: "m",
   },
   "Hg": {
-    title: "Geometric altitude \u2022 H<sub>geom</sub>",
+    title: "Geometric altitude \u2022 H<sub>GEOM</sub>",
     desc: "Geometric altitude: physical height above mean sea level.",
     eq: "H = r h / (r + h)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
     unit: "m",
   },
   "Hgeom": {
-    title: "Geometric altitude \u2022 H<sub>geom</sub>",
+    title: "Geometric altitude \u2022 H<sub>GEOM</sub>",
     desc: "Geometric altitude: physical height above mean sea level.",
     eq: "H = r h / (r + h)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
     unit: "m",
   },
   "Hgeop": {
-    title: "Geopotential altitude \u2022 H<sub>g</sub>",
+    title: "Geopotential altitude \u2022 H<sub>G</sub>",
     desc: "Effective gravitational altitude used by the standard atmosphere.",
     eq: "H = r h / (r + h); for Hp/P input, H = Hp \u2212 29.271247 \u0394T ln(p/p0)",
     model: "Pressure-altitude model: \u22125 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
@@ -422,14 +422,14 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "\u2014",
   },
   "NzPullup": {
-    title: "Pull-up load factor \u2022 N<sub>z</sub> (Pull-up)",
+    title: "Pull-up load factor \u2022 N<sub>Z</sub> (Pull-up)",
     desc: "Normal load factor for a pull-up maneuver. Bank angle is zero.",
     eq: "L = n m g0",
     model: "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
     unit: "g",
   },
   "NzTurn": {
-    title: "Level turn load factor \u2022 N<sub>z</sub> (Turn)",
+    title: "Level turn load factor \u2022 N<sub>Z</sub> (Turn)",
     desc: "Normal load factor in a coordinated level turn. Bank angle is derived from Nz = 1/cos(\u03c6).",
     eq: "n = 1 / cos \u03c6",
     model: "Coordinated level turn: n \u2265 1 and |bank| < 90\u00b0.",
