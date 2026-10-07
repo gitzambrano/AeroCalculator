@@ -2415,7 +2415,7 @@ Sub btnSref_Click
 	items.Initialize
 	items.Add("Wing Reference Area|Theoretical wing planform area")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area", 0)) Complete (idx As Int)
-	If xx > 340dip Or sc > 1 Then
+	If UseLongInputLabels Then
 		btnSref.Text = MakeSubscript("Area S", "REF", "")
 	Else
 		btnSref.Text = MakeSubscript("S", "REF", "")
@@ -2444,7 +2444,7 @@ Sub btncref_Click
 	items.Initialize
 	items.Add("Mean Aerodynamic Chord|Wing MAC reference length")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Chord", 0)) Complete (idx As Int)
-	If xx > 340dip Or sc > 1 Then
+	If UseLongInputLabels Then
 		btncref.Text = MakeSubscript("Chord c", "REF", "")
 	Else
 		btncref.Text = MakeSubscript("c", "REF", "")
@@ -2667,7 +2667,7 @@ Sub AltType_Click
 				btnAltType.Text = MakeSubscript("H", "GEOM", "")
 			End If
 		Else If indAltType=2 Then
-			If xx > 340dip Or sc > 1 Then
+			If UseLongInputLabels Then
 				btnAltType.Text = MakeSubscript("Altitude H", "GEOM", "")
 			Else
 				btnAltType.Text = MakeSubscript("H", "GEOM", "")	
