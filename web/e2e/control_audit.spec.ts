@@ -141,7 +141,7 @@ test("all top-level navigation and menu controls work", async ({ page }) => {
   await page.getByRole("button", { name: "INPUTS" }).click();
   await page.getByRole("button", { name: "More options" }).click();
   await expect(page.locator("#main-menu")).toBeVisible();
-  await page.locator(".brand").click();
+  await page.locator("#main-menu").click({ position: { x: 8, y: 8 } });
   await expect(page.locator("#main-menu")).toBeHidden();
 
   await fill(page, "alt-value", "1234");
