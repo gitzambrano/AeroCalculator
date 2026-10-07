@@ -1327,6 +1327,7 @@ sub.hp-sub {
 @media (max-width: 279px) {
   /* Preserve the fixed 54/46 result split and font size on ultra-narrow screens. */
   .result-row { padding-left: 0; padding-right: 0; }
+  .result-value { padding-left: 0; }
 }
 
 @media (max-width: 359px) {
