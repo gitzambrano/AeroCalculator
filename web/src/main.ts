@@ -1226,7 +1226,7 @@ function initializeSwipeNavigation(): void {
 
     event.preventDefault();
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
-    byId("main-menu").hidden = true;
+    byId("main-menu").classList.remove("open");
     vibrateTap();
     activatePage(PAGE_ORDER[nextIndex], dx < 0 ? "left" : "right");
   };
