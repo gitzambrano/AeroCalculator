@@ -58,6 +58,8 @@ $$
 
 Angles are converted to radians before trigonometric evaluation.
 
+Angle inputs and outputs default to degrees on a first run. The output angle unit is a display setting (deg or rad); a saved setting is kept.
+
 **Heading, $\psi$** is the aircraft-body reference direction in the horizontal plane.
 
 **Track, $\chi$** is the inertial horizontal velocity direction.
@@ -85,6 +87,8 @@ $$
 Positive headwind means wind from ahead. Positive crosswind follows the application's positive normal-direction convention.
 
 Manual headwind/crosswind inputs and wind-speed/direction outputs must use the same convention. Tests cover zero wind, pure headwind, pure crosswind, and oblique wind.
+
+With zero wind speed the wind direction is undefined, so the Wind Direction output shows as unavailable (`----`, requirement UI-1).
 
 ## Numerical comparison
 
