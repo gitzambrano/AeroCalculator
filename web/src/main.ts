@@ -724,7 +724,7 @@ const SETTING_OPTION_DESCRIPTIONS: Record<string, Record<string, string>> = {
     "Orange Juice": "Warm cockpit amber",
   },
   "setting-altitude": { ft: "Feet", m: "Meters — SI unit", km: "Kilometers", nm: "Nautical-distance unit", mi: "Statute-distance unit", in: "Inches" },
-  "setting-pressure": { mbar: "Millibar (hPa)", Pa: "Pascal — SI unit", hPa: "Hectopascal", atm: "Standard atmosphere", mmHg: "Millimeters of mercury", psi: "Pounds per square inch" },
+  "setting-pressure": { mbar: "Millibar", Pa: "Pascal — SI unit", hPa: "Hectopascal", atm: "Standard atmosphere", mmHg: "Millimeters of mercury", psi: "Pounds per square inch" },
   "setting-temperature": { "°C": "Degrees Celsius", "°F": "Degrees Fahrenheit", K: "Kelvin — absolute" },
   "setting-speed": { kt: "Knots — aviation standard", "m/s": "Meters per second — SI unit", "km/h": "Kilometers per hour", mph: "Miles per hour", "ft/s": "Feet per second" },
   "setting-angle": { deg: "Degrees", rad: "Radians" },
@@ -1155,10 +1155,12 @@ function initializeHelpers(): void {
     tooltip.hidden = true;
   };
 
+  let focusHelperLocked = false;
+  document.addEventListener("pointermove", (event) => {
+    if ((event as PointerEvent).pointerType !== "touch") focusHelperLocked = false;
+  }, { passive: true });
   document.addEventListener("pointerover", (event) => {
-    if ((event as PointerEvent).pointerType === "touch") return;
-    const focused = (document.activeElement as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
-    if (focused) return;
+    if ((event as PointerEvent).pointerType === "touch" || focusHelperLocked) return;
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
     if (target) show(target);
   });
@@ -1169,7 +1171,10 @@ function initializeHelpers(): void {
   });
   document.addEventListener("focusin", (event) => {
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
-    if (target) show(target);
+    if (target) {
+      focusHelperLocked = true;
+      show(target);
+    }
   });
   document.addEventListener("focusout", (event) => {
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
