@@ -306,13 +306,20 @@ app.innerHTML = `
       <ul class="results" id="results"></ul>
     </section>
 
-    <div class="popup-menu" id="main-menu" hidden>
-      <button type="button" data-menu="clear">Clear Inputs</button>
-      <button type="button" data-menu="import">Import Airplanes</button>
-      <button type="button" data-menu="export">Export Airplanes</button>
-      <button type="button" data-menu="settings">Settings</button>
-      <a id="feedback-link" href="mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback">Send Feedback</a>
-      <button type="button" data-menu="about">About</button>
+    <div class="modal-overlay menu-overlay" id="main-menu">
+      <div class="menu-sheet">
+        <div class="modal-handle"></div>
+        <div class="sheet-header">
+          <strong>Menu</strong>
+          <button type="button" class="sheet-close" id="main-menu-close" aria-label="Close menu">&times;</button>
+        </div>
+        <button type="button" class="sheet-item" data-menu="clear"><span>Clear Inputs</span><small>Reset all flight-condition entries</small></button>
+        <button type="button" class="sheet-item" data-menu="import"><span>Import Airplanes</span><small>Restore or merge aircraft profiles</small></button>
+        <button type="button" class="sheet-item" data-menu="export"><span>Export Airplanes</span><small>Back up all saved aircraft profiles</small></button>
+        <button type="button" class="sheet-item" data-menu="settings"><span>Settings</span><small>Display, units, precision and aircraft data</small></button>
+        <a class="sheet-item" id="feedback-link" href="mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback"><span>Send Feedback</span><small>Send comments or report a problem</small></a>
+        <button type="button" class="sheet-item" data-menu="about"><span>About</span><small>Version, author and credits</small></button>
+      </div>
     </div>
 
     <input id="profile-import" type="file" accept=".json,application/json,text/plain" hidden />
@@ -351,90 +358,78 @@ app.innerHTML = `
         <button type="button" data-close-dialog="about-dialog">OK</button>
       </div>
     </dialog>
-    <dialog class="settings-dialog simple-dialog" id="settings-dialog">
-      <form id="settings-form">
-        <div class="settings-header"><span>SETTINGS</span><button type="button" class="settings-close" id="settings-close" data-close-dialog="settings-dialog" aria-label="Close settings">&times;</button></div>
-        <h3>DISPLAY</h3>
-        <label>
-          <div class="setting-text">
-            <span class="setting-title">Theme</span>
-            <span class="setting-desc">App visual theme and color palette</span>
+    <div class="modal-overlay settings-overlay" id="settings-dialog">
+      <div class="settings-dialog settings-sheet">
+        <div class="modal-handle"></div>
+        <form id="settings-form">
+          <div class="settings-header"><span>Settings</span><button type="button" class="settings-close" id="settings-close" aria-label="Close settings">&times;</button></div>
+          <h3>DISPLAY</h3>
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Theme</span>
+              <span class="setting-desc">Visual style and color palette</span>
+            </div>
+            <select id="setting-theme" class="setting-native-select" hidden>
+              <option>Green Peace</option><option>Ancient Brown</option><option>Dark Shadows</option><option>Blue Sky</option><option>Red Alert</option><option>Orange Juice</option>
+            </select>
+            <button type="button" class="setting-choice" data-setting-select="setting-theme" data-setting-title="Theme"></button>
           </div>
-          <select id="setting-theme">
-            <option>Green Peace</option><option>Ancient Brown</option><option>Dark Shadows</option><option>Blue Sky</option><option>Red Alert</option><option>Orange Juice</option>
-          </select>
-        </label>
-        <label class="check-row">
-          <div class="setting-text">
-            <span class="setting-title">Extra Decimal Place</span>
-            <span class="setting-desc">Increase output precision by one decimal</span>
+          <div class="setting-row check-row">
+            <div class="setting-text">
+              <span class="setting-title">Extra Decimal Place</span>
+              <span class="setting-desc">Increase result precision by one decimal</span>
+            </div>
+            <input id="setting-extra-decimal" type="checkbox" />
           </div>
-          <input id="setting-extra-decimal" type="checkbox" />
-        </label>
-        <h3>UNITS</h3>
-        <label>
-          <div class="setting-text">
-            <span class="setting-title">Altitude Unit</span>
-            <span class="setting-desc">Unit used for altitude in outputs</span>
+
+          <h3>OUTPUT UNITS</h3>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Altitude Unit</span><span class="setting-desc">Unit used for altitude in calculated outputs</span></div>
+            <select id="setting-altitude" class="setting-native-select" hidden><option>ft</option><option>m</option><option>km</option><option>nm</option><option>mi</option><option>in</option></select>
+            <button type="button" class="setting-choice" data-setting-select="setting-altitude" data-setting-title="Altitude Unit"></button>
           </div>
-          <select id="setting-altitude"><option>ft</option><option>m</option><option>km</option><option>nm</option><option>mi</option><option>in</option></select>
-        </label>
-        <label>
-          <div class="setting-text">
-            <span class="setting-title">Pressure Unit</span>
-            <span class="setting-desc">Unit used for atmospheric pressure in outputs</span>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Pressure Unit</span><span class="setting-desc">Unit used for atmospheric pressure in outputs</span></div>
+            <select id="setting-pressure" class="setting-native-select" hidden><option>mbar</option><option>Pa</option><option>hPa</option><option>atm</option><option>mmHg</option><option>psi</option></select>
+            <button type="button" class="setting-choice" data-setting-select="setting-pressure" data-setting-title="Pressure Unit"></button>
           </div>
-          <select id="setting-pressure"><option>mbar</option><option>Pa</option><option>hPa</option><option>atm</option><option>mmHg</option><option>psi</option></select>
-        </label>
-        <label>
-          <div class="setting-text">
-            <span class="setting-title">Temperature Unit</span>
-            <span class="setting-desc">Unit used for temperature in outputs</span>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Temperature Unit</span><span class="setting-desc">Unit used for temperature in outputs</span></div>
+            <select id="setting-temperature" class="setting-native-select" hidden><option>°C</option><option>°F</option><option>K</option></select>
+            <button type="button" class="setting-choice" data-setting-select="setting-temperature" data-setting-title="Temperature Unit"></button>
           </div>
-          <select id="setting-temperature"><option>°C</option><option>°F</option><option>K</option></select>
-        </label>
-        <label>
-          <div class="setting-text">
-            <span class="setting-title">Speed Unit</span>
-            <span class="setting-desc">Unit used for airspeed in outputs</span>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Speed Unit</span><span class="setting-desc">Unit used for airspeed and velocity outputs</span></div>
+            <select id="setting-speed" class="setting-native-select" hidden><option>kt</option><option>m/s</option><option>km/h</option><option>mph</option><option>ft/s</option></select>
+            <button type="button" class="setting-choice" data-setting-select="setting-speed" data-setting-title="Speed Unit"></button>
           </div>
-          <select id="setting-speed"><option>kt</option><option>m/s</option><option>km/h</option><option>mph</option><option>ft/s</option></select>
-        </label>
-        <label>
-          <div class="setting-text">
-            <span class="setting-title">Angle Unit</span>
-            <span class="setting-desc">Unit used for angular quantities in outputs</span>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Angle Unit</span><span class="setting-desc">Degrees or radians for angular outputs</span></div>
+            <select id="setting-angle" class="setting-native-select" hidden><option>deg</option><option>rad</option></select>
+            <button type="button" class="setting-choice" data-setting-select="setting-angle" data-setting-title="Angle Unit"></button>
           </div>
-          <select id="setting-angle"><option>deg</option><option>rad</option></select>
-        </label>
-        <label>
-          <div class="setting-text">
-            <span class="setting-title">Angle Interval</span>
-            <span class="setting-desc">Angle output range definition</span>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Angle Interval</span><span class="setting-desc">Positive or signed angular convention</span></div>
+            <select id="setting-angle-format" class="setting-native-select" hidden><option value="0/360">0/360 (0/2π)</option><option value="-180/180">-180/180 (-π/π)</option></select>
+            <button type="button" class="setting-choice" data-setting-select="setting-angle-format" data-setting-title="Angle Interval"></button>
           </div>
-          <select id="setting-angle-format"><option value="0/360">0/360 (0/2π)</option><option value="-180/180">-180/180 (-π/π)</option></select>
-        </label>
-        <h3>DATA</h3>
-        <div class="setting-row">
-          <div class="setting-text">
-            <span class="setting-title">Aircraft Database</span>
-            <span class="setting-desc">Export stored airplane profiles</span>
+
+          <h3>AIRCRAFT DATA</h3>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Export Airplanes</span><span class="setting-desc">Back up all saved aircraft profiles</span></div>
+            <button type="button" class="setting-btn" id="setting-export-btn">Export</button>
           </div>
-          <button type="button" class="setting-btn" id="setting-export-btn">Export</button>
-        </div>
-        <div class="setting-row">
-          <div class="setting-text">
-            <span class="setting-title">Clear Inputs</span>
-            <span class="setting-desc">Reset all flight inputs to defaults</span>
+          <div class="setting-row">
+            <div class="setting-text"><span class="setting-title">Clear Inputs</span><span class="setting-desc">Reset all flight-condition entries</span></div>
+            <button type="button" class="setting-btn" id="setting-clear-btn">Clear</button>
           </div>
-          <button type="button" class="setting-btn" id="setting-clear-btn">Clear</button>
-        </div>
-        <div class="dialog-buttons">
-          <button type="button" id="settings-cancel" data-close-dialog="settings-dialog">Cancel</button>
-          <button type="submit">Save</button>
-        </div>
-      </form>
-    </dialog>
+          <div class="dialog-buttons">
+            <button type="button" id="settings-cancel">Cancel</button>
+            <button type="submit">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
     <div id="field-tooltip" class="field-tooltip" role="tooltip" hidden></div>
 
     <!-- MODAL: CONTEXTUAL HELP & TOOLTIP WITH LATEX (RotorCalculator standard) -->
@@ -709,6 +704,90 @@ function openFieldOptionPicker(fieldId: string): void {
   modal.classList.add("open");
 }
 
+const SETTING_OPTION_DESCRIPTIONS: Record<string, Record<string, string>> = {
+  "setting-theme": {
+    "Green Peace": "Teal daylight interface",
+    "Ancient Brown": "Warm leather and sepia surfaces",
+    "Dark Shadows": "Cockpit stealth, high contrast",
+    "Blue Sky": "Midnight navy with cyan accents",
+    "Red Alert": "Crimson avionics on neutral surfaces",
+    "Orange Juice": "Warm cockpit amber",
+  },
+  "setting-altitude": { ft: "Feet", m: "Meters — SI unit", km: "Kilometers", nm: "Nautical miles", mi: "Statute miles", in: "Inches" },
+  "setting-pressure": { mbar: "Millibar (hPa)", Pa: "Pascal — SI unit", hPa: "Hectopascal", atm: "Standard atmosphere", mmHg: "Millimeters of mercury", psi: "Pounds per square inch" },
+  "setting-temperature": { "°C": "Degrees Celsius", "°F": "Degrees Fahrenheit", K: "Kelvin — absolute" },
+  "setting-speed": { kt: "Knots — aviation standard", "m/s": "Meters per second — SI unit", "km/h": "Kilometers per hour", mph: "Miles per hour", "ft/s": "Feet per second" },
+  "setting-angle": { deg: "Degrees", rad: "Radians" },
+  "setting-angle-format": { "0/360": "Positive convention", "-180/180": "Signed convention" },
+};
+
+function syncSettingChoiceButtons(): void {
+  document.querySelectorAll<HTMLButtonElement>(".setting-choice").forEach((button) => {
+    const selectId = button.dataset.settingSelect ?? "";
+    const selectEl = document.getElementById(selectId) as HTMLSelectElement | null;
+    if (!selectEl) return;
+    button.textContent = selectEl.options[selectEl.selectedIndex]?.text ?? selectEl.value;
+  });
+}
+
+function openSettingOptionPicker(selectId: string, title: string): void {
+  const selectEl = document.getElementById(selectId) as HTMLSelectElement | null;
+  const modal = byId("modal-options-selector");
+  const titleEl = byId("options-selector-title");
+  const listEl = byId("options-selector-list");
+  if (!selectEl || !modal || !titleEl || !listEl) return;
+
+  titleEl.textContent = title;
+  listEl.innerHTML = "";
+  const descriptions = SETTING_OPTION_DESCRIPTIONS[selectId] ?? {};
+
+  Array.from(selectEl.options).forEach((opt) => {
+    const itemEl = document.createElement("div");
+    itemEl.className = `option-item${opt.value === selectEl.value ? " selected" : ""}`;
+    itemEl.tabIndex = 0;
+    itemEl.setAttribute("role", "button");
+
+    const textGroup = document.createElement("div");
+    textGroup.className = "option-text-group";
+    const label = document.createElement("div");
+    label.className = "option-label";
+    label.textContent = opt.text;
+    textGroup.appendChild(label);
+
+    const desc = descriptions[opt.value] ?? descriptions[opt.text];
+    if (desc) {
+      const descEl = document.createElement("div");
+      descEl.className = "option-desc";
+      descEl.textContent = desc;
+      textGroup.appendChild(descEl);
+    }
+
+    const radio = document.createElement("div");
+    radio.className = "option-radio";
+    const radioInner = document.createElement("div");
+    radioInner.className = "option-radio-inner";
+    radio.appendChild(radioInner);
+    itemEl.append(textGroup, radio);
+
+    const choose = () => {
+      vibrateTap();
+      selectEl.value = opt.value;
+      syncSettingChoiceButtons();
+      closeOptionsModal();
+    };
+    itemEl.addEventListener("click", choose);
+    itemEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        choose();
+      }
+    });
+    listEl.appendChild(itemEl);
+  });
+
+  modal.classList.add("open");
+}
+
 const inputList = byId("input-list");
 inputList.append(createAirplaneRow());
 for (const field of fields) inputList.append(createInputRow(field));
@@ -764,20 +843,19 @@ document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control")
 });
 
 byId("add-profile").addEventListener("click", () => openProfileEditor());
-byId("more-menu").addEventListener("click", (event) => {
-  event.stopPropagation();
-  const menu = byId("main-menu");
-  menu.hidden = !menu.hidden;
+byId("more-menu").addEventListener("click", () => {
+  vibrateTap();
+  byId("main-menu").classList.add("open");
 });
-document.addEventListener("click", (event) => {
-  const menu = byId("main-menu");
-  if (!menu.hidden && !menu.contains(event.target as Node) && event.target !== byId("more-menu")) menu.hidden = true;
+byId("main-menu-close")?.addEventListener("click", () => byId("main-menu").classList.remove("open"));
+byId("main-menu").addEventListener("click", (event) => {
+  if (event.target === byId("main-menu")) byId("main-menu").classList.remove("open");
 });
 document.querySelectorAll<HTMLButtonElement>("[data-menu]").forEach((button) => {
   button.addEventListener("click", () => handleMenu(button.dataset.menu ?? ""));
 });
 byId("feedback-link").addEventListener("click", () => {
-  byId("main-menu").hidden = true;
+  byId("main-menu").classList.remove("open");
 });
 byId("profile-cancel").addEventListener("click", closeProfileEditor);
 byId("profile-save").addEventListener("click", (event) => {
@@ -790,8 +868,17 @@ byId("add-flap").addEventListener("click", showNextFlapRow);
 document.querySelectorAll<HTMLButtonElement>("[data-close-dialog]").forEach((button) => {
   button.addEventListener("click", () => (byId(button.dataset.closeDialog ?? "") as HTMLDialogElement).close());
 });
-byId("settings-cancel").addEventListener("click", () => (byId("settings-dialog") as HTMLDialogElement).close());
-byId("settings-close")?.addEventListener("click", () => (byId("settings-dialog") as HTMLDialogElement).close());
+byId("settings-cancel").addEventListener("click", () => byId("settings-dialog").classList.remove("open"));
+byId("settings-close")?.addEventListener("click", () => byId("settings-dialog").classList.remove("open"));
+byId("settings-dialog").addEventListener("click", (event) => {
+  if (event.target === byId("settings-dialog")) byId("settings-dialog").classList.remove("open");
+});
+document.querySelectorAll<HTMLButtonElement>(".setting-choice").forEach((button) => {
+  button.addEventListener("click", () => openSettingOptionPicker(
+    button.dataset.settingSelect ?? "",
+    button.dataset.settingTitle ?? "Select Option",
+  ));
+});
 byId("setting-export-btn")?.addEventListener("click", () => exportProfileFile());
 byId("setting-clear-btn")?.addEventListener("click", () => {
   if (confirm("Are you sure you want to clear the inputs?")) clearInputs();
@@ -1583,7 +1670,7 @@ function deleteEditingProfile(): void {
 }
 
 function handleMenu(action: string): void {
-  byId("main-menu").hidden = true;
+  byId("main-menu").classList.remove("open");
   if (action === "clear") {
     if (confirm("Are you sure you want to clear the inputs?")) clearInputs();
   } else if (action === "import") {
@@ -1666,7 +1753,8 @@ function openSettings(): void {
   (byId("setting-angle") as HTMLSelectElement).value = settings.angle;
   (byId("setting-angle-format") as HTMLSelectElement).value = settings.angleFormat;
   (byId("setting-extra-decimal") as HTMLInputElement).checked = settings.extraDecimal;
-  (byId("settings-dialog") as HTMLDialogElement).showModal();
+  syncSettingChoiceButtons();
+  byId("settings-dialog").classList.add("open");
 }
 
 function saveOutputSettings(): void {
@@ -1682,7 +1770,7 @@ function saveOutputSettings(): void {
   };
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   applyTheme();
-  (byId("settings-dialog") as HTMLDialogElement).close();
+  byId("settings-dialog").classList.remove("open");
   recalculate();
 }
 
