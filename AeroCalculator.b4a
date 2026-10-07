@@ -2516,7 +2516,7 @@ Sub btnSrefUnit_Click
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
 	Dim areaDecimals As Int = 6
-	If idx = 2 Then areaDecimals = 3
+	If idx = 2 Or xx < 300dip Then areaDecimals = 3
 	If idx <> record Then ConvertEditByFactor(edtSref, AreaUnitFactor(record), AreaUnitFactor(idx), areaDecimals)
 	indSrefUnit = idx
 	SrefUnit_Click
