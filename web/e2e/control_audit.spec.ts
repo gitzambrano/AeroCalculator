@@ -26,6 +26,17 @@ async function select(page: Page, id: string, value: string): Promise<void> {
   await expect(page.locator("#" + id)).toHaveValue(value);
 }
 
+async function selectSetting(page: Page, id: string, value: string): Promise<void> {
+  const selectEl = page.locator("#" + id);
+  const label = await selectEl.evaluate((el, selectedValue) => {
+    const select = el as HTMLSelectElement;
+    return Array.from(select.options).find((option) => option.value === selectedValue)?.text ?? selectedValue;
+  }, value);
+  await page.locator(`[data-setting-select="${id}"]`).click();
+  await page.locator("#options-selector-list .option-item").filter({ hasText: label }).first().click();
+  await expect(selectEl).toHaveValue(value);
+}
+
 async function validBaseline(page: Page): Promise<void> {
   await fresh(page);
   await fill(page, "alt-value", "10000");
@@ -300,7 +311,7 @@ test("every settings option saves and reformats the corresponding output", async
   for (const [id, values, output] of cases) {
     for (const value of values) {
       await openSettings(page);
-      await select(page, id, value);
+      await selectSetting(page, id, value);
       await saveSettings(page);
       await page.getByRole("button", { name: "CALCULATE" }).click();
       await expect(page.locator(`[data-result="${output}"]`)).toContainText(value);
@@ -310,13 +321,13 @@ test("every settings option saves and reformats the corresponding output", async
 
   for (const interval of ["0/360", "-180/180"]) {
     await openSettings(page);
-    await select(page, "setting-angle-format", interval);
+    await selectSetting(page, "setting-angle-format", interval);
     await saveSettings(page);
   }
 
   for (const theme of themes) {
     await openSettings(page);
-    await select(page, "setting-theme", theme);
+    await selectSetting(page, "setting-theme", theme);
     await saveSettings(page);
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
   }
