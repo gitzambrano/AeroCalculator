@@ -2301,6 +2301,13 @@ Sub btnAltUnit_Click
 		Wait For (AeroSheet.Show(Activity, items, "Pressure Unit", record)) Complete (idx As Int)
 	End If
 	If idx < 0 Then Return
+	If idx <> record Then
+		If indAltType <= 2 Then
+			ConvertEditByFactor(edtAlt, LengthUnitFactor(record), LengthUnitFactor(idx), 6)
+		Else
+			ConvertEditByFactor(edtAlt, PressureUnitFactor(record), PressureUnitFactor(idx), 6)
+		End If
+	End If
 	indAltUnit = idx
 	AltUnit_Click
 End Sub
@@ -2330,6 +2337,7 @@ Sub btnTempUnit_Click
 	Dim record As Int = indTempUnit
 	Wait For (AeroSheet.Show(Activity, items, "Temperature Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then ConvertTemperatureEdit(record, idx)
 	indTempUnit = idx
 	TempUnit_Click
 End Sub
@@ -2386,6 +2394,13 @@ Sub btnSpdUnit_Click
 		Wait For (AeroSheet.Show(Activity, items, "Pressure Unit", record)) Complete (idx As Int)
 	End If
 	If idx < 0 Then Return
+	If idx <> record And indSpdType <> 5 Then
+		If indSpdType < 8 Then
+			ConvertEditByFactor(edtSpd, SpeedUnitFactor(record), SpeedUnitFactor(idx), 6)
+		Else
+			ConvertEditByFactor(edtSpd, PressureUnitFactor(record), PressureUnitFactor(idx), 6)
+		End If
+	End If
 	indSpdUnit = idx
 	SpdUnit_Click
 End Sub
@@ -2419,6 +2434,7 @@ Sub btnWeightUnit_Click
 	Dim record As Int = indWeightUnit
 	Wait For (AeroSheet.Show(Activity, items, "Mass Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then ConvertEditByFactor(edtWeight, MassUnitFactor(record), MassUnitFactor(idx), 6)
 	indWeightUnit = idx
 	WeightUnit_Click
 End Sub
@@ -2444,6 +2460,7 @@ Sub btnSrefUnit_Click
 	Dim record As Int = indSrefUnit
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then ConvertEditByFactor(edtSref, AreaUnitFactor(record), AreaUnitFactor(idx), 3)
 	indSrefUnit = idx
 	SrefUnit_Click
 End Sub
@@ -2469,6 +2486,7 @@ Sub btncrefUnit_Click
 	Dim record As Int = indcrefUnit
 	Wait For (AeroSheet.Show(Activity, items, "Chord Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then ConvertEditByFactor(edtcref, LengthUnitFactor(record), LengthUnitFactor(idx), 6)
 	indcrefUnit = idx
 	crefUnit_Click
 End Sub
@@ -2529,6 +2547,7 @@ Sub btnAngle1Unit_Click
 	Dim record As Int = indAngle1Unit
 	Wait For (AeroSheet.Show(Activity, items, "Angle Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then ConvertEditByFactor(edtAngle1, AngleUnitFactor(record), AngleUnitFactor(idx), 6)
 	indAngle1Unit = idx
 	Angle1Unit_Click
 End Sub
@@ -2556,6 +2575,7 @@ Sub btnAngle2Unit_Click
 	Dim record As Int = indAngle2Unit
 	Wait For (AeroSheet.Show(Activity, items, "Angle Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then ConvertEditByFactor(edtAngle2, AngleUnitFactor(record), AngleUnitFactor(idx), 6)
 	indAngle2Unit = idx
 	Angle2Unit_Click
 End Sub
@@ -2606,6 +2626,7 @@ Sub btnHeadWindUnit_Click
 	Dim record As Int = indHeadWindUnit
 	Wait For (AeroSheet.Show(Activity, items, "Wind Speed Unit", record)) Complete (idx As Int)
 	If idx >= 0 Then
+		If idx <> record Then ConvertEditByFactor(edtHeadWind, SpeedUnitFactor(record), SpeedUnitFactor(idx), 6)
 		indHeadWindUnit = idx
 		HeadWindUnit_Click
 	End If
@@ -2613,7 +2634,18 @@ End Sub
 
 Sub btnCrossWindUnit_Click
 	VibrateTap
-	btnHeadWindUnit_Click
+	Dim items As List
+	items.Initialize
+	items.Add("kt|Knots — aviation standard")
+	items.Add("m/s|Meters per second — SI unit")
+	items.Add("km/h|Kilometers per hour")
+	Dim record As Int = indCrossWindUnit
+	Wait For (AeroSheet.Show(Activity, items, "Wind Speed Unit", record)) Complete (idx As Int)
+	If idx >= 0 Then
+		If idx <> record Then ConvertEditByFactor(edtCrossWind, SpeedUnitFactor(record), SpeedUnitFactor(idx), 6)
+		indCrossWindUnit = idx
+		CrossWindUnit_Click
+	End If
 End Sub
 
 Sub btnWindRefAngleUnit_Click
@@ -2625,6 +2657,7 @@ Sub btnWindRefAngleUnit_Click
 	Dim record As Int = indWindRefAngleUnit
 	Wait For (AeroSheet.Show(Activity, items, "Angle Unit", record)) Complete (idx As Int)
 	If idx >= 0 Then
+		If idx <> record Then ConvertEditByFactor(edtWindRefAngle, AngleUnitFactor(record), AngleUnitFactor(idx), 6)
 		indWindRefAngleUnit = idx
 		WindRefAngleUnit_Click
 	End If
@@ -4815,6 +4848,116 @@ Sub SetDefaults
 	manager.SetString("angleformat", "0/360 (0/2π)")
 	manager.SetBoolean("outputformat",False)
 	manager.SetString("theme", "Green Peace") 
+End Sub
+
+Private Sub FormatInputValue(Value As Double, MaxDecimals As Int) As String
+	If Abs(Value) < 0.0000000001 Then Value = 0
+	Return NumberFormat2(Value, 1, MaxDecimals, 0, False)
+End Sub
+
+Private Sub ConvertEditByFactor(Field As EditText, OldFactor As Double, NewFactor As Double, MaxDecimals As Int)
+	If Not(Field.IsInitialized) Then Return
+	Dim raw As String = Field.Text.Trim
+	If raw.Length = 0 Or Not(IsNumber(raw)) Or NewFactor = 0 Then Return
+	Dim converted As Double = CDbl(raw) * OldFactor / NewFactor
+	Field.Text = FormatInputValue(converted, MaxDecimals)
+End Sub
+
+Private Sub LengthUnitFactor(Index As Int) As Double
+	Select Index
+		Case 0: Return 0.3048
+		Case 1: Return 1
+		Case 2: Return 1000
+		Case 3: Return 1852
+		Case 4: Return 1609.344
+		Case 5: Return 0.0254
+	End Select
+	Return 1
+End Sub
+
+Private Sub PressureUnitFactor(Index As Int) As Double
+	Select Index
+		Case 0: Return 100
+		Case 1: Return 1
+		Case 2: Return 100
+		Case 3: Return 101325
+		Case 4: Return 133.3223684
+		Case 5: Return 6894.75729
+	End Select
+	Return 1
+End Sub
+
+Private Sub SpeedUnitFactor(Index As Int) As Double
+	Select Index
+		Case 0: Return 1852 / 3600
+		Case 1: Return 1
+		Case 2: Return 1 / 3.6
+		Case 3: Return 0.44704
+		Case 4: Return 0.3048
+	End Select
+	Return 1
+End Sub
+
+Private Sub MassUnitFactor(Index As Int) As Double
+	Select Index
+		Case 0: Return 1
+		Case 1: Return 0.45359237
+		Case 2: Return 1000
+		Case 3: Return 14.5939029
+		Case 4: Return 0.028349523125
+	End Select
+	Return 1
+End Sub
+
+Private Sub AreaUnitFactor(Index As Int) As Double
+	Select Index
+		Case 0: Return 1
+		Case 1: Return 0.3048 * 0.3048
+		Case 2: Return 0.0254 * 0.0254
+		Case 3: Return 0.01 * 0.01
+		Case 4: Return 0.001 * 0.001
+	End Select
+	Return 1
+End Sub
+
+Private Sub AngleUnitFactor(Index As Int) As Double
+	If Index = 1 Then Return 1
+	Return 3.14159265358979323846 / 180
+End Sub
+
+Private Sub TemperatureToKelvin(Value As Double, UnitIndex As Int, IsDelta As Boolean) As Double
+	If IsDelta Then
+		If UnitIndex = 1 Then Return Value * 5 / 9
+		Return Value
+	End If
+	Select UnitIndex
+		Case 0: Return Value + 273.15
+		Case 1: Return (Value - 32) * 5 / 9 + 273.15
+		Case 2: Return Value
+	End Select
+	Return Value
+End Sub
+
+Private Sub TemperatureFromKelvin(Value As Double, UnitIndex As Int, IsDelta As Boolean) As Double
+	If IsDelta Then
+		If UnitIndex = 1 Then Return Value * 9 / 5
+		Return Value
+	End If
+	Select UnitIndex
+		Case 0: Return Value - 273.15
+		Case 1: Return (Value - 273.15) * 9 / 5 + 32
+		Case 2: Return Value
+	End Select
+	Return Value
+End Sub
+
+Private Sub ConvertTemperatureEdit(OldUnit As Int, NewUnit As Int)
+	If Not(edtTemp.IsInitialized) Then Return
+	Dim raw As String = edtTemp.Text.Trim
+	If raw.Length = 0 Or Not(IsNumber(raw)) Then Return
+	Dim isDelta As Boolean = (indTempType = 0)
+	Dim kelvinValue As Double = TemperatureToKelvin(CDbl(raw), OldUnit, isDelta)
+	edtTemp.Text = FormatInputValue(TemperatureFromKelvin(kelvinValue, NewUnit, isDelta), 3)
 End Sub
 
 Private Sub SetLetterSpacing(v As View, em As Float)
