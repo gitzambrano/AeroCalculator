@@ -1155,12 +1155,9 @@ function initializeHelpers(): void {
     tooltip.hidden = true;
   };
 
-  let focusHelperLocked = false;
-  document.addEventListener("pointermove", (event) => {
-    if ((event as PointerEvent).pointerType !== "touch") focusHelperLocked = false;
-  }, { passive: true });
+  let focusHelperLockUntil = 0;
   document.addEventListener("pointerover", (event) => {
-    if ((event as PointerEvent).pointerType === "touch" || focusHelperLocked) return;
+    if ((event as PointerEvent).pointerType === "touch" || performance.now() < focusHelperLockUntil) return;
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
     if (target) show(target);
   });
@@ -1172,7 +1169,7 @@ function initializeHelpers(): void {
   document.addEventListener("focusin", (event) => {
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
     if (target) {
-      focusHelperLocked = true;
+      focusHelperLockUntil = performance.now() + 150;
       show(target);
     }
   });
