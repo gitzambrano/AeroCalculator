@@ -152,6 +152,24 @@ def launch(size,density):
  adb("shell","monkey","-p",PKG,"-c","android.intent.category.LAUNCHER","1")
  time.sleep(2.5)
 
+def swipe_sheet_list(root,options):
+ # Scroll inside the sheet list. A screen-relative start point can land on the
+ # sheet chrome (for example between the list and Cancel at 260 dp).
+ anchors=[n for n in (find_sheet_text(root,o) for o in options) if n is not None]
+ boxes=[]
+ for n in nodes(root):
+  if n.attrib.get("scrollable")!="true": continue
+  b=bounds(n.attrib.get("bounds",""))
+  if not b or b[2]<=b[0] or b[3]<=b[1]: continue
+  if any(b[0]<=center(a)[0]<=b[2] and b[1]<=center(a)[1]<=b[3] for a in anchors):
+   boxes.append(b)
+ if not boxes:
+  swipe(True); return
+ x1,y1,x2,y2=min(boxes,key=lambda b:(b[2]-b[0])*(b[3]-b[1]))
+ x=(x1+x2)//2; h=y2-y1
+ adb("shell","input","swipe",str(x),str(y1+int(h*.85)),str(x),str(y1+int(h*.15)),"350",check=False)
+ time.sleep(.35)
+
 def open_picker(dirp,button_candidates,expected,state):
  _,n=reachable(dirp,button_candidates); tap(n); time.sleep(.35)
  seen=set()
@@ -160,7 +178,7 @@ def open_picker(dirp,button_candidates,expected,state):
   for option in expected:
    if find_sheet_text(d,option) is not None: seen.add(option)
   if len(seen)==len(expected): break
-  swipe(True)
+  swipe_sheet_list(d,expected)
  # Do not drag downward to restore the list: downward pull is now the
  # intentional bottom-sheet dismiss gesture. Close and reopen instead.
  missing=[x for x in expected if x not in seen]

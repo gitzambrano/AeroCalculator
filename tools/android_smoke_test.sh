@@ -155,6 +155,22 @@ scroll_down_repeatedly() {
   done
 }
 
+# Older emulators can drop swipes right after a display-size change. After the
+# fixed swipe batch, keep scrolling until the expected bottom text is visible.
+scroll_until_text() {
+  local width="$1" height="$2" count="$3" pattern="$4" extra="${5:-12}" tmp="$OUT_ROOT/scroll-ui.xml"
+  scroll_down_repeatedly "$width" "$height" "$count"
+  for _ in $(seq 1 "$extra"); do
+    adb shell uiautomator dump /sdcard/scroll-ui.xml >/dev/null 2>&1 || true
+    adb pull /sdcard/scroll-ui.xml "$tmp" >/dev/null 2>&1 || true
+    if [[ -s "$tmp" ]] && grep -E -q "$pattern" "$tmp"; then
+      return 0
+    fi
+    sleep 0.6
+    scroll_down_repeatedly "$width" "$height" 2
+  done
+}
+
 exercise_portrait() {
   local dir="$1" width="$2" height="$3"
   adb shell am force-stop "$PACKAGE_NAME" || true; adb logcat -c; launch_app
@@ -162,7 +178,7 @@ exercise_portrait() {
   capture_state "$dir" "portrait-inputs-top"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-top"
   assert_dump_contains "$dir" "portrait-inputs-top" "$PRIMARY_ALTITUDE_PATTERN"
-  scroll_down_repeatedly "$width" "$height" 8
+  scroll_until_text "$width" "$height" 8 'Headwind|HeadWind|HeadWnd|WindSpd|Wind Speed|Wind Spd'
   capture_state "$dir" "portrait-inputs-bottom"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-bottom"
   assert_dump_contains "$dir" "portrait-inputs-bottom" 'Headwind|HeadWind|HeadWnd|WindSpd|Wind Speed|Wind Spd'
@@ -170,7 +186,7 @@ exercise_portrait() {
   capture_state "$dir" "portrait-outputs-top"
   assert_alive_foreground_and_clean "$dir" "portrait-outputs-top"
   assert_dump_contains "$dir" "portrait-outputs-top" 'Pressure Altitude'
-  scroll_down_repeatedly "$width" "$height" 18
+  scroll_until_text "$width" "$height" 18 'Along[- ]Track Crosswind'
   capture_state "$dir" "portrait-outputs-bottom"
   assert_alive_foreground_and_clean "$dir" "portrait-outputs-bottom"
   assert_dump_contains "$dir" "portrait-outputs-bottom" 'Along[- ]Track Crosswind'
