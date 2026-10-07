@@ -203,7 +203,7 @@ test("output settings change formatting without changing the calculation", async
 
   await page.getByRole("button", { name: "More options" }).click();
   await page.getByRole("button", { name: "Settings" }).click();
-  await page.locator("#setting-extra-decimal").check();
+  await selectSetting(page, "setting-number-format", "+1 decimal");
   await page.locator("#settings-form").getByRole("button", { name: "Save" }).click();
   const machWithExtraDigit = Number(await resultText(page, "Mach"));
   expect(machWithExtraDigit).toBeCloseTo(Number(machBefore), 3);
