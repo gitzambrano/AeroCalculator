@@ -1055,7 +1055,7 @@ function createInputRow(field: Field): HTMLElement {
   value.className = "value-input calc-control";
   value.inputMode = "decimal";
   value.autocomplete = "off";
-  value.placeholder = field.placeholder ?? "";
+  value.placeholder = "";
   value.value = field.defaultValue ?? "";
   value.setAttribute("aria-label", `${field.typeOptions.find((item) => item.value === field.defaultType)?.label ?? field.id} value`);
   setHelper(value, helperFor(field.id, field.defaultType));
@@ -1094,7 +1094,7 @@ function createInputRow(field: Field): HTMLElement {
     delta.className = "value-input calc-control speed-delta";
     delta.inputMode = "decimal";
     delta.autocomplete = "off";
-    delta.placeholder = "+ Δkt";
+    delta.placeholder = "";
     delta.value = "0";
     delta.hidden = true;
     delta.setAttribute("aria-label", "Stall-speed-factor delta in knots");
@@ -1998,12 +1998,13 @@ function normalizeDependentUnits(): void {
   if (isVsFactor) {
     speedUnit.hidden = true;
     speedDelta.hidden = false;
-    speedInput.placeholder = "Factor";
+    speedInput.placeholder = "";
   } else {
     speedUnit.hidden = false;
     speedDelta.hidden = true;
-    speedInput.placeholder = speedType === "Mach" ? "Mach" : speedType === "CL" ? "Lift coefficient" : "Speed";
+    speedInput.placeholder = "";
     if (speedType === "Mach" || speedType === "CL") {
+      // Keep the third control visible for dimensionless quantities.
       preserveSelect(speedUnit, ["—"], "—");
     } else if (speedType === "Qdyn" || speedType === "Qc") {
       preserveSelect(speedUnit, ["mbar", "Pa", "hPa", "atm", "mmHg", "psi"], "mbar");
