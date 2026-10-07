@@ -280,10 +280,22 @@ FIELDS={
  },
 }
 
-def expect_visible_text(profile,state,root,wanted):
- ok=find_any(root,[wanted]) is not None
- REPORT.append({"profile":profile,"state":state,"ok":ok,"expected":wanted,"texts":texts(root)[:120]})
- if not ok: raise AssertionError(f"{profile}:{state} expected visible label {wanted}; visible={texts(root)[:80]}")
+def scrolled_pages(dirp,state,first):
+ # Narrow profiles show only a few input rows per screen. Collect dumps from
+ # the top of the page down so every row label is checked where it renders.
+ pages=[first]
+ for i in range(8):
+  swipe(True)
+  d=dump(dirp,f"{state}-scroll-{i}")
+  if texts(d)==texts(pages[-1]): break
+  pages.append(d)
+ return pages
+
+def expect_visible_text(profile,state,pages,wanted):
+ ok=any(find_any(p,[wanted]) is not None for p in pages)
+ seen=[t for p in pages for t in texts(p)]
+ REPORT.append({"profile":profile,"state":state,"ok":ok,"expected":wanted,"texts":seen[:160]})
+ if not ok: raise AssertionError(f"{profile}:{state} expected visible label {wanted}; visible={seen[:120]}")
 
 def assert_fallback_composite(profile,root):
  dp=int(profile.removesuffix("dp"))
@@ -338,8 +350,8 @@ def exercise_profile(label,size,density):
  top(dirp)
  fallback=dump(dirp,"fallback-labels")
  record(label,"fallback-labels",fallback)
- assert_fallback_composite(label,fallback)
  shot(dirp,"fallback-labels",force=True)
+ assert_fallback_composite(label,scrolled_pages(dirp,"fallback-labels",fallback))
 
  # A second compact-state screenshot covers labels that are not present in the
  # pressure/wind-vector composite: ground speed, heading, sideslip and runway.
@@ -350,8 +362,8 @@ def exercise_profile(label,size,density):
  top(dirp)
  compact=dump(dirp,"fallback-compact-labels")
  record(label,"fallback-compact-labels",compact)
- assert_fallback_compact(label,compact)
  shot(dirp,"fallback-compact-labels",force=True)
+ assert_fallback_compact(label,scrolled_pages(dirp,"fallback-compact-labels",compact))
 
  fill_vsfactor(dirp)
 
