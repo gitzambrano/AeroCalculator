@@ -165,13 +165,13 @@ def main():
  adb('install','-r',APK); adb('shell','wm','size','1080x2340'); adb('shell','wm','density','440'); adb('shell','cmd','window','user-rotation','lock','0',check=False); adb('shell','pm','clear',PKG,check=False); adb('logcat','-c',check=False)
  adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(3); foreground('launch','.main')
  r=dump('inputs-top'); layout(r,'inputs-top'); shot('inputs-top')
- for t in ['AIRPLANES','INPUTS','CALCULATE','Hp','OAT','CAS']: rec('input:'+t,find(r,t) is not None,str(texts(r)[:50]))
+ for t in ['AIRPLANES','INPUTS','CALCULATE','HP','OAT','CAS']: rec('input:'+t,find(r,t) is not None,str(texts(r)[:50]))
  rb,_,seen=until(['HeadWind','HeadWnd','WindSpd','Wind Spd','Wind Speed'],'inputs-bottom'); rec('inputs-bottom',True,str(seen[-20:])); layout(rb,'inputs-bottom'); shot('inputs-bottom')
 
- top(); r=dump('selector'); tap(find(r,'Hp')); d,_=wait_text('Pressure Altitude','alt-dialog'); rec('alt-selector',find(d,'Geometric Altitude') is not None,str(texts(d))); shot('altitude-selector'); tap(find(d,'Pressure Altitude'))
+ top(); r=dump('selector'); tap(find(r,'HP')); d,_=wait_text('Pressure Altitude','alt-dialog'); rec('alt-selector',find(d,'Geometric Altitude') is not None,str(texts(d))); shot('altitude-selector'); tap(find(d,'Pressure Altitude'))
  time.sleep(.5); r=dump('unit'); tap(find(r,'ft')); d,_=wait_text('km','unit-dialog'); rec('unit-selector',find(d,'m') is not None,str(texts(d))); shot('altitude-unit-selector'); tap(find(d,'ft')); time.sleep(.5)
 
- for lab,val in [('Hp','0'),('OAT','15'),('CAS','100'),('Weight','1000'),('S_ref_wing','16'),('c_ref_wing','1.5'),('CLMAX','1.5'),('Nz (Pull-up)','1')]: edit(lab,val)
+ for lab,val in [('HP','0'),('OAT','15'),('CAS','100'),('Weight','1000'),('SREF','16'),('cREF','1.5'),('CL,MAX','1.5'),('NZ (Pull-up)','1')]: edit(lab,val)
  top(); taptext('CALCULATE'); time.sleep(1); foreground('calculate','.main'); r=dump('outputs-top'); layout(r,'outputs-top'); shot('outputs-top')
  for lab,exp,tol in [('Pressure',1013.25,1),('Temperature',15,.2),('Density',1.225,.03),('Calibrated Airspeed',100,.5)]:
   s=result(lab); v=num(s); rec('calc:'+lab,abs(v-exp)<=tol,f'{s} expected {exp}±{tol}')
