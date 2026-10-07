@@ -5,6 +5,7 @@ const lengthUnits = ["ft", "m", "km", "nm", "mi", "in"];
 const pressureUnits = ["mbar", "Pa", "hPa", "atm", "mmHg", "psi"];
 const temperatureUnits = ["°C", "°F", "K"];
 const speedUnits = ["kt", "m/s", "km/h", "mph", "ft/s"];
+const windSpeedUnits = ["kt", "m/s", "km/h"];
 const massUnits = ["kg", "lb", "ton", "slug", "oz"];
 const areaUnits = ["m²", "ft²", "in²", "cm²", "mm²"];
 const chordUnits = ["m", "ft", "in", "cm", "mm"];
@@ -33,7 +34,7 @@ async function selectSetting(page: Page, id: string, value: string): Promise<voi
     return Array.from(select.options).find((option) => option.value === selectedValue)?.text ?? selectedValue;
   }, value);
   await page.locator(`[data-setting-select="${id}"]`).click();
-  await page.locator("#options-selector-list .option-item").filter({ hasText: label }).first().click();
+  await page.locator("#options-selector-list .option-label").getByText(label, { exact: true }).click();
   await expect(selectEl).toHaveValue(value);
 }
 
@@ -280,15 +281,15 @@ test("every calculator type and unit option can be selected and calculated", asy
   await select(page, "headWind-type", "HeadWind");
   await fill(page, "headWind-value", "10");
   await fill(page, "crossWind-value", "5");
-  await cycle(page.locator("#headWind-unit"), speedUnits);
-  await cycle(page.locator("#crossWind-unit"), speedUnits);
+  await cycle(page.locator("#headWind-unit"), windSpeedUnits);
+  await cycle(page.locator("#crossWind-unit"), windSpeedUnits);
   await cycle(page.locator("#windRef-unit"), angleUnits);
   await expect(page.locator('[data-field="crossWind"]')).toBeVisible();
 
   await select(page, "headWind-type", "Wind Speed");
   await fill(page, "headWind-value", "20");
   await fill(page, "windRef-value", "270");
-  await cycle(page.locator("#headWind-unit"), speedUnits);
+  await cycle(page.locator("#headWind-unit"), windSpeedUnits);
   await cycle(page.locator("#windRef-unit"), angleUnits);
   await expect(page.locator('[data-field="crossWind"]')).toBeHidden();
   await expect(page.locator("#windRef-type")).toHaveValue("Wind Direction");
