@@ -301,7 +301,6 @@ def main():
 
  select_menu('Import Airplanes','import'); time.sleep(1.2); d=dump('import-system-chooser'); rec('import-system-chooser',bool(texts(d,app_only=False)),str(texts(d,app_only=False)[:80])); shot('import-system-chooser'); back(); return_to_main('import-return')
 
- audit_all_input_modes()
  report(); print(json.dumps(R,indent=2))
 
 try: main()
