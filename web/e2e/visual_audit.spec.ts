@@ -9,6 +9,7 @@ const allCases = [
   { name: "mobile-280", width: 280, height: 653 },
   { name: "mobile-320", width: 320, height: 568 },
   { name: "mobile-360", width: 360, height: 800 },
+  { name: "mobile-380", width: 380, height: 820 },
   { name: "mobile-390", width: 390, height: 844 },
   { name: "mobile-411", width: 411, height: 915 },
   { name: "mobile-430", width: 430, height: 932 },
@@ -19,7 +20,7 @@ const allCases = [
   { name: "desktop-1920", width: 1920, height: 1080 },
 ] as const;
 
-const quickVisualNames = new Set(["mobile-260", "mobile-280", "mobile-320", "mobile-360", "mobile-390", "mobile-411"]);
+const quickVisualNames = new Set(["mobile-260", "mobile-280", "mobile-320", "mobile-360", "mobile-380", "mobile-390", "mobile-411"]);
 const cases = FULL_VISUAL_AUDIT ? allCases : allCases.filter((item) => quickVisualNames.has(item.name));
 
 async function shot(page: Page, dir: string, name: string, fullPage = false): Promise<void> {
