@@ -128,6 +128,31 @@ for (const viewport of viewports) {
       await assertNoHorizontalOverflow(page);
       await assertCriticalTextNotClipped(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
+
+      const settingsSave = page.locator('#settings-form button[type="submit"]');
+      await expect(settingsSave).toBeVisible();
+
+      if (viewport.width <= 430) {
+        const scrollState = await page.locator(".settings-body").evaluate((el) => {
+          const body = el as HTMLElement;
+          body.scrollTop = body.scrollHeight;
+          return {
+            scrollTop: body.scrollTop,
+            scrollHeight: body.scrollHeight,
+            clientHeight: body.clientHeight,
+          };
+        });
+        expect(scrollState.scrollHeight).toBeGreaterThan(scrollState.clientHeight);
+        expect(scrollState.scrollTop).toBeGreaterThan(0);
+        await expect(settingsSave).toBeVisible();
+
+        await page.locator('[data-setting-select="setting-theme"]').click();
+        await expect(page.locator("#modal-options-selector")).toBeVisible();
+        await expect(page.locator("#options-selector-cancel")).toBeVisible();
+        await page.locator("#options-selector-cancel").click();
+        await expect(settingsSave).toBeVisible();
+      }
+
       await page.getByRole("button", { name: "Cancel" }).click();
 
       await page.getByRole("button", { name: "Add airplane" }).click();
