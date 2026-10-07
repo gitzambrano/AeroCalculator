@@ -1588,28 +1588,26 @@ function initializeSwipeNavigation(): void {
 }
 
 function responsiveOptionLabel(value: string, label: string): string {
-  // Width-driven fallbacks for the 39% selector column. Thresholds include
-  // measured label width plus selector padding and the compact chevron.
+  // Same width policy as Android. The 39% selector column keeps full labels
+  // on regular phones; only the longest labels shorten below 380 px.
   const width = window.innerWidth;
-  const under355 = width < 355;
-  const under350 = width < 350;
+  const under380 = width < 380;
   const under340 = width < 340;
-  const under330 = width < 330;
-  const under325 = width < 325;
   const under320 = width < 320;
   const under300 = width < 300;
   const under290 = width < 290;
-  const under270 = width < 270;
   const under260 = width < 260;
 
   if (value === "Hp") return label;
-  if (value === "Hg") return under325 ? "H<sub>GEOM</sub>" : label;
-  if (value === "P") return under330 ? "Pressure" : label;
-  if (value === "OAT") return under270 ? "OAT" : under350 ? "Temperature" : label;
+  if (value === "Hg") return width < 325 ? "H<sub>GEOM</sub>" : label;
+  if (value === "P") return under300 ? "p" : under380 ? "Pressure" : label;
+  if (value === "OAT") return under340 ? "OAT" : under380 ? "Temperature" : label;
+
   if (value === "TAS") return under290 ? "TAS" : label;
   if (value === "CAS") return under290 ? "CAS" : label;
   if (value === "EAS") return under290 ? "EAS" : label;
   if (value === "CL") return "C<sub>L</sub>";
+
   if (value === "Sref") return label;
   if (value === "cref") return under260 ? "c<sub>REF</sub>" : label;
   if (value === "CLmax") return "C<sub>L,MAX</sub>";
@@ -1617,19 +1615,22 @@ function responsiveOptionLabel(value: string, label: string): string {
     const flapNum = value.slice(5);
     return under340 ? `C<sub>L,MAX</sub> F${flapNum}` : `Flap ${flapNum} - C<sub>L,MAX</sub>`;
   }
+
   if (value === "Track") return under260 ? "Track" : label;
   if (value === "Heading") return under300 ? "Heading" : label;
   if (value === "Sideslip") return under300 ? "Sideslip" : label;
   if (value === "Drift") return label;
-  if (value === "Runway Angle") return under300 ? "Rnwy Angle" : label;
-  if (value === "HeadWind") return under260 ? "HeadWnd" : "Headwind";
-  if (value === "CrossWind") return under260 ? "CrossWnd" : "Crosswind";
-  if (value === "Wind Speed") return under320 ? "Wind Spd" : "Wind Speed";
-  if (value === "Wind Direction") return under320 ? "Wind Dir" : "Wind Direction";
+  if (value === "Runway Angle") return under320 ? "Rnwy Angle" : label;
+
+  if (value === "HeadWind") return under300 ? "HeadWnd" : "Headwind";
+  if (value === "CrossWind") return under300 ? "CrossWnd" : "Crosswind";
+  if (value === "Wind Speed") return under300 ? "WindSpd" : under380 ? "Wind Spd" : "Wind Speed";
+  if (value === "Wind Direction") return under300 ? "WindDir" : under380 ? "Wind Dir" : "Wind Direction";
+
   if (value === "Vs Factor") return label;
-  if (value === "Ground Speed") return under300 ? "Grnd Spd" : label;
-  if (value === "Qdyn") return under355 ? "Dyn Press" : label;
-  if (value === "Qc") return under330 ? "Imp Press" : label;
+  if (value === "Ground Speed") return under380 ? "Grnd Spd" : label;
+  if (value === "Qdyn") return under300 ? "q" : under380 ? "Dyn Press" : label;
+  if (value === "Qc") return under300 ? "q<sub>c</sub>" : under380 ? "Imp Press" : label;
   if (value === "NzPullup") return under260 ? "N<sub>Z</sub>" : label;
   if (value === "NzTurn") return under260 ? "N<sub>Z</sub>" : label;
   if (value === "BankTurn") return under260 ? "Bank" : label;
