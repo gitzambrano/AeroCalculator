@@ -2362,7 +2362,7 @@ function convertInputForUnitChange(unitSelect: HTMLSelectElement): void {
   }
 
   if (converted !== null && Number.isFinite(converted)) {
-    const decimals = fieldId === "sref" ? 3 : 7;
+    const decimals = fieldId === "sref" ? 3 : 6;
     input.value = formatEditableNumber(converted, decimals);
   }
 }
@@ -2373,7 +2373,7 @@ function temperatureFromK(kelvin: number, unit: string): number {
   return kelvin;
 }
 
-function formatEditableNumber(value: number, maxDecimals = 7): string {
+function formatEditableNumber(value: number, maxDecimals = 6): string {
   const scale = 10 ** maxDecimals;
   const rounded = Math.round(value * scale) / scale;
   return String(rounded);
@@ -2524,7 +2524,7 @@ function recalculate(): void {
       "Temperature": formatTemperature(atmosphere.temperatureK),
       "Delta ISA": formatTemperatureDelta(deltaIsa),
       "Total Temperature": formatTemperature(totalT),
-      "Viscosity": `${fmt(mu * 1e5, 3)}×10⁻⁵ kg/m/s`,
+      "Viscosity": `${fmt(mu * 1e5, 3)}×10⁻⁵ Pa·s`,
       "Sound Speed": formatSpeed(atmosphere.speedOfSoundMS),
       "True Airspeed": formatSpeed(tas),
       "Calibrated Airspeed": formatSpeed(cas),
