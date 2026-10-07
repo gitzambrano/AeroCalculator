@@ -48,7 +48,7 @@ class TestSourceCharacterization(unittest.TestCase):
             with self.subTest(snippet=snippet):
                 self.assertIn(snippet, text)
 
-        self.assertIn("If idx = 2 Then areaDecimals = 3", text)
+        self.assertIn("If idx = 2 Or xx < 300dip Then areaDecimals = 3", text)
 
         # Crosswind owns its unit state; it must never proxy the headwind unit picker.
         match = re.search(
