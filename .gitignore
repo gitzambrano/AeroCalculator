@@ -99,4 +99,7 @@ artifacts/
 dump.xml
 audit-local/
 smoke-results/
+scratch/
+audit_screenshots/
+*.png.tmp
 
