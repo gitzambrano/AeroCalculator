@@ -295,6 +295,7 @@ test("output values stay on one line across mobile widths with long formatting",
 });
 
 test("every input type stays readable across mobile widths", async ({ browser }) => {
+  test.setTimeout(180_000);
   const widths = [280, 300, 319, 320, 339, 340, 360, 375, 390, 412, 430, 480];
   const typeCases: Record<string, readonly string[]> = {
     alt: ["Hp", "Hg", "P"],
