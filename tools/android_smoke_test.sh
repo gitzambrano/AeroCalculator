@@ -4,7 +4,7 @@ set -euo pipefail
 APK_PATH="${1:?Usage: android_smoke_test.sh <apk> <api-level>}"
 API_LEVEL="${2:-unknown}"
 PACKAGE_NAME="flightdyn.aerocalculator"
-PRIMARY_ALTITUDE_PATTERN='text="(Hp|H[Pp]|Altitude H[Pp])"'
+PRIMARY_ALTITUDE_PATTERN='text="(HP|H[Pp]|Altitude H[Pp])"'
 OUT_ROOT="smoke-results/api-${API_LEVEL}"
 mkdir -p "$OUT_ROOT"
 
