@@ -285,14 +285,39 @@ def main():
  w,h=display_size(); adb('shell','input','swipe',str(w//2),str(int(h*.55)),str(w//2),str(int(h*.82)),'350'); time.sleep(.7)
  d=dump('sheet-swipe-dismissed'); rec('sheet-swipe-down-dismiss',find(d,'Altitude Type') is None,str(texts(d)[:80]))
 
- # The Inputs -> Calculate swipe must work even when the gesture starts on a numeric EditText.
- top(); r=dump('input-swipe-entry'); e=row_edit_node(r,'CAS')
+ # Inputs -> Calculate must work regardless of where the finger starts.
+ top(); r=dump('input-swipe-entry')
+ e=row_edit_node(r,'CAS')
  rec('input-swipe-edit-found',e is not None,str(texts(r)[:60]))
  if e is not None:
   x1,y1,x2,y2=bounds(e.attrib.get('bounds','')); sy=(y1+y2)//2
-  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.9)
-  d=dump('input-swipe-calculate'); rec('input-swipe-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
-  taptext('INPUTS'); time.sleep(.5)
+  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  d=dump('input-swipe-edit-calculate'); rec('input-swipe-edit-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  taptext('INPUTS'); time.sleep(.4); top()
+
+ r=dump('input-swipe-selector-entry'); selector=find(r,'CAS')
+ rec('input-swipe-selector-found',selector is not None,str(texts(r)[:60]))
+ if selector is not None:
+  x1,y1,x2,y2=bounds(selector.attrib.get('bounds','')); sy=(y1+y2)//2
+  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  d=dump('input-swipe-selector-calculate'); rec('input-swipe-selector-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  taptext('INPUTS'); time.sleep(.4); top()
+
+ r=dump('input-swipe-unit-entry'); unit=row_unit_node(r,'CAS')
+ rec('input-swipe-unit-found',unit is not None,str(texts(r)[:60]))
+ if unit is not None:
+  x1,y1,x2,y2=bounds(unit.attrib.get('bounds','')); sy=(y1+y2)//2
+  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  d=dump('input-swipe-unit-calculate'); rec('input-swipe-unit-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  taptext('INPUTS'); time.sleep(.4); top()
+
+ # Start inside the right row margin, outside every selector/value/unit control.
+ r=dump('input-swipe-margin-entry'); e=row_edit_node(r,'CAS')
+ if e is not None:
+  x1,y1,x2,y2=bounds(e.attrib.get('bounds','')); sy=(y1+y2)//2
+  adb('shell','input','swipe',str(int(w*.98)),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  d=dump('input-swipe-margin-calculate'); rec('input-swipe-margin-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  taptext('INPUTS'); time.sleep(.4)
 
  for lab,val in [('HP','0'),('OAT','15'),('CAS','100'),('Weight','1000'),('SREF','16'),('cREF','1.5'),('CL,MAX','1.5'),('NZ (Pull-up)','1')]: edit(lab,val)
  top(); taptext('CALCULATE'); time.sleep(1); foreground('calculate','.main'); r=dump('outputs-top'); layout(r,'outputs-top'); shot('outputs-top')
