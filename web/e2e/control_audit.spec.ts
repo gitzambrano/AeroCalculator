@@ -480,11 +480,19 @@ test("every calculator input option fits across mobile widths", async ({ browser
     "alt-type", "temp-type", "spd-type", "weight-type", "clmax-type",
     "nz-type", "angle1-type", "angle2-type", "headWind-type", "windRef-type",
   ];
-  const unitIds = [
-    "alt-unit", "temp-unit", "spd-unit", "weight-unit", "sref-unit", "cref-unit",
-    "clmax-unit", "nz-unit", "angle1-unit", "angle2-unit",
-    "headWind-unit", "crossWind-unit", "windRef-unit",
-  ];
+  const unitsForType: Record<string, readonly string[]> = {
+    "alt-type": ["alt-unit"],
+    "temp-type": ["temp-unit"],
+    "spd-type": ["spd-unit"],
+    "weight-type": ["weight-unit"],
+    "clmax-type": ["clmax-unit"],
+    "nz-type": ["nz-unit"],
+    "angle1-type": ["angle1-unit"],
+    "angle2-type": ["angle2-unit"],
+    "headWind-type": ["headWind-unit", "crossWind-unit", "windRef-unit"],
+    "windRef-type": ["windRef-unit"],
+  };
+  const staticUnits = ["sref-unit", "cref-unit"];
 
   for (const width of widths) {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
@@ -502,7 +510,7 @@ test("every calculator input option fits across mobile widths", async ({ browser
         await selectEl.selectOption(value);
         await assertInputGeometry(page, `${width}:${id}=${value}`);
 
-        for (const unitId of unitIds) {
+        for (const unitId of unitsForType[id] ?? []) {
           const unit = page.locator("#" + unitId);
           if (await unit.count() === 0 || !(await unit.isVisible())) continue;
           const unitOptions = await unit.locator("option").evaluateAll((nodes) =>
@@ -513,6 +521,17 @@ test("every calculator input option fits across mobile widths", async ({ browser
             await assertInputGeometry(page, `${width}:${id}=${value}:${unitId}=${unitValue}`);
           }
         }
+      }
+    }
+
+    for (const unitId of staticUnits) {
+      const unit = page.locator("#" + unitId);
+      const unitOptions = await unit.locator("option").evaluateAll((nodes) =>
+        nodes.map((n) => (n as HTMLOptionElement).value)
+      );
+      for (const unitValue of unitOptions) {
+        await unit.selectOption(unitValue);
+        await assertInputGeometry(page, `${width}:${unitId}=${unitValue}`);
       }
     }
     await context.close();
