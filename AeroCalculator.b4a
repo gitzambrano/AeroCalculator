@@ -916,7 +916,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 8
 		    btnNzType.Initialize("btnNzType")
 		    pnlInput.AddView(btnNzType, 3%x, ib*sc, 44%x, tb*sc)
-			btnNzType.Text = MakeSubscript("N", "z", " (Pull-up)")
+			btnNzType.Text = MakeSubscript("N", "Z", " (Pull-up)")
 			btnNzType.TextSize = 15*sc
 			btnNzType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtNz.Initialize("edtNz")
@@ -2601,15 +2601,15 @@ Sub AltType_Click
 			End If
 		Else If indAltType=1 Then
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "geom", "")
+				btnAltType.Text = MakeSubscript("Altitude H", "GEOM", "")
 			Else
-				btnAltType.Text = MakeSubscript("H", "geom", "")
+				btnAltType.Text = MakeSubscript("H", "GEOM", "")
 			End If
 		Else If indAltType=2 Then
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "geom", "")
+				btnAltType.Text = MakeSubscript("Altitude H", "GEOM", "")
 			Else
-				btnAltType.Text = MakeSubscript("H", "geom", "")	
+				btnAltType.Text = MakeSubscript("H", "GEOM", "")	
 			End If
 		End If
 		edtAlt.Hint = "Altitude"
@@ -2909,10 +2909,10 @@ Sub SpdType_Click
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 5 Then
 		If xx > 340dip Or sc > 1 Then
-			btnSpdType.Text = MakeSubscript("V", "s", " Factor")
+			btnSpdType.Text = MakeSubscript("V", "S", " Factor")
 			edtSpd.Hint = "Factor"
 		Else
-			btnSpdType.Text = MakeSubscript("V", "s", " Fact")
+			btnSpdType.Text = MakeSubscript("V", "S", " Fact")
 			edtSpd.Hint = "Fact"
 		End If
 		btnSpdUnit.Visible = False
@@ -3138,15 +3138,15 @@ Sub NzType_Click
 	If indNzType < 0 Then
 	Else 
 		If indNzType=0 Then
-			btnNzType.Text = MakeSubscript("N", "z", " (Pull-up)")
+			btnNzType.Text = MakeSubscript("N", "Z", " (Pull-up)")
 			edtNz.Hint = "Load Factor (Pull-up)"
 			btnNzUnit.Text = "g"
 		Else If indNzType=1 Then
 			If xx > 340dip Or sc > 1 Or ld = 1 Then
-				btnNzType.Text = MakeSubscript("N", "z", " (Turn)")
+				btnNzType.Text = MakeSubscript("N", "Z", " (Turn)")
 				edtNz.Hint = "Load Factor (Turn)"
 			Else
-				btnNzType.Text = MakeSubscript("N", "z", "")
+				btnNzType.Text = MakeSubscript("N", "Z", "")
 				edtNz.Hint = "Load Factor"
 			End If
 			btnNzUnit.Text = "g"
@@ -4099,13 +4099,13 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 1
-		lblVar.Text = MakeSubscript("Geometric Altitude H", "geom", "")
+		lblVar.Text = MakeSubscript("Geometric Altitude H", "GEOM", "")
 		lblRes.Text = NumberFormat2(Hgeom * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeom) Or IsInf(Hgeom) Then
 			lblRes.Text = "----"
 		End If
 	Case 2
-		lblVar.Text = MakeSubscript("Geopotential Altitude H", "g", "")
+		lblVar.Text = MakeSubscript("Geopotential Altitude H", "G", "")
 		lblRes.Text = NumberFormat2(Hgeop * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeop) Or IsInf(Hgeop) Then
 			lblRes.Text = "----"
@@ -4193,13 +4193,13 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 16
-		lblVar.Text = MakeSubscript("Stall Speed V", "s", "")
+		lblVar.Text = MakeSubscript("Stall Speed V", "S", "")
 		lblRes.Text = NumberFormat2(Vs_cas * k2spd, 1, 2 + d, 2 + d, False) & " " & manager.GetString("speed")
 		If IsNan(Vs_cas) Or IsInf(Vs_cas) Then
 			lblRes.Text = "----"
 		End If
 	Case 17
-		lblVar.Text = MakeSubscript("V", "s", " Factor")
+		lblVar.Text = MakeSubscript("V", "S", " Factor")
 		lblRes.Text = NumberFormat2(VsFact, 1, 3 + d, 3 + d, False)
 		If IsNan(VsFact) Or IsInf(VsFact) Then
 			lblRes.Text = "----"
@@ -4257,7 +4257,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 26
-		lblVar.Text = MakeSubscript("Total Pressure p", "t", "")
+		lblVar.Text = MakeSubscript("Total Pressure p", "T", "")
 		lblRes.Text = NumberFormat2(Ptot * k2pres, 1, 2 + d, 2 + d, False) & " " & manager.GetString("pressure")
 		If IsNan(Ptot) Or IsInf(Ptot) Then
 			lblRes.Text = "----"
@@ -4281,7 +4281,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 30
-		lblVar.Text = MakeSubscript("Load Factor N", "z", "")
+		lblVar.Text = MakeSubscript("Load Factor N", "Z", "")
 		lblRes.Text = NumberFormat2(Nz, 1, 2 + d, 2 + d, False) & " g"
 		If IsNan(Nz) Or IsInf(Nz) Then
 			lblRes.Text = "----"
@@ -4772,9 +4772,9 @@ Private Sub MakeSubscript(baseText As String, subText As String, extraText As St
 End Sub
 
 Private Sub MakePressureAltitude(baseText As String) As CSBuilder
-	' The descender of p needs slightly more clearance than other subscripts.
+	' Pressure-altitude subscript uses dedicated clearance and uppercase notation.
 	Dim cs As CSBuilder
-	cs.Initialize.Append(baseText).VerticalAlign(3dip).RelativeSize(0.68).Append("p").Pop.Pop
+	cs.Initialize.Append(baseText).VerticalAlign(3dip).RelativeSize(0.68).Append("P").Pop.Pop
 	Return cs
 End Sub
 
