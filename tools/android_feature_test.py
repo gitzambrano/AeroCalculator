@@ -260,6 +260,12 @@ def main():
  for t in ['AIRPLANES','INPUTS','CALCULATE','HP','OAT','CAS']: rec('input:'+t,find(r,t) is not None,str(texts(r)[:50]))
  rb,_,seen=until(['HeadWind','HeadWnd','WindSpd','Wind Spd','Wind Speed'],'inputs-bottom'); rec('inputs-bottom',True,str(seen[-20:])); layout(rb,'inputs-bottom'); shot('inputs-bottom')
 
+ top(); r=dump('airplane-picker-entry'); plane_btn=find(r,'Custom Airplane'); rec('airplane-picker-button',plane_btn is not None,str(texts(r)[:60])); tap(plane_btn); time.sleep(.5)
+ ap,_=wait_text('Boeing 737-800','airplane-picker')
+ rec('airplane-picker-metadata',find_contains(ap,'124.6 m²') is not None and find_contains(ap,'79015 kg') is not None,str(texts(ap)[:100]))
+ layout(ap,'airplane-picker'); shot('airplane-picker', force=True)
+ custom=find(ap,'Custom Airplane'); tap(custom) if custom is not None else back(); time.sleep(.4)
+
  top(); r=dump('selector'); tap(find(r,'HP')); d,_=wait_text('Pressure Altitude','alt-dialog'); rec('alt-selector',find(d,'Geometric Altitude') is not None,str(texts(d))); shot('altitude-selector'); tap(find(d,'Pressure Altitude'))
  time.sleep(.5); r=dump('unit'); tap(find(r,'ft')); d,_=wait_text('km','unit-dialog'); rec('unit-selector',find(d,'m') is not None,str(texts(d))); shot('altitude-unit-selector'); tap(find(d,'ft')); time.sleep(.5)
 
