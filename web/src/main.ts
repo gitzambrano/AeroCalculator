@@ -126,7 +126,7 @@ function helperFor(fieldId: string, typeValue: string): string {
 }
 
 const DEFAULT_OPTION_LABELS: Record<string, string> = {
-  Hp: "Altitude H<sub>p</sub>",
+  Hp: "Altitude H<sub class="hp-sub">p</sub>",
   Hg: "Altitude H<sub>geom</sub>",
   P: "Static Pressure",
   OAT: "Temperature OAT",
@@ -183,7 +183,7 @@ const resultNames = [
 
 // Static trusted markup is used here only for mathematical subscript typography.
 const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
-  "Pressure Altitude": "Pressure Altitude H<sub>p</sub>",
+  "Pressure Altitude": "Pressure Altitude H<sub class="hp-sub">p</sub>",
   "Geometric Altitude": "Geometric Altitude H<sub>geom</sub>",
   "Geopotential Altitude": "Geopotential Altitude H<sub>g</sub>",
   "Density Altitude": "Density Altitude H<sub>ρ</sub>",
@@ -1240,7 +1240,7 @@ function initializeSwipeNavigation(): void {
 
 function responsiveOptionLabel(value: string, label: string): string {
   if (!window.matchMedia("(max-width: 430px)").matches) return label;
-  if (value === "Hp") return "H<sub>p</sub>";
+  if (value === "Hp") return "H<sub class="hp-sub">p</sub>";
   if (value === "Hg") return "H<sub>geom</sub>";
   if (value === "P") return "p";
   if (value === "OAT") return "OAT";
