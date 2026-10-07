@@ -1327,7 +1327,7 @@ function createInputRow(field: Field): HTMLElement {
     deltaLabel.type = "button";
     deltaLabel.id = "spdDelta-label";
     deltaLabel.className = "speed-delta-label";
-    deltaLabel.textContent = "+ Δ";
+    deltaLabel.textContent = "+Δ";
     deltaLabel.setAttribute("aria-label", "Delta speed relative to stall-speed factor");
     setHelper(deltaLabel, "Additional calibrated speed added after applying the stall-speed factor. This Δ term is always entered in knots.");
     deltaLabel.hidden = true;
