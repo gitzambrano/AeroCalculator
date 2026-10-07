@@ -21,6 +21,7 @@ FULL_PROFILES=[
 ]
 QUICK_PROFILES=[
  ("280dp","560x1120","320"),
+ ("320dp","640x1280","320"),
  ("360dp","720x1440","320"),
  ("411dp","1080x2160","420"),
 ]
@@ -52,8 +53,8 @@ def dump(dirp,name):
  adb("pull","/sdcard/window.xml",str(p),check=False)
  return ET.parse(p).getroot()
 
-def shot(dirp,name):
- if not FULL_VISUAL_AUDIT: return
+def shot(dirp,name,force=False):
+ if not FULL_VISUAL_AUDIT and not force: return
  dirp.mkdir(parents=True,exist_ok=True)
  p=dirp/f"{name}.png"
  with p.open("wb") as fh:
@@ -147,8 +148,17 @@ def launch(size,density):
 
 def open_picker(dirp,button_candidates,expected,state):
  _,n=reachable(dirp,button_candidates); tap(n); time.sleep(.35)
+ seen=set()
+ for i in range(8):
+  d=dump(dirp,f"{state}-sheet-{i}")
+  for option in expected:
+   if find_sheet_text(d,option) is not None: seen.add(option)
+  if len(seen)==len(expected): break
+  swipe(True)
+ # Restore the sheet near its top so selection can search deterministically.
+ for _ in range(8): swipe(False)
  d=dump(dirp,state+"-sheet")
- missing=[x for x in expected if find_sheet_text(d,x) is None]
+ missing=[x for x in expected if x not in seen]
  REPORT.append({"profile":dirp.name,"state":state+"-options","ok":not missing,"missing":missing,"texts":texts(d)[:120]})
  if missing: raise AssertionError(f"{dirp.name}:{state} missing options {missing}")
  shot(dirp,state+"-sheet")
@@ -157,6 +167,11 @@ def open_picker(dirp,button_candidates,expected,state):
 def choose(dirp,button_candidates,expected,choice,state):
  d=open_picker(dirp,button_candidates,expected,state)
  n=find_sheet_text(d,choice)
+ for i in range(8):
+  if n is not None: break
+  swipe(True)
+  d=dump(dirp,f"{state}-choice-{i}")
+  n=find_sheet_text(d,choice)
  if n is None: raise AssertionError(f"{state}: missing choice {choice}")
  tap(n); time.sleep(.45)
  r=dump(dirp,state)
@@ -198,17 +213,17 @@ def cycle_units(dirp,label_candidates,options,state):
 
 FIELDS={
  "alt":{
-  "buttons":["HP","Altitude HP","HG","Altitude HGEOM","HGEOM","P","Static Pressure"],
+  "buttons":["HP","Altitude HP","HG","Altitude HGEOM","HGEOM","P","Static Pressure","Sensor Pressure","Pressure"],
   "expected":["Pressure Altitude","Geometric Altitude","Altitude from GPS","Pressure","Pressure from Sensor"],
   "choices":["Pressure Altitude","Geometric Altitude","Pressure"],
  },
  "temp":{
-  "buttons":["Δ ISA","OAT","Temperature OAT"],
+  "buttons":["Δ ISA","OAT","Temperature","Temperature OAT"],
   "expected":["Δ ISA","Outside Air Temperature","Temperature from Sensor"],
   "choices":["Δ ISA","Outside Air Temperature"],
  },
  "speed":{
-  "buttons":["TAS","CAS","EAS","Airspeed TAS","Airspeed CAS","Airspeed EAS","Mach","CL","VS Factor","VS Fact","Ground Speed","Grnd Speed","q","qc","Dynamic Pressure","Impact Pressure"],
+  "buttons":["TAS","CAS","EAS","Airspeed TAS","Airspeed CAS","Airspeed EAS","Mach","CL","VS Factor","VS Fact","Ground Speed","Grnd Spd","q","qc","Dynamic Pressure","Dyn Press","Impact Pressure","Imp Press"],
   "expected":["TAS","CAS","EAS","Mach","Lift Coefficient","Stall-Speed Factor","Ground Speed","GroundSpeed from GPS","Dynamic Pressure","Impact Pressure"],
   "choices":["TAS","CAS","EAS","Mach","Lift Coefficient","Stall-Speed Factor","Ground Speed","Dynamic Pressure","Impact Pressure"],
  },
@@ -252,12 +267,12 @@ def fill_vsfactor(dirp):
   for _ in range(12): adb("shell","input","keyevent","67",check=False)
   adb("shell","input","text","1.30" if k==0 else "10")
   adb("shell","input","keyevent","4",check=False)
- r=dump(dirp,"vsfactor-filled"); record(dirp.name,"vsfactor-filled",r); shot(dirp,"vsfactor-filled")
+ r=dump(dirp,"vsfactor-filled"); record(dirp.name,"vsfactor-filled",r); shot(dirp,"vsfactor-filled",force=True)
 
 def exercise_profile(label,size,density):
  dirp=OUT/label; dirp.mkdir(parents=True,exist_ok=True)
  launch(size,density)
- r=dump(dirp,"baseline"); record(label,"baseline",r); shot(dirp,"baseline")
+ r=dump(dirp,"baseline"); record(label,"baseline",r); shot(dirp,"baseline",force=True)
 
  for key in ["alt","temp","speed","nz","angle1","angle2","wind"]:
   spec=FIELDS[key]
@@ -287,9 +302,9 @@ def exercise_profile(label,size,density):
  cycle_units(dirp,FIELDS["wind"]["buttons"],["kt","m/s","km/h"],"wind-speed")
  cycle_units(dirp,["Runway Angle","Rnwy Angle","Wind Direction","WindDir","Wind Dir"],["deg","rad"],"wind-angle")
 
- top(dirp); rr=dump(dirp,"final-top"); record(label,"final-top",rr); shot(dirp,"final-top")
+ top(dirp); rr=dump(dirp,"final-top"); record(label,"final-top",rr); shot(dirp,"final-top",force=True)
  for _ in range(8): swipe(True)
- rr=dump(dirp,"final-bottom"); record(label,"final-bottom",rr); shot(dirp,"final-bottom")
+ rr=dump(dirp,"final-bottom"); record(label,"final-bottom",rr); shot(dirp,"final-bottom",force=True)
 
 def main():
  adb("wait-for-device")
