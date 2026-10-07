@@ -670,7 +670,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 1
 		    btnAltType.Initialize("btnAltType")
 			pnlInput.AddView(btnAltType, 3%x, ib*sc, 39%x, tb*sc)
-			If xx > 340dip Or sc > 1 Then
+			If UseLongInputLabels Then
 				btnAltType.Text = MakePressureAltitude("Altitude H")
 			Else
 				btnAltType.Text = MakePressureAltitude("H")
@@ -728,7 +728,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 3
 		    btnSpdType.Initialize("btnSpdType")
 		    pnlInput.AddView(btnSpdType, 3%x, ib*sc, 39%x, tb*sc)
-			If xx > 340dip Or sc > 1 Then
+			If UseLongInputLabels Then
 				btnSpdType.Text="Airspeed CAS"
 			Else
 				btnSpdType.Text="CAS"
@@ -810,7 +810,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 5
 			btnSref.Initialize("btnSref")
 		    pnlInput.AddView(btnSref, 3%x, ib*sc, 39%x, tb*sc)
-			If xx > 340dip Or sc > 1 Then
+			If UseLongInputLabels Then
 				btnSref.Text = MakeSubscript("Area S", "REF", "")
 			Else
 				btnSref.Text = MakeSubscript("S", "REF", "")
@@ -844,7 +844,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 6
 			btncref.Initialize("btncref")
 		    pnlInput.AddView(btncref, 3%x, ib*sc, 39%x, tb*sc)
-			If xx > 340dip Or sc > 1 Then
+			If UseLongInputLabels Then
 				btncref.Text = MakeSubscript("Chord c", "REF", "")
 			Else
 				btncref.Text = MakeSubscript("c", "REF", "")
@@ -998,9 +998,10 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 11
 		    btnHeadWind.Initialize("btnHeadWind")
 		    pnlInput.AddView(btnHeadWind, 3%x, ib*sc, 39%x, tb*sc)
-			btnHeadWind.Text = "HeadWnd"
-			If sc > 1 Or ld = 1 Or xx>300dip Then
+			If UseLongInputLabels Then
 				btnHeadWind.Text = "HeadWind"
+			Else
+				btnHeadWind.Text = "HeadWnd"
 			End If
 			btnHeadWind.TextSize = 15*sc
 			btnHeadWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
@@ -1031,9 +1032,10 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 12	
 			btnCrossWind.Initialize("btnCrossWind")
 		    pnlInput.AddView(btnCrossWind, 3%x, ib*sc, 39%x, tb*sc)
-			btnCrossWind.Text = "CrossWnd"
-			If sc > 1 Or ld = 1 Or xx>300dip Then
+			If UseLongInputLabels Then
 				btnCrossWind.Text = "CrossWind"
+			Else
+				btnCrossWind.Text = "CrossWnd"
 			End If
 			btnCrossWind.TextSize = 15*sc
 			btnCrossWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
@@ -1064,7 +1066,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	    Case 13
 		    btnWindRefAngle.Initialize("btnWindRefAngle")
 		    pnlInput.AddView(btnWindRefAngle, 3%x, ib*sc, 39%x, tb*sc)
-			If xx >= 340dip Or sc > 1 Or ld = 1 Then
+			If UseMediumInputLabels Then
 				btnWindRefAngle.Text = "Runway Angle"
 			Else
 				btnWindRefAngle.Text = "Rnwy Angle"
@@ -2653,13 +2655,13 @@ Sub AltType_Click
 	If indAltType < 0 Then
 	Else If indAltType=0 Or indAltType=1 Or indAltType=2 Then
 		If indAltType=0 Then
-			If xx > 340dip Or sc > 1 Then
+			If UseLongInputLabels Then
 				btnAltType.Text = MakePressureAltitude("Altitude H")
 			Else
 				btnAltType.Text = MakePressureAltitude("H")
 			End If
 		Else If indAltType=1 Then
-			If xx > 340dip Or sc > 1 Then
+			If UseLongInputLabels Then
 				btnAltType.Text = MakeSubscript("Altitude H", "GEOM", "")
 			Else
 				btnAltType.Text = MakeSubscript("H", "GEOM", "")
@@ -2697,8 +2699,10 @@ Sub AltType_Click
 			edtAlt.Text = NumberFormat2(GPSalt / kAlt,1,1,1,False)
 		End If	
 	Else If indAltType = 3 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseFullInputLabels Then
 			btnAltType.Text = "Static Pressure"
+		Else If UseLongInputLabels Then
+			btnAltType.Text = "Pressure"
 		Else
 			btnAltType.Text = "P"
 		End If
@@ -2732,8 +2736,10 @@ Sub AltType_Click
 		Msgbox2Async("Pressure Sensor is not supported in this device.", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
 		Wait For Msbox_Result (Idx98 As Int)
 		End If
-		If xx > 340dip Or sc > 1 Then
+		If UseFullInputLabels Then
 			btnAltType.Text = "Sensor Pressure"
+		Else If UseLongInputLabels Then
+			btnAltType.Text = "Pressure"
 		Else
 			btnAltType.Text = "P"
 		End If
@@ -2840,15 +2846,19 @@ Sub TempType_Click
 		btnTempType.Text = "Δ ISA"
 		tmp.StopListening
 	Else If indTempType = 1 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseFullInputLabels Then
 			btnTempType.Text = "Temperature OAT"
+		Else If UseLongInputLabels Then
+			btnTempType.Text = "Temperature"
 		Else
 			btnTempType.Text = "OAT"
 		End If
 		tmp.StopListening
 	Else If indTempType = 2 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseFullInputLabels Then
 			btnTempType.Text = "Temperature OAT"
+		Else If UseLongInputLabels Then
+			btnTempType.Text = "Temperature"
 		Else
 			btnTempType.Text = "OAT"
 		End If
@@ -2917,7 +2927,7 @@ Sub SpdType_Click
 	End If
 	If indSpdType < 0 Then
 	Else If indSpdType = 0 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseLongInputLabels Then
 			btnSpdType.Text = "Airspeed TAS"
 		Else
 			btnSpdType.Text = "TAS"
@@ -2928,7 +2938,7 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x 
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 1 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseLongInputLabels Then
 			btnSpdType.Text = "Airspeed CAS"
 		Else
 			btnSpdType.Text = "CAS"
@@ -2939,7 +2949,7 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 2 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseLongInputLabels Then
 			btnSpdType.Text = "Airspeed EAS"
 		Else
 			btnSpdType.Text = "EAS"
@@ -2968,7 +2978,7 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 5 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseLongInputLabels Then
 			btnSpdType.Text = MakeSubscript("V", "S", " Factor")
 			edtSpd.Hint = ""
 		Else
@@ -2987,10 +2997,10 @@ Sub SpdType_Click
 		edtSpdDelta.Visible = True
 		SetVsDeltaHint(True)
 	Else If indSpdType = 6 Then
-		If xx >= 320dip Or sc > 1 Then
+		If UseMediumInputLabels Then
 			btnSpdType.Text = "Ground Speed"
 		Else
-			btnSpdType.Text = "Grnd Speed"
+			btnSpdType.Text = "Grnd Spd"
 		End If
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
@@ -2998,10 +3008,10 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 7 Then
-		If xx >= 320dip Or sc > 1 Then
+		If UseMediumInputLabels Then
 			btnSpdType.Text = "Ground Speed"
 		Else
-			btnSpdType.Text = "Grnd Speed"
+			btnSpdType.Text = "Grnd Spd"
 		End If
 		btnSpdUnit.Visible = True
 		edtSpd.Text = NumberFormat2(GPSspeed / kSpd, 1, 1, 1, False)
@@ -3009,25 +3019,27 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 8 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseFullInputLabels Then
 			btnSpdType.Text = "Dynamic Pressure"
-			edtSpd.Hint = ""
+		Else If UseLongInputLabels Then
+			btnSpdType.Text = "Dyn Press"
 		Else
 			btnSpdType.Text = "q"
-			edtSpd.Hint = ""
 		End If
+		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 9 Then
-		If xx > 340dip Or sc > 1 Then
+		If UseFullInputLabels Then
 			btnSpdType.Text = "Impact Pressure"
-			edtSpd.Hint = ""
+		Else If UseLongInputLabels Then
+			btnSpdType.Text = "Imp Press"
 		Else
 			btnSpdType.Text = MakeSubscript("q", "c", "")
-			edtSpd.Hint = ""
 		End If
+		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
 		edtSpd.Width = 32%x
@@ -3157,7 +3169,7 @@ Sub CLmax_Click
 			End If
 			If count=indCLmaxType Then Exit
 		Next
-		If xx > 340dip Or sc > 1 Then
+		If UseMediumInputLabels Then
 			btnCLmax.Text = MakeSubscript("Flap " & (ii-1) & " - C", "L,MAX", "")
 		Else
 			btnCLmax.Text = MakeSubscript("C", "L,MAX", " F" & (ii-1))
@@ -3214,7 +3226,7 @@ Sub NzType_Click
 			edtNz.Hint = ""
 			btnNzUnit.Text = "g"
 		Else If indNzType=1 Then
-			If xx > 340dip Or sc > 1 Or ld = 1 Then
+			If UseLongInputLabels Then
 				btnNzType.Text = MakeSubscript("N", "Z", " (Turn)")
 				edtNz.Hint = ""
 			Else
@@ -3223,7 +3235,7 @@ Sub NzType_Click
 			End If
 			btnNzUnit.Text = "g"
 		Else If indNzType=2 Then
-			If sc > 1 Or ld = 1 Or xx>340dip Then
+			If UseLongInputLabels Then
 				btnNzType.Text = "Bank Angle"
 				edtNz.Hint = ""
 			Else
@@ -3239,7 +3251,7 @@ Sub Angle1Type_Click
 	If indAngle1Type < 0 Then
 	Else If indAngle1Type=0 Or indAngle1Type=1 Then
 		If indAngle1Type=0 Then
-			If xx > 340dip Or sc > 1 Or ld = 1 Then
+			If UseLongInputLabels Then
 				btnAngle1Type.Text = "Track Angle"
 				edtAngle1.Hint = ""
 			Else
@@ -3247,7 +3259,7 @@ Sub Angle1Type_Click
 				edtAngle1.Hint = ""
 			End If
 		Else If indAngle1Type=1 Then
-			If xx > 340dip Or sc > 1 Or ld = 1 Then
+			If UseLongInputLabels Then
 				btnAngle1Type.Text = "Heading Angle"
 				edtAngle1.Hint = ""
 			Else
@@ -3273,7 +3285,7 @@ Sub Angle2Type_Click
 	If indAngle2Type < 0 Then
 	Else If indAngle2Type=0 Or indAngle2Type=1 Then
 		If indAngle2Type=0 Then
-			If xx > 340dip Or sc > 1 Or ld = 1 Then
+			If UseLongInputLabels Then
 				btnAngle2Type.Text = "Sideslip Angle"
 				edtAngle2.Hint = ""
 			Else
@@ -3281,7 +3293,7 @@ Sub Angle2Type_Click
 				edtAngle2.Hint = ""
 			End If
 		Else If indAngle2Type=1 Then
-			If xx > 340dip Or sc > 1 Or ld = 1 Then
+			If UseLongInputLabels Then
 				btnAngle2Type.Text = "Drift Angle"
 				edtAngle2.Hint = ""
 			Else
@@ -3313,10 +3325,16 @@ Sub WindType
 			pnlv1.Visible=True
 			pnlv2 = scvMain1.Panel.GetView (26)
 			pnlv2.Visible=True
-			btnHeadWind.Text = "HeadWind"
+			If UseLongInputLabels Then
+				btnHeadWind.Text = "HeadWind"
+				btnCrossWind.Text = "CrossWind"
+			Else
+				btnHeadWind.Text = "HeadWnd"
+				btnCrossWind.Text = "CrossWnd"
+			End If
 			edtHeadWind.Hint = ""
 			edtWindRefAngle.Hint = ""
-			If xx >= 340dip Or sc > 1 Or ld = 1 Then
+			If UseMediumInputLabels Then
 				btnWindRefAngle.Text = "Runway Angle"
 			Else
 				btnWindRefAngle.Text = "Rnwy Angle"
@@ -3333,22 +3351,18 @@ Sub WindType
 			pnlv1.Visible=False
 			pnlv2 = scvMain1.Panel.GetView (26)
 			'pnlv2.Visible = True
-			btnHeadWind.Text = "WindSpd"
+			If UseFullWindVectorLabels Then
+				btnHeadWind.Text = "Wind Speed"
+				btnWindRefAngle.Text = "Wind Direction"
+			Else If UseLongInputLabels Then
+				btnHeadWind.Text = "Wind Spd"
+				btnWindRefAngle.Text = "Wind Dir"
+			Else
+				btnHeadWind.Text = "WindSpd"
+				btnWindRefAngle.Text = "WindDir"
+			End If
 			edtHeadWind.Hint = ""
 			edtWindRefAngle.Hint = ""
-			btnWindRefAngle.Text = "WindDir"
-			If xx > 340dip Then
-				btnHeadWind.Text = "Wind Spd"
-				edtHeadWind.Hint = ""
-				btnWindRefAngle.Text = "Wind Dir"
-				edtWindRefAngle.Hint = ""
-			End If
-			If sc > 1 Or ld = 1 Then
-				btnHeadWind.Text = "Wind Speed"
-				edtHeadWind.Hint = ""
-				edtWindRefAngle.Hint = ""
-				btnWindRefAngle.Text = "Wind Direction"
-			End If
 			pnlv2.Top = (12 * (ib*2+tb) + 12*1dip) *sc
 			pnlv2.Height = (ib * 2 + tb) *sc
 		End If
@@ -4872,6 +4886,22 @@ Private Sub SetVsDeltaHint(ShowHint As Boolean)
 		edtSpdDelta.Hint = "kt"
 		edtSpdDelta.HintColor = ColorEdtHint
 	End Try
+End Sub
+
+Private Sub UseFullInputLabels As Boolean
+	Return ld = 1 Or sc > 1 Or xx >= 360dip
+End Sub
+
+Private Sub UseMediumInputLabels As Boolean
+	Return ld = 1 Or sc > 1 Or xx >= 320dip
+End Sub
+
+Private Sub UseLongInputLabels As Boolean
+	Return ld = 1 Or sc > 1 Or xx >= 300dip
+End Sub
+
+Private Sub UseFullWindVectorLabels As Boolean
+	Return ld = 1 Or sc > 1 Or xx >= 340dip
 End Sub
 
 Public Sub VibrateTap
