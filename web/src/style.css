@@ -340,7 +340,8 @@ sub {
 :root[data-theme="Red Alert"] :is(.field-select, .unit-select, .profile-select, .field-button, .speed-delta-label):active,
 :root[data-theme="Orange Juice"] :is(.field-select, .unit-select, .profile-select, .field-button, .speed-delta-label):active {
   border-color: var(--field-text);
-  background-color: var(--button-pressed);
+  filter: brightness(0.98);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.08);
 }
 
 .field-button {
