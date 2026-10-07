@@ -735,37 +735,37 @@ function installOptionsSwipeDismiss(): void {
     dragging = false;
   }, true);
 
-  card.addEventListener("pointermove", (event) => {
+  const move = (event: PointerEvent): void => {
     if (pointerId !== event.pointerId) return;
     const dx = event.clientX - startX;
     const dy = event.clientY - startY;
-    const startedInHeader = (event.target as HTMLElement | null)?.closest(".modal-header, .modal-handle") !== null;
+    const target = event.target as HTMLElement | null;
+    const startedInHeader = target?.closest(".modal-header, .modal-handle") !== null;
     const canPullBody = !body || body.scrollTop <= 1;
     if (!dragging) {
       if (dy <= 10 || Math.abs(dy) <= Math.abs(dx) * 1.15 || (!startedInHeader && !canPullBody)) return;
       dragging = true;
-      card.setPointerCapture?.(event.pointerId);
       card.style.transition = "none";
     }
     if (dy < 0) return;
     dragY = dy;
     event.preventDefault();
     card.style.transform = `translateY(${Math.min(dy, 180)}px)`;
-  }, { capture: true, passive: false });
+  };
 
   const finish = (event: PointerEvent): void => {
     if (pointerId !== event.pointerId) return;
+    const shouldDismiss = dragging && dragY >= 64;
     if (dragging) {
       suppressClick = true;
       event.preventDefault();
-      if (dragY >= 64) {
-        closeOptionsModal();
-      }
     }
-    if (card.hasPointerCapture?.(event.pointerId)) card.releasePointerCapture(event.pointerId);
     reset();
+    if (shouldDismiss) closeOptionsModal();
   };
 
+  // Window listeners make the gesture reliable even if the finger leaves the handle/card.
+  card.addEventListener("pointermove", move, { capture: true, passive: false });
   card.addEventListener("pointerup", finish, { capture: true });
   card.addEventListener("pointercancel", finish, { capture: true });
   card.addEventListener("click", (event) => {
@@ -2373,7 +2373,7 @@ function temperatureFromK(kelvin: number, unit: string): number {
   return kelvin;
 }
 
-function formatEditableNumber(value: number, maxDecimals = 9): string {
+function formatEditableNumber(value: number, maxDecimals = 7): string {
   const scale = 10 ** maxDecimals;
   const rounded = Math.round(value * scale) / scale;
   return String(rounded);
