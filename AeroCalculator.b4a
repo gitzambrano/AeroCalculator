@@ -314,6 +314,7 @@ Sub Globals
 	'Variaveis globais de Inputs
 	Dim scvMain1 As ScrollView
 	Dim spnAirp As Spinner
+	Dim btnAirplanePicker As Button
 	Dim panelspn As Panel
 	Dim pnlInput As Panel
 	Dim pnlline As Panel
@@ -2038,13 +2039,22 @@ Public Sub SelectAirplane(ID As Int)
 End Sub
 
 Sub SpinnerCreate
+	' Keep the Spinner only as internal selection state. The visible control uses AeroSheet,
+	' matching every other parameter picker in Inputs.
 	spnAirp.Width = panelspn.Width
 	spnAirp.Height = panelspn.Height
 	panelspn.AddView(spnAirp, 0, 0, panelspn.Width, panelspn.Height)
-	spnAirp.TextColor = ColorEdtText
-	spnAirp.DropdownTextColor = ColorEdtText
-	spnAirp.DropdownBackgroundColor = ColorPnlInput5
-	ConfigureAirplaneSpinner(spnAirp)
+	spnAirp.Visible = False
+
+	btnAirplanePicker.Initialize("btnAirplanePicker")
+	btnAirplanePicker.Text = "Custom Airplane"
+	btnAirplanePicker.TextSize = 14 * sc
+	btnAirplanePicker.TextColor = ColorEdtText
+	btnAirplanePicker.Gravity = Gravity.CENTER
+	btnAirplanePicker.SingleLine = True
+	btnAirplanePicker.Background = EditGradient(ColorEdt, ColorPnlLine2)
+	panelspn.AddView(btnAirplanePicker, 0, 0, panelspn.Width, panelspn.Height)
+	ModernizeButton(btnAirplanePicker)
 
 	Dim lblSpnChevron As Label
 	lblSpnChevron.Initialize("lblSpnChevron")
@@ -2052,16 +2062,34 @@ Sub SpinnerCreate
 	lblSpnChevron.TextSize = 10 * sc
 	lblSpnChevron.TextColor = ColorEdtText
 	lblSpnChevron.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.CENTER_HORIZONTAL)
-	panelspn.AddView(lblSpnChevron, panelspn.Width - 18dip * sc, 0, 16dip * sc, panelspn.Height)
+	panelspn.AddView(lblSpnChevron, panelspn.Width - 20dip * sc, 0, 18dip * sc, panelspn.Height)
 End Sub
 
 Sub lblSpnChevron_Click
-	Try
-		Dim jo As JavaObject = spnAirp
-		jo.RunMethod("performClick", Null)
-	Catch
-		Log("spn click: " & LastException.Message)
-	End Try
+	btnAirplanePicker_Click
+End Sub
+
+Sub btnAirplanePicker_Click
+	VibrateTap
+	Dim items As List
+	items.Initialize
+	items.Add("Custom Airplane|Manual geometry, mass and aerodynamic inputs")
+
+	Dim ListAirp As List
+	ListAirp.Initialize
+	If lst.NumberOfItems > 0 Then
+		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems - 1)
+		For ii = 0 To ListAirp.Size - 1
+			items.Add(a.GetDefault(ListAirp.Get(ii) & "_Name", "Unnamed Airplane") & "|Stored aircraft profile")
+		Next
+	End If
+
+	Dim selected As Int = spinnerPos
+	If selected < 0 Or selected >= items.Size Then selected = 0
+	Wait For (AeroSheet.Show(Activity, items, "Airplane", selected)) Complete (idx As Int)
+	If idx < 0 Then Return
+	spnAirp.SelectedIndex = idx
+	spnAirp_ItemClick(idx, spnAirp.SelectedItem)
 End Sub
 
 Sub spnAirp_ItemClick (Position As Int, Value As Object)
@@ -2079,6 +2107,13 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 	
 	spinnerPos = Position
 	ConfigureAirplaneSpinner(spnAirp)
+	If btnAirplanePicker.IsInitialized Then
+		If Position = 0 Then
+			btnAirplanePicker.Text = "Custom Airplane"
+		Else
+			btnAirplanePicker.Text = spnAirp.SelectedItem
+		End If
+	End If
 	
 	If Position = 0 Then
 	Else
