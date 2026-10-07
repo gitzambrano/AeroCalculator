@@ -1324,6 +1324,11 @@ sub.hp-sub {
   #result-tooltip-eq-box .katex { font-size: 1.0em; }
 }
 
+@media (max-width: 279px) {
+  /* Preserve the fixed 54/46 result split and font size on ultra-narrow screens. */
+  .result-row { padding-left: 0; padding-right: 0; }
+}
+
 @media (max-width: 359px) {
   .brand-row { grid-template-columns: 38px minmax(0, 1fr) 36px 36px; padding: 0 6px; }
   .brand { font-size: 18px; min-width: 0; }
