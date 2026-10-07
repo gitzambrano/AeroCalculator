@@ -165,8 +165,8 @@ const fields: Field[] = [
   { id: "nz", typeOptions: [{ value: "NzPullup", label: "N<sub>Z</sub>&nbsp;(Pull-up)" }, { value: "NzTurn", label: "N<sub>Z</sub>&nbsp;(Turn)" }, { value: "BankTurn", label: "Bank Angle" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
   { id: "angle1", typeOptions: opts(["Track", "Heading"]), unitOptions: opts(["deg", "rad"]), defaultType: "Track", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "angle2", typeOptions: opts(["Sideslip", "Drift"]), unitOptions: opts(["deg", "rad"]), defaultType: "Sideslip", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
-  { id: "headWind", typeOptions: [{ value: "HeadWind", label: "HeadWind" }, { value: "Wind Speed", label: "Wind Speed" }], unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "HeadWind", defaultUnit: "kt", placeholder: "Wind", defaultValue: "0" },
-  { id: "crossWind", typeOptions: [{ value: "CrossWind", label: "CrossWind" }], unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "CrossWind", defaultUnit: "kt", placeholder: "Crosswind", defaultValue: "0" },
+  { id: "headWind", typeOptions: [{ value: "HeadWind", label: "HeadWind" }, { value: "Wind Speed", label: "Wind Speed" }], unitOptions: opts(["kt", "m/s", "km/h"]), defaultType: "HeadWind", defaultUnit: "kt", placeholder: "Wind", defaultValue: "0" },
+  { id: "crossWind", typeOptions: [{ value: "CrossWind", label: "CrossWind" }], unitOptions: opts(["kt", "m/s", "km/h"]), defaultType: "CrossWind", defaultUnit: "kt", placeholder: "Crosswind", defaultValue: "0" },
   { id: "windRef", typeOptions: [{ value: "Runway Angle", label: "Runway Angle" }, { value: "Wind Direction", label: "Wind Direction" }], unitOptions: opts(["deg", "rad"]), defaultType: "Runway Angle", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
 ];
 
@@ -870,7 +870,11 @@ function openInputUnitPicker(fieldId: string): void {
     label.textContent = opt.text;
     textGroup.appendChild(label);
 
-    const desc = UNIT_OPTION_DESCRIPTIONS[opt.value] ?? UNIT_OPTION_DESCRIPTIONS[opt.text];
+    const desc = fieldId === "angle1" && opt.value === "deg"
+      ? "Degrees (0 to 360)"
+      : fieldId === "angle1" && opt.value === "rad"
+        ? "Radians (0 to 2π)"
+        : (UNIT_OPTION_DESCRIPTIONS[opt.value] ?? UNIT_OPTION_DESCRIPTIONS[opt.text]);
     if (desc) {
       const descEl = document.createElement("div");
       descEl.className = "option-desc";
@@ -1270,14 +1274,35 @@ function createInputRow(field: Field): HTMLElement {
   unit.setAttribute("aria-label", `${field.id} unit`);
   fillSelect(unit, field.unitOptions, field.defaultUnit);
   setHelper(unit, "Unit used for this input value. Changing the unit converts the current numeric value when applicable.");
+  let unitHoldTimer: number | undefined;
+  let unitHeld = false;
   unit.addEventListener("pointerdown", (event) => {
     if (unit.disabled) return;
     event.preventDefault();
     event.stopPropagation();
-    vibrateTap();
-    openInputUnitPicker(field.id);
+    unitHeld = false;
+    unitHoldTimer = window.setTimeout(() => {
+      unitHeld = true;
+      showContextualHelp(type.value);
+    }, 550);
   });
+  unit.addEventListener("pointerup", (event) => {
+    if (unit.disabled) return;
+    event.preventDefault();
+    window.clearTimeout(unitHoldTimer);
+    if (!unitHeld) {
+      vibrateTap();
+      openInputUnitPicker(field.id);
+    }
+  });
+  ["pointercancel", "pointerleave"].forEach((evt) =>
+    unit.addEventListener(evt, () => window.clearTimeout(unitHoldTimer))
+  );
   unit.addEventListener("click", (event) => event.preventDefault());
+  unit.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    showContextualHelp(type.value);
+  });
   unit.addEventListener("keydown", (event) => {
     if (unit.disabled) return;
     if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
@@ -1287,7 +1312,6 @@ function createInputRow(field: Field): HTMLElement {
     }
   });
   unit.addEventListener("change", () => vibrateTap());
-  installTechnicalHold(unit, () => type.value);
 
   if (field.unitOptions.length === 1 && field.unitOptions[0].value === "-") {
     unit.disabled = true;
