@@ -255,7 +255,7 @@ for (const viewport of viewports) {
 
 
 test("output values stay on one line across mobile widths with long formatting", async ({ browser }) => {
-  const widths = [260, 280, 300, 319, 320, 329, 330, 339, 340, 349, 350, 354, 355, 360, 375, 390, 412, 430, 480];
+  const widths = [260, 280, 299, 300, 319, 320, 339, 340, 359, 360, 375, 379, 380, 381, 390, 411, 412, 430, 480];
   const context = await browser.newContext({ viewport: { width: 480, height: 900 } });
   const page = await context.newPage();
   await page.goto("/");
@@ -296,7 +296,7 @@ test("output values stay on one line across mobile widths with long formatting",
 
 test("every input type stays readable across mobile widths", async ({ browser }) => {
   test.setTimeout(300_000);
-  const widths = [260, 280, 300, 319, 320, 329, 330, 339, 340, 349, 350, 354, 355, 360, 375, 390, 412, 430, 480];
+  const widths = [260, 280, 299, 300, 319, 320, 339, 340, 359, 360, 375, 379, 380, 381, 390, 411, 412, 430, 480];
   const typeCases: Record<string, readonly string[]> = {
     alt: ["Hp", "Hg", "P"],
     temp: ["Δ ISA", "OAT"],
@@ -412,3 +412,51 @@ test("narrow-screen label fallbacks are staged and remain legible", async ({ bro
   await context.close();
 });
 
+
+test("input label fallbacks switch at the intended mobile thresholds", async ({ browser }) => {
+  const cases = [
+    { width: 390, pressure: "Static Pressure", temp: "Temperature OAT", ground: "Ground Speed", qdyn: "Dynamic Pressure", qc: "Impact Pressure", windSpeed: "Wind Speed", windDir: "Wind Direction", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
+    { width: 380, pressure: "Static Pressure", temp: "Temperature OAT", ground: "Ground Speed", qdyn: "Dynamic Pressure", qc: "Impact Pressure", windSpeed: "Wind Speed", windDir: "Wind Direction", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
+    { width: 379, pressure: "Pressure", temp: "Temperature", ground: "Grnd Spd", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
+    { width: 340, pressure: "Pressure", temp: "Temperature", ground: "Grnd Spd", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
+    { width: 339, pressure: "Pressure", temp: "OAT", ground: "Grnd Spd", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
+    { width: 319, pressure: "Pressure", temp: "OAT", ground: "Grnd Spd", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", head: "Headwind", cross: "Crosswind", runway: "Rnwy Angle" },
+    { width: 299, pressure: "p", temp: "OAT", ground: "Grnd Spd", qdyn: "q", qc: "qc", windSpeed: "WindSpd", windDir: "WindDir", head: "HeadWnd", cross: "CrossWnd", runway: "Rnwy Angle" },
+  ] as const;
+
+  const context = await browser.newContext({ viewport: { width: 411, height: 900 } });
+  const page = await context.newPage();
+  await page.goto("/");
+
+  for (const item of cases) {
+    await page.setViewportSize({ width: item.width, height: 900 });
+
+    await page.locator("#alt-type").selectOption("P");
+    await expect(page.locator('[data-field="alt"] .field-select-display')).toHaveText(item.pressure);
+
+    await page.locator("#temp-type").selectOption("OAT");
+    await expect(page.locator('[data-field="temp"] .field-select-display')).toHaveText(item.temp);
+
+    await page.locator("#spd-type").selectOption("Ground Speed");
+    await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(item.ground);
+    await page.locator("#spd-type").selectOption("Qdyn");
+    await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(item.qdyn);
+    await page.locator("#spd-type").selectOption("Qc");
+    await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(item.qc);
+
+    await page.locator("#headWind-type").selectOption("HeadWind");
+    await expect(page.locator('[data-field="headWind"] .field-select-display')).toHaveText(item.head);
+    await expect(page.locator('[data-field="crossWind"] .field-select-display')).toHaveText(item.cross);
+
+    await page.locator("#headWind-type").selectOption("Wind Speed");
+    await expect(page.locator('[data-field="headWind"] .field-select-display')).toHaveText(item.windSpeed);
+    await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(item.windDir);
+
+    await page.locator("#headWind-type").selectOption("HeadWind");
+    await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(item.runway);
+    await assertNoHorizontalOverflow(page);
+    await assertCriticalTextNotClipped(page);
+  }
+
+  await context.close();
+});
