@@ -122,6 +122,43 @@ test.describe("helpers and swipe navigation", () => {
     }
   });
 
+  test("choice sheet dismisses with a downward swipe", async ({ page }) => {
+    await page.goto("/");
+    await page.locator('[data-field="spd"] .field-select-wrap').click();
+    await expect(page.locator("#modal-options-selector")).toHaveClass(/open/);
+
+    const handle = page.locator("#modal-options-selector .modal-handle");
+    await handle.dispatchEvent("pointerdown", {
+      pointerId: 41,
+      pointerType: "touch",
+      isPrimary: true,
+      button: 0,
+      clientX: 195,
+      clientY: 700,
+      bubbles: true,
+    });
+    await handle.dispatchEvent("pointermove", {
+      pointerId: 41,
+      pointerType: "touch",
+      isPrimary: true,
+      button: 0,
+      clientX: 195,
+      clientY: 790,
+      bubbles: true,
+    });
+    await handle.dispatchEvent("pointerup", {
+      pointerId: 41,
+      pointerType: "touch",
+      isPrimary: true,
+      button: 0,
+      clientX: 195,
+      clientY: 790,
+      bubbles: true,
+    });
+
+    await expect(page.locator("#modal-options-selector")).not.toHaveClass(/open/);
+  });
+
   test("horizontal finger swipe changes tabs like the Android ViewPager", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("button", { name: "INPUTS" })).toHaveAttribute("aria-selected", "true");
