@@ -683,10 +683,13 @@ sub.hp-sub {
   box-shadow: 0 8px 32px rgb(0 0 0 / 0.18);
 }
 .profile-dialog {
-  width: min(100%, 860px);
-  height: min(92vh, 850px);
+  width: min(calc(100% - 32px), 860px);
+  height: min(calc(100dvh - 32px), 850px);
   max-width: none;
   max-height: none;
+  margin: 16px auto;
+  border-radius: 16px;
+  overflow: hidden;
 }
 .profile-dialog::backdrop, .simple-dialog::backdrop { background: rgb(0 0 0 / 0.38); }
 .profile-dialog form { height: 100%; display: flex; flex-direction: column; }
@@ -705,7 +708,15 @@ sub.hp-sub {
   cursor: pointer;
 }
 .editor-toolbar button + button { border-left: 1px solid white; }
-.editor-scroll { overflow-y: auto; flex: 1; background: var(--input-bg); }
+.editor-scroll {
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--input-bg);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
 .editor-row {
   min-height: 50px;
   display: grid;
@@ -1232,7 +1243,12 @@ sub.hp-sub {
   .field-select { padding-right: 24px; background-position: right 11px center, right 6px center, center; }
   .field-select-display { padding-right: 24px; }
   .result-row { padding-left: 4px; padding-right: 4px; }
-  .profile-dialog { width: 100%; height: 100%; margin: 0; }
+  .profile-dialog {
+    width: calc(100% - 16px);
+    height: calc(100dvh - 24px);
+    margin: 12px auto;
+    border-radius: 14px;
+  }
   .airplane-list-row { grid-template-columns: 40px minmax(0, 1fr) 38px 38px 38px; }
   #result-tooltip-eq-box .katex { font-size: 1.0em; }
 }
