@@ -13,6 +13,7 @@ REPORT=[]
 FULL_VISUAL_AUDIT = os.environ.get("AEROCALC_FULL_VISUAL_AUDIT", "0") == "1"
 
 FULL_PROFILES=[
+ ("260dp","520x1040","320"),
  ("280dp","560x1120","320"),
  ("320dp","640x1280","320"),
  ("360dp","720x1440","320"),
@@ -20,6 +21,7 @@ FULL_PROFILES=[
  ("411dp","1080x2160","420"),
 ]
 QUICK_PROFILES=[
+ ("260dp","520x1040","320"),
  ("280dp","560x1120","320"),
  ("320dp","640x1280","320"),
  ("360dp","720x1440","320"),
@@ -243,7 +245,7 @@ FIELDS={
   "choices":["Sideslip Angle β","Drift Angle"],
  },
  "wind":{
-  "buttons":["HeadWind","HeadWnd","WindSpd","Wind Spd","Wind Speed"],
+  "buttons":["HeadWind","Headwind","HeadWnd","WindSpd","Wind Spd","Wind Speed"],
   "expected":["Headwind / Crosswind","WindSpeed / WindDirection"],
   "choices":["Headwind / Crosswind","WindSpeed / WindDirection"],
  },
@@ -288,6 +290,17 @@ def exercise_profile(label,size,density):
  fallback=dump(dirp,"fallback-labels")
  record(label,"fallback-labels",fallback)
  shot(dirp,"fallback-labels",force=True)
+
+ # A second compact-state screenshot covers labels that are not present in the
+ # pressure/wind-vector composite: ground speed, heading, sideslip and runway.
+ choose(dirp,FIELDS["speed"]["buttons"],FIELDS["speed"]["expected"],"Ground Speed","fallback-ground-speed")
+ choose(dirp,FIELDS["angle1"]["buttons"],FIELDS["angle1"]["expected"],"Heading Angle","fallback-heading")
+ choose(dirp,FIELDS["angle2"]["buttons"],FIELDS["angle2"]["expected"],"Sideslip Angle β","fallback-sideslip")
+ choose(dirp,FIELDS["wind"]["buttons"],FIELDS["wind"]["expected"],"Headwind / Crosswind","fallback-wind-components")
+ top(dirp)
+ compact=dump(dirp,"fallback-compact-labels")
+ record(label,"fallback-compact-labels",compact)
+ shot(dirp,"fallback-compact-labels",force=True)
 
  fill_vsfactor(dirp)
 
