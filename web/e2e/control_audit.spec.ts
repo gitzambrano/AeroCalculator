@@ -435,7 +435,7 @@ test("invalid edge inputs fail visibly without crashing the web app", async ({ p
 
 test("every calculator input option fits across mobile widths", async ({ browser }) => {
   test.setTimeout(240_000);
-  const widths = [280, 300, 320, 340, 360, 390, 430, 480];
+  const widths = [260, 280, 300, 320, 330, 340, 350, 355, 360, 390, 430, 480];
 
   const assertInputGeometry = async (page: Page, context: string): Promise<void> => {
     const failures = await page.evaluate((label) => {
