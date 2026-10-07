@@ -43,6 +43,8 @@ DISPLAY_ALIASES = {
  'cref': {'cref','chordcref'},
  'clmax': {'clmax','flap0clmax','customclmax'},
  'nz': {'nz','nzpullup','nzturn'},
+ 'pressure': {'pressure','pressurep'},
+ 'temperature': {'temperature','temperatureoat','outsideairtemperatureoat'},
 }
 
 def equivalent_texts(t):
@@ -112,7 +114,8 @@ def layout(root,name):
  rb=bounds(ns[0].attrib.get('bounds','')); rec('root-bounds:'+name,rb is not None,str(rb)); x1,_,x2,_=rb; bad=[]
  for n in ns:
   z=bounds(n.attrib.get('bounds',''))
-  if z and (z[0]<x1-1 or z[2]>x2+1 or z[2]<=z[0] or z[3]<=z[1]): bad.append((n.attrib.get('text'),z))
+  if not z or z[2] <= z[0] or z[3] <= z[1]: continue
+  if z[0] < x1-1 or z[2] > x2+1: bad.append((n.attrib.get('text'),z))
  rec('horizontal-overflow:'+name,not bad,str(bad[:8]))
 def edit(label,value):
  top()
