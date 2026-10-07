@@ -2362,7 +2362,7 @@ function convertInputForUnitChange(unitSelect: HTMLSelectElement): void {
   }
 
   if (converted !== null && Number.isFinite(converted)) {
-    const decimals = fieldId === "sref" ? 3 : 9;
+    const decimals = fieldId === "sref" ? 3 : 7;
     input.value = formatEditableNumber(converted, decimals);
   }
 }
