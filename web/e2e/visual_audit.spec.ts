@@ -72,6 +72,21 @@ for (const viewport of cases) {
 
       await page.getByRole("button", { name: "CALCULATE" }).click();
       await shot(page, dir, "05-outputs");
+
+      await page.getByRole("button", { name: "AIRPLANES" }).click();
+      await page.getByRole("button", { name: "Add airplane" }).click();
+      await page.locator("#profile-name").fill("Quick Audit Jet");
+      await page.locator("#profile-sref").fill("42");
+      await page.locator("#profile-cref").fill("3");
+      await page.locator("#profile-weight-MTOW").fill("12000");
+      await page.locator("#profile-save").click();
+      await page.getByRole("button", { name: "INPUTS" }).click();
+      await page.locator("#airplane-select-button").click();
+      const quickProfile = page.locator("#options-selector-list .option-item").filter({ hasText: "Quick Audit Jet" });
+      await expect(quickProfile.locator(".option-desc")).toHaveText("42 m² · 12000 kg");
+      await shot(page, dir, "06-airplane-picker");
+      await quickProfile.click();
+
       await context.close();
       return;
     }
