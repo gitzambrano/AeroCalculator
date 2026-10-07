@@ -1031,6 +1031,41 @@ sub.hp-sub {
   color: var(--button-text);
 }
 
+#modal-result-tooltip {
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+.help-sheet {
+  width: min(100%, 520px);
+  max-height: calc(100dvh - 40px);
+  border-radius: 20px 20px 0 0;
+  border-bottom: 0;
+  background: var(--input-bg);
+}
+.help-sheet .modal-header {
+  flex: 0 0 52px;
+  background: transparent;
+  border-bottom: 1px solid var(--divider);
+}
+.help-sheet .modal-title {
+  color: var(--button-text);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 18px;
+}
+.help-sheet .modal-close-btn {
+  color: var(--muted);
+}
+.help-sheet .modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
 #result-tooltip-eq-box {
   background: var(--field-bg);
   border: 1px solid var(--accent);
