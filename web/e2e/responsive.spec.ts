@@ -357,14 +357,14 @@ test("every input type stays readable across mobile widths", async ({ browser })
 
 test("narrow-screen label fallbacks are staged and remain legible", async ({ browser }) => {
   const cases = [
-    { width: 280, temp: "OAT", pressure: "p", ground: "Grnd Spd", q: "q", qc: "qc", windSpeed: "WindSpd", windDir: "WindDir", runway: "Rnwy Angle" },
-    { width: 300, temp: "Temperature", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
-    { width: 319, temp: "Temperature", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
-    { width: 320, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Runway Angle" },
-    { width: 339, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Runway Angle" },
-    { width: 340, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 359, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 360, temp: "Temperature OAT", pressure: "Static Pressure", ground: "Ground Speed", q: "Dynamic Pressure", qc: "Impact Pressure", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
+    { width: 280, temp: "OAT", pressure: "p", ground: "Grnd Spd", q: "q", qc: "qc", head: "HeadWnd", cross: "CrossWnd", windSpeed: "WindSpd", windDir: "WindDir", runway: "Rnwy Angle" },
+    { width: 300, temp: "Temperature", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", head: "HeadWind", cross: "CrossWind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
+    { width: 319, temp: "Temperature", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", head: "HeadWind", cross: "CrossWind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
+    { width: 320, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", head: "HeadWind", cross: "CrossWind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Runway Angle" },
+    { width: 339, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", head: "HeadWind", cross: "CrossWind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Runway Angle" },
+    { width: 340, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", head: "HeadWind", cross: "CrossWind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
+    { width: 359, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", head: "HeadWind", cross: "CrossWind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
+    { width: 360, temp: "Temperature OAT", pressure: "Static Pressure", ground: "Ground Speed", q: "Dynamic Pressure", qc: "Impact Pressure", head: "HeadWind", cross: "CrossWind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
   ] as const;
 
   const context = await browser.newContext({ viewport: { width: 360, height: 800 } });
@@ -392,6 +392,8 @@ test("narrow-screen label fallbacks are staged and remain legible", async ({ bro
     await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(c.windDir);
 
     await page.locator("#headWind-type").selectOption("HeadWind");
+    await expect(page.locator('[data-field="headWind"] .field-select-display')).toHaveText(c.head);
+    await expect(page.locator('[data-field="crossWind"] .field-select-display')).toHaveText(c.cross);
     await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(c.runway);
 
     const fontSize = await page.locator('[data-field="spd"] .field-select-display').evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
