@@ -435,7 +435,7 @@ test("invalid edge inputs fail visibly without crashing the web app", async ({ p
 
 test("every calculator input option fits across mobile widths", async ({ browser }) => {
   test.setTimeout(300_000);
-  const widths = [260, 280, 299, 300, 319, 320, 339, 340, 359, 360, 375, 379, 380, 381, 390, 411, 430, 480];
+  const widths = [260, 280, 299, 300, 319, 320, 339, 340, 359, 360, 375, 379, 380, 381, 390, 411, 412, 430, 480];
 
   const assertInputGeometry = async (page: Page, context: string): Promise<void> => {
     const failures = await page.evaluate((label) => {
@@ -445,6 +445,10 @@ test("every calculator input option fits across mobile widths", async ({ browser
         return style.display !== "none" && style.visibility !== "hidden" && !el.hasAttribute("hidden") && rect.width > 0 && rect.height > 0;
       };
       const out: Array<Record<string, unknown>> = [];
+      const pageWidth = document.documentElement.scrollWidth;
+      if (pageWidth > window.innerWidth + 1) {
+        out.push({ context: label, kind: "page-overflow", scrollWidth: pageWidth, viewport: window.innerWidth });
+      }
       for (const row of document.querySelectorAll<HTMLElement>(".input-row")) {
         if (!visible(row)) continue;
         const rr = row.getBoundingClientRect();

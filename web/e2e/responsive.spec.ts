@@ -294,67 +294,6 @@ test("output values stay on one line across mobile widths with long formatting",
   await context.close();
 });
 
-test("every input type stays readable across mobile widths", async ({ browser }) => {
-  test.setTimeout(300_000);
-  const widths = [260, 280, 299, 300, 319, 320, 339, 340, 359, 360, 375, 379, 380, 381, 390, 411, 412, 430, 480];
-  const typeCases: Record<string, readonly string[]> = {
-    alt: ["Hp", "Hg", "P"],
-    temp: ["Δ ISA", "OAT"],
-    spd: ["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"],
-    nz: ["NzPullup", "NzTurn", "BankTurn"],
-    angle1: ["Track", "Heading"],
-    angle2: ["Sideslip", "Drift"],
-    headWind: ["HeadWind", "Wind Speed"],
-  };
-  const context = await browser.newContext({ viewport: { width: 480, height: 900 } });
-  const page = await context.newPage();
-  await page.goto("/");
-
-  for (const width of widths) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const [field, values] of Object.entries(typeCases)) {
-      for (const value of values) {
-        await page.locator(`#${field}-type`).selectOption(value);
-        const row = page.locator(`[data-field="${field}"]`);
-        await expect(row).toBeVisible();
-        const display = row.locator(".field-select-display");
-        const metrics = await display.evaluate((el) => {
-          const node = el as HTMLElement;
-          const style = getComputedStyle(node);
-          return {
-            text: node.textContent?.trim() ?? "",
-            whiteSpace: style.whiteSpace,
-            scrollWidth: node.scrollWidth,
-            clientWidth: node.clientWidth,
-            scrollHeight: node.scrollHeight,
-            clientHeight: node.clientHeight,
-          };
-        });
-        expect(metrics.scrollWidth, `${width}px ${field}=${value}: ${metrics.text}`).toBeLessThanOrEqual(metrics.clientWidth + 1);
-        expect(metrics.scrollHeight, `${width}px ${field}=${value}: ${metrics.text}`).toBeLessThanOrEqual(metrics.clientHeight + 1);
-        await assertNoHorizontalOverflow(page);
-        await assertVisibleInteractiveElementsInsideViewport(page);
-
-        if (field === "spd" && value === "Vs Factor") {
-          await expect(page.locator("#spdDelta-label")).toBeVisible();
-          await expect(page.locator("#spdDelta-value")).toBeVisible();
-          const delta = await page.locator("#spdDelta-label").evaluate((el) => ({
-            text: el.textContent?.trim(),
-            scrollWidth: (el as HTMLElement).scrollWidth,
-            clientWidth: (el as HTMLElement).clientWidth,
-            scrollHeight: (el as HTMLElement).scrollHeight,
-            clientHeight: (el as HTMLElement).clientHeight,
-          }));
-          expect(delta.scrollWidth, `${width}px +Δ`).toBeLessThanOrEqual(delta.clientWidth + 1);
-          expect(delta.scrollHeight, `${width}px +Δ`).toBeLessThanOrEqual(delta.clientHeight + 1);
-        }
-      }
-    }
-  }
-  await context.close();
-});
-
-
 test("input label fallbacks switch at the intended mobile thresholds", async ({ browser }) => {
   const cases = [
     { width: 390, pressure: "Static Pressure", temp: "Temperature OAT", ground: "Ground Speed", qdyn: "Dynamic Pressure", qc: "Impact Pressure", windSpeed: "Wind Speed", windDir: "Wind Direction", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },

@@ -60,6 +60,8 @@ or manually dispatch the `Web` / `android-build-smoke` GitHub workflow with `ful
 
 Full mode expands the viewport/state matrix and captures the complete screenshot set. On Android it exercises the detailed input-state sweep at 260, 280, 320, 360, 379, 380, 390, 393, and 411 dp in addition to the broader smoke profiles. On web it enables `web/e2e/visual_audit.spec.ts` across the configured mobile, tablet, landscape, laptop, and desktop viewports.
 
+Android UI tests drive the emulator with `adb input`. Swipe inside the bounds of the target scroll container, not at fixed screen fractions, and confirm the expected text after scrolling instead of trusting a fixed swipe count. Older emulator images can drop input events after a display-size change.
+
 A successful full-audit workflow is not, by itself, visual approval. When full mode is requested, inspect the generated screenshots for clipping, wrapping, alignment, spacing, inconsistent labels, modal geometry, and web/APK parity before declaring the visual audit complete.
 
 ## Workspace cleanliness and scratch files
@@ -123,7 +125,9 @@ New calculation logic should move toward pure B4A modules that do not read contr
 
 All Python scripts under `tools/` must run without command-line arguments.
 
-Define default or fallback parameters as explicit variables near the top of each script. Command-line flags may override these variables, but the script must execute successfully when invoked with zero arguments.
+Define default or fallback parameters as explicit variables near the top of each script. Command-line flags may override these variables, but the script must execute successfully when invoked with zero arguments. `tools/check_repo.py` rejects a `sys.argv[N]` read without a length guard.
+
+Delete one-off migration or fix-up scripts after they run. Delete a generator when its output has been edited by hand and the generator no longer reproduces the committed file.
 
 Do not commit private credentials, tokens, keystores, or service-account JSON files to Git. Keep credentials in the ignored `Key/` directory or supply them via environment variables.
 

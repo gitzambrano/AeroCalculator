@@ -3,8 +3,11 @@ import json, os, re, subprocess, sys, time
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-APK=sys.argv[1]
-API=sys.argv[2] if len(sys.argv)>2 else "unknown"
+# Defaults allow a zero-argument run; CI passes the APK path and API level.
+DEFAULT_APK_PATH=Path("Objects/AeroCalculator.apk")
+DEFAULT_API_LEVEL="36"
+APK=sys.argv[1] if len(sys.argv)>1 else str(DEFAULT_APK_PATH)
+API=sys.argv[2] if len(sys.argv)>2 else DEFAULT_API_LEVEL
 PKG="flightdyn.aerocalculator"
 OUT=Path(f"smoke-results/api-{API}/input-matrix")
 OUT.mkdir(parents=True,exist_ok=True)

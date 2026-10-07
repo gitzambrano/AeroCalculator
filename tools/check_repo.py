@@ -162,6 +162,19 @@ def check_duplicate_assets(warnings: list[str]) -> None:
                 seen[digest] = p
 
 
+def check_zero_argument_tools(errors: list[str]) -> None:
+    """Python tools must run without arguments (AGENTS.md, Python tooling)."""
+    for path in sorted((ROOT / "tools").glob("*.py")):
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            for match in re.finditer(r"sys\.argv\[(\d+)\]", line):
+                index = match.group(1)
+                if f"len(sys.argv) > {index}" not in line and f"len(sys.argv)>{index}" not in line:
+                    errors.append(
+                        f"{path.relative_to(ROOT).as_posix()}:{number}: sys.argv[{index}] "
+                        "is read without a fallback; tools must run with zero arguments"
+                    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strict-warnings", action="store_true")
@@ -173,6 +186,7 @@ def main() -> int:
     check_project(errors, warnings)
     check_security(errors)
     check_skill_mirrors(errors)
+    check_zero_argument_tools(errors)
     check_duplicate_assets(warnings)
 
     for item in warnings:
