@@ -125,6 +125,17 @@ def layout(root,name):
   if not z or z[2] <= z[0] or z[3] <= z[1]: continue
   if z[0] < x1-1 or z[2] > x2+1: bad.append((n.attrib.get('text'),z))
  rec('horizontal-overflow:'+name,not bad,str(bad[:8]))
+def row_edit_node(root,label):
+ pm=parents(root); lab=find(root,label)
+ if lab is None:return None
+ p=pm.get(lab)
+ for _ in range(4):
+  if p is None:break
+  e=next((x for x in p.iter('node') if x.attrib.get('class')=='android.widget.EditText'),None)
+  if e is not None:return e
+  p=pm.get(p)
+ return None
+
 def edit(label,value):
  top()
  for i in range(10):
@@ -268,6 +279,20 @@ def main():
 
  top(); r=dump('selector'); tap(find(r,'HP')); d,_=wait_text('Pressure Altitude','alt-dialog'); rec('alt-selector',find(d,'Geometric Altitude') is not None,str(texts(d))); shot('altitude-selector'); tap(find(d,'Pressure Altitude'))
  time.sleep(.5); r=dump('unit'); tap(find(r,'ft')); d,_=wait_text('km','unit-dialog'); rec('unit-selector',find(d,'m') is not None,str(texts(d))); shot('altitude-unit-selector'); tap(find(d,'ft')); time.sleep(.5)
+
+ # Bottom sheets should behave like native sheets: a deliberate downward pull closes them.
+ top(); r=dump('sheet-swipe-entry'); tap(find(r,'HP')); d,_=wait_text('Pressure Altitude','sheet-swipe-open')
+ w,h=display_size(); adb('shell','input','swipe',str(w//2),str(int(h*.55)),str(w//2),str(int(h*.82)),'350'); time.sleep(.7)
+ d=dump('sheet-swipe-dismissed'); rec('sheet-swipe-down-dismiss',find(d,'Altitude Type') is None,str(texts(d)[:80]))
+
+ # The Inputs -> Calculate swipe must work even when the gesture starts on a numeric EditText.
+ top(); r=dump('input-swipe-entry'); e=row_edit_node(r,'CAS')
+ rec('input-swipe-edit-found',e is not None,str(texts(r)[:60]))
+ if e is not None:
+  x1,y1,x2,y2=bounds(e.attrib.get('bounds','')); sy=(y1+y2)//2
+  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.9)
+  d=dump('input-swipe-calculate'); rec('input-swipe-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  taptext('INPUTS'); time.sleep(.5)
 
  for lab,val in [('HP','0'),('OAT','15'),('CAS','100'),('Weight','1000'),('SREF','16'),('cREF','1.5'),('CL,MAX','1.5'),('NZ (Pull-up)','1')]: edit(lab,val)
  top(); taptext('CALCULATE'); time.sleep(1); foreground('calculate','.main'); r=dump('outputs-top'); layout(r,'outputs-top'); shot('outputs-top')
