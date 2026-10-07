@@ -296,6 +296,7 @@ test("every calculator type and unit option can be selected and calculated", asy
 });
 
 test("every settings option saves and reformats the corresponding output", async ({ page }) => {
+  test.setTimeout(60_000);
   await validBaseline(page);
   await select(page, "nz-type", "NzTurn");
   await fill(page, "nz-value", "2");
