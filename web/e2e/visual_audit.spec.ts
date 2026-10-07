@@ -95,9 +95,9 @@ for (const viewport of cases) {
     await page.locator('[data-setting-select="setting-theme"]').click();
     await shot(page, dir, "09b-theme-sheet");
     await page.locator("#options-selector-cancel").click();
-    await page.locator("#settings-form").evaluate((el) => el.scrollTo(0, el.scrollHeight));
+    await page.locator(".settings-body").evaluate((el) => el.scrollTo(0, el.scrollHeight));
     await shot(page, dir, "10-settings-bottom");
-    await page.locator("#settings-form").evaluate((el) => el.scrollTo(0, 0));
+    await page.locator(".settings-body").evaluate((el) => el.scrollTo(0, 0));
     await page.getByRole("button", { name: "Cancel" }).click();
 
     await page.getByRole("button", { name: "More options" }).click();
