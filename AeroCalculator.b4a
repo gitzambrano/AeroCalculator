@@ -764,9 +764,6 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtSpdDelta.Initialize("edtSpdDelta")
 		    pnlInput.AddView(edtSpdDelta, 81%x, ib*sc, 16%x, tb*sc)
 			edtSpdDelta.Hint = ""
-			If sc > 1 Or ld = 1 Or xx>300dip Then
-				edtSpdDelta.Hint = ""
-			End If
 			edtSpdDelta.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtSpdDelta)
 			edtSpdDelta.TextSize = 13*sc
@@ -2868,6 +2865,7 @@ Sub TempUnit_Click
 End Sub
 
 Sub SpdType_Click
+	SetVsDeltaHint(False)
 	If indAltType<>2 And indSpdType<>7 Then
 		Gps1.Stop
 		Ready = False
@@ -2959,6 +2957,7 @@ Sub SpdType_Click
 		btnSpdDelta.Visible = True
 		edtSpd.Width = 13%x
 		edtSpdDelta.Visible = True
+		SetVsDeltaHint(True)
 	Else If indSpdType = 6 Then
 		If xx >= 320dip Or sc > 1 Then
 			btnSpdType.Text = "Ground Speed"
@@ -4821,6 +4820,29 @@ Private Sub MakePressureAltitude(baseText As String) As CSBuilder
 	Dim cs As CSBuilder
 	cs.Initialize.Append(baseText).VerticalAlign(3dip).RelativeSize(0.68).Append("P").Pop.Pop
 	Return cs
+End Sub
+
+Private Sub SetVsDeltaHint(ShowHint As Boolean)
+	If Not(edtSpdDelta.IsInitialized) Then Return
+	If Not(ShowHint) Then
+		edtSpdDelta.Hint = ""
+		Return
+	End If
+	Try
+		' Keep entered numbers bold, but render the empty-field unit hint as normal italic.
+		Dim hint As JavaObject
+		hint.InitializeNewInstance("android.text.SpannableString", Array As Object("kt"))
+		Dim span As JavaObject
+		span.InitializeNewInstance("android.text.style.TextAppearanceSpan", _
+			Array As Object("sans-serif", 2, -1, Null, Null)) ' 2 = Typeface.ITALIC
+		hint.RunMethod("setSpan", Array As Object(span, 0, 2, 33))
+		Dim jo As JavaObject = edtSpdDelta
+		jo.RunMethod("setHint", Array As Object(hint))
+		edtSpdDelta.HintColor = ColorEdtHint
+	Catch
+		edtSpdDelta.Hint = "kt"
+		edtSpdDelta.HintColor = ColorEdtHint
+	End Try
 End Sub
 
 Public Sub VibrateTap
