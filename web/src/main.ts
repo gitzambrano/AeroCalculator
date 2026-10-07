@@ -911,7 +911,9 @@ byId("settings-form").addEventListener("submit", (event) => {
 
 initializeHelpers();
 initializeSwipeNavigation();
-window.matchMedia("(max-width: 430px)").addEventListener("change", refreshResponsiveOptionLabels);
+["(max-width: 430px)", "(max-width: 340px)", "(max-width: 300px)"].forEach((query) =>
+  window.matchMedia(query).addEventListener("change", refreshResponsiveOptionLabels)
+);
 
 applyTheme();
 renderProfiles();
