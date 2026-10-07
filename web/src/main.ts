@@ -1634,9 +1634,7 @@ function renderProfiles(): void {
     selectButton.type = "button";
     selectButton.className = "airplane-name-button";
     const activeBadge = isActive ? `<span class="active-badge">ACTIVE</span>` : "";
-    const primaryWeight = profile.weights?.MTOW ?? Object.values(profile.weights ?? {})[0];
-    const weightText = primaryWeight != null ? ` · ${primaryWeight} ${profile.weightUnit}` : (profile.cref ? ` · ${profile.cref} ${profile.crefUnit}` : "");
-    selectButton.innerHTML = `<span class="airplane-name-line"><strong>${escapeHtml(displayName)}</strong>${activeBadge}</span><span class="airplane-meta">${profile.sref} ${profile.srefUnit}${weightText}</span>`;
+    selectButton.innerHTML = `<span class="airplane-name-line"><strong>${escapeHtml(displayName)}</strong>${activeBadge}</span><span class="airplane-meta">${escapeHtml(airplaneMetaSubtitle(profile))}</span>`;
     selectButton.title = "Select airplane";
     const activateProfile = () => {
       vibrateTap();
@@ -1809,6 +1807,16 @@ function beginProfileDrag(event: PointerEvent, row: HTMLElement, handle: HTMLBut
   handle.addEventListener("pointercancel", finish);
 }
 
+function airplaneMetaSubtitle(profile: AircraftProfile): string {
+  const primaryWeight = profile.weights?.MTOW ?? Object.values(profile.weights ?? {})[0];
+  const secondary = primaryWeight != null
+    ? `${primaryWeight} ${profile.weightUnit}`
+    : (profile.cref ? `${profile.cref} ${profile.crefUnit}` : "");
+  return secondary
+    ? `${profile.sref} ${profile.srefUnit} · ${secondary}`
+    : `${profile.sref} ${profile.srefUnit}`;
+}
+
 function openAirplaneProfilePicker(): void {
   const modal = byId("modal-options-selector");
   const titleEl = byId("options-selector-title");
@@ -1823,7 +1831,7 @@ function openAirplaneProfilePicker(): void {
     ...profiles.map((profile) => ({
       id: profile.id,
       name: profile.name || "Unnamed Airplane",
-      desc: "Stored aircraft profile",
+      desc: airplaneMetaSubtitle(profile),
     })),
   ];
 
