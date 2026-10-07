@@ -34,26 +34,40 @@ test.describe("helpers and swipe navigation", () => {
   test("quantity selector and numeric value expose contextual helpers", async ({ page }) => {
     await page.goto("/");
 
-    await page.locator('[data-field="spd"] .field-select-wrap').hover();
-    await expect(page.locator("#field-tooltip")).toBeVisible();
-    await expect(page.locator("#field-tooltip")).toContainText("Calibrated Airspeed");
+    const longPress = async (selector: string, pointerId: number): Promise<void> => {
+      const target = page.locator(selector);
+      await target.dispatchEvent("pointerdown", {
+        pointerId,
+        pointerType: "touch",
+        isPrimary: true,
+        clientX: 80,
+        clientY: 240,
+        bubbles: true,
+      });
+      await page.waitForTimeout(650);
+      await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
+      await expect(page.locator("#result-tooltip-title")).not.toHaveText("");
+      await expect(page.locator("#result-tooltip-desc")).not.toHaveText("");
+      await target.dispatchEvent("pointerup", {
+        pointerId,
+        pointerType: "touch",
+        isPrimary: true,
+        clientX: 80,
+        clientY: 240,
+        bubbles: true,
+      });
+      await page.locator("#modal-tooltip-close").click();
+      await expect(page.locator("#modal-result-tooltip")).not.toHaveClass(/open/);
+    };
 
-    await page.locator("#spd-value").hover();
-    await expect(page.locator("#field-tooltip")).toBeVisible();
-    await expect(page.locator("#field-tooltip")).toContainText("Calibrated Airspeed");
+    await expect(page.locator("#field-tooltip")).toBeHidden();
+    await longPress('[data-field="spd"] .field-select-wrap', 31);
 
     await page.locator("#spd-type").selectOption("Mach");
-    await page.locator("#spd-value").focus();
-    await expect(page.locator("#field-tooltip")).toBeVisible();
-    await expect(page.locator("#field-tooltip")).toContainText("Mach number");
+    await longPress("#spd-value", 32);
 
-    const rect = await page.locator("#field-tooltip").boundingBox();
-    expect(rect).not.toBeNull();
-    expect(rect!.x).toBeGreaterThanOrEqual(0);
-    expect(rect!.x + rect!.width).toBeLessThanOrEqual(390);
-
-    await page.locator('[data-field="windRef"] .field-select-wrap').focus();
-    await expect(page.locator("#field-tooltip")).toContainText("Reference direction");
+    await longPress('[data-field="windRef"] .field-select-wrap', 33);
+    await expect(page.locator("#field-tooltip")).toBeHidden();
   });
 
   test("all input type and unit choice sheets are populated and single-line", async ({ page }) => {
