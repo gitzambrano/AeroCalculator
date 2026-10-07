@@ -1338,7 +1338,7 @@ function createInputRow(field: Field): HTMLElement {
     delta.inputMode = "decimal";
     delta.autocomplete = "off";
     delta.placeholder = "kt";
-    delta.value = "0";
+    delta.value = "";
     delta.hidden = true;
     delta.setAttribute("aria-label", "Stall-speed-factor delta in knots");
     setHelper(delta, "Additional calibrated speed in knots added after multiplying the 1-g stall speed by the selected factor.");
@@ -1347,8 +1347,8 @@ function createInputRow(field: Field): HTMLElement {
       delta.focus();
     });
 
-    tail.append(delta);
-    row.append(wrap, value, deltaLabel, tail);
+    tail.append(deltaLabel, delta);
+    row.append(wrap, value, tail);
     return row;
   }
 
