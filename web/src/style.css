@@ -615,6 +615,9 @@ sub.hp-sub {
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -12px 40px rgb(0 0 0 / 0.28);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   transform: translateY(18px);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -788,16 +791,29 @@ sub.hp-sub {
   color: var(--button-text);
 }
 .settings-dialog form {
-  padding: 0 20px 18px;
+  height: min(92dvh, 780px);
+  max-height: min(92dvh, 780px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.settings-body {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
-  max-height: calc(100dvh - 38px);
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 0 20px;
+  scrollbar-gutter: stable;
 }
 .settings-header {
-  position: sticky;
-  top: 0;
+  flex: 0 0 56px;
+  position: relative;
   z-index: 10;
-  margin: 0 -20px;
+  margin: 0;
   min-height: 56px;
   display: flex;
   align-items: center;
@@ -901,7 +917,13 @@ sub.hp-sub {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  padding-top: 16px;
+}
+.settings-footer {
+  flex: 0 0 auto;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--divider);
+  background: var(--input-bg);
+  box-shadow: 0 -6px 18px rgb(0 0 0 / 0.06);
 }
 .dialog-buttons button {
   min-height: 44px;
@@ -1067,19 +1089,24 @@ sub.hp-sub {
   margin: 8px auto 2px;
 }
 .options-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 0;
-  max-height: calc(100vh - 120px);
-  max-height: calc(100dvh - 120px);
   overflow-y: auto;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 .options-list {
   display: flex;
   flex-direction: column;
 }
 .options-modal-footer {
-  padding: 10px 16px 14px;
+  flex: 0 0 auto;
+  padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--divider);
+  background: var(--input-bg);
+  box-shadow: 0 -6px 18px rgb(0 0 0 / 0.05);
 }
 .options-modal-footer button {
   width: 100%;
@@ -1196,10 +1223,11 @@ sub.hp-sub {
   }
   .unit-select { padding-left: 3px; }
   .result-name, .result-value { font-size: 13px; padding-left: 3px; }
-  .settings-dialog form { padding-left: 14px; padding-right: 14px; }
-  .settings-header { margin-left: -14px; margin-right: -14px; padding-left: 16px; padding-right: 16px; }
+  .settings-header { padding-left: 16px; padding-right: 16px; }
+  .settings-body { padding-left: 14px; padding-right: 14px; }
   .settings-dialog h3 { margin-left: -14px; margin-right: -14px; padding-left: 14px; padding-right: 14px; }
   .settings-dialog .setting-row { grid-template-columns: minmax(0, 1fr) minmax(105px, 42%); gap: 8px; }
+  .settings-footer { padding-left: 14px; padding-right: 14px; }
   .setting-title { font-size: 13px; }
   .setting-desc { font-size: 11px; }
   .weight-grid, .flap-grid { grid-template-columns: 1fr; }
