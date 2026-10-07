@@ -102,6 +102,7 @@ export const KEY_EQUATIONS_LATEX: Record<string, string> = {
   "CWχ": "\\mathrm{CW}_\\chi = V_w \\sin(\\psi_w - \\chi)",
   "Wind Speed": "V_w = \\sqrt{\\mathrm{HW}^2 + \\mathrm{CW}^2}",
   "Wind Direction": "\\psi_w = \\text{meteorological wind direction from}",
+  "Runway Angle": "\\psi_{\\mathrm{RWY}} = \\text{runway heading}",
   "Ground Speed": "V_{\\mathrm{ground}} = V_{\\mathrm{air}} + V_{\\mathrm{wind}}"
 };
 
