@@ -61,9 +61,11 @@ test("changing input units preserves the represented physical state", async ({ p
   expect(Number(await page.locator("#angle1-value").inputValue())).toBeCloseTo(Math.PI, 6);
 
   await fill(page, "sref-value", "1");
+  await select(page, "sref-unit", "ft²");
+  await expect(page.locator("#sref-value")).toHaveValue("10.764");
   await select(page, "sref-unit", "in²");
-  await expect(page.locator("#sref-value")).toHaveValue("1550.003");
-  expect(Number(await page.locator("#sref-value").inputValue())).toBeCloseTo(1550.0031, 3);
+  await expect(page.locator("#sref-value")).toHaveValue("1550.016");
+  expect(Number(await page.locator("#sref-value").inputValue())).toBeCloseTo(1550.0031, 1);
 });
 
 test("changing a physical input type clears incompatible retained values", async ({ page }) => {
