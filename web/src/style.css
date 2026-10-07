@@ -933,14 +933,14 @@ sub.hp-sub {
   visibility: hidden;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+  transition: opacity 0.2s ease;
 }
 
 .modal-overlay.open {
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
-  transition: opacity 0.2s ease, visibility 0s linear 0s;
+  transition: opacity 0.2s ease;
 }
 
 /* Menu backdrop is visually modal but lets outside taps reach the page so they can dismiss it. */
