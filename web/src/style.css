@@ -151,8 +151,8 @@ sub {
   vertical-align: baseline;
   bottom: -0.38em;
 }
-/* p has a descender: pressure-altitude labels get slightly more bottom clearance. */
-.pressure-altitude-label sub {
+/* Only H_p needs extra descender clearance; other subscripts keep the standard alignment. */
+sub.hp-sub {
   bottom: -0.30em;
 }
 
