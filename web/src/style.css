@@ -405,7 +405,7 @@ sub.hp-sub {
   cursor: pointer;
 }
 .airplane-row {
-  grid-template-columns: minmax(0, 39fr) minmax(0, 58fr);
+  grid-template-columns: minmax(0, 39fr) minmax(0, 52fr);
   column-gap: 3%;
 }
 .airplane-row .profile-select {
@@ -1308,7 +1308,7 @@ sub.hp-sub {
   .brand { font-size: 21px; }
   .brand-icon { width: 35px; height: 35px; }
   .input-row { grid-template-columns: minmax(0, 39fr) minmax(0, 32fr) minmax(0, 17fr); min-height: 56px; }
-  .airplane-row { grid-template-columns: minmax(0, 39fr) minmax(0, 58fr); }
+  .airplane-row { grid-template-columns: minmax(0, 39fr) minmax(0, 52fr); }
   .field-select, .unit-select, .value-input, .field-select-display { font-size: 14px; padding-left: 8px; padding-right: 8px; }
   .field-select { padding-right: 24px; background-position: right 11px center, right 6px center, center; }
   .field-select-display { padding-right: 24px; }
