@@ -260,7 +260,7 @@ def audit_all_input_modes():
   choose_option(['Drift Angle','Drift'],'Sideslip Angle β',label+'-lateral-sideslip')
 
   # Wind representation modes.
-  choose_option(['HeadWind','HeadWnd'],'WindSpeed / WindDirection',label+'-wind-vector')
+  choose_option(['Headwind','HeadWind','HeadWnd'],'WindSpeed / WindDirection',label+'-wind-vector')
   choose_option(['Wind Speed','Wind Spd','WindSpd'],'Headwind / Crosswind',label+'-wind-components')
   foreground('audit-finish-'+label,'.main')
 
@@ -269,7 +269,7 @@ def main():
  adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(3); foreground('launch','.main')
  r=dump('inputs-top'); layout(r,'inputs-top'); shot('inputs-top')
  for t in ['AIRPLANES','INPUTS','CALCULATE','HP','OAT','CAS']: rec('input:'+t,find(r,t) is not None,str(texts(r)[:50]))
- rb,_,seen=until(['HeadWind','HeadWnd','WindSpd','Wind Spd','Wind Speed'],'inputs-bottom'); rec('inputs-bottom',True,str(seen[-20:])); layout(rb,'inputs-bottom'); shot('inputs-bottom')
+ rb,_,seen=until(['Headwind','HeadWind','HeadWnd','WindSpd','Wind Spd','Wind Speed'],'inputs-bottom'); rec('inputs-bottom',True,str(seen[-20:])); layout(rb,'inputs-bottom'); shot('inputs-bottom')
 
  top(); r=dump('airplane-picker-entry'); plane_btn=find(r,'Custom Airplane'); rec('airplane-picker-button',plane_btn is not None,str(texts(r)[:60])); tap(plane_btn); time.sleep(.5)
  ap,_=wait_text('Boeing 737-800','airplane-picker')
