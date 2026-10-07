@@ -1325,8 +1325,12 @@ Sub Activity_Resume
 	' Recupera variaveis do arquivo interno lastmod.txt
 	Dim m As Map
 	m.Initialize
+	Dim restoredAirplaneID As Int = 0
+	Dim hasStableAirplaneState As Boolean = False
 	If File.Exists(File.DirInternal, "lastmod.txt") Then
 		m = File.ReadMap(File.DirInternal,"lastmod.txt")
+		hasStableAirplaneState = m.ContainsKey("var35")
+		restoredAirplaneID = m.GetDefault("var35", 0)
 		edtAlt.Text = m.GetDefault("var0","")
 		edtTemp.Text = m.GetDefault("var1","")
 		edtSpd.Text = m.GetDefault("var2","")
@@ -1343,7 +1347,13 @@ Sub Activity_Resume
 		indAltType = m.GetDefault("var13",0)
 		indAltUnit = m.GetDefault("var14",0)
 		indTempType = m.GetDefault("var15",0)
-		indAltUnit = m.GetDefault("var16",0)
+		If hasStableAirplaneState Then
+			indTempUnit = m.GetDefault("var16",0)
+			If indTempUnit < 0 Or indTempUnit > 2 Then indTempUnit = 0
+		Else
+			' Releases <= 3.31 accidentally stored altitude-unit index in var16.
+			indTempUnit = 0
+		End If
 		indSpdType = m.GetDefault("var17",0)
 	 	indSpdUnit = m.GetDefault("var18",0)
 		indWeightUnit = m.GetDefault("var19",0)
@@ -1450,7 +1460,6 @@ Sub Activity_Resume
 	If (Airp.add=0 And ID_edt = 0) And lst.NumberOfItems=0 Then
 		If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
 			ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
-			If ID_use = 0 And ListAirp.Size > 0 Then ID_use = ListAirp.Get(0)
 			If ListAirp.Size = N Then
 				'Inicializar e criar lista de avioes na aba Airplanes
 				For ii= 1 To N
@@ -1521,9 +1530,20 @@ Sub Activity_Resume
 		End If
 	End If
 	
-	If spinnerPos<=N Then
-		spnAirp.SelectedIndex=spinnerPos
-		spnAirp_ItemClick(spinnerPos,spnAirp)
+	If hasStableAirplaneState Then
+		spinnerPos = 0
+		If restoredAirplaneID > 0 Then
+			Dim restoredPos As Int = ListAirp.IndexOf(restoredAirplaneID)
+			If restoredPos >= 0 Then spinnerPos = restoredPos + 1
+		End If
+	End If
+	If spinnerPos >= 0 And spinnerPos <= N Then
+		spnAirp.SelectedIndex = spinnerPos
+		spnAirp_ItemClick(spinnerPos, spnAirp)
+	Else
+		spinnerPos = 0
+		spnAirp.SelectedIndex = 0
+		spnAirp_ItemClick(0, spnAirp)
 	End If	
 		
 	'Variaveis Weight e CLmax do arquivo airplanes.txt
@@ -1567,7 +1587,7 @@ Sub Activity_Pause (UserClosed As Boolean)
 	m.Put("var13", indAltType)
 	m.Put("var14", indAltUnit)
 	m.Put("var15", indTempType)
-	m.Put("var16", indAltUnit)
+	m.Put("var16", indTempUnit)
 	m.Put("var17", indSpdType)
 	m.Put("var18", indSpdUnit)
 	m.Put("var19", indWeightUnit)
@@ -1586,6 +1606,11 @@ Sub Activity_Pause (UserClosed As Boolean)
 	m.Put("var32", spinnerPos)
 	m.Put("var33", indWeightType)
 	m.Put("var34", indCLmaxType)
+	If spinnerPos = 0 Then
+		m.Put("var35", 0)
+	Else
+		m.Put("var35", ID_use)
+	End If
 	File.WriteMap(File.DirInternal, "lastmod.txt", m)
 	
 	' Escreve ordem dos avioes da aba AIRPLANES no arquivo taglist.txt
@@ -1907,6 +1932,28 @@ Sub Timer1_tick
 			NewList.Set(ii,(NewList.Get(ii)-1))
 		End If
 	Next
+
+	If ID_use = ID_rem Then
+		' Deleted active profile becomes Custom while preserving the visible numeric inputs.
+		ID_use = 0
+		ID_inp = 0
+		spinnerPos = 0
+	Else If ID_use > ID_rem Then
+		' IDs above the deleted profile are compacted by one.
+		ID_use = ID_use - 1
+		ID_inp = ID_use
+	End If
+	If ID_use > 0 Then
+		Dim activePosAfterDelete As Int = NewList.IndexOf(ID_use)
+		If activePosAfterDelete >= 0 Then
+			spinnerPos = activePosAfterDelete + 1
+		Else
+			spinnerPos = 0
+			ID_use = 0
+			ID_inp = 0
+		End If
+	End If
+
 	For ii = 0 To NewList.Size-1
 			ID = NewList.Get(ii)
 			He = 68dip
@@ -1944,6 +1991,7 @@ Sub Timer1_tick
 	ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
 	File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", ListAirp)
 	lst.DividerColor = ColorPnlLine3
+	RefreshAirplanesList
 
 End Sub
 
@@ -2037,6 +2085,10 @@ Sub lst_AfterDrop(StartPosition As Int, EndPosition As Int)
 	If lst.NumberOfItems > 0 Then
 		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems - 1)
 		File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", ListAirp)
+		If ID_use > 0 Then
+			Dim activePos As Int = ListAirp.IndexOf(ID_use)
+			If activePos >= 0 Then spinnerPos = activePos + 1
+		End If
 	End If
 	RefreshAirplanesList
 End Sub
@@ -2151,6 +2203,9 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 	End If
 	
 	If Position = 0 Then
+		ID_inp = 0
+		ID_use = 0
+		RefreshAirplanesList
 	Else
 		ID_inp = ListAirp.Get(Position-1)
 		ID_use = ID_inp
