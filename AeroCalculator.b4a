@@ -455,7 +455,7 @@ Sub Activity_Create(FirstTime As Boolean)
 '			ColorPnlInput4 = Colors.RGB(222, 242, 241)
 '			ColorPnlInput5 = Colors.RGB(222, 242, 241)
 	Else If manager.GetString("theme").CompareTo("Green Peace")=0 Then
-		ColorButPressed = Colors.RGB(0, 105, 120)     ' preserve existing pressed state
+		ColorButPressed = Colors.RGB(238, 243, 245)   ' #EEF3F5 gentle pressed surface
 		ColorButBorder = Colors.RGB(213, 220, 230)     ' #D5DCE6 subtle selector border
 		ColorPnlTitle =  Colors.RGB(0, 105, 120)       ' #006978 Deep Teal Cyan
 		ColorTitleText = Colors.White
@@ -467,7 +467,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorButText2 =  Colors.RGB(239, 239, 239)
 		ColorButText3 =  Colors.RGB(255, 255, 255)
 		ColorBut1 = 	 Colors.RGB(248, 250, 252)     ' #F8FAFC
-		ColorBut2 =      Colors.RGB(233, 238, 244)     ' #E9EEF4
+		ColorBut2 =      Colors.RGB(245, 247, 250)     ' #F5F7FA subtle gradient
 		ColorButText1 =  Colors.RGB(23, 32, 51)        ' #172033
 		ColorEdt =       Colors.RGB(234, 245, 247)     ' #EAF5F7 Field Fill
 		ColorEdtText =   Colors.RGB(0, 105, 120)       ' #006978 Field Text
