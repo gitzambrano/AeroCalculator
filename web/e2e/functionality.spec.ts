@@ -30,6 +30,17 @@ async function setupBaseline(page: Page): Promise<void> {
   await fill(page, "windRef-value", "0");
 }
 
+async function selectSetting(page: Page, id: string, value: string): Promise<void> {
+  const selectEl = page.locator("#" + id);
+  const label = await selectEl.evaluate((el, selectedValue) => {
+    const select = el as HTMLSelectElement;
+    return Array.from(select.options).find((option) => option.value === selectedValue)?.text ?? selectedValue;
+  }, value);
+  await page.locator(`[data-setting-select="${id}"]`).click();
+  await page.locator("#options-selector-list .option-item").filter({ hasText: label }).first().click();
+  await expect(selectEl).toHaveValue(value);
+}
+
 test("changing input units preserves the represented physical state", async ({ page }) => {
   await page.goto("/");
 
@@ -182,8 +193,8 @@ test("output settings change formatting without changing the calculation", async
 
   await page.getByRole("button", { name: "More options" }).click();
   await page.getByRole("button", { name: "Settings" }).click();
-  await select(page, "setting-speed", "m/s");
-  await select(page, "setting-angle", "deg");
+  await selectSetting(page, "setting-speed", "m/s");
+  await selectSetting(page, "setting-angle", "deg");
   await page.locator("#settings-form").getByRole("button", { name: "Save" }).click();
 
   expect(await resultText(page, "True Airspeed")).toContain("m/s");
