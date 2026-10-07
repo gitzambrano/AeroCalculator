@@ -331,8 +331,16 @@ sub.hp-sub {
 .speed-delta { text-align: center; border-left: 1px solid var(--button-border, #d5dce6); }
 
 .speed-row.vs-factor-mode {
-  /* Keep the first column perfectly aligned; redistribute only the right side. */
-  grid-template-columns: 39% 3% 28% 2% 9% 2% 17%;
+  /*
+   * Same first-column track and same 3% first gap as a standard input row.
+   * The remaining 49fr are split among Vs Factor, +Δ and Δ while the total
+   * inter-control spacing remains 6%, exactly matching the normal row.
+   */
+  grid-template-columns:
+    minmax(0, 39fr) 3%
+    minmax(0, 28fr) 1.5%
+    minmax(0, 9fr) 1.5%
+    minmax(0, 12fr);
   column-gap: 0;
 }
 .speed-row.vs-factor-mode > .field-select-wrap { grid-column: 1; }
