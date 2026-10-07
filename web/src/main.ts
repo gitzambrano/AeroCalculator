@@ -363,6 +363,7 @@ app.innerHTML = `
         <div class="modal-handle"></div>
         <form id="settings-form">
           <div class="settings-header"><span>Settings</span><button type="button" class="settings-close" id="settings-close" aria-label="Close settings">&times;</button></div>
+          <div class="settings-body">
           <h3>DISPLAY</h3>
           <div class="setting-row">
             <div class="setting-text">
@@ -423,7 +424,8 @@ app.innerHTML = `
             <div class="setting-text"><span class="setting-title">Clear Inputs</span><span class="setting-desc">Reset all flight-condition entries</span></div>
             <button type="button" class="setting-btn" id="setting-clear-btn">Clear</button>
           </div>
-          <div class="dialog-buttons">
+          </div>
+          <div class="dialog-buttons settings-footer">
             <button type="button" id="settings-cancel">Cancel</button>
             <button type="submit">Save</button>
           </div>
