@@ -227,7 +227,10 @@ test("aircraft profile create, select and Android-compatible export work end to 
   await select(page, "weight-type", "MTOW");
   await expect(page.locator("#weight-value")).toHaveValue("12000");
   await expect(page.locator("#clmax-type option")).toHaveCount(2);
+  await expect(page.locator('[data-field="clmax"] .field-select-display')).toHaveText("CL,max");
+  await expect(page.locator('[data-field="clmax"] .field-select-display')).not.toContainText("Flap 0");
   await select(page, "clmax-type", "Flap 0");
+  await expect(page.locator('[data-field="clmax"] .field-select-display')).toContainText("Flap 0");
   await expect(page.locator("#clmax-value")).toHaveValue("1.6");
 
   await page.getByRole("button", { name: "AIRPLANES" }).click();
