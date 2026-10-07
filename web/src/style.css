@@ -329,24 +329,35 @@ sub.hp-sub {
 .speed-delta { text-align: center; border-left: 1px solid var(--button-border, #d5dce6); }
 
 .speed-row.vs-factor-mode {
-  grid-template-columns: minmax(0, 46%) minmax(0, 13%) minmax(0, 15%) minmax(0, 20%);
-  column-gap: 2%;
+  /* Keep the same three-column geometry as every other input row. */
+  grid-template-columns: minmax(0, 44fr) minmax(0, 27fr) minmax(0, 17fr);
+  column-gap: 3%;
+}
+.speed-row.vs-factor-mode .input-tail {
+  display: grid;
+  grid-template-columns: clamp(26px, 38%, 38px) minmax(0, 1fr);
+  column-gap: 3px;
 }
 .speed-delta-label {
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 4px;
-  padding: 0 4px;
+  padding: 0 2px;
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--button-text, #111);
   background: linear-gradient(var(--button-a), var(--button-b));
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
   cursor: pointer;
 }
+.speed-row.vs-factor-mode .speed-delta-label,
+.speed-row.vs-factor-mode .speed-delta {
+  width: 100%;
+  height: 100%;
+}
 .speed-row.vs-factor-mode .speed-delta {
   border-left: 0;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 .value-input::placeholder { color: var(--muted, #8a9392); }
 .speed-delta::placeholder {
