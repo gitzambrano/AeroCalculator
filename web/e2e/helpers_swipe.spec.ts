@@ -56,6 +56,58 @@ test.describe("helpers and swipe navigation", () => {
     await expect(page.locator("#field-tooltip")).toContainText("Reference direction");
   });
 
+  test("all input type and unit choice sheets are populated and single-line", async ({ page }) => {
+    await page.goto("/");
+
+    const fieldIds = ["alt", "temp", "spd", "weight", "sref", "cref", "clmax", "nz", "angle1", "angle2", "headWind", "crossWind", "windRef"];
+    for (const fieldId of fieldIds) {
+      await page.locator(`[data-field="${fieldId}"] .field-select-wrap`).click();
+      await expect(page.locator("#modal-options-selector")).toBeVisible();
+      await expect(page.locator("#modal-options-selector .option-item").first()).toBeVisible();
+
+      const descriptions = page.locator("#modal-options-selector .option-desc");
+      if (await descriptions.count()) {
+        const metrics = await descriptions.evaluateAll((elements) =>
+          elements.map((el) => {
+            const node = el as HTMLElement;
+            return {
+              whiteSpace: getComputedStyle(node).whiteSpace,
+              clientHeight: node.clientHeight,
+              scrollHeight: node.scrollHeight,
+            };
+          })
+        );
+        expect(metrics.every((item) => item.whiteSpace === "nowrap" && item.scrollHeight <= item.clientHeight + 1)).toBe(true);
+      }
+      await page.locator("#options-selector-cancel").click();
+    }
+
+    for (const fieldId of fieldIds) {
+      const unit = page.locator(`#${fieldId}-unit`);
+      if (await unit.isDisabled()) continue;
+      await unit.click();
+      await expect(page.locator("#modal-options-selector")).toBeVisible();
+      await expect(page.locator("#modal-options-selector .option-item").first()).toBeVisible();
+      await page.locator("#options-selector-cancel").click();
+    }
+  });
+
+  test("all 42 output rows open contextual technical help", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "CALCULATE" }).click();
+
+    const rows = page.locator(".result-row");
+    await expect(rows).toHaveCount(42);
+    for (let index = 0; index < 42; index += 1) {
+      await rows.nth(index).click();
+      await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
+      await expect(page.locator("#result-tooltip-title")).not.toHaveText("");
+      await expect(page.locator("#result-tooltip-desc")).not.toHaveText("");
+      await page.locator("#modal-tooltip-close").click();
+      await expect(page.locator("#modal-result-tooltip")).not.toHaveClass(/open/);
+    }
+  });
+
   test("horizontal finger swipe changes tabs like the Android ViewPager", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("button", { name: "INPUTS" })).toHaveAttribute("aria-selected", "true");
