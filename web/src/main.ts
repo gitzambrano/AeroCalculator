@@ -894,6 +894,11 @@ byId("settings-close")?.addEventListener("click", () => setOverlayOpen("settings
 byId("settings-dialog").addEventListener("click", (event) => {
   if (event.target === byId("settings-dialog")) setOverlayOpen("settings-dialog", false);
 });
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  if (byId("settings-dialog").classList.contains("open")) setOverlayOpen("settings-dialog", false);
+  if (byId("main-menu").classList.contains("open")) setOverlayOpen("main-menu", false);
+});
 document.querySelectorAll<HTMLButtonElement>(".setting-choice").forEach((button) => {
   button.addEventListener("click", () => openSettingOptionPicker(
     button.dataset.settingSelect ?? "",
