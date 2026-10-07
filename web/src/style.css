@@ -941,6 +941,14 @@ sub.hp-sub {
   visibility: visible;
   transition: opacity 0.2s ease, visibility 0s linear 0s;
 }
+
+/* Menu backdrop is visually modal but lets outside taps reach the page so they can dismiss it. */
+.modal-overlay.menu-overlay.open {
+  pointer-events: none;
+}
+.modal-overlay.menu-overlay.open .menu-sheet {
+  pointer-events: auto;
+}
 .modal-overlay.menu-overlay,
 .modal-overlay.settings-overlay {
   align-items: flex-end;
