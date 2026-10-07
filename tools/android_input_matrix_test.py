@@ -200,7 +200,7 @@ def choose(dirp,button_candidates,expected,choice,state):
  n=find_sheet_text(d,choice)
  for i in range(8):
   if n is not None: break
-  swipe(True)
+  swipe_sheet_list(d,expected)
   d=dump(dirp,f"{state}-choice-{i}")
   n=find_sheet_text(d,choice)
  if n is None: raise AssertionError(f"{state}: missing choice {choice}")

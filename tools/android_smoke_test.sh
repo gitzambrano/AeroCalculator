@@ -155,6 +155,17 @@ scroll_down_repeatedly() {
   done
 }
 
+# Switch tabs and wait for the target page. A tap during scroll settling can be
+# lost, so tap once more before failing.
+open_tab() {
+  local text="$1" pattern="$2"
+  tap_text "$text"
+  if ! wait_for_ui_text "$pattern" 10; then
+    tap_text "$text"
+    wait_for_ui_text "$pattern" 20
+  fi
+}
+
 # Older emulators can drop swipes right after a display-size change. After the
 # fixed swipe batch, keep scrolling until the expected bottom text is visible.
 scroll_until_text() {
@@ -182,7 +193,7 @@ exercise_portrait() {
   capture_state "$dir" "portrait-inputs-bottom"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-bottom"
   assert_dump_contains "$dir" "portrait-inputs-bottom" 'Headwind|HeadWind|HeadWnd|WindSpd|Wind Speed|Wind Spd'
-  tap_text "CALCULATE"
+  open_tab "CALCULATE" 'Pressure Altitude'
   capture_state "$dir" "portrait-outputs-top"
   assert_alive_foreground_and_clean "$dir" "portrait-outputs-top"
   assert_dump_contains "$dir" "portrait-outputs-top" 'Pressure Altitude'
@@ -205,7 +216,7 @@ exercise_landscape() {
   scroll_down_repeatedly "$width" "$height" 8
   capture_state "$dir" "landscape-inputs-bottom"
   assert_alive_foreground_and_clean "$dir" "landscape-inputs-bottom"
-  tap_text "CALCULATE"
+  open_tab "CALCULATE" 'Pressure Altitude'
   capture_state "$dir" "landscape-outputs-top"
   assert_alive_foreground_and_clean "$dir" "landscape-outputs-top"
   scroll_down_repeatedly "$width" "$height" 18
