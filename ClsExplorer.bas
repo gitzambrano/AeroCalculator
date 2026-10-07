@@ -249,6 +249,7 @@ Public Sub Explorer As typResult
 	gd_pnlCartouche.CornerRadius = 10
 	pnlCartouche.Background = gd_pnlCartouche
 	edtFilename.Initialize("")
+	Main.CenterEditTextContent(edtFilename)
 	edtFilename.TextSize = 16
 	edtFilename.InputType = Bit.Or(edtFilename.InputType, 0x80000)
 	edtFilename.SingleLine = True
@@ -334,6 +335,7 @@ Public Sub Explorer2(DarkTheme As Boolean) As typResult
 	pnlCartouche.Initialize("")
 	pnlCartouche.Color = Colors.Transparent
 	edtFilename.Initialize("")
+	Main.CenterEditTextContent(edtFilename)
 	edtFilename.TextSize = 16
 	edtFilename.InputType = Bit.Or(edtFilename.InputType, 0x80000)
 	edtFilename.SingleLine = True
