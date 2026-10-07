@@ -268,7 +268,7 @@ sub.hp-sub {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 24px 0 8px;
+  padding: 0 16px 0 8px;
   pointer-events: none;
   font-size: 15px;
   color: var(--button-text, #111);
@@ -287,7 +287,7 @@ sub.hp-sub {
   min-width: 0;
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 6px;
-  padding: 0 30px 0 12px;
+  padding: 0 20px 0 10px;
   font-size: 15px;
   color: var(--button-text, #111);
   background:
@@ -1310,8 +1310,8 @@ sub.hp-sub {
   .input-row { grid-template-columns: minmax(0, 39fr) minmax(0, 32fr) minmax(0, 17fr); min-height: 56px; }
   .airplane-row { grid-template-columns: minmax(0, 39fr) minmax(0, 52fr); }
   .field-select, .unit-select, .value-input, .field-select-display { font-size: 14px; padding-left: 8px; padding-right: 8px; }
-  .field-select { padding-right: 24px; background-position: right 11px center, right 6px center, center; }
-  .field-select-display { padding-right: 24px; }
+  .field-select { padding-right: 16px; background-position: right 8px center, right 4px center, center; }
+  .field-select-display { padding-right: 16px; }
   .result-row { padding-left: 4px; padding-right: 4px; }
   .profile-dialog {
     width: calc(100% - 16px);
@@ -1337,11 +1337,11 @@ sub.hp-sub {
     padding-right: 5px;
   }
   .field-select {
-    padding-right: 20px;
-    background-position: right 9px center, right 4px center, center;
+    padding-right: 14px;
+    background-position: right 7px center, right 3px center, center;
   }
   .field-select-display {
-    padding-right: 20px;
+    padding-right: 14px;
   }
   .unit-select { padding-left: 3px; }
   .result-name, .result-value { font-size: 13px; padding-left: 3px; }
