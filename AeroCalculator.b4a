@@ -886,11 +886,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 7
 			btnCLmax.Initialize("btnCLmax")
 		    pnlInput.AddView(btnCLmax, 3%x, ib*sc, 44%x, tb*sc)
-			If xx > 340dip Or sc > 1 Then
-				btnCLmax.Text = MakeSubscript("Flap 0 - C", "L,max", "")
-			Else
-				btnCLmax.Text = MakeSubscript("C", "L,max", "")
-			End If
+			btnCLmax.Text = MakeSubscript("C", "L,max", "")
 			btnCLmax.TextSize = 15*sc
 			btnCLmax.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtCLmax.Initialize("edtCLmax")
@@ -3079,11 +3075,7 @@ Sub CLmax_Click
 	Dim count As Int: count=0
 	Dim ii As Int
 	If indCLmaxType = 0 Then
-		If xx > 340dip Or sc > 1 Then
-			btnCLmax.Text = MakeSubscript("Flap 0 - C", "L,max", "")
-		Else
-			btnCLmax.Text = MakeSubscript("C", "L,max", "")
-		End If
+		btnCLmax.Text = MakeSubscript("C", "L,max", "")
 		edtCLmax.Text = ""
 	Else
 		For ii=1 To 14
@@ -5201,11 +5193,7 @@ Sub edtCLmax_TextChanged (Old As String, New As String)
 	End If
 	If New.CompareTo(text) <> 0 Then
 		indCLmaxType = 0
-		If xx > 340dip Or sc > 1 Then
-			btnCLmax.Text = MakeSubscript("Flap 0 - C", "L,max", "")
-		Else
-			btnCLmax.Text = MakeSubscript("C", "L,max", "")
-		End If
+		btnCLmax.Text = MakeSubscript("C", "L,max", "")
 	End If
 End Sub
 
