@@ -548,6 +548,51 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+function installTechnicalHold(target: HTMLElement, keyProvider: () => string): void {
+  let timer: number | undefined;
+  let fired = false;
+
+  const clearTimer = (): void => {
+    if (timer !== undefined) window.clearTimeout(timer);
+    timer = undefined;
+  };
+
+  target.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    fired = false;
+    clearTimer();
+    timer = window.setTimeout(() => {
+      fired = true;
+      vibrateTap();
+      showContextualHelp(keyProvider());
+    }, 550);
+  });
+
+  target.addEventListener("pointerup", (event) => {
+    clearTimer();
+    if (fired) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  });
+  target.addEventListener("pointercancel", clearTimer);
+  target.addEventListener("pointerleave", clearTimer);
+
+  target.addEventListener("click", (event) => {
+    if (!fired) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    fired = false;
+  }, true);
+
+  target.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    clearTimer();
+    fired = false;
+    showContextualHelp(keyProvider());
+  });
+}
+
 const FIELD_MODAL_TITLES: Record<string, string> = {
   spd: "Speed Type",
   weight: "Aircraft Mass",
@@ -958,6 +1003,7 @@ function createAirplaneRow(): HTMLElement {
     e.preventDefault();
     showContextualHelp("Aircraft Profile");
   });
+  installTechnicalHold(label, () => "Aircraft Profile");
 
   const picker = document.createElement("select");
   picker.id = "airplane-select";
@@ -983,6 +1029,7 @@ function createAirplaneRow(): HTMLElement {
       openAirplaneProfilePicker();
     }
   });
+  installTechnicalHold(pickerButton, () => "Aircraft Profile");
 
   row.append(label, picker, pickerButton);
   return row;
@@ -1073,6 +1120,7 @@ function createInputRow(field: Field): HTMLElement {
   value.value = field.defaultValue ?? "";
   value.setAttribute("aria-label", `${field.typeOptions.find((item) => item.value === field.defaultType)?.label ?? field.id} value`);
   setHelper(value, helperFor(field.id, field.defaultType));
+  installTechnicalHold(value, () => type.value);
 
   const unit = document.createElement("select");
   unit.id = `${field.id}-unit`;
@@ -1082,6 +1130,7 @@ function createInputRow(field: Field): HTMLElement {
   setHelper(unit, "Unit used for this input value. Changing the unit converts the current numeric value when applicable.");
   unit.addEventListener("click", () => vibrateTap());
   unit.addEventListener("change", () => vibrateTap());
+  installTechnicalHold(unit, () => type.value);
 
   if (field.unitOptions.length === 1 && field.unitOptions[0].value === "-") {
     unit.disabled = true;
