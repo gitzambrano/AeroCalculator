@@ -2,6 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
+const FULL_VISUAL_AUDIT = process.env.AEROCALC_FULL_VISUAL_AUDIT === "1";
+
 const cases = [
   { name: "mobile-280", width: 280, height: 653 },
   { name: "mobile-320", width: 320, height: 568 },
@@ -39,6 +41,7 @@ async function baseline(page: Page): Promise<void> {
 
 for (const viewport of cases) {
   test(`visual audit ${viewport.name}`, async ({ browser }) => {
+    test.skip(!FULL_VISUAL_AUDIT, "Full visual audit is opt-in.");
     const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height } });
     const page = await context.newPage();
     const dir = join("visual-audit", viewport.name);
