@@ -56,9 +56,9 @@ Enable it with:
 
 `AEROCALC_FULL_VISUAL_AUDIT=1`
 
-or manually dispatch the `Web` / `android-build-smoke` GitHub workflow with `full_visual_audit=true`.
+or manually dispatch the `Web` / `android-build-smoke` GitHub workflow with `full_visual_audit=true`. A push whose head commit message contains `[visual-audit]` is also an explicit opt-in and runs the full visual audit for that commit.
 
-Full mode expands the viewport/state matrix and captures the complete screenshot set. On Android it exercises the detailed input-state sweep at 280, 320, 360, 393, and 411 dp in addition to the broader smoke profiles. On web it enables `web/e2e/visual_audit.spec.ts` across the configured mobile, tablet, landscape, laptop, and desktop viewports.
+Full mode expands the viewport/state matrix and captures the complete screenshot set. On Android it exercises the detailed input-state sweep at 260, 280, 320, 360, 379, 380, 390, 393, and 411 dp in addition to the broader smoke profiles. On web it enables `web/e2e/visual_audit.spec.ts` across the configured mobile, tablet, landscape, laptop, and desktop viewports.
 
 A successful full-audit workflow is not, by itself, visual approval. When full mode is requested, inspect the generated screenshots for clipping, wrapping, alignment, spacing, inconsistent labels, modal geometry, and web/APK parity before declaring the visual audit complete.
 
