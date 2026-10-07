@@ -26,6 +26,42 @@ Follow `.agents/skills/writing-rules/SKILL.md` for prose. Keep the mirrored Clau
 8. Inspect the final diff. Do not accept changed golden values without reading the numerical diff.
 9. Update documentation when behavior, assumptions, conventions, dependencies, or limits change.
 
+## Verification modes
+
+AeroCalculator has two distinct verification modes. Do not conflate mechanical CI coverage with a visual audit.
+
+### Quick mechanical check
+
+This is the default and required completion gate.
+
+It verifies compilation, unit and physics tests, calculator controls, input modes and units, navigation, Android runtime health, UI bounds, and representative phone/tablet layouts without intentionally generating the full screenshot corpus.
+
+Automatic GitHub Actions runs use this mode. Leave `AEROCALC_FULL_VISUAL_AUDIT` unset or set it to `0`.
+
+For web work, run:
+
+`cd web && npm test && npm run build && npm run test:e2e`
+
+The visual-audit Playwright cases are skipped in quick mode.
+
+For Android work, the normal `android-build-smoke` workflow runs a reduced representative viewport matrix plus the mechanical smoke, input-matrix, and feature checks. The input matrix still exercises all calculator choices and units, but with fewer viewport profiles and without bulk screenshot capture.
+
+A quick check must be green before reporting a normal change as complete.
+
+### Full visual audit
+
+This mode is optional by default. Use it when explicitly requested, for substantial UI/layout changes, before a visual release review, or when a mechanical check cannot explain a suspected rendering problem.
+
+Enable it with:
+
+`AEROCALC_FULL_VISUAL_AUDIT=1`
+
+or manually dispatch the `Web` / `android-build-smoke` GitHub workflow with `full_visual_audit=true`.
+
+Full mode expands the viewport/state matrix and captures the complete screenshot set. On Android it exercises the detailed input-state sweep at 280, 320, 360, 393, and 411 dp in addition to the broader smoke profiles. On web it enables `web/e2e/visual_audit.spec.ts` across the configured mobile, tablet, landscape, laptop, and desktop viewports.
+
+A successful full-audit workflow is not, by itself, visual approval. When full mode is requested, inspect the generated screenshots for clipping, wrapping, alignment, spacing, inconsistent labels, modal geometry, and web/APK parity before declaring the visual audit complete.
+
 ## Numerical changes
 
 Do not treat historical output as physical truth.
