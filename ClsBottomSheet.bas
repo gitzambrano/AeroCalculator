@@ -52,66 +52,67 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	Dismiss
 	mActivity = act
 	mSelectedIndex = selectedIndex
-	
-	' Overlay
+
+	' Dimmed overlay
 	pnlOverlay.Initialize("pnlOverlay")
-	pnlOverlay.Color = Colors.ARGB(128, 0, 0, 0)
+	pnlOverlay.Color = Colors.ARGB(178, 0, 0, 0)
 	act.AddView(pnlOverlay, 0, 0, 100%x, 100%y)
-	
-	' Sheet panel
+
+	' Premium bottom sheet
 	pnlSheet.Initialize("pnlSheet")
-	pnlSheet.Color = mBackgroundColor
-	
-	' Rounded top corners
 	Dim gdSheet As GradientDrawable
 	gdSheet.Initialize("TOP_BOTTOM", Array As Int(mBackgroundColor, mBackgroundColor))
-	gdSheet.CornerRadius = 16dip
+	gdSheet.CornerRadius = 20dip
 	pnlSheet.Background = gdSheet
-	
-	' Drag handle indicator
+
 	pnlHandle.Initialize("")
 	Dim gdHandle As GradientDrawable
-	gdHandle.Initialize("TOP_BOTTOM", Array As Int(Colors.RGB(189, 189, 189), Colors.RGB(189, 189, 189)))
+	gdHandle.Initialize("TOP_BOTTOM", Array As Int(mDividerColor, mDividerColor))
 	gdHandle.CornerRadius = 3dip
 	pnlHandle.Background = gdHandle
-	pnlSheet.AddView(pnlHandle, (100%x - 40dip) / 2, 8dip, 40dip, 4dip)
-	
-	' Title
-	lblTitle.Initialize("")
-	lblTitle.Text = FormatScriptedText(title)
-	lblTitle.TextSize = 16
-	lblTitle.TextColor = mTitleColor
-	lblTitle.Typeface = Typeface.DEFAULT_BOLD
-	lblTitle.Gravity = Gravity.CENTER_VERTICAL
-	lblTitle.Padding = Array As Int(20dip, 0, 20dip, 0)
-	pnlSheet.AddView(lblTitle, 0, 16dip, 100%x, 40dip)
-	
-	' Calculate sheet height: title + items, capped below app header
+
 	Dim itemCount As Int = items.Size
 	Dim totalItemsH As Int = 0
 	Dim i As Int
 	For i = 0 To itemCount - 1
 		Dim rawItem As String = items.Get(i)
 		If rawItem.Contains("|") Then
-			totalItemsH = totalItemsH + 50dip
+			totalItemsH = totalItemsH + 62dip
 		Else
-			totalItemsH = totalItemsH + 46dip
+			totalItemsH = totalItemsH + 54dip
 		End If
 	Next
-	Dim scvH As Int = totalItemsH + 8dip
-	Dim contentHeight As Int = 56dip + scvH + 16dip
-	Dim maxHeight As Int = 100%y - 56dip
+
+	Dim scvH As Int = totalItemsH
+	Dim contentHeight As Int = 64dip + scvH + 64dip
+	Dim maxHeight As Int = 100%y - 40dip
 	Dim sheetHeight As Int = Min(contentHeight, maxHeight)
-	
 	act.AddView(pnlSheet, 0, 100%y - sheetHeight, 100%x, sheetHeight)
-	
-	' Items scroll view
-	Dim scrollHeight As Int = sheetHeight - 56dip - 8dip
-	scvItems.Initialize(scvH)
-	pnlSheet.AddView(scvItems, 0, 56dip, 100%x, scrollHeight)
+
+	pnlSheet.AddView(pnlHandle, (100%x - 42dip) / 2, 8dip, 42dip, 4dip)
+
+	lblTitle.Initialize("")
+	lblTitle.Text = FormatScriptedText(title)
+	lblTitle.TextSize = 18
+	lblTitle.TextColor = mTextColor
+	lblTitle.Typeface = Typeface.DEFAULT_BOLD
+	lblTitle.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
+	pnlSheet.AddView(lblTitle, 20dip, 16dip, 100%x - 76dip, 44dip)
+
+	Dim btnClose As Button
+	btnClose.Initialize("btnSheetClose")
+	btnClose.Text = Chr(215)
+	btnClose.TextSize = 24
+	btnClose.TextColor = mDividerColor
+	btnClose.Color = Colors.Transparent
+	pnlSheet.AddView(btnClose, 100%x - 52dip, 18dip, 44dip, 40dip)
+
+	Dim scrollHeight As Int = sheetHeight - 64dip - 60dip
+	scvItems.Initialize(Max(scvH, scrollHeight))
+	scvItems.Color = Colors.Transparent
+	pnlSheet.AddView(scvItems, 0, 64dip, 100%x, scrollHeight)
 	scvItems.Panel.Height = Max(scvH, scrollHeight)
-	
-	' Create item rows
+
 	Dim yItem As Int = 0
 	For i = 0 To itemCount - 1
 		Dim itemStr As String = items.Get(i)
@@ -120,55 +121,47 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 		Dim sec As String = ""
 		If parts.Length > 1 Then sec = parts(1).Trim
 		Dim sel As Boolean = (i = selectedIndex)
-		
-		Dim thisHeight As Int = 46dip
-		If sec.Length > 0 Then thisHeight = 50dip
-		
+
+		Dim thisHeight As Int = 54dip
+		If sec.Length > 0 Then thisHeight = 62dip
+
 		Dim pnlItem As Panel
 		pnlItem.Initialize("pnlItem")
-		pnlItem.Color = mBackgroundColor
+		If sel Then
+			Dim rr As Int = Bit.And(Bit.ShiftRight(mSelectedTextColor, 16), 0xFF)
+			Dim gg As Int = Bit.And(Bit.ShiftRight(mSelectedTextColor, 8), 0xFF)
+			Dim bb As Int = Bit.And(mSelectedTextColor, 0xFF)
+			pnlItem.Color = Colors.ARGB(30, rr, gg, bb)
+		Else
+			pnlItem.Color = Colors.Transparent
+		End If
 		pnlItem.Tag = i
 		scvItems.Panel.AddView(pnlItem, 0, yItem, 100%x, thisHeight)
-		
-		' Radio indicator
-		Dim lblRadio As Label
-		lblRadio.Initialize("pnlItem")
-		lblRadio.Tag = i
+
+		Dim lblPrim As Label
+		lblPrim.Initialize("pnlItem")
+		lblPrim.Tag = i
+		lblPrim.Text = FormatScriptedText(prim)
+		lblPrim.TextSize = 15
+		lblPrim.SingleLine = True
 		If sel Then
-			lblRadio.Text = Chr(9679) ' filled circle
-			lblRadio.TextColor = mSelectedTextColor
+			lblPrim.TextColor = mSelectedTextColor
+			lblPrim.Typeface = Typeface.DEFAULT_BOLD
 		Else
-			lblRadio.Text = Chr(9675) ' empty circle
-			lblRadio.TextColor = mDividerColor
+			lblPrim.TextColor = mTextColor
+			lblPrim.Typeface = Typeface.DEFAULT
 		End If
-		lblRadio.TextSize = 16
-		lblRadio.Gravity = Gravity.CENTER
-		pnlItem.AddView(lblRadio, 10dip, 0, 32dip, thisHeight)
-		
-		' Item text
+
 		If sec.Length > 0 Then
-			Dim lblPrim As Label
-			lblPrim.Initialize("pnlItem")
-			lblPrim.Tag = i
-			lblPrim.Text = FormatScriptedText(prim)
-			lblPrim.TextSize = 15
-			lblPrim.SingleLine = True
-			If sel Then
-				lblPrim.TextColor = mSelectedTextColor
-				lblPrim.Typeface = Typeface.DEFAULT_BOLD
-			Else
-				lblPrim.TextColor = mTextColor
-				lblPrim.Typeface = Typeface.DEFAULT
-			End If
 			lblPrim.Gravity = Gravity.CENTER_VERTICAL
-			pnlItem.AddView(lblPrim, 46dip, 4dip, 100%x - 58dip, 22dip)
-			
+			pnlItem.AddView(lblPrim, 20dip, 7dip, 100%x - 76dip, 24dip)
+
 			Dim lblSub As Label
 			lblSub.Initialize("pnlItem")
 			lblSub.Tag = i
 			lblSub.Text = FormatScriptedText(sec)
-			lblSub.TextSize = 12
-			lblSub.TextColor = Colors.ARGB(160, Bit.And(Bit.ShiftRight(mTextColor, 16), 0xFF), Bit.And(Bit.ShiftRight(mTextColor, 8), 0xFF), Bit.And(mTextColor, 0xFF))
+			lblSub.TextSize = 12.5
+			lblSub.TextColor = Colors.ARGB(170, Bit.And(Bit.ShiftRight(mTextColor, 16), 0xFF), Bit.And(Bit.ShiftRight(mTextColor, 8), 0xFF), Bit.And(mTextColor, 0xFF))
 			lblSub.Gravity = Gravity.CENTER_VERTICAL
 			lblSub.SingleLine = True
 			Dim joSub As JavaObject = lblSub
@@ -176,35 +169,43 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 			Dim ta As JavaObject
 			ta.InitializeStatic("android.text.TextUtils$TruncateAt")
 			joSub.RunMethod("setEllipsize", Array(ta.GetField("END")))
-			pnlItem.AddView(lblSub, 46dip, 25dip, 100%x - 58dip, 20dip)
+			pnlItem.AddView(lblSub, 20dip, 31dip, 100%x - 76dip, 23dip)
 		Else
-			Dim lblPrimOnly As Label
-			lblPrimOnly.Initialize("pnlItem")
-			lblPrimOnly.Tag = i
-			lblPrimOnly.Text = FormatScriptedText(prim)
-			lblPrimOnly.TextSize = 15
-			If sel Then
-				lblPrimOnly.TextColor = mSelectedTextColor
-				lblPrimOnly.Typeface = Typeface.DEFAULT_BOLD
-			Else
-				lblPrimOnly.TextColor = mTextColor
-				lblPrimOnly.Typeface = Typeface.DEFAULT
-			End If
-			lblPrimOnly.Gravity = Gravity.CENTER_VERTICAL
-			pnlItem.AddView(lblPrimOnly, 46dip, 0, 100%x - 58dip, thisHeight)
+			lblPrim.Gravity = Gravity.CENTER_VERTICAL
+			pnlItem.AddView(lblPrim, 20dip, 0, 100%x - 76dip, thisHeight)
 		End If
-		
-		' Divider line
+
+		If sel Then
+			Dim lblCheck As Label
+			lblCheck.Initialize("pnlItem")
+			lblCheck.Tag = i
+			lblCheck.Text = Chr(10003)
+			lblCheck.TextColor = mSelectedTextColor
+			lblCheck.TextSize = 22
+			lblCheck.Typeface = Typeface.DEFAULT_BOLD
+			lblCheck.Gravity = Gravity.CENTER
+			pnlItem.AddView(lblCheck, 100%x - 54dip, 0, 42dip, thisHeight)
+		End If
+
 		If i < itemCount - 1 Then
 			Dim pnlDiv As Panel
 			pnlDiv.Initialize("")
 			pnlDiv.Color = mDividerColor
-			scvItems.Panel.AddView(pnlDiv, 46dip, yItem + thisHeight - 1dip, 100%x - 46dip, 1dip)
+			scvItems.Panel.AddView(pnlDiv, 20dip, yItem + thisHeight - 1dip, 100%x - 40dip, 1dip)
 		End If
-		
 		yItem = yItem + thisHeight
 	Next
-	
+
+	Dim btnCancel As Button
+	btnCancel.Initialize("btnSheetCancel")
+	btnCancel.Text = "Cancel"
+	btnCancel.TextSize = 15
+	btnCancel.TextColor = mTextColor
+	Dim cdCancel As ColorDrawable
+	cdCancel.Initialize2(mBackgroundColor, 10dip, 1dip, mDividerColor)
+	btnCancel.Background = cdCancel
+	pnlSheet.AddView(btnCancel, 20dip, sheetHeight - 52dip, 100%x - 40dip, 42dip)
+
 	mPending = True
 	Wait For Sheet_Result(idx As Int)
 	Return idx
@@ -238,6 +239,14 @@ Public Sub getIsShowing As Boolean
 End Sub
 
 Private Sub pnlOverlay_Click
+	Dismiss
+End Sub
+
+Private Sub btnSheetClose_Click
+	Dismiss
+End Sub
+
+Private Sub btnSheetCancel_Click
 	Dismiss
 End Sub
 
