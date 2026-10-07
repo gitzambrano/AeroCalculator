@@ -720,7 +720,7 @@ sub {
   min-width: 0;
   height: 34px;
   line-height: 34px;
-  border: 1px solid var(--button-border, #d5dce6);
+  border: 1px solid var(--field-border, var(--button-border, #d5dce6));
   border-radius: 4px;
   background: var(--field-bg);
   color: var(--field-text, #111);
@@ -824,6 +824,7 @@ sub {
   border-bottom: 1px solid var(--divider);
 }
 .settings-dialog .setting-row {
+  position: relative;
   min-height: 72px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(108px, 38%);
@@ -874,6 +875,19 @@ sub {
 .setting-choice:hover,
 .settings-dialog .setting-btn:hover {
   border-color: var(--field-border, var(--button-border));
+}
+.setting-choice {
+  position: relative;
+  padding: 0 26px 0 10px;
+}
+.setting-choice::after {
+  content: "▾";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--field-text);
+  font-size: 11px;
 }
 .settings-dialog .check-row input {
   justify-self: end;
