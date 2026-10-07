@@ -149,7 +149,7 @@ for (const viewport of viewports) {
       await expect(page.locator("#options-selector-title")).toHaveText("Wind Input Type");
       await expect(page.locator("#modal-options-selector .option-item")).toHaveCount(2);
       await expect(page.locator("#modal-options-selector")).toContainText("Headwind / Crosswind");
-      await expect(page.locator("#modal-options-selector")).toContainText("WindSpeed / WindDirection");
+      await expect(page.locator("#modal-options-selector")).toContainText("Wind Speed / Wind Direction");
       await page.locator("#options-selector-cancel").click();
 
       await page.locator("#alt-unit").click();

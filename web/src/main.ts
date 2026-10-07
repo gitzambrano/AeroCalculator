@@ -635,7 +635,7 @@ const FIELD_MODAL_OPTION_LABELS: Record<string, string> = {
   Sideslip: "Sideslip Angle β",
   Drift: "Drift Angle",
   HeadWind: "Headwind / Crosswind",
-  "Wind Speed": "WindSpeed / WindDirection",
+  "Wind Speed": "Wind Speed / Wind Direction",
   "Runway Angle": "Runway Reference Angle",
   "Wind Direction": "Wind Direction",
   Sref: "Wing Reference Area",

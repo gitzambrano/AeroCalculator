@@ -2408,7 +2408,7 @@ Sub btnSpdType_Click
 	items.Add("Lift Coefficient|Aerodynamic lift coefficient")
 	items.Add("Stall-Speed Factor|Multiple of reference stall speed")
 	items.Add("Ground Speed|Speed over ground")
-	items.Add("GroundSpeed from GPS|Speed over ground from GPS")
+	items.Add("Ground Speed from GPS|Speed over ground from GPS")
 	items.Add("Dynamic Pressure|q = ½ ρ TAS²")
 	items.Add("Impact Pressure|Total pressure minus static pressure")
 	Dim record As Int = indSpdType
@@ -2642,7 +2642,7 @@ Sub btnHeadWind_Click
 	Dim items As List
 	items.Initialize
 	items.Add("Headwind / Crosswind|Runway wind components directly")
-	items.Add("WindSpeed / WindDirection|Total wind speed and direction")
+	items.Add("Wind Speed / Wind Direction|Total wind speed and direction")
 	Dim record As Int = indWindType
 	Wait For (AeroSheet.Show(Activity, items, "Wind Input Type", record)) Complete (idx As Int)
 	If idx < 0 Then Return
