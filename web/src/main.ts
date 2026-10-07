@@ -306,7 +306,7 @@ app.innerHTML = `
       <ul class="results" id="results"></ul>
     </section>
 
-    <div class="modal-overlay menu-overlay" id="main-menu">
+    <div class="modal-overlay menu-overlay" id="main-menu" aria-hidden="true">
       <div class="menu-sheet">
         <div class="modal-handle"></div>
         <div class="sheet-header">
@@ -358,7 +358,7 @@ app.innerHTML = `
         <button type="button" data-close-dialog="about-dialog">OK</button>
       </div>
     </dialog>
-    <div class="modal-overlay settings-overlay" id="settings-dialog">
+    <div class="modal-overlay settings-overlay" id="settings-dialog" aria-hidden="true">
       <div class="settings-dialog settings-sheet">
         <div class="modal-handle"></div>
         <form id="settings-form">
@@ -379,7 +379,7 @@ app.innerHTML = `
               <span class="setting-title">Extra Decimal Place</span>
               <span class="setting-desc">Increase result precision by one decimal</span>
             </div>
-            <input id="setting-extra-decimal" type="checkbox" />
+            <input id="setting-extra-decimal" type="checkbox" aria-label="Extra Decimal Place" />
           </div>
 
           <h3>OUTPUT UNITS</h3>
@@ -433,7 +433,7 @@ app.innerHTML = `
     <div id="field-tooltip" class="field-tooltip" role="tooltip" hidden></div>
 
     <!-- MODAL: CONTEXTUAL HELP & TOOLTIP WITH LATEX (RotorCalculator standard) -->
-    <div class="modal-overlay" id="modal-result-tooltip">
+    <div class="modal-overlay" id="modal-result-tooltip" aria-hidden="true">
       <div class="modal-card">
         <div class="modal-header">
           <div class="modal-title" id="result-tooltip-title">About • Parameter</div>
@@ -456,7 +456,7 @@ app.innerHTML = `
     </div>
 
     <!-- MODAL: FIELD OPTION SELECTOR (Bottom Sheet Picker) -->
-    <div class="modal-overlay" id="modal-options-selector">
+    <div class="modal-overlay" id="modal-options-selector" aria-hidden="true">
       <div class="modal-card options-modal-card">
         <div class="modal-handle"></div>
         <div class="modal-header">
@@ -473,6 +473,12 @@ app.innerHTML = `
     </div>
   </main>
 `;
+
+function setOverlayOpen(id: string, open: boolean): void {
+  const overlay = byId(id);
+  overlay.classList.toggle("open", open);
+  overlay.setAttribute("aria-hidden", open ? "false" : "true");
+}
 
 export function showContextualHelp(key: string): void {
   const item = CATALOG[key] || {
@@ -520,13 +526,13 @@ export function showContextualHelp(key: string): void {
     unitBox.style.display = "none";
   }
 
-  byId("modal-result-tooltip")?.classList.add("open");
+  setOverlayOpen("modal-result-tooltip", true);
 }
 
 (window as unknown as { showContextualHelp: typeof showContextualHelp }).showContextualHelp = showContextualHelp;
 
 const closeTooltipModal = () => {
-  byId("modal-result-tooltip")?.classList.remove("open");
+  setOverlayOpen("modal-result-tooltip", false);
 };
 byId("modal-tooltip-close")?.addEventListener("click", closeTooltipModal);
 byId("btn-result-tooltip-ok")?.addEventListener("click", closeTooltipModal);
@@ -613,7 +619,7 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
 };
 
 const closeOptionsModal = () => {
-  byId("modal-options-selector")?.classList.remove("open");
+  setOverlayOpen("modal-options-selector", false);
 };
 byId("modal-options-close")?.addEventListener("click", closeOptionsModal);
 byId("options-selector-cancel")?.addEventListener("click", closeOptionsModal);
@@ -705,7 +711,7 @@ function openFieldOptionPicker(fieldId: string): void {
     listEl.appendChild(itemEl);
   });
 
-  modal.classList.add("open");
+  setOverlayOpen("modal-options-selector", true);
 }
 
 const SETTING_OPTION_DESCRIPTIONS: Record<string, Record<string, string>> = {
@@ -717,7 +723,7 @@ const SETTING_OPTION_DESCRIPTIONS: Record<string, Record<string, string>> = {
     "Red Alert": "Crimson avionics on neutral surfaces",
     "Orange Juice": "Warm cockpit amber",
   },
-  "setting-altitude": { ft: "Feet", m: "Meters — SI unit", km: "Kilometers", nm: "Nautical miles", mi: "Statute miles", in: "Inches" },
+  "setting-altitude": { ft: "Feet", m: "Meters — SI unit", km: "Kilometers", nm: "Nautical-distance unit", mi: "Statute-distance unit", in: "Inches" },
   "setting-pressure": { mbar: "Millibar (hPa)", Pa: "Pascal — SI unit", hPa: "Hectopascal", atm: "Standard atmosphere", mmHg: "Millimeters of mercury", psi: "Pounds per square inch" },
   "setting-temperature": { "°C": "Degrees Celsius", "°F": "Degrees Fahrenheit", K: "Kelvin — absolute" },
   "setting-speed": { kt: "Knots — aviation standard", "m/s": "Meters per second — SI unit", "km/h": "Kilometers per hour", mph: "Miles per hour", "ft/s": "Feet per second" },
@@ -789,7 +795,7 @@ function openSettingOptionPicker(selectId: string, title: string): void {
     listEl.appendChild(itemEl);
   });
 
-  modal.classList.add("open");
+  setOverlayOpen("modal-options-selector", true);
 }
 
 const inputList = byId("input-list");
@@ -847,19 +853,24 @@ document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".calc-control")
 });
 
 byId("add-profile").addEventListener("click", () => openProfileEditor());
-byId("more-menu").addEventListener("click", () => {
+byId("more-menu").addEventListener("click", (event) => {
+  event.stopPropagation();
   vibrateTap();
-  byId("main-menu").classList.add("open");
+  setOverlayOpen("main-menu", true);
 });
-byId("main-menu-close")?.addEventListener("click", () => byId("main-menu").classList.remove("open"));
-byId("main-menu").addEventListener("click", (event) => {
-  if (event.target === byId("main-menu")) byId("main-menu").classList.remove("open");
+byId("main-menu-close")?.addEventListener("click", () => setOverlayOpen("main-menu", false));
+document.addEventListener("click", (event) => {
+  const menu = byId("main-menu");
+  if (!menu.classList.contains("open")) return;
+  const sheet = menu.querySelector(".menu-sheet");
+  if (sheet?.contains(event.target as Node) || event.target === byId("more-menu")) return;
+  setOverlayOpen("main-menu", false);
 });
 document.querySelectorAll<HTMLButtonElement>("[data-menu]").forEach((button) => {
   button.addEventListener("click", () => handleMenu(button.dataset.menu ?? ""));
 });
 byId("feedback-link").addEventListener("click", () => {
-  byId("main-menu").classList.remove("open");
+  setOverlayOpen("main-menu", false);
 });
 byId("profile-cancel").addEventListener("click", closeProfileEditor);
 byId("profile-save").addEventListener("click", (event) => {
@@ -872,10 +883,10 @@ byId("add-flap").addEventListener("click", showNextFlapRow);
 document.querySelectorAll<HTMLButtonElement>("[data-close-dialog]").forEach((button) => {
   button.addEventListener("click", () => (byId(button.dataset.closeDialog ?? "") as HTMLDialogElement).close());
 });
-byId("settings-cancel").addEventListener("click", () => byId("settings-dialog").classList.remove("open"));
-byId("settings-close")?.addEventListener("click", () => byId("settings-dialog").classList.remove("open"));
+byId("settings-cancel").addEventListener("click", () => setOverlayOpen("settings-dialog", false));
+byId("settings-close")?.addEventListener("click", () => setOverlayOpen("settings-dialog", false));
 byId("settings-dialog").addEventListener("click", (event) => {
-  if (event.target === byId("settings-dialog")) byId("settings-dialog").classList.remove("open");
+  if (event.target === byId("settings-dialog")) setOverlayOpen("settings-dialog", false);
 });
 document.querySelectorAll<HTMLButtonElement>(".setting-choice").forEach((button) => {
   button.addEventListener("click", () => openSettingOptionPicker(
@@ -1146,6 +1157,8 @@ function initializeHelpers(): void {
 
   document.addEventListener("pointerover", (event) => {
     if ((event as PointerEvent).pointerType === "touch") return;
+    const focused = (document.activeElement as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
+    if (focused) return;
     const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
     if (target) show(target);
   });
@@ -1194,7 +1207,7 @@ function initializeSwipeNavigation(): void {
   let tracking = false;
 
   shell.addEventListener("pointerdown", (event) => {
-    if (event.pointerType !== "touch" || document.querySelector("dialog[open]")) return;
+    if (event.pointerType !== "touch" || document.querySelector("dialog[open], .modal-overlay.open")) return;
     pointerId = event.pointerId;
     startX = event.clientX;
     startY = event.clientY;
@@ -1226,7 +1239,7 @@ function initializeSwipeNavigation(): void {
 
     event.preventDefault();
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
-    byId("main-menu").classList.remove("open");
+    setOverlayOpen("main-menu", false);
     vibrateTap();
     activatePage(PAGE_ORDER[nextIndex], dx < 0 ? "left" : "right");
   };
@@ -1675,7 +1688,7 @@ function deleteEditingProfile(): void {
 }
 
 function handleMenu(action: string): void {
-  byId("main-menu").classList.remove("open");
+  setOverlayOpen("main-menu", false);
   if (action === "clear") {
     if (confirm("Are you sure you want to clear the inputs?")) clearInputs();
   } else if (action === "import") {
@@ -1759,7 +1772,7 @@ function openSettings(): void {
   (byId("setting-angle-format") as HTMLSelectElement).value = settings.angleFormat;
   (byId("setting-extra-decimal") as HTMLInputElement).checked = settings.extraDecimal;
   syncSettingChoiceButtons();
-  byId("settings-dialog").classList.add("open");
+  setOverlayOpen("settings-dialog", true);
 }
 
 function saveOutputSettings(): void {
@@ -1775,7 +1788,7 @@ function saveOutputSettings(): void {
   };
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   applyTheme();
-  byId("settings-dialog").classList.remove("open");
+  setOverlayOpen("settings-dialog", false);
   recalculate();
 }
 
