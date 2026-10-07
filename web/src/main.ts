@@ -2360,7 +2360,7 @@ function convertInputForUnitChange(unitSelect: HTMLSelectElement): void {
   }
 
   if (converted !== null && Number.isFinite(converted)) {
-    const decimals = fieldId === "sref" && newUnit === "in²" ? 3 : 9;
+    const decimals = fieldId === "sref" ? 3 : 9;
     input.value = formatEditableNumber(converted, decimals);
   }
 }
