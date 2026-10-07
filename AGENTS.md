@@ -58,6 +58,8 @@ Enable it with:
 
 or manually dispatch the `Web` / `android-build-smoke` GitHub workflow with `full_visual_audit=true`.
 
+For an explicitly requested one-off audit from a normal push, include `[full-audit]` in the commit message. Ordinary commits remain in Quick mode.
+
 Full mode expands the viewport/state matrix and captures the complete screenshot set. On Android it exercises the detailed input-state sweep at 280, 320, 360, 393, and 411 dp in addition to the broader smoke profiles. On web it enables `web/e2e/visual_audit.spec.ts` across the configured mobile, tablet, landscape, laptop, and desktop viewports.
 
 A successful full-audit workflow is not, by itself, visual approval. When full mode is requested, inspect the generated screenshots for clipping, wrapping, alignment, spacing, inconsistent labels, modal geometry, and web/APK parity before declaring the visual audit complete.
