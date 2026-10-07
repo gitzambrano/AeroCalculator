@@ -241,6 +241,18 @@ Public Sub getIsShowing As Boolean
 	Return mPending
 End Sub
 
+Public Sub getCanSwipeDismiss As Boolean
+	If Not(mPending) Then Return False
+	If Not(scvItems.IsInitialized) Then Return True
+	Try
+		Dim jo As JavaObject = scvItems
+		Dim scrollY As Int = jo.RunMethod("getScrollY", Null)
+		Return scrollY <= 2dip
+	Catch
+		Return True
+	End Try
+End Sub
+
 Private Sub pnlSheetDrag_Touch(Action As Int, X As Float, Y As Float) As Boolean
 	Select Action
 		Case mActivity.ACTION_DOWN
