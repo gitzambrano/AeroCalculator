@@ -349,6 +349,13 @@ sub.hp-sub {
   padding-right: 5px;
 }
 .value-input::placeholder { color: var(--muted, #8a9392); }
+.speed-delta::placeholder {
+  color: var(--muted, #8a9392);
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 400;
+  opacity: 0.72;
+}
 .unit-select { text-align: center; text-align-last: center; padding-left: 8px; }
 .unit-select:disabled {
   background-image: none, none, linear-gradient(var(--button-a), var(--button-b));
