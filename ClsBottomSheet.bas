@@ -379,7 +379,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	btnClose.Initialize("pnlOverlay")
 	btnClose.Text = Chr(0xD7) ' ×
 	btnClose.TextSize = 22
-	btnClose.TextColor = mDividerColor
+	btnClose.TextColor = mTextColor
 	btnClose.Color = Colors.Transparent
 	pnlSheet.AddView(btnClose, 100%x - 48dip, 16dip, 40dip, 40dip)
 
