@@ -25,6 +25,9 @@ Sub Class_Globals
 	Private mSelectedTextColor As Int
 	Private mDividerColor As Int
 	Private mPending As Boolean
+	Private mDragStartX As Float
+	Private mDragStartY As Float
+	Private mDragTracking As Boolean
 End Sub
 
 Public Sub Initialize(callback As Object, eventName As String)
@@ -59,13 +62,13 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	act.AddView(pnlOverlay, 0, 0, 100%x, 100%y)
 
 	' Premium bottom sheet
-	pnlSheet.Initialize("pnlSheet")
+	pnlSheet.Initialize("pnlSheetDrag")
 	Dim gdSheet As GradientDrawable
 	gdSheet.Initialize("TOP_BOTTOM", Array As Int(mBackgroundColor, mBackgroundColor))
 	gdSheet.CornerRadius = 20dip
 	pnlSheet.Background = gdSheet
 
-	pnlHandle.Initialize("")
+	pnlHandle.Initialize("pnlSheetDrag")
 	Dim gdHandle As GradientDrawable
 	gdHandle.Initialize("TOP_BOTTOM", Array As Int(mDividerColor, mDividerColor))
 	gdHandle.CornerRadius = 3dip
@@ -91,7 +94,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 
 	pnlSheet.AddView(pnlHandle, (100%x - 42dip) / 2, 8dip, 42dip, 4dip)
 
-	lblTitle.Initialize("")
+	lblTitle.Initialize("pnlSheetDrag")
 	lblTitle.Text = FormatScriptedText(title)
 	lblTitle.TextSize = 18
 	lblTitle.TextColor = mTextColor
@@ -236,6 +239,39 @@ End Sub
 
 Public Sub getIsShowing As Boolean
 	Return mPending
+End Sub
+
+Private Sub pnlSheetDrag_Touch(Action As Int, X As Float, Y As Float) As Boolean
+	Select Action
+		Case mActivity.ACTION_DOWN
+			mDragStartX = X
+			mDragStartY = Y
+			mDragTracking = True
+			Return True
+		Case mActivity.ACTION_MOVE
+			If mDragTracking Then
+				Dim dy As Float = Y - mDragStartY
+				Dim dx As Float = X - mDragStartX
+				If dy > 12dip And Abs(dy) > Abs(dx) * 1.15 Then
+					' Consume a deliberate downward drag in the sheet header.
+					Return True
+				End If
+			End If
+		Case mActivity.ACTION_UP
+			If mDragTracking Then
+				mDragTracking = False
+				Dim dy As Float = Y - mDragStartY
+				Dim dx As Float = X - mDragStartX
+				If dy >= 64dip And Abs(dy) > Abs(dx) * 1.15 Then
+					Dismiss
+				End If
+			End If
+			Return True
+		Case mActivity.ACTION_CANCEL
+			mDragTracking = False
+			Return True
+	End Select
+	Return True
 End Sub
 
 Private Sub pnlOverlay_Click
