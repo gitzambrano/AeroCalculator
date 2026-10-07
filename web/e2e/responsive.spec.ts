@@ -127,6 +127,28 @@ for (const viewport of viewports) {
       const settingsSave = page.locator('#settings-form button[type="submit"]');
       await expect(settingsSave).toBeVisible();
 
+      await page.locator('[data-setting-select="setting-theme"]').click();
+      await expect(page.locator("#modal-options-selector")).toBeVisible();
+      await expect(page.locator("#options-selector-cancel")).toBeVisible();
+      const optionDescriptions = await page.locator("#modal-options-selector .option-desc").evaluateAll((elements) =>
+        elements.map((el) => {
+          const node = el as HTMLElement;
+          const style = getComputedStyle(node);
+          return {
+            whiteSpace: style.whiteSpace,
+            clientHeight: node.clientHeight,
+            scrollHeight: node.scrollHeight,
+          };
+        })
+      );
+      expect(optionDescriptions.length).toBeGreaterThan(0);
+      expect(optionDescriptions.every((item) =>
+        item.whiteSpace === "nowrap" && item.scrollHeight <= item.clientHeight + 1
+      )).toBe(true);
+      await assertNoHorizontalOverflow(page);
+      await assertVisibleInteractiveElementsInsideViewport(page);
+      await page.locator("#options-selector-cancel").click();
+
       if (viewport.width <= 430) {
         const scrollState = await page.locator(".settings-body").evaluate((el) => {
           const body = el as HTMLElement;
@@ -141,10 +163,6 @@ for (const viewport of viewports) {
         expect(scrollState.scrollTop).toBeGreaterThan(0);
         await expect(settingsSave).toBeVisible();
 
-        await page.locator('[data-setting-select="setting-theme"]').click();
-        await expect(page.locator("#modal-options-selector")).toBeVisible();
-        await expect(page.locator("#options-selector-cancel")).toBeVisible();
-        await page.locator("#options-selector-cancel").click();
         await expect(settingsSave).toBeVisible();
       }
 
