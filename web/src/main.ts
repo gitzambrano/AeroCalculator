@@ -1276,7 +1276,11 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "EAS") return narrow340 ? "EAS" : label;
   if (value === "Sref") return narrow340 ? "S<sub>ref</sub>" : label;
   if (value === "cref") return narrow340 ? "c<sub>ref</sub>" : label;
-  if (value === "CLmax") return narrow340 ? "C<sub>L,max</sub>" : label;
+  if (value === "CLmax") return "C<sub>L,max</sub>";
+  if (value.startsWith("Flap ")) {
+    const flapNum = value.slice(5);
+    return narrow340 ? `C<sub>L,max</sub> F${flapNum}` : `Flap ${flapNum} - C<sub>L,max</sub>`;
+  }
   if (value === "Track") return narrow340 ? "Track" : label;
   if (value === "Heading") return narrow340 ? "Heading" : label;
   if (value === "Sideslip") return narrow340 ? "Sideslip" : label;
