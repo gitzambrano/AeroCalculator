@@ -350,6 +350,7 @@ sub.hp-sub {
 .speed-row.vs-factor-mode .speed-delta-label,
 .speed-row.vs-factor-mode .speed-delta {
   width: 100%;
+  min-width: 0;
   height: 100%;
 }
 .speed-row.vs-factor-mode .speed-delta {
@@ -599,7 +600,7 @@ sub.hp-sub {
   background: transparent !important;
   border-left: none !important;
   border-right: none !important;
-  font-size: 19px;
+  font-size: 20px;
   color: var(--field-text, var(--title-dark));
   opacity: 0.9;
 }
@@ -737,6 +738,7 @@ sub.hp-sub {
 .editor-toolbar button + button { border-left: 1px solid white; }
 .editor-scroll {
   overflow-y: auto;
+  max-height: calc(100dvh - 82px);
   flex: 1 1 auto;
   min-height: 0;
   background: var(--input-bg);
@@ -1314,7 +1316,8 @@ sub.hp-sub {
   .setting-title { font-size: 13px; }
   .setting-desc { font-size: 11px; }
   .weight-grid, .flap-grid { grid-template-columns: 1fr; }
-  .editor-row { grid-template-columns: 22% minmax(0, 1fr) 22%; }
+  .editor-row { grid-template-columns: 24% minmax(0, 1fr) 20%; }
+  .editor-row > label { font-size: 12px; }
   .airplane-list-row { grid-template-columns: 38px minmax(0, 1fr) 38px 38px 38px; }
   .airplane-name-button { padding-left: 6px; padding-right: 6px; }
   .airplane-duplicate-button, .airplane-edit-button, .airplane-delete-button { font-size: 18px; }
