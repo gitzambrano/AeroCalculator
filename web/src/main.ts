@@ -1262,6 +1262,7 @@ function initializeSwipeNavigation(): void {
 function responsiveOptionLabel(value: string, label: string): string {
   // Match the Android UI: keep descriptive labels on normal phones and
   // abbreviate only on genuinely narrow layouts.
+  const mobile430 = window.matchMedia("(max-width: 430px)").matches;
   const narrow340 = window.matchMedia("(max-width: 340px)").matches;
   const narrow300 = window.matchMedia("(max-width: 300px)").matches;
 
@@ -1278,7 +1279,7 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "Heading") return narrow340 ? "Heading" : label;
   if (value === "Sideslip") return narrow340 ? "Sideslip" : label;
   if (value === "Drift") return narrow340 ? "Drift" : label;
-  if (value === "Runway Angle") return narrow340 ? "Rnwy Angle" : label;
+  if (value === "Runway Angle") return mobile430 ? "Rnwy Angle" : label;
 
   if (value === "HeadWind") return narrow300 ? "HeadWnd" : label;
   if (value === "CrossWind") return narrow300 ? "CrossWnd" : label;
@@ -1289,7 +1290,7 @@ function responsiveOptionLabel(value: string, label: string): string {
 
   // These compact mathematical labels match Android semantics and remain useful.
   if (value === "Vs Factor") return narrow340 ? "V<sub>s</sub> Fact" : label;
-  if (value === "Ground Speed") return narrow340 ? "Grnd Speed" : label;
+  if (value === "Ground Speed") return mobile430 ? "Grnd Speed" : label;
   if (value === "Qdyn") return narrow340 ? "q" : label;
   if (value === "Qc") return narrow340 ? "q<sub>c</sub>" : label;
   if (value === "NzTurn") return narrow340 ? "N<sub>z</sub>" : label;
