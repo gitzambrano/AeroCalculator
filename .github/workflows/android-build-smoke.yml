@@ -129,7 +129,7 @@ jobs:
 
       - name: Boot emulator and exercise screens and features
         env:
-          AEROCALC_FULL_VISUAL_AUDIT: ${{ ((github.event_name == 'workflow_dispatch' && inputs.full_visual_audit) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[full-audit]'))) && '1' || '0' }}
+          AEROCALC_FULL_VISUAL_AUDIT: ${{ github.event_name == 'workflow_dispatch' && inputs.full_visual_audit && '1' || '0' }}
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
