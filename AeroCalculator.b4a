@@ -415,23 +415,23 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlTitle = Colors.RGB(140, 90, 43)       ' #8C5A2B Warm leather
 		ColorTitleText = Colors.White
 		ColorPnlLine = Colors.White
-		ColorPnlLine2 = Colors.RGB(203, 187, 168)     ' #CBBBA8 Control border
+		ColorPnlLine2 = Colors.RGB(205, 175, 143)     ' #CDAF8F center-field border
 		ColorPnlLine3 = Colors.RGB(229, 217, 202)     ' #E5D9CA Divider
 		ColorBut3 = Colors.Transparent
 		ColorBut4 = Colors.Transparent
 		ColorButText2 = Colors.RGB(245, 239, 235)
 		ColorButText3 = Colors.White
-		ColorBut1 = Colors.RGB(242, 236, 227)         ' #F2ECE3
-		ColorBut2 = Colors.RGB(238, 231, 221)         ' #EEE7DD subtle gradient
+		ColorBut1 = Colors.RGB(248, 244, 238)         ' #F8F4EE raised control
+		ColorBut2 = Colors.RGB(244, 238, 231)         ' #F4EEE7 subtle gradient
 		ColorButText1 = Colors.RGB(48, 40, 32)        ' #302820
-		ColorEdt = Colors.RGB(251, 248, 243)          ' #FBF8F3 Field
+		ColorEdt = Colors.RGB(251, 246, 239)          ' #FBF6EF center field
 		ColorEdtText = Colors.RGB(140, 90, 43)        ' #8C5A2B
 		ColorEdtHint = Colors.RGB(122, 110, 95)       ' #7A6E5F
-		ColorPnlInput1 = Colors.RGB(250, 248, 244)    ' #FAF8F4
-		ColorPnlInput2 = Colors.RGB(244, 240, 234)    ' #F4F0EA
-		ColorPnlInput3 = Colors.RGB(250, 248, 244)
-		ColorPnlInput4 = Colors.RGB(244, 240, 234)
-		ColorPnlInput5 = Colors.RGB(234, 229, 221)    ' #EAE5DD Canvas
+		ColorPnlInput1 = Colors.RGB(237, 231, 222)    ' #EDE7DE Row 1
+		ColorPnlInput2 = Colors.RGB(241, 236, 229)    ' #F1ECE5 Row 2
+		ColorPnlInput3 = Colors.RGB(240, 234, 226)
+		ColorPnlInput4 = Colors.RGB(241, 236, 229)
+		ColorPnlInput5 = Colors.RGB(228, 222, 213)    ' #E4DED5 Canvas
 '	Else If manager.GetString("theme").CompareTo("Green Peace")=0 Then
 '			ColorPnlTitle =  Colors.RGB(0, 150, 136)
 '			ColorTitleText = Colors.White
@@ -456,11 +456,11 @@ Sub Activity_Create(FirstTime As Boolean)
 '			ColorPnlInput5 = Colors.RGB(222, 242, 241)
 	Else If manager.GetString("theme").CompareTo("Green Peace")=0 Then
 		ColorButPressed = Colors.RGB(0, 105, 120)     ' preserve existing pressed state
-		ColorButBorder = Colors.Transparent            ' preserve existing rendering
+		ColorButBorder = Colors.RGB(213, 220, 230)     ' #D5DCE6 subtle selector border
 		ColorPnlTitle =  Colors.RGB(0, 105, 120)       ' #006978 Deep Teal Cyan
 		ColorTitleText = Colors.White
 		ColorPnlLine =   Colors.White
-		ColorPnlLine2 =  Colors.RGB(213, 220, 230)     ' #D5DCE6
+		ColorPnlLine2 =  Colors.RGB(155, 196, 201)     ' #9BC4C9 soft teal center-field border
 		ColorPnlLine3 =  Colors.RGB(227, 232, 239)     ' #E3E8EF
 		ColorBut3 =      Colors.Transparent
 		ColorBut4 = 	 Colors.Transparent
@@ -472,8 +472,8 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorEdt =       Colors.RGB(234, 245, 247)     ' #EAF5F7 Field Fill
 		ColorEdtText =   Colors.RGB(0, 105, 120)       ' #006978 Field Text
 		ColorEdtHint =   Colors.RGB(90, 102, 120)      ' #5A6678
-		ColorPnlInput1 = Colors.RGB(247, 249, 252)     ' #F7F9FC Row 1
-		ColorPnlInput2 = Colors.White                  ' #FFFFFF Row 2
+		ColorPnlInput1 = Colors.RGB(243, 246, 248)     ' #F3F6F8 Row 1
+		ColorPnlInput2 = Colors.RGB(246, 248, 250)     ' #F6F8FA Row 2
 		ColorPnlInput3 = Colors.RGB(234, 245, 247)
 		ColorPnlInput4 = Colors.RGB(247, 249, 252)
 		ColorPnlInput5 = Colors.RGB(241, 244, 248)     ' #F1F4F8 Canvas	
@@ -483,7 +483,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlTitle =  Colors.RGB(13, 18, 27)        ' #0D121B Header
 		ColorTitleText = Colors.White
 		ColorPnlLine =   Colors.RGB(0, 229, 255)       ' #00E5FF Aero Cyan indicator!
-		ColorPnlLine2 =  Colors.RGB(30, 39, 56)        ' #1E2738
+		ColorPnlLine2 =  Colors.RGB(20, 80, 93)        ' #14505D subtle cyan center-field border
 		ColorPnlLine3 =  Colors.RGB(23, 30, 43)        ' #171E2B
 		ColorBut3 =      Colors.Transparent
 		ColorBut4 = 	 Colors.Transparent
@@ -506,7 +506,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlTitle =  Colors.RGB(11, 23, 48)        ' #0B1730 Navy Header
 		ColorTitleText = Colors.White
 		ColorPnlLine =   Colors.RGB(34, 211, 238)      ' #22D3EE Electric Cyan
-		ColorPnlLine2 = Colors.RGB(42, 71, 118)       ' #2A4776 clearer control border
+		ColorPnlLine2 = Colors.RGB(36, 98, 112)       ' #246270 cyan center-field border
 		ColorPnlLine3 =  Colors.RGB(38, 59, 99)        ' #263B63
 		ColorBut3 =      Colors.Transparent
 		ColorBut4 = 	 Colors.Transparent
@@ -529,46 +529,46 @@ Sub Activity_Create(FirstTime As Boolean)
 		ColorPnlTitle = Colors.RGB(139, 30, 36)        ' #8B1E24 Crimson
 		ColorTitleText = Colors.White
 		ColorPnlLine = Colors.White
-		ColorPnlLine2 = Colors.RGB(205, 174, 177)      ' #CDAEB1 Control border
+		ColorPnlLine2 = Colors.RGB(213, 163, 167)      ' #D5A3A7 center-field border
 		ColorPnlLine3 = Colors.RGB(229, 216, 218)      ' #E5D8DA Divider
 		ColorBut3 = Colors.Transparent
 		ColorBut4 = Colors.Transparent
 		ColorButText2 = Colors.RGB(248, 237, 239)
 		ColorButText3 = Colors.White
-		ColorBut1 = Colors.RGB(245, 239, 239)          ' #F5EFEF
-		ColorBut2 = Colors.RGB(241, 233, 233)          ' #F1E9E9 subtle gradient
+		ColorBut1 = Colors.RGB(248, 243, 243)          ' #F8F3F3 raised control
+		ColorBut2 = Colors.RGB(245, 238, 238)          ' #F5EEEE subtle gradient
 		ColorButText1 = Colors.RGB(48, 33, 35)         ' #302123
-		ColorEdt = Colors.RGB(252, 249, 249)           ' #FCF9F9 Field
+		ColorEdt = Colors.RGB(251, 247, 247)           ' #FBF7F7 center field
 		ColorEdtText = Colors.RGB(168, 33, 39)         ' #A82127
 		ColorEdtHint = Colors.RGB(140, 114, 117)       ' #8C7275
-		ColorPnlInput1 = Colors.RGB(250, 248, 248)     ' #FAF8F8
-		ColorPnlInput2 = Colors.RGB(245, 241, 241)     ' #F5F1F1
-		ColorPnlInput3 = Colors.RGB(250, 248, 248)
-		ColorPnlInput4 = Colors.RGB(245, 241, 241)
-		ColorPnlInput5 = Colors.RGB(238, 234, 234)     ' #EEEAEA Canvas
+		ColorPnlInput1 = Colors.RGB(238, 232, 233)     ' #EEE8E9 Row 1
+		ColorPnlInput2 = Colors.RGB(242, 237, 238)     ' #F2EDEE Row 2
+		ColorPnlInput3 = Colors.RGB(238, 232, 233)
+		ColorPnlInput4 = Colors.RGB(242, 237, 238)
+		ColorPnlInput5 = Colors.RGB(230, 225, 226)     ' #E6E1E2 Canvas
 	Else If manager.GetString("theme").CompareTo("Orange Juice")=0 Then
 		ColorButPressed = Colors.RGB(232, 222, 209)    ' #E8DED1
 		ColorButBorder = Colors.RGB(210, 189, 164)     ' #D2BDA4
 		ColorPnlTitle = Colors.RGB(181, 83, 24)        ' #B55318 Burnt orange
 		ColorTitleText = Colors.White
 		ColorPnlLine = Colors.White
-		ColorPnlLine2 = Colors.RGB(210, 189, 164)      ' #D2BDA4 Control border
+		ColorPnlLine2 = Colors.RGB(215, 177, 140)      ' #D7B18C center-field border
 		ColorPnlLine3 = Colors.RGB(229, 217, 202)      ' #E5D9CA Divider
 		ColorBut3 = Colors.Transparent
 		ColorBut4 = Colors.Transparent
 		ColorButText2 = Colors.RGB(250, 240, 229)
 		ColorButText3 = Colors.White
-		ColorBut1 = Colors.RGB(246, 241, 233)          ' #F6F1E9
-		ColorBut2 = Colors.RGB(241, 234, 224)          ' #F1EAE0 subtle gradient
+		ColorBut1 = Colors.RGB(250, 246, 240)          ' #FAF6F0 raised control
+		ColorBut2 = Colors.RGB(246, 240, 232)          ' #F6F0E8 subtle gradient
 		ColorButText1 = Colors.RGB(52, 42, 35)         ' #342A23
-		ColorEdt = Colors.RGB(252, 249, 245)           ' #FCF9F5 Field
+		ColorEdt = Colors.RGB(252, 247, 241)           ' #FCF7F1 center field
 		ColorEdtText = Colors.RGB(188, 88, 24)         ' #BC5818
 		ColorEdtHint = Colors.RGB(138, 117, 99)        ' #8A7563
-		ColorPnlInput1 = Colors.RGB(250, 248, 244)     ' #FAF8F4
-		ColorPnlInput2 = Colors.RGB(245, 241, 235)     ' #F5F1EB
+		ColorPnlInput1 = Colors.RGB(240, 234, 226)     ' #F0EAE2 Row 1
+		ColorPnlInput2 = Colors.RGB(243, 238, 232)     ' #F3EEE8 Row 2
 		ColorPnlInput3 = Colors.RGB(250, 248, 244)
-		ColorPnlInput4 = Colors.RGB(245, 241, 235)
-		ColorPnlInput5 = Colors.RGB(238, 234, 228)     ' #EEEAE4 Canvas
+		ColorPnlInput4 = Colors.RGB(243, 238, 232)
+		ColorPnlInput5 = Colors.RGB(231, 225, 217)     ' #E7E1D9 Canvas
 	End If
 
 	'Color shown behind transparent system bars on edge-to-edge Android versions.
@@ -576,8 +576,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	root.Color = ColorPnlInput5
 
 	'Tamanho e numero de paineis de inputs
-	ib = 8dip
-	tb = 40dip
+	ib = 6dip
+	tb = 44dip
 	Dim PanelNb As Int
 	PanelNb = 14
 
@@ -670,9 +670,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		    btnAltType.Initialize("btnAltType")
 			pnlInput.AddView(btnAltType, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "p", "")
+				btnAltType.Text = MakePressureAltitude("Altitude H")
 			Else
-				btnAltType.Text = MakeSubscript("H", "p", "")
+				btnAltType.Text = MakePressureAltitude("H")
 			End If
 			btnAltType.TextSize = 15*sc
 			btnAltType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
@@ -2599,9 +2599,9 @@ Sub AltType_Click
 	Else If indAltType=0 Or indAltType=1 Or indAltType=2 Then
 		If indAltType=0 Then
 			If xx > 340dip Or sc > 1 Then
-				btnAltType.Text = MakeSubscript("Altitude H", "p", "")
+				btnAltType.Text = MakePressureAltitude("Altitude H")
 			Else
-				btnAltType.Text = MakeSubscript("H", "p", "")
+				btnAltType.Text = MakePressureAltitude("H")
 			End If
 		Else If indAltType=1 Then
 			If xx > 340dip Or sc > 1 Then
@@ -4101,7 +4101,7 @@ Sub WriteText
 	' Escrever Outputs nos Paineis
 	Select i
 	Case 0
-		lblVar.Text = MakeSubscript("Pressure Altitude H", "p", "")
+		lblVar.Text = MakePressureAltitude("Pressure Altitude H")
 		lblRes.Text = NumberFormat2(Hp_ft * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hp_ft) Or IsInf(Hp_ft) Then
 			lblRes.Text = "----"
@@ -4481,15 +4481,30 @@ Sub GPS_UserEnabled (Enabled As Boolean)
 	End If
 End Sub
 
-Sub pnlTransparent_Touch(Action As Int, X As Float, Y As Float) As Boolean	
+Sub pnlTransparent_Touch(Action As Int, X As Float, Y As Float) As Boolean
 	Select Action
 	Case Activity.ACTION_DOWN
 		pnlTransparent.Color = ColorPnlInput2
-		PopupMenu.Show
 	Case Activity.ACTION_UP
 		pnlTransparent.Color = Colors.Transparent
+		CallSubDelayed(Me, "OpenMainMenuSheet")
 	End Select
 	Return True
+End Sub
+
+Private Sub OpenMainMenuSheet
+	Dim items As List
+	items.Initialize
+	items.Add("Clear Inputs|Reset all flight-condition entries")
+	items.Add("Import Airplanes|Restore or merge aircraft profiles")
+	items.Add("Export Airplanes|Back up all saved aircraft profiles")
+	items.Add("Settings|Display, units, precision and aircraft data")
+	items.Add("Send Feedback|Rate the app or send feedback by e-mail")
+	items.Add("About|Version, author and credits")
+	Wait For (AeroSheet.Show(Activity, items, "Menu", -1)) Complete (idx As Int)
+	If idx < 0 Then Return
+	Dim actions() As Int = Array As Int(2, 3, 4, 0, 5, 1)
+	MenuCall(actions(idx))
 End Sub
 
 Sub pnlTransparent1_Touch(Action As Int, X As Float, Y As Float) As Boolean
@@ -4764,6 +4779,13 @@ Private Sub MakeSubscript(baseText As String, subText As String, extraText As St
 	Return cs
 End Sub
 
+Private Sub MakePressureAltitude(baseText As String) As CSBuilder
+	' The descender of p needs slightly more clearance than other subscripts.
+	Dim cs As CSBuilder
+	cs.Initialize.Append(baseText).VerticalAlign(3dip).RelativeSize(0.68).Append("p").Pop.Pop
+	Return cs
+End Sub
+
 Public Sub VibrateTap
 	Try
 		Dim jo As JavaObject = Activity
@@ -4846,85 +4868,95 @@ End Sub
 Private Sub OpenSettingsPopup
 	If SettingsPopupOpen Then CloseSettingsPopup
 	pnlSettingsPopup.Initialize("pnlSettingsPopup")
-	pnlSettingsPopup.Color = 0x99000000
+	pnlSettingsPopup.Color = Colors.ARGB(178, 0, 0, 0)
 	root.AddView(pnlSettingsPopup, 0, 0, root.Width, root.Height)
 	SettingsPopupOpen = True
 	pnlSettingsPopup.BringToFront
 
 	Dim cardW As Int = root.Width
-	Dim cardH As Int = root.Height
+	Dim cardH As Int = Min(root.Height - 24dip, 760dip)
 	Dim cardLeft As Int = 0
-	Dim cardTop As Int = 0
+	Dim cardTop As Int = root.Height - cardH
 	Dim rowH As Int = 80dip
 	Dim hdrH As Int = 40dip
-	Dim nRows As Int = 8
-	Dim nHdr As Int = 2
-	Dim contentH As Int = 10dip + nHdr * hdrH + nRows * rowH + 12dip
+	Dim nRows As Int = 10
+	Dim nHdr As Int = 3
+	Dim contentH As Int = 12dip + nHdr * hdrH + nRows * rowH + 20dip
+
 	Dim card As Panel
 	card.Initialize("")
-	card.Color = ColorPnlInput2
+	Dim gdCard As GradientDrawable
+	gdCard.Initialize("TOP_BOTTOM", Array As Int(ColorPnlInput5, ColorPnlInput5))
+	gdCard.CornerRadius = 20dip
+	card.Background = gdCard
 	pnlSettingsPopup.AddView(card, cardLeft, cardTop, cardW, cardH)
 
-	' Title bar
+	' Drag handle
+	Dim handle As Panel
+	handle.Initialize("")
+	Dim gdHandle As GradientDrawable
+	gdHandle.Initialize("TOP_BOTTOM", Array As Int(ColorPnlLine2, ColorPnlLine2))
+	gdHandle.CornerRadius = 3dip
+	handle.Background = gdHandle
+	card.AddView(handle, (cardW - 42dip) / 2, 8dip, 42dip, 4dip)
+
+	' Neutral sheet header
 	Dim titleBar As Panel
 	titleBar.Initialize("")
-	titleBar.Color = ColorPnlTitle
-	card.AddView(titleBar, 0, 0, cardW, 52dip)
+	titleBar.Color = Colors.Transparent
+	card.AddView(titleBar, 0, 16dip, cardW, 52dip)
 	Dim lblTitle As Label
 	lblTitle.Initialize("")
-	lblTitle.Text = "SETTINGS"
-	lblTitle.TextColor = ColorTitleText
+	lblTitle.Text = "Settings"
+	lblTitle.TextColor = ColorButText1
 	lblTitle.Typeface = Typeface.DEFAULT_BOLD
-	lblTitle.TextSize = 17
-	SetLetterSpacing(lblTitle, 0.08)
+	lblTitle.TextSize = 18
 	lblTitle.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
-	titleBar.AddView(lblTitle, 16dip, 0, cardW - 72dip, 52dip)
+	titleBar.AddView(lblTitle, 20dip, 0, cardW - 76dip, 52dip)
 	Dim btnClose As Button
 	btnClose.Initialize("btnCloseSettings")
-	btnClose.Text = Chr(215) ' x
-	btnClose.TextColor = ColorTitleText
-	btnClose.TextSize = 20
+	btnClose.Text = Chr(215)
+	btnClose.TextColor = ColorEdtHint
+	btnClose.TextSize = 24
 	btnClose.Color = Colors.Transparent
-	titleBar.AddView(btnClose, cardW - 52dip, 2dip, 48dip, 48dip)
+	titleBar.AddView(btnClose, cardW - 54dip, 2dip, 48dip, 48dip)
 
-	' Scrollable content
+	' Scrollable, explanatory settings rows
 	Dim scv As ScrollView
 	scv.Initialize(contentH)
-	card.AddView(scv, 0, 52dip, cardW, cardH - 52dip)
+	scv.Color = Colors.Transparent
+	card.AddView(scv, 0, 68dip, cardW, cardH - 68dip)
 	Dim y As Int = 10dip
 
-	' --- DISPLAY ---
 	y = SettingsAddHeader(scv.Panel, cardW, y, "DISPLAY")
-	btnSettingTheme = SettingsAddRow(scv.Panel, cardW, y, rowH, "Theme", "Visual color palette", "btnSettingTheme")
+	btnSettingTheme = SettingsAddRow(scv.Panel, cardW, y, rowH, "Theme", "Visual style and color palette", "btnSettingTheme")
 	y = y + rowH
 
-	' --- OUTPUT UNITS ---
 	y = SettingsAddHeader(scv.Panel, cardW, y, "OUTPUT UNITS")
-	btnSettingAltUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Altitude Unit", "Unit for altitude in results", "btnSettingAltUnit")
+	btnSettingAltUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Altitude Unit", "Unit used for altitude in calculated outputs", "btnSettingAltUnit")
 	y = y + rowH
-	btnSettingPressureUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Pressure Unit", "Unit for pressure in results", "btnSettingPressureUnit")
+	btnSettingPressureUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Pressure Unit", "Unit used for atmospheric pressure in outputs", "btnSettingPressureUnit")
 	y = y + rowH
-	btnSettingTempUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Temperature Unit", "Unit for temperature in results", "btnSettingTempUnit")
+	btnSettingTempUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Temperature Unit", "Unit used for temperature in outputs", "btnSettingTempUnit")
 	y = y + rowH
-	btnSettingSpdUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Speed Unit", "Unit for speed in results", "btnSettingSpdUnit")
+	btnSettingSpdUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Speed Unit", "Unit used for airspeed and velocity outputs", "btnSettingSpdUnit")
 	y = y + rowH
-	btnSettingAngleUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Angle Unit", "Unit for angles in results", "btnSettingAngleUnit")
+	btnSettingAngleUnit = SettingsAddRow(scv.Panel, cardW, y, rowH, "Angle Unit", "Degrees or radians for angular outputs", "btnSettingAngleUnit")
 	y = y + rowH
-	btnSettingAngleFmt = SettingsAddRow(scv.Panel, cardW, y, rowH, "Angle Interval", "Convention for angle range", "btnSettingAngleFmt")
+	btnSettingAngleFmt = SettingsAddRow(scv.Panel, cardW, y, rowH, "Angle Interval", "Positive or signed angular convention", "btnSettingAngleFmt")
 	y = y + rowH
-	btnSettingFormat = SettingsAddRow(scv.Panel, cardW, y, rowH, "Number Format", "Decimal places in results", "btnSettingFormat")
+	btnSettingFormat = SettingsAddRow(scv.Panel, cardW, y, rowH, "Number Format", "Standard precision or one extra decimal place", "btnSettingFormat")
 	y = y + rowH
 
-	' --- AIRCRAFT DATA ---
 	y = SettingsAddHeader(scv.Panel, cardW, y, "AIRCRAFT DATA")
-	Dim btnImport As Button = SettingsAddRow(scv.Panel, cardW, y, rowH, "Import Airplanes", "Restore or merge a backup file", "btnSettingImport")
+	Dim btnImport As Button = SettingsAddRow(scv.Panel, cardW, y, rowH, "Import Airplanes", "Restore or merge aircraft profiles from a backup", "btnSettingImport")
 	btnImport.Text = "IMPORT"
 	y = y + rowH
 	Dim btnExport As Button = SettingsAddRow(scv.Panel, cardW, y, rowH, "Export Airplanes", "Back up all saved aircraft profiles", "btnSettingExport")
 	btnExport.Text = "EXPORT"
 	y = y + rowH
 
-	scv.Panel.Height = y + 12dip
+	scv.Panel.Height = y + 16dip
 	RefreshSettingsButtons
 End Sub
 
