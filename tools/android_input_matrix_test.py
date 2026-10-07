@@ -108,15 +108,16 @@ def reachable(dirp,candidates):
 
 def visible_bounds_ok(root):
  ns=nodes(root)
+ w,h=display_size()
  valid=[bounds(n.attrib.get("bounds","")) for n in ns]
  valid=[b for b in valid if b and b[2]>b[0] and b[3]>b[1]]
  if not valid:return False,[("empty",None)]
- left=min(b[0] for b in valid); right=max(b[2] for b in valid)
  bad=[]
  for n in ns:
   b=bounds(n.attrib.get("bounds",""))
   if not b or b[2]<=b[0] or b[3]<=b[1]: continue
-  if b[0]<left-1 or b[2]>right+1: bad.append((n.attrib.get("text",""),b))
+  if b[0] < -1 or b[2] > w+1:
+   bad.append((n.attrib.get("text",""),b))
  return not bad,bad[:10]
 
 def record(profile,state,root):
