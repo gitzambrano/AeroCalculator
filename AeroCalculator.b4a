@@ -1278,6 +1278,12 @@ Public Sub GlobalScreenSwipe(Direction As Int)
 	pager.GotoPage(target, True)
 End Sub
 
+Public Sub GlobalScreenSwipeDown
+	If Not(AeroSheet.IsInitialized) Then Return
+	If Not(AeroSheet.IsShowing) Then Return
+	If AeroSheet.CanSwipeDismiss Then AeroSheet.Dismiss
+End Sub
+
 Sub Activity_Resume
 	
 	If manager.GetUpdatedKeys.Size>0 Then
@@ -3643,6 +3649,8 @@ Sub Calculate
 	End If
 	
 	' Criando Panels de Outputs
+	Dim resultRightPad As Int = 8dip
+	If xx < 280dip Then resultRightPad = 0
 	For i=0 To PanelNb1-1
 		Dim pnltest As Panel
 		Dim pnlline As Panel
@@ -3664,7 +3672,7 @@ Sub Calculate
 		lblVar.TextColor = ColorButText1
 		lblVar.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
 	    lblRes.Initialize("lblRes")
-	    pnltest.AddView(lblRes, 54%x, 0dip, 46%x - 8dip, PanelHeight1)
+	    pnltest.AddView(lblRes, 54%x, 0dip, 46%x - resultRightPad, PanelHeight1)
 	    lblRes.Tag=i
 	    lblRes.TextSize=15
 		lblRes.Typeface = Typeface.DEFAULT_BOLD
@@ -5954,6 +5962,14 @@ public static boolean processGlobalSwipe(android.view.MotionEvent event) {
                         android.util.Log.e("AERO_SWIPE", "callback error: " + ex.getMessage(), ex);
                     }
                     return true;
+                }
+                boolean downSwipe = dy >= 64f * density && Math.abs(dy) > Math.abs(dx) * 1.2f;
+                if (downSwipe) {
+                    try {
+                        processBA.raiseEvent2(null, true, "globalscreenswipedown", false);
+                    } catch (Exception ex) {
+                        android.util.Log.e("AERO_SWIPE", "down callback error: " + ex.getMessage(), ex);
+                    }
                 }
                 return false;
             case android.view.MotionEvent.ACTION_CANCEL:
