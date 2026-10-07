@@ -4,11 +4,12 @@ import { join } from "node:path";
 
 const FULL_VISUAL_AUDIT = process.env.AEROCALC_FULL_VISUAL_AUDIT === "1";
 
-const cases = [
+const allCases = [
   { name: "mobile-280", width: 280, height: 653 },
   { name: "mobile-320", width: 320, height: 568 },
   { name: "mobile-360", width: 360, height: 800 },
   { name: "mobile-390", width: 390, height: 844 },
+  { name: "mobile-411", width: 411, height: 915 },
   { name: "mobile-430", width: 430, height: 932 },
   { name: "mobile-480", width: 480, height: 960 },
   { name: "tablet-768", width: 768, height: 1024 },
@@ -16,6 +17,9 @@ const cases = [
   { name: "desktop-1440", width: 1440, height: 900 },
   { name: "desktop-1920", width: 1920, height: 1080 },
 ] as const;
+
+const quickVisualNames = new Set(["mobile-280", "mobile-320", "mobile-360", "mobile-390", "mobile-411"]);
+const cases = FULL_VISUAL_AUDIT ? allCases : allCases.filter((item) => quickVisualNames.has(item.name));
 
 async function shot(page: Page, dir: string, name: string, fullPage = false): Promise<void> {
   // Let bottom-sheet/modal transitions settle so audit artifacts represent the final UI, not a mid-animation frame.
@@ -41,7 +45,6 @@ async function baseline(page: Page): Promise<void> {
 
 for (const viewport of cases) {
   test(`visual audit ${viewport.name}`, async ({ browser }) => {
-    test.skip(!FULL_VISUAL_AUDIT, "Full visual audit is opt-in.");
     const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height } });
     const page = await context.newPage();
     const dir = join("visual-audit", viewport.name);
@@ -51,6 +54,28 @@ for (const viewport of cases) {
     await expect(page.locator(".app-shell")).toBeVisible();
 
     await shot(page, dir, "01-inputs-viewport");
+
+    if (!FULL_VISUAL_AUDIT) {
+      await page.locator("#temp-type").selectOption("OAT");
+      await page.locator("#alt-type").selectOption("P");
+      await page.locator("#spd-type").selectOption("Qdyn");
+      await page.locator("#headWind-type").selectOption("Wind Speed");
+      await shot(page, dir, "02-fallback-labels");
+
+      await page.locator("#spd-type").selectOption("Ground Speed");
+      await shot(page, dir, "03-ground-speed");
+
+      await page.locator("#spd-type").selectOption("Vs Factor");
+      await page.locator("#spd-value").fill("1.3");
+      await page.locator("#spdDelta-value").fill("10");
+      await shot(page, dir, "04-vs-factor");
+
+      await page.getByRole("button", { name: "CALCULATE" }).click();
+      await shot(page, dir, "05-outputs");
+      await context.close();
+      return;
+    }
+
     const speedSelector = page.locator('[data-field="spd"] .field-select-wrap');
     if (viewport.width <= 430) {
       // Mobile parity with the APK: long-press opens contextual help.
