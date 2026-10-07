@@ -267,7 +267,7 @@ Private Sub pnlSheetDrag_Touch(Action As Int, X As Float, Y As Float) As Boolean
 				End If
 			End If
 			Return True
-		Case mActivity.ACTION_CANCEL
+		Case 3 ' MotionEvent.ACTION_CANCEL
 			mDragTracking = False
 			Return True
 	End Select
