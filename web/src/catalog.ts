@@ -43,13 +43,7 @@ export const CATALOG: Record<string, CatalogItem> = {
     model: "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
     unit: "K",
   },
-  "Δ ISA": {
-    title: "ISA temperature deviation / ΔT",
-    desc: "Temperature deviation from the ISA temperature at the current pressure altitude.",
-    eq: "\\Delta T = T - T_{\\mathrm{ISA}}(H_P)",
-    model: "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
-    unit: "K",
-  },
+
   "True Airspeed": {
     title: "True airspeed \u2022 TAS",
     desc: "True Airspeed: aircraft speed relative to the surrounding air mass.",
