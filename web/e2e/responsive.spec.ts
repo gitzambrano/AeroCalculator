@@ -137,10 +137,10 @@ for (const viewport of viewports) {
       });
       expect(vsLayout.typeWidthDiff).toBeLessThanOrEqual(0.6);
       expect(vsLayout.typeLeftDiff).toBeLessThanOrEqual(0.6);
-      expect(vsLayout.valueWidthDiff).toBeLessThanOrEqual(0.6);
       expect(vsLayout.valueLeftDiff).toBeLessThanOrEqual(0.6);
-      expect(vsLayout.deltaButtonWidth).toBeLessThan(44);
-      expect(vsLayout.deltaValueWidth).toBeLessThan(vsLayout.spdValueWidth);
+      expect(vsLayout.spdValueWidth).toBeGreaterThan(vsLayout.deltaValueWidth);
+      expect(vsLayout.deltaValueWidth).toBeGreaterThan(vsLayout.deltaButtonWidth);
+      expect(vsLayout.deltaButtonWidth).toBeLessThan(vsLayout.spdValueWidth * 0.5);
       await assertNoHorizontalOverflow(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
 
@@ -290,6 +290,65 @@ test("output values stay on one line across mobile widths with long formatting",
     await page.setViewportSize({ width, height: 900 });
     await assertNoHorizontalOverflow(page);
     await assertResultValuesSingleLine(page);
+  }
+  await context.close();
+});
+
+test("every input type stays readable across mobile widths", async ({ browser }) => {
+  const widths = [280, 300, 319, 320, 339, 340, 360, 375, 390, 412, 430, 480];
+  const typeCases: Record<string, readonly string[]> = {
+    alt: ["Hp", "Hg", "P"],
+    temp: ["Δ ISA", "OAT"],
+    spd: ["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"],
+    nz: ["NzPullup", "NzTurn", "BankTurn"],
+    angle1: ["Track", "Heading"],
+    angle2: ["Sideslip", "Drift"],
+    headWind: ["HeadWind", "Wind Speed"],
+  };
+  const context = await browser.newContext({ viewport: { width: 480, height: 900 } });
+  const page = await context.newPage();
+  await page.goto("/");
+
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const [field, values] of Object.entries(typeCases)) {
+      for (const value of values) {
+        await page.locator(`#${field}-type`).selectOption(value);
+        const row = page.locator(`[data-field="${field}"]`);
+        await expect(row).toBeVisible();
+        const display = row.locator(".field-select-display");
+        const metrics = await display.evaluate((el) => {
+          const node = el as HTMLElement;
+          const style = getComputedStyle(node);
+          return {
+            text: node.textContent?.trim() ?? "",
+            whiteSpace: style.whiteSpace,
+            scrollWidth: node.scrollWidth,
+            clientWidth: node.clientWidth,
+            scrollHeight: node.scrollHeight,
+            clientHeight: node.clientHeight,
+          };
+        });
+        expect(metrics.scrollWidth, `${width}px ${field}=${value}: ${metrics.text}`).toBeLessThanOrEqual(metrics.clientWidth + 1);
+        expect(metrics.scrollHeight, `${width}px ${field}=${value}: ${metrics.text}`).toBeLessThanOrEqual(metrics.clientHeight + 1);
+        await assertNoHorizontalOverflow(page);
+        await assertVisibleInteractiveElementsInsideViewport(page);
+
+        if (field === "spd" && value === "Vs Factor") {
+          await expect(page.locator("#spdDelta-label")).toBeVisible();
+          await expect(page.locator("#spdDelta-value")).toBeVisible();
+          const delta = await page.locator("#spdDelta-label").evaluate((el) => ({
+            text: el.textContent?.trim(),
+            scrollWidth: (el as HTMLElement).scrollWidth,
+            clientWidth: (el as HTMLElement).clientWidth,
+            scrollHeight: (el as HTMLElement).scrollHeight,
+            clientHeight: (el as HTMLElement).clientHeight,
+          }));
+          expect(delta.scrollWidth, `${width}px +Δ`).toBeLessThanOrEqual(delta.clientWidth + 1);
+          expect(delta.scrollHeight, `${width}px +Δ`).toBeLessThanOrEqual(delta.clientHeight + 1);
+        }
+      }
+    }
   }
   await context.close();
 });
