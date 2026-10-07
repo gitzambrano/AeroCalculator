@@ -369,7 +369,7 @@ app.innerHTML = `
               <span class="setting-title">Theme</span>
               <span class="setting-desc">Visual style and color palette</span>
             </div>
-            <select id="setting-theme" class="setting-native-select" hidden>
+            <select id="setting-theme" class="setting-native-select" aria-label="Theme">
               <option>Green Peace</option><option>Ancient Brown</option><option>Dark Shadows</option><option>Blue Sky</option><option>Red Alert</option><option>Orange Juice</option>
             </select>
             <button type="button" class="setting-choice" data-setting-select="setting-theme" data-setting-title="Theme"></button>
@@ -385,32 +385,32 @@ app.innerHTML = `
           <h3>OUTPUT UNITS</h3>
           <div class="setting-row">
             <div class="setting-text"><span class="setting-title">Altitude Unit</span><span class="setting-desc">Unit used for altitude in calculated outputs</span></div>
-            <select id="setting-altitude" class="setting-native-select" hidden><option>ft</option><option>m</option><option>km</option><option>nm</option><option>mi</option><option>in</option></select>
+            <select id="setting-altitude" class="setting-native-select" aria-label="Altitude Unit"><option>ft</option><option>m</option><option>km</option><option>nm</option><option>mi</option><option>in</option></select>
             <button type="button" class="setting-choice" data-setting-select="setting-altitude" data-setting-title="Altitude Unit"></button>
           </div>
           <div class="setting-row">
             <div class="setting-text"><span class="setting-title">Pressure Unit</span><span class="setting-desc">Unit used for atmospheric pressure in outputs</span></div>
-            <select id="setting-pressure" class="setting-native-select" hidden><option>mbar</option><option>Pa</option><option>hPa</option><option>atm</option><option>mmHg</option><option>psi</option></select>
+            <select id="setting-pressure" class="setting-native-select" aria-label="Pressure Unit"><option>mbar</option><option>Pa</option><option>hPa</option><option>atm</option><option>mmHg</option><option>psi</option></select>
             <button type="button" class="setting-choice" data-setting-select="setting-pressure" data-setting-title="Pressure Unit"></button>
           </div>
           <div class="setting-row">
             <div class="setting-text"><span class="setting-title">Temperature Unit</span><span class="setting-desc">Unit used for temperature in outputs</span></div>
-            <select id="setting-temperature" class="setting-native-select" hidden><option>°C</option><option>°F</option><option>K</option></select>
+            <select id="setting-temperature" class="setting-native-select" aria-label="Temperature Unit"><option>°C</option><option>°F</option><option>K</option></select>
             <button type="button" class="setting-choice" data-setting-select="setting-temperature" data-setting-title="Temperature Unit"></button>
           </div>
           <div class="setting-row">
             <div class="setting-text"><span class="setting-title">Speed Unit</span><span class="setting-desc">Unit used for airspeed and velocity outputs</span></div>
-            <select id="setting-speed" class="setting-native-select" hidden><option>kt</option><option>m/s</option><option>km/h</option><option>mph</option><option>ft/s</option></select>
+            <select id="setting-speed" class="setting-native-select" aria-label="Speed Unit"><option>kt</option><option>m/s</option><option>km/h</option><option>mph</option><option>ft/s</option></select>
             <button type="button" class="setting-choice" data-setting-select="setting-speed" data-setting-title="Speed Unit"></button>
           </div>
           <div class="setting-row">
             <div class="setting-text"><span class="setting-title">Angle Unit</span><span class="setting-desc">Degrees or radians for angular outputs</span></div>
-            <select id="setting-angle" class="setting-native-select" hidden><option>deg</option><option>rad</option></select>
+            <select id="setting-angle" class="setting-native-select" aria-label="Angle Unit"><option>deg</option><option>rad</option></select>
             <button type="button" class="setting-choice" data-setting-select="setting-angle" data-setting-title="Angle Unit"></button>
           </div>
           <div class="setting-row">
             <div class="setting-text"><span class="setting-title">Angle Interval</span><span class="setting-desc">Positive or signed angular convention</span></div>
-            <select id="setting-angle-format" class="setting-native-select" hidden><option value="0/360">0/360 (0/2π)</option><option value="-180/180">-180/180 (-π/π)</option></select>
+            <select id="setting-angle-format" class="setting-native-select" aria-label="Angle Interval"><option value="0/360">0/360 (0/2π)</option><option value="-180/180">-180/180 (-π/π)</option></select>
             <button type="button" class="setting-choice" data-setting-select="setting-angle-format" data-setting-title="Angle Interval"></button>
           </div>
 
