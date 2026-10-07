@@ -2,6 +2,104 @@
 
 All notable changes to the repository should be recorded here.
 
+## [3.32] - 2026-10-07
+
+### Changed
+
+- Changing an input unit now converts the value.
+- Temperature unit and selected airplane are restored after restart.
+- Crosswind unit is independent from Headwind.
+- Wing area in in² is converted correctly.
+- Output angles default to degrees; zero wind shows no direction.
+- Swipe down to close menus; swipe sideways to change tabs.
+- Labels adapt to very narrow screens without clipping.
+- Airplane picker shows aircraft details; viscosity in Pa·s.
+- Web selector chevrons match the smaller Android chevron.
+
+### Repository
+
+- Removed one-off and stale scripts: `apply_physics_fixes.py` (and its workflow), `capture_audit_apk.py`, `test_themes_and_popups.py`, `enhance_aeronames.py`, `make_web_catalog.py`.
+- `check_repo.py` rejects `tools/` scripts that read `sys.argv[N]` without a fallback.
+- Android CI scrolls inside sheet lists, confirms scroll targets and tab switches, and never reuses stale UI dumps.
+- Merged a duplicate web width test into the control audit.
+
+## [3.31] - 2026-10-07
+
+### Changed
+
+- Restored input control height and spacing to prevent clipped button text.
+- Vertically centered text in all Android edit fields, including Airplanes editor.
+- Geopotential Altitude now uses Hg for a more compact result label.
+- Refined Brown, Blue, Red, and Orange themes with clearer borders and neutral surfaces.
+- Added premium input layout with taller controls, tighter rows, highlighted values, and bottom-sheet menus.
+
+## [3.30] - 2026-10-06
+
+### Changed
+
+- Altitudes: Geometric and Geopotential Altitude symbols are now clearly distinguished.
+- Notation: Proper subscript typography for pressure altitude (H_p).
+- Aircraft: Centered airplane selector and clean themed dropdown indicator.
+- Responsive labels: Full Ground Speed and Runway Angle with compact fallbacks.
+- Layout: Optimized vertical spacing and bottom padding on compact screens.
+
+## [3.29] - 2026-10-06
+
+### Changed
+
+- Standardized descriptors: Concise definitions for all modal options and settings.
+- American English: Unified unit spellings (meters, kilometers, millimeters).
+- Clear definitions: User-defined max CL, coordinated turn load factors, and relative wind angles.
+- Subtitles: Added helpful subtitles to settings pickers.
+
+## [3.28] - 2026-10-06
+
+### Changed
+
+- Optimized selection sheets: Quantity pickers fit on screen without vertical scrolling.
+- Standard definitions: Concise definitions for speeds (TAS, CAS, EAS, Mach, CL, Qc) and weights (MTOW, MLW, MZFW, BOW).
+- Flap nomenclature: Flap 0 (clean) and detent CLmax settings.
+- Inputs: Centered aircraft name and subtle themed arrow.
+- Stability: Fixed app exit on theme change.
+
+## [3.27] - 2026-10-06
+
+### Changed
+
+- Modern unit selectors: Airplane editor units now use sleek bottom-sheet picker dialogs.
+- Dynamic icon tinting: Aircraft action icons automatically match the selected visual theme.
+- Haptic feedback: Subtle touch vibrations when selecting units in the airplane editor.
+- Performance and stability enhancements across all screens.
+
+## [3.26] - 2026-10-06
+
+### Changed
+
+- Theme switching fix: Aircraft profiles remain fully preserved and populated across all theme changes.
+- State persistence: Robust fallback and guarded storage for aircraft list ordering.
+- Rapid double-tap aircraft activation with touch-and-hold reordering.
+- Themed vector icons matching active color palette.
+
+## [3.25] - 2026-10-06
+
+### Changed
+
+- Aircraft selection: Rapid double-tap activation prevents accidental touches with smooth navigation.
+- Visual alignment: Generous typography spacing between aircraft name and area/mass metrics.
+- Themed vector icons: New vector duplicate, edit, and delete glyphs matching app palette.
+- Discreet active indicator: Streamlined active badge and accent bar.
+- Touch-and-hold aircraft reordering.
+
+## [3.24] - 2026-10-06
+
+### Changed
+
+- Technical Help: KaTeX LaTeX formulas and physical model assumptions for 74 variables.
+- Modern UI: New in-app Settings overlay and proportional 3-column inputs layout.
+- Scientific notation: Enhanced formatting with precise subscripts (S_REF, c_REF, CL_MAX).
+- Aircraft management: Active profile badge and improved action buttons.
+- Polished themes: Enhanced Red Alert and Orange Juice palettes.
+
 ## [3.23] - 2026-09-13
 
 ### Changed
