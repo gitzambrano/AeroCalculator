@@ -1353,7 +1353,7 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "Heading") return narrow340 ? "Heading" : label;
   if (value === "Sideslip") return narrow340 ? "Sideslip" : label;
   if (value === "Drift") return narrow340 ? "Drift" : label;
-  if (value === "Runway Angle") return narrow340 ? "Rnwy Angle" : label;
+  if (value === "Runway Angle") return window.innerWidth < 340 ? "Rnwy Angle" : label;
 
   if (value === "HeadWind") return narrow300 ? "HeadWnd" : label;
   if (value === "CrossWind") return narrow300 ? "CrossWnd" : label;
@@ -1364,7 +1364,7 @@ function responsiveOptionLabel(value: string, label: string): string {
 
   // These compact mathematical labels match Android semantics and remain useful.
   if (value === "Vs Factor") return narrow340 ? "V<sub>S</sub> Fact" : label;
-  if (value === "Ground Speed") return narrow320 ? "Grnd Speed" : label;
+  if (value === "Ground Speed") return window.innerWidth < 320 ? "Grnd Speed" : label;
   if (value === "Qdyn") return narrow340 ? "q" : label;
   if (value === "Qc") return narrow340 ? "q<sub>c</sub>" : label;
   if (value === "NzTurn") return narrow340 ? "N<sub>Z</sub>" : label;
