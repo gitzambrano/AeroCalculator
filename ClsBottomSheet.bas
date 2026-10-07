@@ -300,30 +300,6 @@ Private Sub pnlSheet_Click
 	' Consume click
 End Sub
 
-Private Sub pnlSheet_Touch(Action As Int, X As Float, Y As Float) As Boolean
-	Select Action
-		Case Activity.ACTION_DOWN
-			mSwipeStartX = X
-			mSwipeStartY = Y
-			mSwipeDragging = False
-		Case Activity.ACTION_MOVE
-			Dim dx As Float = X - mSwipeStartX
-			Dim dy As Float = Y - mSwipeStartY
-			If dy > 12dip And Abs(dy) > Abs(dx) * 1.2 Then mSwipeDragging = True
-		Case Activity.ACTION_UP
-			Dim dx As Float = X - mSwipeStartX
-			Dim dy As Float = Y - mSwipeStartY
-			If mSwipeDragging And dy >= 64dip And Abs(dy) > Abs(dx) * 1.2 Then
-				Dismiss
-				Return True
-			End If
-		Case Activity.ACTION_CANCEL
-			mSwipeDragging = False
-	End Select
-	' Do not consume ordinary taps: child rows, scrolling and buttons keep working.
-	Return False
-End Sub
-
 ' Render compact mathematical identifiers such as H_P, S_{REF}, C_{L,MAX}, and m²
 ' without exposing markup characters in native Android labels.
 Private Sub FormatScriptedText(Value As String) As CSBuilder
