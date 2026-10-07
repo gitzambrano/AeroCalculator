@@ -349,13 +349,17 @@ app.innerHTML = `
       </form>
     </dialog>
 
-    <dialog class="simple-dialog" id="about-dialog">
+    <dialog class="simple-dialog about-dialog" id="about-dialog">
+      <div class="about-header">
+        <span>About</span>
+        <button type="button" data-close-dialog="about-dialog" aria-label="Close about">&times;</button>
+      </div>
       <div class="about-content">
         <img src="${iconUrl}" alt="" />
         <h2>Aero Calculator</h2>
         <p>Browser edition</p>
         <p>Gustavo José Zambrano</p>
-        <button type="button" data-close-dialog="about-dialog">OK</button>
+        <button type="button" class="about-ok" data-close-dialog="about-dialog">OK</button>
       </div>
     </dialog>
     <div class="modal-overlay settings-overlay" id="settings-dialog" aria-hidden="true">
@@ -1347,8 +1351,7 @@ function createInputRow(field: Field): HTMLElement {
       delta.focus();
     });
 
-    tail.append(deltaLabel, delta);
-    row.append(wrap, value, tail);
+    row.append(wrap, value, tail, deltaLabel, delta);
     return row;
   }
 
@@ -1379,6 +1382,7 @@ function initializeHelpers(): void {
   let activeTarget: HTMLElement | null = null;
 
   const show = (target: HTMLElement): void => {
+    if (window.innerWidth <= 430 || window.matchMedia("(pointer: coarse)").matches) return;
     const text = target.dataset.helper?.trim();
     if (!text) return;
     activeTarget = target;
