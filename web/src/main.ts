@@ -210,7 +210,7 @@ const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string
 };
 
 const RESULT_HELPERS: Record<string, string> = {
-  "Pressure Altitude": "Pressure altitude H_P: ISA altitude corresponding to static pressure.",
+  "Pressure Altitude": "Pressure altitude: ISA altitude corresponding to static pressure.",
   "Geometric Altitude": "Geometric altitude: physical height above mean sea level.",
   "Geopotential Altitude": "Geopotential altitude used by the standard-atmosphere model.",
   "Density Altitude": "ISA altitude with the same air density as the current condition.",
@@ -226,7 +226,7 @@ const RESULT_HELPERS: Record<string, string> = {
   "Calibrated Airspeed": "Calibrated airspeed from the documented pitot-static model.",
   "Equivalent Airspeed": "Airspeed at standard sea-level density with the same dynamic pressure.",
   "Ground Speed": "Aircraft speed relative to the ground.",
-  "Stall Speed Vs": "Reference 1-g stall speed Vₛ.",
+  "Stall Speed Vs": "Reference 1-g stall speed.",
   "Vs Factor": "Multiplier applied to the reference 1-g stall speed.",
   "Lift Coefficient CL": "Required lift coefficient for the selected condition.",
   "Mach": "True airspeed divided by the local speed of sound.",
@@ -606,7 +606,7 @@ const FIELD_MODAL_TITLES: Record<string, string> = {
   headWind: "Wind Input Type",
   windRef: "Reference Angle",
   sref: "Wing Area",
-  cref: "Wing Chord",
+  cref: "Reference Chord",
   crossWind: "Wind Input Type",
 };
 
@@ -651,15 +651,15 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   CL: "Aerodynamic lift coefficient",
   "Vs Factor": "Multiple of reference stall speed",
   "Ground Speed": "Speed over ground",
-  Qdyn: "q = ½ ρ TAS²",
+  Qdyn: "Dynamic pressure, ½ ρ TAS²",
   Qc: "Total pressure minus static pressure",
 
   // Weight
   Weight: "Manual mass entry",
-  MTOW: "Maximum takeoff weight",
+  MTOW: "Maximum takeoff mass",
   MLW: "Maximum landing weight",
   MZFW: "Maximum zero fuel weight",
-  BOW: "Basic operational weight",
+  BOW: "Basic operating mass",
   Heavy: "Heavy configuration weight",
   Light: "Light configuration weight",
 
@@ -668,7 +668,7 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   "Flap 0": "Flap 0 (clean configuration) maximum lift coefficient",
 
   // Altitude
-  Hp: "Barometric altitude (H_p), ISA",
+  Hp: "Pressure altitude, ISA",
   Hg: "True height above MSL",
   P: "Direct static pressure input",
 
@@ -694,8 +694,8 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   "Wind Direction": "Direction wind blows from (True North)",
 
   // Geometry
-  Sref: "Theoretical wing planform area",
-  cref: "Wing MAC reference length",
+  Sref: "Wing reference planform area",
+  cref: "Reference length for Reynolds number",
   CrossWind: "Runway crosswind component directly",
 };
 
