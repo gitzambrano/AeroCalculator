@@ -961,16 +961,30 @@ function createAirplaneRow(): HTMLElement {
 
   const picker = document.createElement("select");
   picker.id = "airplane-select";
-  picker.className = "profile-select";
+  picker.className = "profile-select airplane-select-native";
   picker.setAttribute("aria-label", "Airplane profile");
-  setHelper(picker, "Select a stored aircraft profile. Its reference geometry, named weights and flap maximum-lift-coefficient values become available in Inputs.");
-  picker.addEventListener("click", () => vibrateTap());
-  picker.addEventListener("change", () => {
+  picker.hidden = true;
+
+  const pickerButton = document.createElement("button");
+  pickerButton.type = "button";
+  pickerButton.id = "airplane-select-button";
+  pickerButton.className = "profile-select airplane-select-button";
+  pickerButton.setAttribute("aria-haspopup", "dialog");
+  pickerButton.setAttribute("aria-label", "Select airplane profile");
+  setHelper(pickerButton, "Select a stored aircraft profile. Its reference geometry, named weights and flap maximum-lift-coefficient values become available in Inputs.");
+  pickerButton.addEventListener("click", () => {
     vibrateTap();
-    applyProfileSelection(picker.value);
+    openAirplaneProfilePicker();
+  });
+  pickerButton.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
+      event.preventDefault();
+      vibrateTap();
+      openAirplaneProfilePicker();
+    }
   });
 
-  row.append(label, picker);
+  row.append(label, picker, pickerButton);
   return row;
 }
 
@@ -1558,6 +1572,69 @@ function beginProfileDrag(event: PointerEvent, row: HTMLElement, handle: HTMLBut
   handle.addEventListener("pointercancel", finish);
 }
 
+function openAirplaneProfilePicker(): void {
+  const modal = byId("modal-options-selector");
+  const titleEl = byId("options-selector-title");
+  const listEl = byId("options-selector-list");
+  if (!modal || !titleEl || !listEl) return;
+
+  titleEl.textContent = "Airplane";
+  listEl.innerHTML = "";
+
+  const options = [
+    { id: "custom", name: "Custom Airplane", desc: "Manual geometry, mass and aerodynamic inputs" },
+    ...profiles.map((profile) => ({
+      id: profile.id,
+      name: profile.name || "Unnamed Airplane",
+      desc: "Stored aircraft profile",
+    })),
+  ];
+
+  for (const option of options) {
+    const itemEl = document.createElement("div");
+    itemEl.className = `option-item${option.id === selectedProfileId ? " selected" : ""}`;
+    itemEl.tabIndex = 0;
+    itemEl.setAttribute("role", "button");
+
+    const textGroup = document.createElement("div");
+    textGroup.className = "option-text-group";
+
+    const labelEl = document.createElement("div");
+    labelEl.className = "option-label";
+    labelEl.textContent = option.name;
+    textGroup.appendChild(labelEl);
+
+    const descEl = document.createElement("div");
+    descEl.className = "option-desc";
+    descEl.textContent = option.desc;
+    textGroup.appendChild(descEl);
+
+    const radio = document.createElement("div");
+    radio.className = "option-radio";
+    const radioInner = document.createElement("div");
+    radioInner.className = "option-radio-inner";
+    radio.appendChild(radioInner);
+
+    itemEl.append(textGroup, radio);
+
+    const choose = () => {
+      vibrateTap();
+      applyProfileSelection(option.id);
+      closeOptionsModal();
+    };
+    itemEl.addEventListener("click", choose);
+    itemEl.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        choose();
+      }
+    });
+    listEl.appendChild(itemEl);
+  }
+
+  modal.classList.add("open");
+}
+
 function renderAirplaneSelector(): void {
   const picker = byId("airplane-select") as HTMLSelectElement;
   const options: SelectOption[] = [
@@ -1566,6 +1643,8 @@ function renderAirplaneSelector(): void {
   ];
   if (selectedProfileId !== "custom" && !profiles.some((p) => p.id === selectedProfileId)) selectedProfileId = "custom";
   fillSelect(picker, options, selectedProfileId);
+  const button = document.getElementById("airplane-select-button") as HTMLButtonElement | null;
+  if (button) button.textContent = picker.selectedOptions[0]?.textContent ?? "Custom Airplane";
 }
 
 function selectedProfile(): AircraftProfile | undefined {
@@ -1577,6 +1656,11 @@ function applyProfileSelection(id: string, recalc = true): void {
   localStorage.setItem(SELECTED_PROFILE_KEY, selectedProfileId);
   const picker = document.getElementById("airplane-select") as HTMLSelectElement | null;
   if (picker) picker.value = selectedProfileId;
+  const pickerButton = document.getElementById("airplane-select-button") as HTMLButtonElement | null;
+  if (pickerButton) {
+    const selected = selectedProfile();
+    pickerButton.textContent = selected?.name || "Custom Airplane";
+  }
 
   const weightSelect = select("weight-type");
   const clSelect = select("clmax-type");
