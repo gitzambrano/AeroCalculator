@@ -126,22 +126,22 @@ function helperFor(fieldId: string, typeValue: string): string {
 }
 
 const DEFAULT_OPTION_LABELS: Record<string, string> = {
-  Hp: "Altitude H<sub class='hp-sub'>p</sub>",
-  Hg: "Altitude H<sub>geom</sub>",
+  Hp: "Altitude H<sub class='hp-sub'>P</sub>",
+  Hg: "Altitude H<sub>GEOM</sub>",
   P: "Static Pressure",
   OAT: "Temperature OAT",
   TAS: "Airspeed TAS",
   CAS: "Airspeed CAS",
   EAS: "Airspeed EAS",
   CL: "Lift Coefficient C<sub>L</sub>",
-  "Vs Factor": "V<sub>s</sub> Factor",
+  "Vs Factor": "V<sub>S</sub> Factor",
   Qdyn: "Dynamic Pressure q",
   Qc: "Impact Pressure q<sub>c</sub>",
   Sref: "Area S<sub>REF</sub>",
   cref: "Chord c<sub>REF</sub>",
   CLmax: "C<sub>L,MAX</sub>",
-  NzPullup: "N<sub>z</sub>&nbsp;(Pull-up)",
-  NzTurn: "N<sub>z</sub>&nbsp;(Turn)",
+  NzPullup: "N<sub>Z</sub>&nbsp;(Pull-up)",
+  NzTurn: "N<sub>Z</sub>&nbsp;(Turn)",
   BankTurn: "Bank Angle",
   Track: "Track Angle",
   Heading: "Heading Angle",
@@ -162,7 +162,7 @@ const fields: Field[] = [
   { id: "sref", typeOptions: [{ value: "Sref", label: "Area S<sub>REF</sub>" }], unitOptions: opts(["m²", "ft²", "in²", "cm²", "mm²"]), defaultType: "Sref", defaultUnit: "m²", placeholder: "Reference area", defaultValue: "1" },
   { id: "cref", typeOptions: [{ value: "cref", label: "Chord c<sub>REF</sub>" }], unitOptions: opts(["m", "ft", "in", "cm", "mm"]), defaultType: "cref", defaultUnit: "m", placeholder: "Reference chord", defaultValue: "1" },
   { id: "clmax", typeOptions: [{ value: "CLmax", label: "C<sub>L,MAX</sub>" }], unitOptions: [{ value: "-", label: "—" }], defaultType: "CLmax", defaultUnit: "-", placeholder: "Maximum lift coefficient", defaultValue: "1" },
-  { id: "nz", typeOptions: [{ value: "NzPullup", label: "N<sub>z</sub>&nbsp;(Pull-up)" }, { value: "NzTurn", label: "N<sub>z</sub>&nbsp;(Turn)" }, { value: "BankTurn", label: "Bank Angle" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
+  { id: "nz", typeOptions: [{ value: "NzPullup", label: "N<sub>Z</sub>&nbsp;(Pull-up)" }, { value: "NzTurn", label: "N<sub>Z</sub>&nbsp;(Turn)" }, { value: "BankTurn", label: "Bank Angle" }], unitOptions: opts(["g", "deg"]), defaultType: "NzPullup", defaultUnit: "g", placeholder: "Load factor", defaultValue: "1" },
   { id: "angle1", typeOptions: opts(["Track", "Heading"]), unitOptions: opts(["deg", "rad"]), defaultType: "Track", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "angle2", typeOptions: opts(["Sideslip", "Drift"]), unitOptions: opts(["deg", "rad"]), defaultType: "Sideslip", defaultUnit: "deg", placeholder: "Angle", defaultValue: "0" },
   { id: "headWind", typeOptions: [{ value: "HeadWind", label: "HeadWind" }, { value: "Wind Speed", label: "Wind Speed" }], unitOptions: opts(["kt", "m/s", "km/h", "mph", "ft/s"]), defaultType: "HeadWind", defaultUnit: "kt", placeholder: "Wind", defaultValue: "0" },
@@ -183,9 +183,9 @@ const resultNames = [
 
 // Static trusted markup is used here only for mathematical subscript typography.
 const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
-  "Pressure Altitude": "Pressure Altitude H<sub class='hp-sub'>p</sub>",
-  "Geometric Altitude": "Geometric Altitude H<sub>geom</sub>",
-  "Geopotential Altitude": "Geopotential Altitude H<sub>g</sub>",
+  "Pressure Altitude": "Pressure Altitude H<sub class='hp-sub'>P</sub>",
+  "Geometric Altitude": "Geometric Altitude H<sub>GEOM</sub>",
+  "Geopotential Altitude": "Geopotential Altitude H<sub>G</sub>",
   "Density Altitude": "Density Altitude H<sub>ρ</sub>",
   "Temperature Altitude": "Temperature Altitude H<sub>T</sub>",
   "Pressure": "Pressure p",
@@ -195,22 +195,22 @@ const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string
   "Total Temperature": "Total Air Temperature TAT",
   "Viscosity": "Viscosity μ",
   "Sound Speed": "Sound Speed a",
-  "Stall Speed Vs": "Stall Speed V<sub>s</sub>",
-  "Vs Factor": "V<sub>s</sub> Factor",
+  "Stall Speed Vs": "Stall Speed V<sub>S</sub>",
+  "Vs Factor": "V<sub>S</sub> Factor",
   "Lift Coefficient CL": "Lift Coefficient C<sub>L</sub>",
   "Reynolds": "Reynolds Re",
   "Dynamic Pressure": "Dynamic Pressure q",
   "Impact Pressure": "Impact Pressure q<sub>c</sub>",
-  "Total Pressure": "Total Pressure p<sub>t</sub>",
+  "Total Pressure": "Total Pressure p<sub>T</sub>",
   "DynPressure * S / g": "q S / g₀",
   "Weight/Delta W/δ": "Weight / δ",
-  "Load Factor Nz": "Load Factor N<sub>z</sub>",
+  "Load Factor Nz": "Load Factor N<sub>Z</sub>",
   "AlongTrack Headwind": "Along-Track Headwind",
   "AlongTrack Crosswind": "Along-Track Crosswind",
 };
 
 const RESULT_HELPERS: Record<string, string> = {
-  "Pressure Altitude": "Pressure altitude Hₚ: ISA altitude corresponding to static pressure.",
+  "Pressure Altitude": "Pressure altitude H_P: ISA altitude corresponding to static pressure.",
   "Geometric Altitude": "Geometric altitude: physical height above mean sea level.",
   "Geopotential Altitude": "Geopotential altitude used by the standard-atmosphere model.",
   "Density Altitude": "ISA altitude with the same air density as the current condition.",
@@ -1268,8 +1268,8 @@ function responsiveOptionLabel(value: string, label: string): string {
   const narrow320 = window.matchMedia("(max-width: 320px)").matches;
   const narrow300 = window.matchMedia("(max-width: 300px)").matches;
 
-  if (value === "Hp") return narrow340 ? "H<sub class='hp-sub'>p</sub>" : label;
-  if (value === "Hg") return narrow340 ? "H<sub>geom</sub>" : label;
+  if (value === "Hp") return narrow340 ? "H<sub class='hp-sub'>P</sub>" : label;
+  if (value === "Hg") return narrow340 ? "H<sub>GEOM</sub>" : label;
   if (value === "P") return narrow340 ? "p" : label;
   if (value === "TAS") return narrow340 ? "TAS" : label;
   if (value === "CAS") return narrow340 ? "CAS" : label;
@@ -1295,11 +1295,11 @@ function responsiveOptionLabel(value: string, label: string): string {
   if (value === "Wind Direction") return narrow340 ? "WindDir" : "Wind Dir";
 
   // These compact mathematical labels match Android semantics and remain useful.
-  if (value === "Vs Factor") return narrow340 ? "V<sub>s</sub> Fact" : label;
+  if (value === "Vs Factor") return narrow340 ? "V<sub>S</sub> Fact" : label;
   if (value === "Ground Speed") return narrow320 ? "Grnd Speed" : label;
   if (value === "Qdyn") return narrow340 ? "q" : label;
   if (value === "Qc") return narrow340 ? "q<sub>c</sub>" : label;
-  if (value === "NzTurn") return narrow340 ? "N<sub>z</sub>" : label;
+  if (value === "NzTurn") return narrow340 ? "N<sub>Z</sub>" : label;
   if (value === "BankTurn") return narrow340 ? "Bank" : label;
 
   return label;
@@ -2147,7 +2147,7 @@ function recalculate(): void {
 
     renderResults(outputs);
     setStatus(
-      `Valid solution · Hₚ = ${fmt(pressureAltitudeM, 1)} m · M = ${fmt(mach, 3)} · GS = ${fmt(windSolution.groundSpeedMS / (1852 / 3600), 1)} kt`,
+      `Valid solution · H_P = ${fmt(pressureAltitudeM, 1)} m · M = ${fmt(mach, 3)} · GS = ${fmt(windSolution.groundSpeedMS / (1852 / 3600), 1)} kt`,
       false,
     );
   } catch (error) {
