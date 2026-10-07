@@ -83,6 +83,42 @@ for (const viewport of viewports) {
       await assertCriticalTextNotClipped(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
 
+      // Vs Factor must preserve the same first two columns as every standard input row.
+      await page.locator("#spd-type").selectOption("Vs Factor");
+      await expect(page.locator("#spd-unit")).toBeHidden();
+      await expect(page.locator("#spdDelta-label")).toBeVisible();
+      await expect(page.locator("#spdDelta-value")).toBeVisible();
+      await expect(page.locator("#spdDelta-value")).toHaveAttribute("placeholder", "kt");
+      const vsLayout = await page.evaluate(() => {
+        const rect = (selector: string) => {
+          const el = document.querySelector<HTMLElement>(selector);
+          if (!el) throw new Error(`Missing ${selector}`);
+          return el.getBoundingClientRect();
+        };
+        const altType = rect('[data-field="alt"] .field-select-wrap');
+        const altValue = rect("#alt-value");
+        const spdType = rect('[data-field="spd"] .field-select-wrap');
+        const spdValue = rect("#spd-value");
+        const deltaButton = rect("#spdDelta-label");
+        const deltaValue = rect("#spdDelta-value");
+        return {
+          typeWidthDiff: Math.abs(spdType.width - altType.width),
+          typeLeftDiff: Math.abs(spdType.left - altType.left),
+          valueWidthDiff: Math.abs(spdValue.width - altValue.width),
+          valueLeftDiff: Math.abs(spdValue.left - altValue.left),
+          deltaButtonWidth: deltaButton.width,
+          deltaValueWidth: deltaValue.width,
+        };
+      });
+      expect(vsLayout.typeWidthDiff).toBeLessThanOrEqual(0.6);
+      expect(vsLayout.typeLeftDiff).toBeLessThanOrEqual(0.6);
+      expect(vsLayout.valueWidthDiff).toBeLessThanOrEqual(0.6);
+      expect(vsLayout.valueLeftDiff).toBeLessThanOrEqual(0.6);
+      expect(vsLayout.deltaButtonWidth).toBeLessThan(44);
+      expect(vsLayout.deltaValueWidth).toBeLessThan(100);
+      await assertNoHorizontalOverflow(page);
+      await assertVisibleInteractiveElementsInsideViewport(page);
+
       await page.locator('[data-field="crossWind"] .field-select-wrap').click();
       await expect(page.locator("#modal-options-selector")).toBeVisible();
       await expect(page.locator("#options-selector-title")).toHaveText("Wind Input Type");
