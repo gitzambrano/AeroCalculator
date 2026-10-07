@@ -317,7 +317,7 @@ app.innerHTML = `
         <button type="button" class="sheet-item" data-menu="import"><span>Import Airplanes</span><small>Restore or merge aircraft profiles</small></button>
         <button type="button" class="sheet-item" data-menu="export"><span>Export Airplanes</span><small>Back up all saved aircraft profiles</small></button>
         <button type="button" class="sheet-item" data-menu="settings"><span>Settings</span><small>Display, units, precision and aircraft data</small></button>
-        <a class="sheet-item" id="feedback-link" href="mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback"><span>Send Feedback</span><small>Send comments or report a problem</small></a>
+        <a class="sheet-item" id="feedback-link" href="mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback"><span>Send Feedback</span><small>Rate the app or send feedback by e-mail</small></a>
         <button type="button" class="sheet-item" data-menu="about"><span>About</span><small>Version, author and credits</small></button>
       </div>
     </div>
