@@ -138,6 +138,21 @@ def layout(root,name):
   if not z or z[2] <= z[0] or z[3] <= z[1]: continue
   if z[0] < x1-1 or z[2] > x2+1: bad.append((n.attrib.get('text'),z))
  rec('horizontal-overflow:'+name,not bad,str(bad[:8]))
+def row_unit_node(root,label):
+ # The unit control is the right-most clickable node in the label's row.
+ pm=parents(root); lab=find(root,label)
+ if lab is None:return None
+ p=pm.get(lab)
+ for _ in range(4):
+  if p is None:break
+  cand=[]
+  for x in p.iter('node'):
+   b=bounds(x.attrib.get('bounds',''))
+   if b and b[2]>b[0] and b[3]>b[1] and x.attrib.get('clickable')=='true': cand.append((b[0],x))
+  if len(cand)>=2: return max(cand,key=lambda z:z[0])[1]
+  p=pm.get(p)
+ return None
+
 def row_edit_node(root,label):
  pm=parents(root); lab=find(root,label)
  if lab is None:return None
