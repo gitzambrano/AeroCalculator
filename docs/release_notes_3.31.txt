@@ -1,16 +1,16 @@
 <en-US>
 What's new in v3.31:
-• Restored the original input-control height and spacing to prevent clipped button text.
-• Vertically centered values in all Android edit fields, including the Airplanes editor.
-• Geopotential Altitude now uses H with a subscript g for a more compact result label.
-• Refined Brown, Blue, Red, and Orange themes with subtler gradients, clearer borders, and more neutral premium surfaces.
-• Added premium input geometry with taller controls, tighter row spacing, highlighted value fields, and unified bottom-sheet menus/settings.
+• Restored input control height and spacing to prevent clipped button text.
+• Vertically centered text in all Android edit fields, including Airplanes editor.
+• Geopotential Altitude now uses Hg for a more compact result label.
+• Refined Brown, Blue, Red, and Orange themes with clearer borders and neutral surfaces.
+• Added premium input layout with taller controls, tighter rows, highlighted values, and bottom-sheet menus.
 </en-US>
 <pt-BR>
 Novidades da v3.31:
-• Restaurada a altura e o espaçamento originais dos controles para evitar texto cortado nos botões.
-• Valores centralizados verticalmente em todos os campos de edição Android, incluindo o editor de Airplanes.
-• Geopotential Altitude agora usa H com g subscrito para deixar o resultado mais compacto.
-• Temas Brown, Blue, Red e Orange refinados com degradês discretos, bordas mais claras e superfícies neutras.
-• Geometria de inputs refinada com controles maiores, menor margem, campo central destacado e menus/settings em bottom sheets.
+• Restaurada a altura e espaçamento dos controles, evitando texto cortado nos botões.
+• Valores centralizados verticalmente em todos os campos de edição Android e Airplanes.
+• Geopotential Altitude agora usa Hg para deixar o resultado mais compacto.
+• Temas Brown, Blue, Red e Orange refinados com degradês suaves e bordas nítidas.
+• Geometria de inputs refinada com controles maiores, menor margem e menus em bottom sheets.
 </pt-BR>
