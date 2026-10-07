@@ -750,19 +750,13 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSpdUnit.Text="kt"
 			btnSpdUnit.TextSize = 15*sc
 			btnSpdDelta.Initialize("btnSpdDelta")
-		    pnlInput.AddView(btnSpdDelta, 65%x, ib*sc, 14%x, tb*sc)
-			btnSpdDelta.Text = "+ Δ"
-			If sc > 1 Or ld = 1 Then
-			Dim rs4 As RichString
-				rs4.Initialize("+ΔV{T}S{T}")
-				rs4.RelativeSize2(.7,"{T}")
-				btnSpdDelta.Text = rs4
-			End If
-			btnSpdDelta.TextSize = 15*sc
+		    pnlInput.AddView(btnSpdDelta, 80%x, ib*sc, 8%x, tb*sc)
+			btnSpdDelta.Text = "+Δ"
+			btnSpdDelta.TextSize = 13*sc
 			btnSpdDelta.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			btnSpdDelta.Visible = False
 			edtSpdDelta.Initialize("edtSpdDelta")
-		    pnlInput.AddView(edtSpdDelta, 81%x, ib*sc, 16%x, tb*sc)
+		    pnlInput.AddView(edtSpdDelta, 89%x, ib*sc, 8%x, tb*sc)
 			edtSpdDelta.Hint = ""
 			edtSpdDelta.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtSpdDelta)
@@ -2955,7 +2949,12 @@ Sub SpdType_Click
 		End If
 		btnSpdUnit.Visible = False
 		btnSpdDelta.Visible = True
-		edtSpd.Width = 13%x
+		' Keep the standard 44/27/17 column alignment: reuse the unit column for +Δ and Δ.
+		edtSpd.Width = 27%x
+		btnSpdDelta.Left = 80%x
+		btnSpdDelta.Width = 8%x
+		edtSpdDelta.Left = 89%x
+		edtSpdDelta.Width = 8%x
 		edtSpdDelta.Visible = True
 		SetVsDeltaHint(True)
 	Else If indSpdType = 6 Then
