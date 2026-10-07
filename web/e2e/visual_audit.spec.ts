@@ -5,6 +5,7 @@ import { join } from "node:path";
 const FULL_VISUAL_AUDIT = process.env.AEROCALC_FULL_VISUAL_AUDIT === "1";
 
 const allCases = [
+  { name: "mobile-260", width: 260, height: 600 },
   { name: "mobile-280", width: 280, height: 653 },
   { name: "mobile-320", width: 320, height: 568 },
   { name: "mobile-360", width: 360, height: 800 },
@@ -18,7 +19,7 @@ const allCases = [
   { name: "desktop-1920", width: 1920, height: 1080 },
 ] as const;
 
-const quickVisualNames = new Set(["mobile-280", "mobile-320", "mobile-360", "mobile-390", "mobile-411"]);
+const quickVisualNames = new Set(["mobile-260", "mobile-280", "mobile-320", "mobile-360", "mobile-390", "mobile-411"]);
 const cases = FULL_VISUAL_AUDIT ? allCases : allCases.filter((item) => quickVisualNames.has(item.name));
 
 async function shot(page: Page, dir: string, name: string, fullPage = false): Promise<void> {
