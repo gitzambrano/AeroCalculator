@@ -1,0 +1,12 @@
+<en-US>
+What's new in v3.31:
+• Restored the original input-control height and spacing to prevent clipped button text.
+• Vertically centered values in all Android edit fields, including the Airplanes editor.
+• Geopotential Altitude now uses H with a subscript g for a more compact result label.
+</en-US>
+<pt-BR>
+Novidades da v3.31:
+• Restaurada a altura e o espaçamento originais dos controles para evitar texto cortado nos botões.
+• Valores centralizados verticalmente em todos os campos de edição Android, incluindo o editor de Airplanes.
+• Geopotential Altitude agora usa H com g subscrito para deixar o resultado mais compacto.
+</pt-BR>
