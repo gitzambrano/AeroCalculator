@@ -7,6 +7,12 @@ on:
       - Full-documentation
   pull_request:
   workflow_dispatch:
+    inputs:
+      full_visual_audit:
+        description: "Run the full multi-state visual audit and capture all screenshots"
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: android-build-smoke-${{ github.ref }}
@@ -122,6 +128,8 @@ jobs:
           fi
 
       - name: Boot emulator and exercise screens and features
+        env:
+          AEROCALC_FULL_VISUAL_AUDIT: ${{ github.event_name == 'workflow_dispatch' && inputs.full_visual_audit && '1' || '0' }}
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
