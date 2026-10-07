@@ -466,6 +466,9 @@ app.innerHTML = `
         <div class="options-modal-body">
           <div class="options-list" id="options-selector-list"></div>
         </div>
+        <div class="options-modal-footer">
+          <button type="button" id="options-selector-cancel">Cancel</button>
+        </div>
       </div>
     </div>
   </main>
@@ -613,6 +616,7 @@ const closeOptionsModal = () => {
   byId("modal-options-selector")?.classList.remove("open");
 };
 byId("modal-options-close")?.addEventListener("click", closeOptionsModal);
+byId("options-selector-cancel")?.addEventListener("click", closeOptionsModal);
 byId("modal-options-selector")?.addEventListener("click", (e) => {
   if (e.target === byId("modal-options-selector")) closeOptionsModal();
 });
