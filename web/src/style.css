@@ -466,7 +466,7 @@ sub.hp-sub {
 .result-row {
   min-height: 40px;
   display: grid;
-  grid-template-columns: 52% 48%;
+  grid-template-columns: 54% 46%;
   align-items: center;
   padding: 0 10px;
   border-bottom: 1px solid var(--divider);
@@ -489,13 +489,15 @@ sub.hp-sub {
   line-height: 0;
 }
 .result-value {
+  min-width: 0;
   font-size: 15px;
   color: var(--field-text, var(--title));
   font-weight: 700;
-  text-align: right;
+  text-align: left;
   font-variant-numeric: tabular-nums;
-  padding-right: 4px;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 .result-value.na { color: var(--muted, #87908f); font-weight: 400; }
 
