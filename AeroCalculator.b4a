@@ -1264,19 +1264,6 @@ Sub Activity_Create(FirstTime As Boolean)
 		If b.IsInitialized Then ModernizeButton(b)
 	Next
 
-	' AHViewPager can lose horizontal gestures when a leaf control consumes touch.
-	' Observe all leaf controls in Inputs without consuming taps or vertical scrolling.
-	InstallInputPageSwipeCapture
-End Sub
-
-Private Sub InstallInputPageSwipeCapture
-	Try
-		Dim joMe As JavaObject = Me
-		Dim joPage As JavaObject = pnlBack1
-		joMe.RunMethod("installSwipeCaptureTree", Array As Object(joPage))
-	Catch
-		Log("Input-page swipe capture skipped: " & LastException.Message)
-	End Try
 End Sub
 
 Public Sub GlobalScreenSwipe(Direction As Int)
@@ -5916,75 +5903,59 @@ public static void configureAirplaneSpinner(Object spnObj) {
     }
 }
 
-public static void installSwipeCaptureTree(Object rootObj) {
+public static boolean processGlobalSwipe(android.view.MotionEvent event) {
     try {
-        if (!(rootObj instanceof android.view.View)) return;
-        final android.view.View rootView = (android.view.View) rootObj;
-        final float density = rootView.getResources().getDisplayMetrics().density;
-        installSwipeCaptureRecursive(rootView, density);
+        if (event == null) return false;
+        final float density = anywheresoftware.b4a.BA.applicationContext.getResources().getDisplayMetrics().density;
+        switch (event.getActionMasked()) {
+            case android.view.MotionEvent.ACTION_DOWN:
+                aeroSwipeDownX = event.getRawX();
+                aeroSwipeDownY = event.getRawY();
+                aeroSwipeTracking = true;
+                aeroSwipeHorizontal = false;
+                return false;
+            case android.view.MotionEvent.ACTION_MOVE:
+                if (!aeroSwipeTracking) return false;
+                float mdx = event.getRawX() - aeroSwipeDownX;
+                float mdy = event.getRawY() - aeroSwipeDownY;
+                if (Math.abs(mdx) >= 28f * density && Math.abs(mdx) > Math.abs(mdy) * 1.35f) {
+                    aeroSwipeHorizontal = true;
+                }
+                return false;
+            case android.view.MotionEvent.ACTION_UP:
+                if (!aeroSwipeTracking) return false;
+                float dx = event.getRawX() - aeroSwipeDownX;
+                float dy = event.getRawY() - aeroSwipeDownY;
+                boolean valid = aeroSwipeHorizontal
+                    && Math.abs(dx) >= 72f * density
+                    && Math.abs(dx) > Math.abs(dy) * 1.35f;
+                aeroSwipeTracking = false;
+                aeroSwipeHorizontal = false;
+                if (valid) {
+                    int direction = dx < 0 ? 1 : -1;
+                    try {
+                        processBA.raiseEvent2(null, true, "globalscreenswipe", false, Integer.valueOf(direction));
+                    } catch (Exception ex) {
+                        android.util.Log.e("AERO_SWIPE", "callback error: " + ex.getMessage(), ex);
+                    }
+                    return true;
+                }
+                return false;
+            case android.view.MotionEvent.ACTION_CANCEL:
+                aeroSwipeTracking = false;
+                aeroSwipeHorizontal = false;
+                return false;
+        }
     } catch (Exception e) {
-        android.util.Log.e("AERO_SWIPE", "install error: " + e.getMessage(), e);
+        android.util.Log.e("AERO_SWIPE", "dispatch error: " + e.getMessage(), e);
     }
+    return false;
 }
 
-private static void installSwipeCaptureRecursive(android.view.View view, final float density) {
-    if (view instanceof android.view.ViewGroup) {
-        android.view.ViewGroup group = (android.view.ViewGroup) view;
-        for (int i = 0; i < group.getChildCount(); i++) {
-            installSwipeCaptureRecursive(group.getChildAt(i), density);
-        }
-        return;
-    }
-
-    view.setOnTouchListener(new android.view.View.OnTouchListener() {
-        float downX;
-        float downY;
-        boolean horizontalGesture;
-
-        @Override
-        public boolean onTouch(android.view.View v, android.view.MotionEvent event) {
-            switch (event.getActionMasked()) {
-                case android.view.MotionEvent.ACTION_DOWN:
-                    downX = event.getRawX();
-                    downY = event.getRawY();
-                    horizontalGesture = false;
-                    return false;
-
-                case android.view.MotionEvent.ACTION_MOVE: {
-                    float dx = event.getRawX() - downX;
-                    float dy = event.getRawY() - downY;
-                    if (Math.abs(dx) >= 28f * density && Math.abs(dx) > Math.abs(dy) * 1.35f) {
-                        horizontalGesture = true;
-                        return true;
-                    }
-                    return false;
-                }
-
-                case android.view.MotionEvent.ACTION_UP: {
-                    float dx = event.getRawX() - downX;
-                    float dy = event.getRawY() - downY;
-                    boolean valid = horizontalGesture
-                        && Math.abs(dx) >= 72f * density
-                        && Math.abs(dx) > Math.abs(dy) * 1.35f;
-                    if (valid) {
-                        int direction = dx < 0 ? 1 : -1;
-                        try {
-                            processBA.raiseEvent2(v, true, "globalscreenswipe", false, Integer.valueOf(direction));
-                        } catch (Exception ex) {
-                            android.util.Log.e("AERO_SWIPE", "callback error: " + ex.getMessage(), ex);
-                        }
-                        return true;
-                    }
-                    return horizontalGesture;
-                }
-
-                case android.view.MotionEvent.ACTION_CANCEL:
-                    return horizontalGesture;
-            }
-            return false;
-        }
-    });
-}
+private static float aeroSwipeDownX;
+private static float aeroSwipeDownY;
+private static boolean aeroSwipeTracking;
+private static boolean aeroSwipeHorizontal;
 
 public static void tintImageView(Object ivObj, int color) {
     try {
@@ -6012,6 +5983,13 @@ public static void tintImageView(Object ivObj, int color) {
     } catch (Exception e) {
         android.util.Log.e("AERO_TINT", "Tint error: " + e.getMessage(), e);
     }
+}
+
+@Override
+public boolean dispatchTouchEvent(android.view.MotionEvent event) {
+    boolean handled = processGlobalSwipe(event);
+    if (handled) return true;
+    return super.dispatchTouchEvent(event);
 }
 #End If
 
