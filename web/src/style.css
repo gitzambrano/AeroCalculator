@@ -26,19 +26,25 @@
 
 
 :root[data-theme="Ancient Brown"] {
-  color: #2d2319;
-  background: #eae3d5;
+  color: #302820;
+  background: #eae5dd;
   --title: #8c5a2b;
   --title-dark: #6e4620;
-  --input-bg: #eae3d5;
-  --field-bg: #f0e9dc;
+  --input-bg: #eae5dd;
+  --field-bg: #fbf8f3;
   --field-text: #8c5a2b;
-  --button-a: #ede5d8;
-  --button-b: #e4dbd0;
-  --button-border: #ddd2c0;
-  --button-text: #2d2319;
-  --divider: #e7dece;
+  --button-a: #f2ece3;
+  --button-b: #eee7dd;
+  --button-pressed: #e6ddd1;
+  --button-border: #cbbba8;
+  --button-text: #302820;
+  --divider: #e5d9ca;
   --muted: #7a6e5f;
+  --accent: #8c5a2b;
+  --input-row-a: #faf8f4;
+  --input-row-b: #f4f0ea;
+  --result-row-a: #faf8f4;
+  --result-row-b: #f4f0ea;
 }
 :root[data-theme="Dark Shadows"] {
   color: #f1f5f9;
@@ -63,42 +69,57 @@
   --field-bg: #0e2040;
   --field-text: #22d3ee;
   --button-a: #132547;
-  --button-b: #0f1d3a;
-  --button-border: #182b52;
+  --button-b: #11213f;
+  --button-pressed: #0d1a34;
+  --button-border: #2a4776;
   --button-text: #f1f6ff;
   --divider: #263b63;
   --muted: #8aa0c6;
   --accent: #22d3ee;
+  --input-row-a: #0f1d3a;
+  --input-row-b: #132547;
+  --result-row-a: #0e2040;
+  --result-row-b: #132547;
 }
 :root[data-theme="Red Alert"] {
-  color: #4a0a0a;
-  --title: #b71c1c;
-  --title-dark: #880e4f;
-  --input-bg: #ffd7d7;
-  --field-bg: #fff5f5;
-  --field-text: #b71c1c;
-  --button-a: #ffebee;
-  --button-b: #ffcdd2;
-  --button-border: #ef9a9a;
-  --button-text: #4a0a0a;
-  --divider: #ffcdd2;
-  --muted: #b71c1c;
-  --accent: #b71c1c;
+  color: #302123;
+  --title: #8b1e24;
+  --title-dark: #681419;
+  --input-bg: #eeeaea;
+  --field-bg: #fcf9f9;
+  --field-text: #a82127;
+  --button-a: #f5efef;
+  --button-b: #f1e9e9;
+  --button-pressed: #e9ddde;
+  --button-border: #cdaeb1;
+  --button-text: #302123;
+  --divider: #e5d8da;
+  --muted: #8c7275;
+  --accent: #a82127;
+  --input-row-a: #faf8f8;
+  --input-row-b: #f5f1f1;
+  --result-row-a: #faf8f8;
+  --result-row-b: #f5f1f1;
 }
 :root[data-theme="Orange Juice"] {
-  color: #5d4037;
-  --title: #e65100;
-  --title-dark: #bf360c;
-  --input-bg: #ffeeba;
-  --field-bg: #fffde7;
-  --field-text: #e65100;
-  --button-a: #fff8e1;
-  --button-b: #ffecb3;
-  --button-border: #ffcc80;
-  --button-text: #5d4037;
-  --divider: #ffe0b2;
-  --muted: #8d6e63;
-  --accent: #e65100;
+  color: #342a23;
+  --title: #b55318;
+  --title-dark: #863b10;
+  --input-bg: #eeeae4;
+  --field-bg: #fcf9f5;
+  --field-text: #bc5818;
+  --button-a: #f6f1e9;
+  --button-b: #f1eae0;
+  --button-pressed: #e8ded1;
+  --button-border: #d2bda4;
+  --button-text: #342a23;
+  --divider: #e5d9ca;
+  --muted: #8a7563;
+  --accent: #bc5818;
+  --input-row-a: #faf8f4;
+  --input-row-b: #f5f1eb;
+  --result-row-a: #faf8f4;
+  --result-row-b: #f5f1eb;
 }
 
 
@@ -201,8 +222,9 @@ sub {
   align-items: stretch;
   padding: 8px 3%;
   border-bottom: 1px solid var(--divider);
-  background: var(--input-bg);
+  background: var(--input-row-a, var(--input-bg));
 }
+.input-row:nth-child(even) { background: var(--input-row-b, var(--input-bg)); }
 .field-select-wrap {
   position: relative;
   width: 100%;
@@ -312,6 +334,15 @@ sub {
   padding-right: 8px;
 }
 
+
+:root[data-theme="Ancient Brown"] :is(.field-select, .unit-select, .profile-select, .field-button, .speed-delta-label):active,
+:root[data-theme="Blue Sky"] :is(.field-select, .unit-select, .profile-select, .field-button, .speed-delta-label):active,
+:root[data-theme="Red Alert"] :is(.field-select, .unit-select, .profile-select, .field-button, .speed-delta-label):active,
+:root[data-theme="Orange Juice"] :is(.field-select, .unit-select, .profile-select, .field-button, .speed-delta-label):active {
+  border-color: var(--field-text);
+  background-color: var(--button-pressed);
+}
+
 .field-button {
   font: inherit;
   font-size: 15px;
@@ -400,8 +431,8 @@ sub {
   padding: 0 10px;
   border-bottom: 1px solid var(--divider);
 }
-.result-row:nth-child(odd) { background: var(--input-bg); }
-.result-row:nth-child(even) { background: var(--field-bg); }
+.result-row:nth-child(odd) { background: var(--result-row-a, var(--input-bg)); }
+.result-row:nth-child(even) { background: var(--result-row-b, var(--field-bg)); }
 .result-name {
   font-size: 14px;
   color: var(--button-text, #111);
