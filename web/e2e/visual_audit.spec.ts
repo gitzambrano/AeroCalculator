@@ -84,6 +84,10 @@ for (const viewport of cases) {
 
     await page.getByRole("button", { name: "CALCULATE" }).click();
     await shot(page, dir, "05-calculate-top");
+    await page.locator(".result-row").first().click();
+    await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
+    await shot(page, dir, "05b-output-helper");
+    await page.locator("#modal-tooltip-close").click();
     await shot(page, dir, "06-calculate-full", true);
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await shot(page, dir, "07-calculate-bottom");
@@ -129,6 +133,26 @@ for (const viewport of cases) {
     await page.getByRole("button", { name: "Cancel" }).click();
 
     await page.getByRole("button", { name: "INPUTS" }).click();
+
+    if (viewport.width <= 480) {
+      const inputModes: Record<string, readonly string[]> = {
+        alt: ["Hp", "Hg", "P"],
+        temp: ["Δ ISA", "OAT"],
+        spd: ["TAS", "CAS", "EAS", "Mach", "CL", "Vs Factor", "Ground Speed", "Qdyn", "Qc"],
+        nz: ["NzPullup", "NzTurn", "BankTurn"],
+        angle1: ["Track", "Heading"],
+        angle2: ["Sideslip", "Drift"],
+        headWind: ["HeadWind", "Wind Speed"],
+      };
+      for (const [field, values] of Object.entries(inputModes)) {
+        for (const value of values) {
+          await page.locator(`#${field}-type`).selectOption(value);
+          const safe = value.toLowerCase().replaceAll(" ", "-").replaceAll("Δ", "delta");
+          await page.locator(`[data-field="${field}"]`).screenshot({ path: join(dir, `input-${field}-${safe}.png`) });
+        }
+      }
+    }
+
     await page.locator("#spd-type").selectOption("Vs Factor");
     await page.locator("#spd-value").fill("1.3");
     await page.locator("#spdDelta-value").fill("10");
