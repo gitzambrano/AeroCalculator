@@ -190,7 +190,7 @@ const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string
   "Temperature Altitude": "Temperature Altitude H<sub>T</sub>",
   "Pressure": "Pressure p",
   "Density": "Density ρ",
-  "Temperature": "Outside Air Temperature OAT",
+  "Temperature": "Temperature OAT",
   "Delta ISA": "Δ ISA",
   "Total Temperature": "Total Air Temperature TAT",
   "Viscosity": "Viscosity μ",
