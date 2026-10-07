@@ -4178,7 +4178,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 7
-		lblVar.Text = "Outside Air Temperature OAT"
+		lblVar.Text = "Temperature OAT"
 		lblRes.Text = NumberFormat2(T_degC * k2temp + c2temp, 1, 2 + d, 2 + d, False) & " " & manager.GetString("temperature")
 		If IsNan(T_degC) Or IsInf(T_degC) Then
 			lblRes.Text = "----"
