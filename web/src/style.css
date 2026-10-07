@@ -328,11 +328,6 @@ sub.hp-sub {
 }
 .speed-delta { text-align: center; border-left: 1px solid var(--button-border, #d5dce6); }
 
-.speed-row.vs-factor-mode {
-  /* Keep the same three-column geometry as every other input row. */
-  grid-template-columns: minmax(0, 44fr) minmax(0, 27fr) minmax(0, 17fr);
-  column-gap: 3%;
-}
 .speed-row.vs-factor-mode .input-tail {
   display: grid;
   grid-template-columns: clamp(26px, 38%, 38px) minmax(0, 1fr);
