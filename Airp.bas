@@ -464,7 +464,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtSref.TextSize = 13
 			filter.SetCustomFilter(edtSref, edtSref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnSrefUnit.Initialize("btnSrefUnit")
-			btnSrefUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorPnlTitle))
+			btnSrefUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorButPressed))
 		    pnl2.AddView(btnSrefUnit,76%x, 8dip, 22%x, 34dip)
 		    btnSrefUnit.Text="m²"
 			btnSrefUnit.TextSize = 11
@@ -501,7 +501,7 @@ Sub CreateItem(ii As Int, He As Int)
 			edtcref.TextSize = 13
 			filter.SetCustomFilter(edtcref, edtcref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btncrefUnit.Initialize("btncrefUnit")
-			btncrefUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorPnlTitle))
+			btncrefUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorButPressed))
 		    pnl3.AddView(btncrefUnit,76%x, 8dip, 22%x, 34dip)
 		    btncrefUnit.Text="m"
 			btncrefUnit.TextSize = 11
@@ -527,7 +527,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl4.AddView(lblWeight, 1%x, 8dip, 20%x, 34dip)
 		
 			btnWeightUnit.Initialize("btnWeightUnit")
-			btnWeightUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorPnlTitle))
+			btnWeightUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorButPressed))
 		    pnl4.AddView(btnWeightUnit,77%x, 8dip, 20%x, 34dip)
 		    btnWeightUnit.Text="kg"
 			btnWeightUnit.TextSize = 11
@@ -1422,6 +1422,18 @@ Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable
     Dim gdwDisabled As GradientDrawable
     gdwDisabled.Initialize("TOP_BOTTOM", Array As Int(Colors.LightGray, Colors.DarkGray))
     gdwDisabled.CornerRadius = 4dip
+    If Main.ColorButBorder <> Colors.Transparent Then
+        Try
+            Dim joEnabled As JavaObject = gdwEnabled
+            Dim joPressed As JavaObject = gdwPressed
+            Dim joDisabled As JavaObject = gdwDisabled
+            joEnabled.RunMethod("setStroke", Array As Object(1dip, Main.ColorButBorder))
+            joPressed.RunMethod("setStroke", Array As Object(1dip, Main.ColorEdtText))
+            joDisabled.RunMethod("setStroke", Array As Object(1dip, Main.ColorButBorder))
+        Catch
+            Log("Button border skipped: " & LastException.Message)
+        End Try
+    End If
     Dim stdGradient As StateListDrawable
     stdGradient.Initialize
     stdGradient.AddState2(Array As Int(stdGradient.State_enabled, -stdGradient.State_Pressed), gdwEnabled)
