@@ -151,7 +151,7 @@ sub {
   vertical-align: baseline;
   bottom: -0.38em;
 }
-/* Only H_p needs extra descender clearance; other subscripts keep the standard alignment. */
+/* Only H_P needs dedicated subscript clearance; other subscripts keep the standard alignment. */
 sub.hp-sub {
   bottom: -0.30em;
 }
