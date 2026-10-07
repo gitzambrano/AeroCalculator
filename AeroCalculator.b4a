@@ -2676,7 +2676,7 @@ Sub AltType_Click
 				btnAltType.Text = MakeSubscript("H", "GEOM", "")
 			End If
 		Else If indAltType=2 Then
-			If UseLongInputLabels Then
+			If UseGeometryFullLabels Then
 				btnAltType.Text = MakeSubscript("Altitude H", "GEOM", "")
 			Else
 				btnAltType.Text = MakeSubscript("H", "GEOM", "")	
@@ -2708,7 +2708,7 @@ Sub AltType_Click
 			edtAlt.Text = NumberFormat2(GPSalt / kAlt,1,1,1,False)
 		End If	
 	Else If indAltType = 3 Then
-		If UsePressureTempFullLabels Then
+		If UsePressureFullLabels Then
 			btnAltType.Text = "Static Pressure"
 		Else
 			btnAltType.Text = "Pressure"
@@ -2743,7 +2743,7 @@ Sub AltType_Click
 		Msgbox2Async("Pressure Sensor is not supported in this device.", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
 		Wait For Msbox_Result (Idx98 As Int)
 		End If
-		If UsePressureTempFullLabels Then
+		If UsePressureFullLabels Then
 			btnAltType.Text = "Sensor Pressure"
 		Else
 			btnAltType.Text = "Pressure"
@@ -2851,7 +2851,7 @@ Sub TempType_Click
 		btnTempType.Text = "Δ ISA"
 		tmp.StopListening
 	Else If indTempType = 1 Then
-		If UsePressureTempFullLabels Then
+		If UseTemperatureFullLabels Then
 			btnTempType.Text = "Temperature OAT"
 		Else If UseTemperatureWord Then
 			btnTempType.Text = "Temperature"
@@ -2860,7 +2860,7 @@ Sub TempType_Click
 		End If
 		tmp.StopListening
 	Else If indTempType = 2 Then
-		If UsePressureTempFullLabels Then
+		If UseTemperatureFullLabels Then
 			btnTempType.Text = "Temperature OAT"
 		Else If UseTemperatureWord Then
 			btnTempType.Text = "Temperature"
@@ -2932,7 +2932,7 @@ Sub SpdType_Click
 	End If
 	If indSpdType < 0 Then
 	Else If indSpdType = 0 Then
-		If UseLongInputLabels Then
+		If UseAirspeedFullLabels Then
 			btnSpdType.Text = "Airspeed TAS"
 		Else
 			btnSpdType.Text = "TAS"
@@ -2943,7 +2943,7 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x 
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 1 Then
-		If UseLongInputLabels Then
+		If UseAirspeedFullLabels Then
 			btnSpdType.Text = "Airspeed CAS"
 		Else
 			btnSpdType.Text = "CAS"
@@ -2954,7 +2954,7 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 2 Then
-		If UseLongInputLabels Then
+		If UseAirspeedFullLabels Then
 			btnSpdType.Text = "Airspeed EAS"
 		Else
 			btnSpdType.Text = "EAS"
@@ -3030,7 +3030,7 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 9 Then
-		If UseFullInputLabels Then
+		If UseImpactFullLabels Then
 			btnSpdType.Text = "Impact Pressure"
 		Else
 			btnSpdType.Text = "Imp Press"
@@ -3165,7 +3165,7 @@ Sub CLmax_Click
 			End If
 			If count=indCLmaxType Then Exit
 		Next
-		If UsePressureTempFullLabels Then
+		If UseFlapFullLabels Then
 			btnCLmax.Text = MakeSubscript("Flap " & (ii-1) & " - C", "L,MAX", "")
 		Else
 			btnCLmax.Text = MakeSubscript("C", "L,MAX", " F" & (ii-1))
@@ -4865,15 +4865,27 @@ Private Sub SetVsDeltaHint(ShowHint As Boolean)
 End Sub
 
 Private Sub UseFullInputLabels As Boolean
-	Return xx >= 360dip
+	Return xx >= 355dip
 End Sub
 
-Private Sub UsePressureTempFullLabels As Boolean
+Private Sub UseImpactFullLabels As Boolean
+	Return xx >= 330dip
+End Sub
+
+Private Sub UsePressureFullLabels As Boolean
+	Return xx >= 330dip
+End Sub
+
+Private Sub UseTemperatureFullLabels As Boolean
+	Return xx >= 350dip
+End Sub
+
+Private Sub UseFlapFullLabels As Boolean
 	Return xx >= 340dip
 End Sub
 
 Private Sub UseGeometryFullLabels As Boolean
-	Return xx >= 320dip
+	Return xx >= 325dip
 End Sub
 
 Private Sub UseMediumInputLabels As Boolean
@@ -4884,8 +4896,12 @@ Private Sub UseLongInputLabels As Boolean
 	Return xx >= 300dip
 End Sub
 
+Private Sub UseAirspeedFullLabels As Boolean
+	Return xx >= 290dip
+End Sub
+
 Private Sub UseTemperatureWord As Boolean
-	Return xx >= 280dip
+	Return xx >= 270dip
 End Sub
 
 Private Sub UseFullWindVectorLabels As Boolean
@@ -4893,7 +4909,7 @@ Private Sub UseFullWindVectorLabels As Boolean
 End Sub
 
 Private Sub UseHeadCrossFullLabels As Boolean
-	Return xx >= 240dip
+	Return xx >= 260dip
 End Sub
 
 Public Sub VibrateTap
