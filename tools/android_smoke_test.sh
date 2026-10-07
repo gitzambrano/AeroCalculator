@@ -6,6 +6,7 @@ API_LEVEL="${2:-unknown}"
 PACKAGE_NAME="flightdyn.aerocalculator"
 PRIMARY_ALTITUDE_PATTERN='text="(HP|H[Pp]|Altitude H[Pp])"'
 OUT_ROOT="smoke-results/api-${API_LEVEL}"
+FULL_VISUAL_AUDIT="${AEROCALC_FULL_VISUAL_AUDIT:-0}"
 mkdir -p "$OUT_ROOT"
 
 adb wait-for-device
@@ -18,24 +19,34 @@ if [[ -z "$resolved" || "$resolved" == "No activity found"* ]]; then
 fi
 printf '%s\n' "$resolved" > "$OUT_ROOT/resolved-activity.txt"
 
-profiles=(
-  "tiny:560x1120:320"
-  "narrow:640x1280:320"
-  "compact:720x1280:320"
-  "dense-compact:1080x1920:480"
-  "modern:1080x2340:440"
-  "tall:1080x2400:420"
-  "tablet:1600x2560:320"
-)
+if [[ "$FULL_VISUAL_AUDIT" == "1" ]]; then
+  profiles=(
+    "tiny:560x1120:320"
+    "narrow:640x1280:320"
+    "compact:720x1280:320"
+    "dense-compact:1080x1920:480"
+    "modern:1080x2340:440"
+    "tall:1080x2400:420"
+    "tablet:1600x2560:320"
+  )
+else
+  profiles=(
+    "tiny:560x1120:320"
+    "modern:1080x2340:440"
+    "tablet:1600x2560:320"
+  )
+fi
 
 capture_state() {
   local dir="$1" name="$2"
   mkdir -p "$dir"
   adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
   adb pull /sdcard/window.xml "$dir/${name}.xml" >/dev/null 2>&1 || true
-  adb exec-out screencap -p > /tmp/aerocalculator-screencap-warmup.png || true
-  sleep 0.6
-  adb exec-out screencap -p > "$dir/${name}.png"
+  if [[ "$FULL_VISUAL_AUDIT" == "1" ]]; then
+    adb exec-out screencap -p > /tmp/aerocalculator-screencap-warmup.png || true
+    sleep 0.6
+    adb exec-out screencap -p > "$dir/${name}.png"
+  fi
   adb shell dumpsys window windows > "$dir/${name}-window.txt" || true
 }
 
