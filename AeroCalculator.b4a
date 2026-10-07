@@ -819,9 +819,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSref.Initialize("btnSref")
 		    pnlInput.AddView(btnSref, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btnSref.Text = MakeSubscript("Area S", "ref", "")
+				btnSref.Text = MakeSubscript("Area S", "REF", "")
 			Else
-				btnSref.Text = MakeSubscript("S", "ref", "")
+				btnSref.Text = MakeSubscript("S", "REF", "")
 			End If
 			btnSref.TextSize = 15*sc
 			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
@@ -853,9 +853,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			btncref.Initialize("btncref")
 		    pnlInput.AddView(btncref, 3%x, ib*sc, 44%x, tb*sc)
 			If xx > 340dip Or sc > 1 Then
-				btncref.Text = MakeSubscript("Chord c", "ref", "")
+				btncref.Text = MakeSubscript("Chord c", "REF", "")
 			Else
-				btncref.Text = MakeSubscript("c", "ref", "")
+				btncref.Text = MakeSubscript("c", "REF", "")
 			End If
 			btncref.TextSize = 15*sc
 			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
@@ -886,7 +886,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 7
 			btnCLmax.Initialize("btnCLmax")
 		    pnlInput.AddView(btnCLmax, 3%x, ib*sc, 44%x, tb*sc)
-			btnCLmax.Text = MakeSubscript("C", "L,max", "")
+			btnCLmax.Text = MakeSubscript("C", "L,MAX", "")
 			btnCLmax.TextSize = 15*sc
 			btnCLmax.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtCLmax.Initialize("edtCLmax")
@@ -2355,9 +2355,9 @@ Sub btnSref_Click
 	items.Add("Wing Reference Area|Theoretical wing planform area")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area", 0)) Complete (idx As Int)
 	If xx > 340dip Or sc > 1 Then
-		btnSref.Text = MakeSubscript("Area S", "ref", "")
+		btnSref.Text = MakeSubscript("Area S", "REF", "")
 	Else
-		btnSref.Text = MakeSubscript("S", "ref", "")
+		btnSref.Text = MakeSubscript("S", "REF", "")
 	End If
 End Sub
 
@@ -2384,9 +2384,9 @@ Sub btncref_Click
 	items.Add("Mean Aerodynamic Chord|Wing MAC reference length")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Chord", 0)) Complete (idx As Int)
 	If xx > 340dip Or sc > 1 Then
-		btncref.Text = MakeSubscript("Chord c", "ref", "")
+		btncref.Text = MakeSubscript("Chord c", "REF", "")
 	Else
-		btncref.Text = MakeSubscript("c", "ref", "")
+		btncref.Text = MakeSubscript("c", "REF", "")
 	End If
 End Sub
 
@@ -3075,7 +3075,7 @@ Sub CLmax_Click
 	Dim count As Int: count=0
 	Dim ii As Int
 	If indCLmaxType = 0 Then
-		btnCLmax.Text = MakeSubscript("C", "L,max", "")
+		btnCLmax.Text = MakeSubscript("C", "L,MAX", "")
 		edtCLmax.Text = ""
 	Else
 		For ii=1 To 14
@@ -3086,9 +3086,9 @@ Sub CLmax_Click
 			If count=indCLmaxType Then Exit
 		Next
 		If xx > 340dip Or sc > 1 Then
-			btnCLmax.Text = MakeSubscript("Flap " & (ii-1) & " - C", "L,max", "")
+			btnCLmax.Text = MakeSubscript("Flap " & (ii-1) & " - C", "L,MAX", "")
 		Else
-			btnCLmax.Text = MakeSubscript("C", "L,max", " F" & (ii-1))
+			btnCLmax.Text = MakeSubscript("C", "L,MAX", " F" & (ii-1))
 		End If
 		edtCLmax.Text = a.GetDefault(ID_inp & "_F" & (ii-1),"")
 	End If
@@ -5193,7 +5193,7 @@ Sub edtCLmax_TextChanged (Old As String, New As String)
 	End If
 	If New.CompareTo(text) <> 0 Then
 		indCLmaxType = 0
-		btnCLmax.Text = MakeSubscript("C", "L,max", "")
+		btnCLmax.Text = MakeSubscript("C", "L,MAX", "")
 	End If
 End Sub
 
