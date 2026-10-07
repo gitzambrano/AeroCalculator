@@ -53,6 +53,30 @@ async function assertCriticalTextNotClipped(page: Page): Promise<void> {
   expect(clipped).toEqual([]);
 }
 
+async function assertResultValuesSingleLine(page: Page): Promise<void> {
+  const failures = await page.locator(".result-value").evaluateAll((elements) =>
+    elements.map((el) => {
+      const node = el as HTMLElement;
+      const style = getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      return {
+        text: node.textContent?.trim() ?? "",
+        whiteSpace: style.whiteSpace,
+        scrollWidth: node.scrollWidth,
+        clientWidth: node.clientWidth,
+        scrollHeight: node.scrollHeight,
+        clientHeight: node.clientHeight,
+        height: rect.height,
+      };
+    }).filter((item) =>
+      item.whiteSpace !== "nowrap"
+      || item.scrollWidth > item.clientWidth + 1
+      || item.scrollHeight > item.clientHeight + 1
+    )
+  );
+  expect(failures).toEqual([]);
+}
+
 async function assertVisibleInteractiveElementsInsideViewport(page: Page): Promise<void> {
   const failures = await page.evaluate(() => {
     const selector = ".tab,.icon-button,.field-select,.unit-select,.profile-select,.field-button,.value-input,dialog[open] button,dialog[open] input,dialog[open] select,.modal-overlay.open button,.modal-overlay.open input";
@@ -106,6 +130,7 @@ for (const viewport of viewports) {
           typeLeftDiff: Math.abs(spdType.left - altType.left),
           valueWidthDiff: Math.abs(spdValue.width - altValue.width),
           valueLeftDiff: Math.abs(spdValue.left - altValue.left),
+          spdValueWidth: spdValue.width,
           deltaButtonWidth: deltaButton.width,
           deltaValueWidth: deltaValue.width,
         };
@@ -115,7 +140,7 @@ for (const viewport of viewports) {
       expect(vsLayout.valueWidthDiff).toBeLessThanOrEqual(0.6);
       expect(vsLayout.valueLeftDiff).toBeLessThanOrEqual(0.6);
       expect(vsLayout.deltaButtonWidth).toBeLessThan(44);
-      expect(vsLayout.deltaValueWidth).toBeLessThan(100);
+      expect(vsLayout.deltaValueWidth).toBeLessThan(vsLayout.spdValueWidth);
       await assertNoHorizontalOverflow(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
 
@@ -159,6 +184,7 @@ for (const viewport of viewports) {
       await assertNoHorizontalOverflow(page);
       await assertCriticalTextNotClipped(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
+      await assertResultValuesSingleLine(page);
     });
 
     test("menu, settings and aircraft editor remain usable", async ({ page }) => {
@@ -226,3 +252,44 @@ for (const viewport of viewports) {
     });
   });
 }
+
+
+test("output values stay on one line across mobile widths with long formatting", async ({ browser }) => {
+  const widths = [280, 300, 319, 320, 339, 340, 360, 375, 390, 412, 430, 480];
+  const context = await browser.newContext({ viewport: { width: 480, height: 900 } });
+  const page = await context.newPage();
+  await page.goto("/");
+  await page.evaluate(() => {
+    localStorage.setItem("aerocalculator.settings.v1", JSON.stringify({
+      altitude: "nm",
+      pressure: "mmHg",
+      temperature: "°F",
+      speed: "km/h",
+      angle: "deg",
+      angleFormat: "-180/180",
+      extraDecimal: true,
+      theme: "Green Peace",
+    }));
+  });
+  await page.reload();
+
+  await page.locator("#alt-value").fill("12345");
+  await page.locator("#temp-type").selectOption("OAT");
+  await page.locator("#temp-value").fill("21.5");
+  await page.locator("#spd-type").selectOption("CAS");
+  await page.locator("#spd-value").fill("321.4");
+  await page.locator("#weight-value").fill("12345");
+  await page.locator("#sref-value").fill("27.3");
+  await page.locator("#cref-value").fill("3.14");
+  await page.locator("#clmax-value").fill("1.789");
+  await page.locator("#nz-value").fill("2.5");
+  await page.getByRole("button", { name: "CALCULATE" }).click();
+  await expect(page.locator(".result-row")).toHaveCount(42);
+
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: 900 });
+    await assertNoHorizontalOverflow(page);
+    await assertResultValuesSingleLine(page);
+  }
+  await context.close();
+});
