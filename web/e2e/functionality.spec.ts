@@ -226,7 +226,12 @@ test("aircraft profile create, select and Android-compatible export work end to 
   await page.locator("#profile-save").click();
 
   await expect(page.locator(".airplane-name-button strong")).toHaveText("Test Jet");
+  await expect(page.locator(".airplane-meta")).toHaveText("42 m² · 12000 kg");
   await page.locator(".airplane-name-button").click();
+  await page.locator("#airplane-select-button").click();
+  const profileOption = page.locator("#options-selector-list .option-item").filter({ hasText: "Test Jet" });
+  await expect(profileOption.locator(".option-desc")).toHaveText("42 m² · 12000 kg");
+  await profileOption.click();
   await expect(page.locator("#airplane-select")).toHaveValue(/.+/);
   await expect(page.locator("#sref-value")).toHaveValue("42");
   await select(page, "weight-type", "MTOW");
