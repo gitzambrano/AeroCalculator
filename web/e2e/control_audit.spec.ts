@@ -513,6 +513,8 @@ test("every calculator input option fits across mobile widths", async ({ browser
         for (const unitId of unitsForType[id] ?? []) {
           const unit = page.locator("#" + unitId);
           if (await unit.count() === 0 || !(await unit.isVisible())) continue;
+          await assertInputGeometry(page, `${width}:${id}=${value}:${unitId}`);
+          if (!(await unit.isEnabled())) continue;
           const unitOptions = await unit.locator("option").evaluateAll((nodes) =>
             nodes.map((n) => (n as HTMLOptionElement).value)
           );
