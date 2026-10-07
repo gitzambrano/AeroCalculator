@@ -1245,7 +1245,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	AddMenus
 
 	AeroSheet.Initialize(Me, "AeroSheet")
-	AeroSheet.SetColors(ColorEdtText, ColorPnlInput2, ColorButText1, ColorEdtText, ColorPnlLine2)
+	AeroSheet.SetColors(ColorEdtText, ColorPnlInput2, ColorButText1, ColorEdtText, ColorPnlLine3)
 	SettingsPopupOpen = False
 
 	Dim allButtons() As Button = Array As Button(btnAirp, btnBack, btnCalc, btnAirplane, _
