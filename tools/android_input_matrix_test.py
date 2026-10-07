@@ -255,6 +255,26 @@ FIELDS={
  },
 }
 
+def expect_visible_text(profile,state,root,wanted):
+ ok=find_any(root,[wanted]) is not None
+ REPORT.append({"profile":profile,"state":state,"ok":ok,"expected":wanted,"texts":texts(root)[:120]})
+ if not ok: raise AssertionError(f"{profile}:{state} expected visible label {wanted}; visible={texts(root)[:80]}")
+
+def assert_fallback_composite(profile,root):
+ dp=int(profile.removesuffix("dp"))
+ expect_visible_text(profile,"fallback-pressure-exact",root,"Static Pressure" if dp>=380 else ("Pressure" if dp>=300 else "P"))
+ expect_visible_text(profile,"fallback-temperature-exact",root,"Temperature OAT" if dp>=380 else ("Temperature" if dp>=340 else "OAT"))
+ expect_visible_text(profile,"fallback-dynamic-exact",root,"Dynamic Pressure" if dp>=380 else ("Dyn Press" if dp>=300 else "q"))
+ expect_visible_text(profile,"fallback-wind-speed-exact",root,"Wind Speed" if dp>=380 else ("Wind Spd" if dp>=300 else "WindSpd"))
+ expect_visible_text(profile,"fallback-wind-direction-exact",root,"Wind Direction" if dp>=380 else ("Wind Dir" if dp>=300 else "WindDir"))
+
+def assert_fallback_compact(profile,root):
+ dp=int(profile.removesuffix("dp"))
+ expect_visible_text(profile,"fallback-ground-exact",root,"Ground Speed" if dp>=380 else "Grnd Spd")
+ expect_visible_text(profile,"fallback-headwind-exact",root,"Headwind" if dp>=300 else "HeadWnd")
+ expect_visible_text(profile,"fallback-crosswind-exact",root,"Crosswind" if dp>=300 else "CrossWnd")
+ expect_visible_text(profile,"fallback-runway-exact",root,"Runway Angle" if dp>=320 else "Rnwy Angle")
+
 def fill_vsfactor(dirp):
  choose(dirp,FIELDS["speed"]["buttons"],FIELDS["speed"]["expected"],"Stall-Speed Factor","vsfactor")
  r,n=reachable(dirp,FIELDS["speed"]["buttons"])
@@ -293,6 +313,7 @@ def exercise_profile(label,size,density):
  top(dirp)
  fallback=dump(dirp,"fallback-labels")
  record(label,"fallback-labels",fallback)
+ assert_fallback_composite(label,fallback)
  shot(dirp,"fallback-labels",force=True)
 
  # A second compact-state screenshot covers labels that are not present in the
@@ -304,6 +325,7 @@ def exercise_profile(label,size,density):
  top(dirp)
  compact=dump(dirp,"fallback-compact-labels")
  record(label,"fallback-compact-labels",compact)
+ assert_fallback_compact(label,compact)
  shot(dirp,"fallback-compact-labels",force=True)
 
  fill_vsfactor(dirp)
