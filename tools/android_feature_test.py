@@ -52,13 +52,26 @@ def equivalent_texts(t):
  q=norm(t)
  return DISPLAY_ALIASES.get(q,{q})
 def dump(name):
- adb('shell','uiautomator','dump','/sdcard/window.xml',check=False); p=OUT/f'{name}.xml'; run('adb','pull','/sdcard/window.xml',str(p),check=False)
- return ET.parse(p).getroot()
+ # Remove the previous dump first so a failed uiautomator call cannot return
+ # an older screen. uiautomator also refuses while a fling is still animating.
+ p=OUT/f'{name}.xml'
+ for _ in range(6):
+  p.unlink(missing_ok=True)
+  adb('shell','rm','-f','/sdcard/window.xml',check=False)
+  adb('shell','uiautomator','dump','/sdcard/window.xml',check=False); run('adb','pull','/sdcard/window.xml',str(p),check=False)
+  if p.exists() and p.stat().st_size>0: return ET.parse(p).getroot()
+  time.sleep(.7)
+ raise AssertionError(f'uiautomator dump failed: {name}')
 def shot(name, force=False):
  if not FULL_VISUAL_AUDIT and not force: return
  run('adb','exec-out','screencap','-p',text=False,check=False); time.sleep(.45)
  p=OUT/f'{name}.png'; p.parent.mkdir(parents=True,exist_ok=True)
  p.write_bytes(run('adb','exec-out','screencap','-p',text=False))
+def display_size():
+    size=adb('shell','wm','size')
+    m=re.search(r'Override size: (\d+)x(\d+)',size) or re.search(r'Physical size: (\d+)x(\d+)',size)
+    return tuple(map(int,m.groups()))
+
 def nodes(root): return [n for n in root.iter('node') if n.attrib.get('package')==PKG]
 def allnodes(root): return list(root.iter('node'))
 def texts(root,app_only=True):
@@ -246,8 +259,8 @@ def audit_all_input_modes():
   for current,opt,next_names,slug in speed_states:
    choose_option(current,opt,label+'-spd-'+slug)
   r,spdbtn,_=until(['Impact Pressure','qc'],'audit-'+label+'-spd-gps-check',12); tap(spdbtn)
-  d,_,_=until(['GroundSpeed from GPS'],'audit-'+label+'-spd-gps-option',10)
-  rec('gps-speed-option-present:'+label,find(d,'GroundSpeed from GPS') is not None,str(texts(d)[:120]))
+  d,_,_=until(['Ground Speed from GPS'],'audit-'+label+'-spd-gps-option',10)
+  rec('gps-speed-option-present:'+label,find(d,'Ground Speed from GPS') is not None,str(texts(d)[:120]))
   cancel=find(d,'Cancel'); tap(cancel) if cancel is not None else back(); time.sleep(.3)
 
   # Maneuver / angular modes.
@@ -260,7 +273,7 @@ def audit_all_input_modes():
   choose_option(['Drift Angle','Drift'],'Sideslip Angle β',label+'-lateral-sideslip')
 
   # Wind representation modes.
-  choose_option(['Headwind','HeadWind','HeadWnd'],'WindSpeed / WindDirection',label+'-wind-vector')
+  choose_option(['Headwind','HeadWind','HeadWnd'],'Wind Speed / Wind Direction',label+'-wind-vector')
   choose_option(['Wind Speed','Wind Spd','WindSpd'],'Headwind / Crosswind',label+'-wind-components')
   foreground('audit-finish-'+label,'.main')
 
@@ -292,15 +305,17 @@ def main():
  if e is not None:
   x1,y1,x2,y2=bounds(e.attrib.get('bounds','')); sy=(y1+y2)//2
   adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
-  d=dump('input-swipe-edit-calculate'); rec('input-swipe-edit-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  d=dump('input-swipe-edit-calculate'); rec('input-swipe-edit-to-calculate',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
   taptext('INPUTS'); time.sleep(.4); top()
 
  r=dump('input-swipe-selector-entry'); selector=find(r,'CAS')
  rec('input-swipe-selector-found',selector is not None,str(texts(r)[:60]))
  if selector is not None:
+  # Start at the selector's inner edge: from its center the finger has too
+  # little room to the screen edge to reach the 72 dp swipe threshold.
   x1,y1,x2,y2=bounds(selector.attrib.get('bounds','')); sy=(y1+y2)//2
-  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
-  d=dump('input-swipe-selector-calculate'); rec('input-swipe-selector-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  adb('shell','input','swipe',str(x2-12),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  d=dump('input-swipe-selector-calculate'); rec('input-swipe-selector-to-calculate',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
   taptext('INPUTS'); time.sleep(.4); top()
 
  r=dump('input-swipe-unit-entry'); unit=row_unit_node(r,'CAS')
@@ -308,7 +323,7 @@ def main():
  if unit is not None:
   x1,y1,x2,y2=bounds(unit.attrib.get('bounds','')); sy=(y1+y2)//2
   adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
-  d=dump('input-swipe-unit-calculate'); rec('input-swipe-unit-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  d=dump('input-swipe-unit-calculate'); rec('input-swipe-unit-to-calculate',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
   taptext('INPUTS'); time.sleep(.4); top()
 
  # Start inside the right row margin, outside every selector/value/unit control.
@@ -316,12 +331,15 @@ def main():
  if e is not None:
   x1,y1,x2,y2=bounds(e.attrib.get('bounds','')); sy=(y1+y2)//2
   adb('shell','input','swipe',str(int(w*.98)),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
-  d=dump('input-swipe-margin-calculate'); rec('input-swipe-margin-to-calculate',find(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+  d=dump('input-swipe-margin-calculate'); rec('input-swipe-margin-to-calculate',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
   taptext('INPUTS'); time.sleep(.4)
 
  for lab,val in [('HP','0'),('OAT','15'),('CAS','100'),('Weight','1000'),('SREF','16'),('cREF','1.5'),('CL,MAX','1.5'),('NZ (Pull-up)','1')]: edit(lab,val)
  top(); taptext('CALCULATE'); time.sleep(1); foreground('calculate','.main'); r=dump('outputs-top'); layout(r,'outputs-top'); shot('outputs-top')
- helper_label=find(r,'Pressure Altitude')
+ # The label carries a symbol (Pressure Altitude HP), so match by content and
+ # require it: a silent skip would leave the output help untested.
+ helper_label=find_contains(r,'Pressure Altitude')
+ rec('output-helper-label',helper_label is not None,str(texts(r)[:60]))
  if helper_label is not None:
   tap(helper_label); time.sleep(.6); hd=dump('output-helper')
   rec('output-helper-open',find_contains(hd,'MODEL / ASSUMPTIONS') is not None or find_contains(hd,'Definition') is not None,str(texts(hd)[:100]))

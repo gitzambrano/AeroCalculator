@@ -57,10 +57,17 @@ def center(n):
  return (x1+x2)//2,(y1+y2)//2
 
 def dump(dirp,name):
- adb("shell","uiautomator","dump","/sdcard/window.xml",check=False)
+ # Remove the previous dump first so a failed uiautomator call cannot return
+ # an older screen. uiautomator also refuses while a fling is still animating.
  p=dirp/f"{name}.xml"
- adb("pull","/sdcard/window.xml",str(p),check=False)
- return ET.parse(p).getroot()
+ for _ in range(6):
+  p.unlink(missing_ok=True)
+  adb("shell","rm","-f","/sdcard/window.xml",check=False)
+  adb("shell","uiautomator","dump","/sdcard/window.xml",check=False)
+  adb("pull","/sdcard/window.xml",str(p),check=False)
+  if p.exists() and p.stat().st_size>0: return ET.parse(p).getroot()
+  time.sleep(.7)
+ raise AssertionError(f"uiautomator dump failed: {name}")
 
 def shot(dirp,name,force=False):
  if not FULL_VISUAL_AUDIT and not force: return
@@ -87,11 +94,13 @@ def find_any(root,candidates):
  return None
 
 def find_sheet_text(root,wanted):
+ # Ignore rows clipped at the list edge: a tap on a sliver of a row lands on
+ # the sheet chrome instead of selecting the option.
  q=norm(wanted); found=[]
  for n in nodes(root):
   if norm(n.attrib.get("text",""))==q:
    b=bounds(n.attrib.get("bounds",""))
-   if b and b[2]>b[0] and b[3]>b[1]: found.append((b[1],n))
+   if b and b[2]>b[0] and b[3]-b[1]>=30: found.append((b[1],n))
  return max(found,key=lambda x:x[0])[1] if found else None
 
 def tap(n):
@@ -226,13 +235,31 @@ def row_unit_node(root,label_candidates):
   p=pm.get(p)
  return None
 
-def cycle_units(dirp,label_candidates,options,state):
- for idx,opt in enumerate(options):
+def sheet_open(root):
+ return find_sheet_text(root,"Cancel") is not None
+
+def wait_sheet_closed(dirp,state):
+ # The sheet animates closed after a choice. A tap during that animation is
+ # swallowed by the closing overlay, so wait until it is gone.
+ for i in range(10):
+  d=dump(dirp,f"{state}-closing-{i}")
+  if not sheet_open(d): return d
+  time.sleep(.3)
+ raise AssertionError(f"{state}: sheet did not close")
+
+def open_unit_sheet(dirp,label_candidates,state):
+ for attempt in range(2):
   r,_=reachable(dirp,label_candidates)
   unit=row_unit_node(r,label_candidates)
   if unit is None: raise AssertionError(f"{state}: unit control missing")
-  tap(unit); time.sleep(.25)
-  d=dump(dirp,f"{state}-unit-{idx}-sheet")
+  tap(unit); time.sleep(.35)
+  d=dump(dirp,f"{state}-sheet" if attempt==0 else f"{state}-sheet-retry")
+  if sheet_open(d): return d
+ raise AssertionError(f"{state}: unit sheet did not open")
+
+def cycle_units(dirp,label_candidates,options,state):
+ for idx,opt in enumerate(options):
+  d=open_unit_sheet(dirp,label_candidates,f"{state}-unit-{idx}")
   # Narrow sheets do not show every unit at once. Scroll the sheet list to
   # collect the options, then reopen it and scroll to the one to select.
   seen=set()
@@ -245,18 +272,17 @@ def cycle_units(dirp,label_candidates,options,state):
   if missing: raise AssertionError(f"{state}: missing units {missing}")
   n=find_sheet_text(d,opt)
   if n is None:
-   adb("shell","input","keyevent","4",check=False); time.sleep(.3)
-   r,_=reachable(dirp,label_candidates)
-   tap(row_unit_node(r,label_candidates)); time.sleep(.25)
-   d=dump(dirp,f"{state}-unit-{idx}-reopen")
+   adb("shell","input","keyevent","4",check=False)
+   wait_sheet_closed(dirp,f"{state}-unit-{idx}-back")
+   d=open_unit_sheet(dirp,label_candidates,f"{state}-unit-{idx}-reopen")
    for i in range(8):
     n=find_sheet_text(d,opt)
     if n is not None: break
     swipe_sheet_list(d,options)
     d=dump(dirp,f"{state}-unit-{idx}-reopen-{i}")
   if n is None: raise AssertionError(f"{state}: cannot select {opt}")
-  tap(n); time.sleep(.3)
-  rr=dump(dirp,f"{state}-unit-{idx}")
+  tap(n)
+  rr=wait_sheet_closed(dirp,f"{state}-unit-{idx}")
   record(dirp.name,f"{state}-unit-{opt}",rr)
  shot(dirp,f"{state}-units-final")
 
@@ -273,7 +299,7 @@ FIELDS={
  },
  "speed":{
   "buttons":["TAS","CAS","EAS","Airspeed TAS","Airspeed CAS","Airspeed EAS","Mach","CL","VS Factor","VS Fact","Ground Speed","Grnd Spd","q","qc","Dynamic Pressure","Dyn Press","Impact Pressure","Imp Press"],
-  "expected":["TAS","CAS","EAS","Mach","Lift Coefficient","Stall-Speed Factor","Ground Speed","GroundSpeed from GPS","Dynamic Pressure","Impact Pressure"],
+  "expected":["TAS","CAS","EAS","Mach","Lift Coefficient","Stall-Speed Factor","Ground Speed","Ground Speed from GPS","Dynamic Pressure","Impact Pressure"],
   "choices":["TAS","CAS","EAS","Mach","Lift Coefficient","Stall-Speed Factor","Ground Speed","Dynamic Pressure","Impact Pressure"],
  },
  "nz":{
@@ -293,8 +319,8 @@ FIELDS={
  },
  "wind":{
   "buttons":["HeadWind","Headwind","HeadWnd","WindSpd","Wind Spd","Wind Speed"],
-  "expected":["Headwind / Crosswind","WindSpeed / WindDirection"],
-  "choices":["Headwind / Crosswind","WindSpeed / WindDirection"],
+  "expected":["Headwind / Crosswind","Wind Speed / Wind Direction"],
+  "choices":["Headwind / Crosswind","Wind Speed / Wind Direction"],
  },
 }
 
@@ -364,7 +390,7 @@ def exercise_profile(label,size,density):
  choose(dirp,FIELDS["alt"]["buttons"],FIELDS["alt"]["expected"],"Pressure","fallback-pressure")
  choose(dirp,FIELDS["temp"]["buttons"],FIELDS["temp"]["expected"],"Outside Air Temperature","fallback-temperature")
  choose(dirp,FIELDS["speed"]["buttons"],FIELDS["speed"]["expected"],"Dynamic Pressure","fallback-dynamic-pressure")
- choose(dirp,FIELDS["wind"]["buttons"],FIELDS["wind"]["expected"],"WindSpeed / WindDirection","fallback-wind-vector")
+ choose(dirp,FIELDS["wind"]["buttons"],FIELDS["wind"]["expected"],"Wind Speed / Wind Direction","fallback-wind-vector")
  top(dirp)
  fallback=dump(dirp,"fallback-labels")
  record(label,"fallback-labels",fallback)
