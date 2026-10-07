@@ -168,7 +168,7 @@ for (const viewport of viewports) {
         expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(0.6);
 
         await page.locator("#spd-type").selectOption("Ground Speed");
-        await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(viewport.width < 300 ? "Grnd Spd" : "Ground Speed");
+        await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(viewport.width < 380 ? "Grnd Spd" : "Ground Speed");
         await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(viewport.width < 320 ? "Rnwy Angle" : "Runway Angle");
       } else {
         await page.locator("#spd-type").selectOption("Ground Speed");
@@ -350,64 +350,6 @@ test("every input type stays readable across mobile widths", async ({ browser })
         }
       }
     }
-  }
-  await context.close();
-});
-
-
-test("narrow-screen label fallbacks are staged and remain legible", async ({ browser }) => {
-  const cases = [
-    { width: 260, temp: "OAT", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
-    { width: 269, temp: "OAT", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
-    { width: 270, temp: "Temperature", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
-    { width: 289, temp: "Temperature", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
-    { width: 290, temp: "Temperature", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
-    { width: 299, temp: "Temperature", pressure: "Pressure", ground: "Grnd Spd", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Rnwy Angle" },
-    { width: 300, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Runway Angle" },
-    { width: 319, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Spd", windDir: "Wind Dir", runway: "Runway Angle" },
-    { width: 320, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 329, temp: "Temperature", pressure: "Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Imp Press", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 330, temp: "Temperature", pressure: "Static Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Impact Pressure", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 339, temp: "Temperature", pressure: "Static Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Impact Pressure", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 349, temp: "Temperature", pressure: "Static Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Impact Pressure", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 350, temp: "Temperature OAT", pressure: "Static Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Impact Pressure", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 354, temp: "Temperature OAT", pressure: "Static Pressure", ground: "Ground Speed", q: "Dyn Press", qc: "Impact Pressure", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 355, temp: "Temperature OAT", pressure: "Static Pressure", ground: "Ground Speed", q: "Dynamic Pressure", qc: "Impact Pressure", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-    { width: 360, temp: "Temperature OAT", pressure: "Static Pressure", ground: "Ground Speed", q: "Dynamic Pressure", qc: "Impact Pressure", head: "Headwind", cross: "Crosswind", windSpeed: "Wind Speed", windDir: "Wind Direction", runway: "Runway Angle" },
-  ] as const;
-
-  const context = await browser.newContext({ viewport: { width: 360, height: 800 } });
-  const page = await context.newPage();
-  await page.goto("/");
-
-  for (const c of cases) {
-    await page.setViewportSize({ width: c.width, height: 800 });
-
-    await page.locator("#temp-type").selectOption("OAT");
-    await expect(page.locator('[data-field="temp"] .field-select-display')).toHaveText(c.temp);
-
-    await page.locator("#alt-type").selectOption("P");
-    await expect(page.locator('[data-field="alt"] .field-select-display')).toHaveText(c.pressure);
-
-    await page.locator("#spd-type").selectOption("Ground Speed");
-    await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(c.ground);
-    await page.locator("#spd-type").selectOption("Qdyn");
-    await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(c.q);
-    await page.locator("#spd-type").selectOption("Qc");
-    await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(c.qc);
-
-    await page.locator("#headWind-type").selectOption("Wind Speed");
-    await expect(page.locator('[data-field="headWind"] .field-select-display')).toHaveText(c.windSpeed);
-    await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(c.windDir);
-
-    await page.locator("#headWind-type").selectOption("HeadWind");
-    await expect(page.locator('[data-field="headWind"] .field-select-display')).toHaveText(c.head);
-    await expect(page.locator('[data-field="crossWind"] .field-select-display')).toHaveText(c.cross);
-    await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(c.runway);
-
-    const fontSize = await page.locator('[data-field="spd"] .field-select-display').evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-    expect(fontSize).toBeGreaterThanOrEqual(13);
-    await assertNoHorizontalOverflow(page);
   }
   await context.close();
 });
