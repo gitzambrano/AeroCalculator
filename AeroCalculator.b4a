@@ -1275,6 +1275,32 @@ Sub Activity_Create(FirstTime As Boolean)
 	For Each b As Button In allButtons
 		If b.IsInitialized Then ModernizeButton(b)
 	Next
+
+	' AHViewPager can lose horizontal gestures when a leaf control consumes touch.
+	' Observe all leaf controls in Inputs without consuming taps or vertical scrolling.
+	InstallInputPageSwipeCapture
+End Sub
+
+Private Sub InstallInputPageSwipeCapture
+	Try
+		Dim joMe As JavaObject = Me
+		Dim joPage As JavaObject = pnlBack1
+		joMe.RunMethod("installSwipeCaptureTree", Array As Object(joPage))
+	Catch
+		Log("Input-page swipe capture skipped: " & LastException.Message)
+	End Try
+End Sub
+
+Public Sub GlobalScreenSwipe(Direction As Int)
+	If AeroSheet.IsInitialized And AeroSheet.IsShowing Then Return
+	If SettingsPopupOpen Then Return
+	If CurrentPage <> 1 Then Return
+	Dim target As Int = CurrentPage + Direction
+	If target < 0 Or target > 2 Then Return
+	Dim HideK As IME
+	HideK.Initialize("")
+	HideK.HideKeyboard
+	pager.GotoPage(target, True)
 End Sub
 
 Sub Activity_Resume
@@ -5913,6 +5939,76 @@ public static void configureAirplaneSpinner(Object spnObj) {
     } catch (Exception e) {
         android.util.Log.e("AERO_SPN", "configureAirplaneSpinner error: " + e.getMessage(), e);
     }
+}
+
+public static void installSwipeCaptureTree(Object rootObj) {
+    try {
+        if (!(rootObj instanceof android.view.View)) return;
+        final android.view.View rootView = (android.view.View) rootObj;
+        final float density = rootView.getResources().getDisplayMetrics().density;
+        installSwipeCaptureRecursive(rootView, density);
+    } catch (Exception e) {
+        android.util.Log.e("AERO_SWIPE", "install error: " + e.getMessage(), e);
+    }
+}
+
+private static void installSwipeCaptureRecursive(android.view.View view, final float density) {
+    if (view instanceof android.view.ViewGroup) {
+        android.view.ViewGroup group = (android.view.ViewGroup) view;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            installSwipeCaptureRecursive(group.getChildAt(i), density);
+        }
+        return;
+    }
+
+    view.setOnTouchListener(new android.view.View.OnTouchListener() {
+        float downX;
+        float downY;
+        boolean horizontalGesture;
+
+        @Override
+        public boolean onTouch(android.view.View v, android.view.MotionEvent event) {
+            switch (event.getActionMasked()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    downX = event.getRawX();
+                    downY = event.getRawY();
+                    horizontalGesture = false;
+                    return false;
+
+                case android.view.MotionEvent.ACTION_MOVE: {
+                    float dx = event.getRawX() - downX;
+                    float dy = event.getRawY() - downY;
+                    if (Math.abs(dx) >= 28f * density && Math.abs(dx) > Math.abs(dy) * 1.35f) {
+                        horizontalGesture = true;
+                        return true;
+                    }
+                    return false;
+                }
+
+                case android.view.MotionEvent.ACTION_UP: {
+                    float dx = event.getRawX() - downX;
+                    float dy = event.getRawY() - downY;
+                    boolean valid = horizontalGesture
+                        && Math.abs(dx) >= 72f * density
+                        && Math.abs(dx) > Math.abs(dy) * 1.35f;
+                    if (valid) {
+                        int direction = dx < 0 ? 1 : -1;
+                        try {
+                            processBA.raiseEvent2(v, true, "globalscreenswipe", false, Integer.valueOf(direction));
+                        } catch (Exception ex) {
+                            android.util.Log.e("AERO_SWIPE", "callback error: " + ex.getMessage(), ex);
+                        }
+                        return true;
+                    }
+                    return horizontalGesture;
+                }
+
+                case android.view.MotionEvent.ACTION_CANCEL:
+                    return horizontalGesture;
+            }
+            return false;
+        }
+    });
 }
 
 public static void tintImageView(Object ivObj, int color) {
