@@ -956,6 +956,7 @@ function updateTypeSelectDisplay(selectEl: HTMLSelectElement): void {
     return;
   }
   const rawLabel = DEFAULT_OPTION_LABELS[option.value] ?? option.label ?? option.value;
+  display.classList.toggle("pressure-altitude-label", option.value === "Hp");
   display.innerHTML = responsiveOptionLabel(option.value, rawLabel);
 }
 
