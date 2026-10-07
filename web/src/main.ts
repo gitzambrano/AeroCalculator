@@ -1252,32 +1252,41 @@ function initializeSwipeNavigation(): void {
 }
 
 function responsiveOptionLabel(value: string, label: string): string {
-  if (!window.matchMedia("(max-width: 430px)").matches) return label;
-  if (value === "Hp") return "H<sub class='hp-sub'>p</sub>";
-  if (value === "Hg") return "H<sub>geom</sub>";
-  if (value === "P") return "p";
-  if (value === "OAT") return "OAT";
-  if (value === "TAS") return "TAS";
-  if (value === "CAS") return "CAS";
-  if (value === "EAS") return "EAS";
-  if (value === "Vs Factor") return "V<sub>s</sub> Fact";
-  if (value === "Ground Speed") return window.matchMedia("(max-width: 330px)").matches ? "Grnd Speed" : "Ground Speed";
-  if (value === "Qdyn") return "q";
-  if (value === "Qc") return "q<sub>c</sub>";
-  if (value === "Sref") return "S<sub>ref</sub>";
-  if (value === "cref") return "c<sub>ref</sub>";
-  if (value === "CLmax") return "C<sub>L,max</sub>";
-  if (value === "NzTurn") return "N<sub>z</sub>";
-  if (value === "BankTurn") return "Bank";
-  if (value === "Track") return "Track";
-  if (value === "Heading") return "Heading";
-  if (value === "Sideslip") return "Sideslip";
-  if (value === "Drift") return "Drift";
-  if (value === "HeadWind") return "HeadWnd";
-  if (value === "Wind Speed") return "WindSpd";
-  if (value === "CrossWind") return "CrossWnd";
-  if (value === "Runway Angle") return window.matchMedia("(max-width: 330px)").matches ? "Rnwy Angle" : "Runway Angle";
-  if (value === "Wind Direction") return "WindDir";
+  // Match the Android UI: keep descriptive labels on normal phones and
+  // abbreviate only on genuinely narrow layouts.
+  const narrow340 = window.matchMedia("(max-width: 340px)").matches;
+  const narrow300 = window.matchMedia("(max-width: 300px)").matches;
+
+  if (value === "Hp") return narrow340 ? "H<sub class='hp-sub'>p</sub>" : label;
+  if (value === "Hg") return narrow340 ? "H<sub>geom</sub>" : label;
+  if (value === "P") return narrow340 ? "p" : label;
+  if (value === "TAS") return narrow340 ? "TAS" : label;
+  if (value === "CAS") return narrow340 ? "CAS" : label;
+  if (value === "EAS") return narrow340 ? "EAS" : label;
+  if (value === "Sref") return narrow340 ? "S<sub>ref</sub>" : label;
+  if (value === "cref") return narrow340 ? "c<sub>ref</sub>" : label;
+  if (value === "CLmax") return narrow340 ? "C<sub>L,max</sub>" : label;
+  if (value === "Track") return narrow340 ? "Track" : label;
+  if (value === "Heading") return narrow340 ? "Heading" : label;
+  if (value === "Sideslip") return narrow340 ? "Sideslip" : label;
+  if (value === "Drift") return narrow340 ? "Drift" : label;
+  if (value === "Runway Angle") return narrow340 ? "Rnwy Angle" : label;
+
+  if (value === "HeadWind") return narrow300 ? "HeadWnd" : label;
+  if (value === "CrossWind") return narrow300 ? "CrossWnd" : label;
+
+  // Wind-vector mode is compact in the Android app even on regular phones.
+  if (value === "Wind Speed") return narrow340 ? "WindSpd" : "Wind Spd";
+  if (value === "Wind Direction") return narrow340 ? "WindDir" : "Wind Dir";
+
+  // These compact mathematical labels match Android semantics and remain useful.
+  if (value === "Vs Factor") return narrow340 ? "V<sub>s</sub> Fact" : label;
+  if (value === "Ground Speed") return narrow340 ? "Grnd Speed" : label;
+  if (value === "Qdyn") return narrow340 ? "q" : label;
+  if (value === "Qc") return narrow340 ? "q<sub>c</sub>" : label;
+  if (value === "NzTurn") return narrow340 ? "N<sub>z</sub>" : label;
+  if (value === "BankTurn") return narrow340 ? "Bank" : label;
+
   return label;
 }
 
