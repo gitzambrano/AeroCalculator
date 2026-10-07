@@ -4922,19 +4922,19 @@ Private Sub SetVsDeltaHint(ShowHint As Boolean)
 End Sub
 
 Private Sub UseFullInputLabels As Boolean
-	Return ld = 1 Or sc > 1 Or xx >= 360dip
+	Return xx >= 360dip
 End Sub
 
 Private Sub UseMediumInputLabels As Boolean
-	Return ld = 1 Or sc > 1 Or xx >= 320dip
+	Return xx >= 320dip
 End Sub
 
 Private Sub UseLongInputLabels As Boolean
-	Return ld = 1 Or sc > 1 Or xx >= 300dip
+	Return xx >= 300dip
 End Sub
 
 Private Sub UseFullWindVectorLabels As Boolean
-	Return ld = 1 Or sc > 1 Or xx >= 340dip
+	Return xx >= 340dip
 End Sub
 
 Public Sub VibrateTap
