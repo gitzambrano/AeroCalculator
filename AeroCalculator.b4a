@@ -4859,7 +4859,8 @@ Private Sub ConvertEditByFactor(Field As EditText, OldFactor As Double, NewFacto
 	If Not(Field.IsInitialized) Then Return
 	Dim raw As String = Field.Text.Trim
 	If raw.Length = 0 Or Not(IsNumber(raw)) Or NewFactor = 0 Then Return
-	Dim converted As Double = CDbl(raw) * OldFactor / NewFactor
+	Dim currentValue As Double = raw
+	Dim converted As Double = currentValue * OldFactor / NewFactor
 	Field.Text = FormatInputValue(converted, MaxDecimals)
 End Sub
 
@@ -4956,7 +4957,8 @@ Private Sub ConvertTemperatureEdit(OldUnit As Int, NewUnit As Int)
 	Dim raw As String = edtTemp.Text.Trim
 	If raw.Length = 0 Or Not(IsNumber(raw)) Then Return
 	Dim isDelta As Boolean = (indTempType = 0)
-	Dim kelvinValue As Double = TemperatureToKelvin(CDbl(raw), OldUnit, isDelta)
+	Dim currentValue As Double = raw
+	Dim kelvinValue As Double = TemperatureToKelvin(currentValue, OldUnit, isDelta)
 	edtTemp.Text = FormatInputValue(TemperatureFromKelvin(kelvinValue, NewUnit, isDelta), 3)
 End Sub
 
