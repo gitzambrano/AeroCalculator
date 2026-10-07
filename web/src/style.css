@@ -1054,6 +1054,21 @@ sub {
   display: flex;
   flex-direction: column;
 }
+.options-modal-footer {
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--divider);
+}
+.options-modal-footer button {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--button-border);
+  border-radius: 9px;
+  background: var(--button-a);
+  color: var(--button-text);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
 .option-item {
   display: flex;
   align-items: center;
