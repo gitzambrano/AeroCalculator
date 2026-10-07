@@ -1,0 +1,20 @@
+<en-US>
+What's new in v3.32:
+• Changing an input unit now converts the value instead of reinterpreting it.
+• Temperature unit and selected airplane are restored correctly after restart.
+• Crosswind unit is independent from Headwind.
+• Wing area in in² is converted and displayed correctly.
+• Swipe down to close selection menus; swipe sideways anywhere to change tabs.
+• Labels adapt to very narrow screens without clipping.
+• Airplane picker shows aircraft details; viscosity shown in Pa·s.
+</en-US>
+<pt-BR>
+Novidades da v3.32:
+• Trocar a unidade de um input agora converte o valor em vez de reinterpretá-lo.
+• Unidade de temperatura e avião selecionado são restaurados após reiniciar.
+• Unidade de Crosswind independente da de Headwind.
+• Área da asa em in² convertida e exibida corretamente.
+• Deslize para baixo para fechar menus; deslize para os lados para trocar de aba.
+• Rótulos se adaptam a telas muito estreitas sem cortes.
+• Seletor de aviões mostra detalhes; viscosidade em Pa·s.
+</pt-BR>

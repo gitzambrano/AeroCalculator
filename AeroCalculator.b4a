@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 36
-	#VersionName: 3.31
+	#VersionCode: 37
+	#VersionName: 3.32
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
