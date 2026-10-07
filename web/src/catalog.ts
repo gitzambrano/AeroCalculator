@@ -401,21 +401,21 @@ export const CATALOG: Record<string, CatalogItem> = {
     unit: "kg",
   },
   "Sref": {
-    title: "Wing reference area \u2022 S<sub>ref</sub>",
+    title: "Wing reference area \u2022 S<sub>REF</sub>",
     desc: "Wing reference area used in aerodynamic force and coefficient calculations.",
     eq: "L = q Sref CL",
     model: "Positive value required for this calculation.",
     unit: "m\u00b2",
   },
   "cref": {
-    title: "Reference chord \u2022 c<sub>ref</sub>",
+    title: "Reference chord \u2022 c<sub>REF</sub>",
     desc: "Wing reference chord used to calculate Reynolds number.",
     eq: "Re = \u03c1 TAS cref / \u03bc",
     model: "Positive value required for this calculation.",
     unit: "m",
   },
   "CLmax": {
-    title: "Maximum lift coefficient \u2022 C<sub>L,max</sub>",
+    title: "Maximum lift coefficient \u2022 C<sub>L,MAX</sub>",
     desc: "Maximum lift coefficient used to calculate the 1-g stall speed.",
     eq: "Vs,TAS = \u221a(2 m g0 / (\u03c1 Sref CLmax))",
     model: "Positive value required for this calculation.",
@@ -494,7 +494,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   "Aircraft Profile": {
     title: "Aircraft Profile • Geometry & Weights",
     desc: "Saved aircraft aerodynamic and mass configuration. Supplies reference wing area Sref, mean aerodynamic chord cref, operating weights, and flap CLmax values.",
-    eq: "L = q \\cdot S_{\\mathrm{ref}} \\cdot C_L",
+    eq: "L = q \\cdot S_{\\mathrm{REF}} \\cdot C_L",
     model: "Saved profiles are preserved in local storage and can be exported or imported.",
     unit: "m², m, kg",
   },
