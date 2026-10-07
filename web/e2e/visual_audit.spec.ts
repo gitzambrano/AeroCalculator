@@ -13,6 +13,8 @@ const cases = [
 ] as const;
 
 async function shot(page: Page, dir: string, name: string, fullPage = false): Promise<void> {
+  // Let bottom-sheet/modal transitions settle so audit artifacts represent the final UI, not a mid-animation frame.
+  await page.waitForTimeout(260);
   await page.screenshot({ path: join(dir, `${name}.png`), fullPage });
 }
 
