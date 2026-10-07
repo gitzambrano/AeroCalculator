@@ -165,7 +165,7 @@ exercise_portrait() {
   scroll_down_repeatedly "$width" "$height" 8
   capture_state "$dir" "portrait-inputs-bottom"
   assert_alive_foreground_and_clean "$dir" "portrait-inputs-bottom"
-  assert_dump_contains "$dir" "portrait-inputs-bottom" 'HeadWind|HeadWnd|WindSpd|Wind Speed|Wind Spd'
+  assert_dump_contains "$dir" "portrait-inputs-bottom" 'Headwind|HeadWind|HeadWnd|WindSpd|Wind Speed|Wind Spd'
   tap_text "CALCULATE"
   capture_state "$dir" "portrait-outputs-top"
   assert_alive_foreground_and_clean "$dir" "portrait-outputs-top"
