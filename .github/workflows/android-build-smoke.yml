@@ -132,6 +132,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
             bash tools/android_smoke_test.sh ci-apk/AeroCalculator-ci.apk ${{ matrix.api-level }}
+            python tools/android_input_matrix_test.py ci-apk/AeroCalculator-ci.apk ${{ matrix.api-level }}
             python tools/android_feature_test.py ci-apk/AeroCalculator-ci.apk ${{ matrix.api-level }}
 
       - name: Upload screenshots, UI dumps, reports and logs
