@@ -272,6 +272,7 @@ sub.hp-sub {
   pointer-events: none;
   font-size: 15px;
   color: var(--button-text, #111);
+  white-space: nowrap;
 }
 .select-invisible {
   color: transparent !important;
@@ -280,6 +281,7 @@ sub.hp-sub {
   color: var(--button-text, #111);
 }
 .field-select, .unit-select, .profile-select, .field-button {
+  white-space: nowrap;
   appearance: none;
   width: 100%;
   min-width: 0;
