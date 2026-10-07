@@ -133,10 +133,10 @@ const DEFAULT_OPTION_LABELS: Record<string, string> = {
   TAS: "Airspeed TAS",
   CAS: "Airspeed CAS",
   EAS: "Airspeed EAS",
-  CL: "Lift Coefficient C<sub>L</sub>",
+  CL: "C<sub>L</sub>",
   "Vs Factor": "V<sub>S</sub> Factor",
-  Qdyn: "Dynamic Pressure q",
-  Qc: "Impact Pressure q<sub>c</sub>",
+  Qdyn: "Dynamic Pressure",
+  Qc: "Impact Pressure",
   Sref: "Area S<sub>REF</sub>",
   cref: "Chord c<sub>REF</sub>",
   CLmax: "C<sub>L,MAX</sub>",
@@ -1514,45 +1514,49 @@ function initializeSwipeNavigation(): void {
 }
 
 function responsiveOptionLabel(value: string, label: string): string {
-  // Match the Android UI: keep descriptive labels on normal phones and
-  // abbreviate only on genuinely narrow layouts.
-  const narrow340 = window.matchMedia("(max-width: 340px)").matches;
-  const narrow320 = window.matchMedia("(max-width: 320px)").matches;
-  const narrow300 = window.matchMedia("(max-width: 300px)").matches;
+  // Keep descriptive labels on normal phones. Fallbacks are deliberately
+  // staged and only begin below 360 px so Android and web expose the same UI.
+  const width = window.innerWidth;
+  const under360 = width < 360;
+  const under340 = width < 340;
+  const under320 = width < 320;
+  const under300 = width < 300;
 
-  if (value === "Hp") return narrow340 ? "H<sub class='hp-sub'>P</sub>" : label;
-  if (value === "Hg") return narrow340 ? "H<sub>GEOM</sub>" : label;
-  if (value === "P") return narrow340 ? "p" : label;
-  if (value === "TAS") return narrow340 ? "TAS" : label;
-  if (value === "CAS") return narrow340 ? "CAS" : label;
-  if (value === "EAS") return narrow340 ? "EAS" : label;
-  if (value === "Sref") return narrow340 ? "S<sub>REF</sub>" : label;
-  if (value === "cref") return narrow340 ? "c<sub>REF</sub>" : label;
+  if (value === "Hp") return under300 ? "H<sub class='hp-sub'>P</sub>" : label;
+  if (value === "Hg") return under300 ? "H<sub>GEOM</sub>" : label;
+  if (value === "P") return under300 ? "p" : under360 ? "Pressure" : label;
+  if (value === "OAT") return under300 ? "OAT" : under360 ? "Temperature" : label;
+
+  if (value === "TAS") return under300 ? "TAS" : label;
+  if (value === "CAS") return under300 ? "CAS" : label;
+  if (value === "EAS") return under300 ? "EAS" : label;
+  if (value === "CL") return "C<sub>L</sub>";
+
+  if (value === "Sref") return under300 ? "S<sub>REF</sub>" : label;
+  if (value === "cref") return under300 ? "c<sub>REF</sub>" : label;
   if (value === "CLmax") return "C<sub>L,MAX</sub>";
   if (value.startsWith("Flap ")) {
     const flapNum = value.slice(5);
-    return narrow340 ? `C<sub>L,MAX</sub> F${flapNum}` : `Flap ${flapNum} - C<sub>L,MAX</sub>`;
+    return under320 ? `C<sub>L,MAX</sub> F${flapNum}` : `Flap ${flapNum} - C<sub>L,MAX</sub>`;
   }
-  if (value === "Track") return narrow340 ? "Track" : label;
-  if (value === "Heading") return narrow340 ? "Heading" : label;
-  if (value === "Sideslip") return narrow340 ? "Sideslip" : label;
-  if (value === "Drift") return narrow340 ? "Drift" : label;
-  if (value === "Runway Angle") return window.innerWidth < 340 ? "Rnwy Angle" : label;
 
-  if (value === "HeadWind") return narrow300 ? "HeadWnd" : label;
-  if (value === "CrossWind") return narrow300 ? "CrossWnd" : label;
+  if (value === "Track") return under300 ? "Track" : label;
+  if (value === "Heading") return under300 ? "Heading" : label;
+  if (value === "Sideslip") return under300 ? "Sideslip" : label;
+  if (value === "Drift") return under300 ? "Drift" : label;
+  if (value === "Runway Angle") return under320 ? "Rnwy Angle" : label;
 
-  // Wind-vector mode is compact in the Android app even on regular phones.
-  if (value === "Wind Speed") return narrow340 ? "WindSpd" : "Wind Spd";
-  if (value === "Wind Direction") return narrow340 ? "WindDir" : "Wind Dir";
+  if (value === "HeadWind") return under300 ? "HeadWnd" : label;
+  if (value === "CrossWind") return under300 ? "CrossWnd" : label;
+  if (value === "Wind Speed") return under300 ? "WindSpd" : under340 ? "Wind Spd" : "Wind Speed";
+  if (value === "Wind Direction") return under300 ? "WindDir" : under340 ? "Wind Dir" : "Wind Direction";
 
-  // These compact mathematical labels match Android semantics and remain useful.
-  if (value === "Vs Factor") return narrow340 ? "V<sub>S</sub> Fact" : label;
-  if (value === "Ground Speed") return window.innerWidth < 320 ? "Grnd Speed" : label;
-  if (value === "Qdyn") return narrow340 ? "q" : label;
-  if (value === "Qc") return narrow340 ? "q<sub>c</sub>" : label;
-  if (value === "NzTurn") return narrow340 ? "N<sub>Z</sub>" : label;
-  if (value === "BankTurn") return narrow340 ? "Bank" : label;
+  if (value === "Vs Factor") return under300 ? "V<sub>S</sub> Fact" : label;
+  if (value === "Ground Speed") return under320 ? "Grnd Spd" : label;
+  if (value === "Qdyn") return under300 ? "q" : under360 ? "Dyn Press" : label;
+  if (value === "Qc") return under300 ? "q<sub>c</sub>" : under360 ? "Imp Press" : label;
+  if (value === "NzTurn") return under300 ? "N<sub>Z</sub>" : label;
+  if (value === "BankTurn") return under300 ? "Bank" : label;
 
   return label;
 }
@@ -2274,7 +2278,8 @@ function convertInputForUnitChange(unitSelect: HTMLSelectElement): void {
   }
 
   if (converted !== null && Number.isFinite(converted)) {
-    input.value = formatEditableNumber(converted);
+    const decimals = fieldId === "sref" && newUnit === "in²" ? 3 : 9;
+    input.value = formatEditableNumber(converted, decimals);
   }
 }
 
@@ -2284,8 +2289,9 @@ function temperatureFromK(kelvin: number, unit: string): number {
   return kelvin;
 }
 
-function formatEditableNumber(value: number): string {
-  const rounded = Math.round(value * 1e9) / 1e9;
+function formatEditableNumber(value: number, maxDecimals = 9): string {
+  const scale = 10 ** maxDecimals;
+  const rounded = Math.round(value * scale) / scale;
   return String(rounded);
 }
 
