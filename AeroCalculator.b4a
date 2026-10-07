@@ -670,11 +670,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 1
 		    btnAltType.Initialize("btnAltType")
 			pnlInput.AddView(btnAltType, 3%x, ib*sc, 39%x, tb*sc)
-			If UseLongInputLabels Then
-				btnAltType.Text = MakePressureAltitude("Altitude H")
-			Else
-				btnAltType.Text = MakePressureAltitude("H")
-			End If
+			btnAltType.Text = MakePressureAltitude("Altitude H")
 			btnAltType.TextSize = 15*sc
 			btnAltType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAlt.Initialize("edtAlt")
@@ -810,11 +806,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 5
 			btnSref.Initialize("btnSref")
 		    pnlInput.AddView(btnSref, 3%x, ib*sc, 39%x, tb*sc)
-			If UseLongInputLabels Then
-				btnSref.Text = MakeSubscript("Area S", "REF", "")
-			Else
-				btnSref.Text = MakeSubscript("S", "REF", "")
-			End If
+			btnSref.Text = MakeSubscript("Area S", "REF", "")
 			btnSref.TextSize = 15*sc
 			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtSref.Initialize("edtSref")
@@ -844,11 +836,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 6
 			btncref.Initialize("btncref")
 		    pnlInput.AddView(btncref, 3%x, ib*sc, 39%x, tb*sc)
-			If UseLongInputLabels Then
-				btncref.Text = MakeSubscript("Chord c", "REF", "")
-			Else
-				btncref.Text = MakeSubscript("c", "REF", "")
-			End If
+			btncref.Text = MakeSubscript("Chord c", "REF", "")
 			btncref.TextSize = 15*sc
 			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtcref.Initialize("edtcref")
@@ -998,8 +986,8 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 11
 		    btnHeadWind.Initialize("btnHeadWind")
 		    pnlInput.AddView(btnHeadWind, 3%x, ib*sc, 39%x, tb*sc)
-			If UseLongInputLabels Then
-				btnHeadWind.Text = "HeadWind"
+			If UseHeadCrossFullLabels Then
+				btnHeadWind.Text = "Headwind"
 			Else
 				btnHeadWind.Text = "HeadWnd"
 			End If
@@ -1032,8 +1020,8 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 12	
 			btnCrossWind.Initialize("btnCrossWind")
 		    pnlInput.AddView(btnCrossWind, 3%x, ib*sc, 39%x, tb*sc)
-			If UseLongInputLabels Then
-				btnCrossWind.Text = "CrossWind"
+			If UseHeadCrossFullLabels Then
+				btnCrossWind.Text = "Crosswind"
 			Else
 				btnCrossWind.Text = "CrossWnd"
 			End If
@@ -2448,11 +2436,7 @@ Sub btnSref_Click
 	items.Initialize
 	items.Add("Wing Reference Area|Theoretical wing planform area")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area", 0)) Complete (idx As Int)
-	If UseLongInputLabels Then
-		btnSref.Text = MakeSubscript("Area S", "REF", "")
-	Else
-		btnSref.Text = MakeSubscript("S", "REF", "")
-	End If
+	btnSref.Text = MakeSubscript("Area S", "REF", "")
 End Sub
 
 Sub btnSrefUnit_Click
@@ -2477,11 +2461,7 @@ Sub btncref_Click
 	items.Initialize
 	items.Add("Mean Aerodynamic Chord|Wing MAC reference length")
 	Wait For (AeroSheet.Show(Activity, items, "Wing Chord", 0)) Complete (idx As Int)
-	If UseLongInputLabels Then
-		btncref.Text = MakeSubscript("Chord c", "REF", "")
-	Else
-		btncref.Text = MakeSubscript("c", "REF", "")
-	End If
+	btncref.Text = MakeSubscript("Chord c", "REF", "")
 End Sub
 
 Sub btncrefUnit_Click
@@ -2688,13 +2668,9 @@ Sub AltType_Click
 	If indAltType < 0 Then
 	Else If indAltType=0 Or indAltType=1 Or indAltType=2 Then
 		If indAltType=0 Then
-			If UseLongInputLabels Then
-				btnAltType.Text = MakePressureAltitude("Altitude H")
-			Else
-				btnAltType.Text = MakePressureAltitude("H")
-			End If
+			btnAltType.Text = MakePressureAltitude("Altitude H")
 		Else If indAltType=1 Then
-			If UseLongInputLabels Then
+			If UseGeometryFullLabels Then
 				btnAltType.Text = MakeSubscript("Altitude H", "GEOM", "")
 			Else
 				btnAltType.Text = MakeSubscript("H", "GEOM", "")
@@ -2732,12 +2708,10 @@ Sub AltType_Click
 			edtAlt.Text = NumberFormat2(GPSalt / kAlt,1,1,1,False)
 		End If	
 	Else If indAltType = 3 Then
-		If UseFullInputLabels Then
+		If UsePressureTempFullLabels Then
 			btnAltType.Text = "Static Pressure"
-		Else If UseLongInputLabels Then
-			btnAltType.Text = "Pressure"
 		Else
-			btnAltType.Text = "P"
+			btnAltType.Text = "Pressure"
 		End If
 		edtAlt.Hint = ""
 		pa.StopListening
@@ -2769,12 +2743,10 @@ Sub AltType_Click
 		Msgbox2Async("Pressure Sensor is not supported in this device.", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
 		Wait For Msbox_Result (Idx98 As Int)
 		End If
-		If UseFullInputLabels Then
+		If UsePressureTempFullLabels Then
 			btnAltType.Text = "Sensor Pressure"
-		Else If UseLongInputLabels Then
-			btnAltType.Text = "Pressure"
 		Else
-			btnAltType.Text = "P"
+			btnAltType.Text = "Pressure"
 		End If
 		btnAltUnit.Text = "mbar"
 		kPres = 100
@@ -2879,18 +2851,18 @@ Sub TempType_Click
 		btnTempType.Text = "Δ ISA"
 		tmp.StopListening
 	Else If indTempType = 1 Then
-		If UseFullInputLabels Then
+		If UsePressureTempFullLabels Then
 			btnTempType.Text = "Temperature OAT"
-		Else If UseLongInputLabels Then
+		Else If UseTemperatureWord Then
 			btnTempType.Text = "Temperature"
 		Else
 			btnTempType.Text = "OAT"
 		End If
 		tmp.StopListening
 	Else If indTempType = 2 Then
-		If UseFullInputLabels Then
+		If UsePressureTempFullLabels Then
 			btnTempType.Text = "Temperature OAT"
-		Else If UseLongInputLabels Then
+		Else If UseTemperatureWord Then
 			btnTempType.Text = "Temperature"
 		Else
 			btnTempType.Text = "OAT"
@@ -3011,13 +2983,8 @@ Sub SpdType_Click
 		edtSpd.Width = 32%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 5 Then
-		If UseLongInputLabels Then
-			btnSpdType.Text = MakeSubscript("V", "S", " Factor")
-			edtSpd.Hint = ""
-		Else
-			btnSpdType.Text = MakeSubscript("V", "S", " Fact")
-			edtSpd.Hint = ""
-		End If
+		btnSpdType.Text = MakeSubscript("V", "S", " Factor")
+		edtSpd.Hint = ""
 		btnSpdUnit.Visible = False
 		btnSpdDelta.Visible = True
 		' Preserve the 39% label column and redistribute only the remaining space.
@@ -3054,10 +3021,8 @@ Sub SpdType_Click
 	Else If indSpdType = 8 Then
 		If UseFullInputLabels Then
 			btnSpdType.Text = "Dynamic Pressure"
-		Else If UseLongInputLabels Then
-			btnSpdType.Text = "Dyn Press"
 		Else
-			btnSpdType.Text = "q"
+			btnSpdType.Text = "Dyn Press"
 		End If
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
@@ -3067,10 +3032,8 @@ Sub SpdType_Click
 	Else If indSpdType = 9 Then
 		If UseFullInputLabels Then
 			btnSpdType.Text = "Impact Pressure"
-		Else If UseLongInputLabels Then
-			btnSpdType.Text = "Imp Press"
 		Else
-			btnSpdType.Text = MakeSubscript("q", "c", "")
+			btnSpdType.Text = "Imp Press"
 		End If
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
@@ -3202,7 +3165,7 @@ Sub CLmax_Click
 			End If
 			If count=indCLmaxType Then Exit
 		Next
-		If UseMediumInputLabels Then
+		If UsePressureTempFullLabels Then
 			btnCLmax.Text = MakeSubscript("Flap " & (ii-1) & " - C", "L,MAX", "")
 		Else
 			btnCLmax.Text = MakeSubscript("C", "L,MAX", " F" & (ii-1))
@@ -3222,6 +3185,9 @@ Sub SrefUnit_Click
 	Else If indSrefUnit = 2 Then
 		btnSrefUnit.Text = "in²"
 		kSref = 0.0254*0.0254
+		If edtSref.IsInitialized And edtSref.Text.Trim.Length > 0 And IsNumber(edtSref.Text) Then
+			edtSref.Text = NumberFormat2(edtSref.Text, 1, 3, 0, False)
+		End If
 	Else If indSrefUnit = 3 Then
 		btnSrefUnit.Text = "cm²"
 		kSref = 0.01 * 0.01
@@ -3259,22 +3225,12 @@ Sub NzType_Click
 			edtNz.Hint = ""
 			btnNzUnit.Text = "g"
 		Else If indNzType=1 Then
-			If UseLongInputLabels Then
-				btnNzType.Text = MakeSubscript("N", "Z", " (Turn)")
-				edtNz.Hint = ""
-			Else
-				btnNzType.Text = MakeSubscript("N", "Z", "")
-				edtNz.Hint = ""
-			End If
+			btnNzType.Text = MakeSubscript("N", "Z", " (Turn)")
+			edtNz.Hint = ""
 			btnNzUnit.Text = "g"
 		Else If indNzType=2 Then
-			If UseLongInputLabels Then
-				btnNzType.Text = "Bank Angle"
-				edtNz.Hint = ""
-			Else
-				btnNzType.Text = "Bank"
-				edtNz.Hint = ""
-			End If
+			btnNzType.Text = "Bank Angle"
+			edtNz.Hint = ""
 			btnNzUnit.Text = "deg"
 		End If
 	End If
@@ -3284,13 +3240,8 @@ Sub Angle1Type_Click
 	If indAngle1Type < 0 Then
 	Else If indAngle1Type=0 Or indAngle1Type=1 Then
 		If indAngle1Type=0 Then
-			If UseLongInputLabels Then
-				btnAngle1Type.Text = "Track Angle"
-				edtAngle1.Hint = ""
-			Else
-				btnAngle1Type.Text = "Track"
-				edtAngle1.Hint = ""
-			End If
+			btnAngle1Type.Text = "Track Angle"
+			edtAngle1.Hint = ""
 		Else If indAngle1Type=1 Then
 			If UseLongInputLabels Then
 				btnAngle1Type.Text = "Heading Angle"
@@ -3326,13 +3277,8 @@ Sub Angle2Type_Click
 				edtAngle2.Hint = ""
 			End If
 		Else If indAngle2Type=1 Then
-			If UseLongInputLabels Then
-				btnAngle2Type.Text = "Drift Angle"
-				edtAngle2.Hint = ""
-			Else
-				btnAngle2Type.Text = "Drift"
-				edtAngle2.Hint = ""
-			End If
+			btnAngle2Type.Text = "Drift Angle"
+			edtAngle2.Hint = ""
 		End If
 	End If
 End Sub
@@ -3358,9 +3304,9 @@ Sub WindType
 			pnlv1.Visible=True
 			pnlv2 = scvMain1.Panel.GetView (26)
 			pnlv2.Visible=True
-			If UseLongInputLabels Then
-				btnHeadWind.Text = "HeadWind"
-				btnCrossWind.Text = "CrossWind"
+			If UseHeadCrossFullLabels Then
+				btnHeadWind.Text = "Headwind"
+				btnCrossWind.Text = "Crosswind"
 			Else
 				btnHeadWind.Text = "HeadWnd"
 				btnCrossWind.Text = "CrossWnd"
@@ -3387,12 +3333,9 @@ Sub WindType
 			If UseFullWindVectorLabels Then
 				btnHeadWind.Text = "Wind Speed"
 				btnWindRefAngle.Text = "Wind Direction"
-			Else If UseLongInputLabels Then
+			Else
 				btnHeadWind.Text = "Wind Spd"
 				btnWindRefAngle.Text = "Wind Dir"
-			Else
-				btnHeadWind.Text = "WindSpd"
-				btnWindRefAngle.Text = "WindDir"
 			End If
 			edtHeadWind.Hint = ""
 			edtWindRefAngle.Hint = ""
@@ -4925,16 +4868,32 @@ Private Sub UseFullInputLabels As Boolean
 	Return xx >= 360dip
 End Sub
 
-Private Sub UseMediumInputLabels As Boolean
+Private Sub UsePressureTempFullLabels As Boolean
+	Return xx >= 340dip
+End Sub
+
+Private Sub UseGeometryFullLabels As Boolean
 	Return xx >= 320dip
+End Sub
+
+Private Sub UseMediumInputLabels As Boolean
+	Return xx >= 300dip
 End Sub
 
 Private Sub UseLongInputLabels As Boolean
 	Return xx >= 300dip
 End Sub
 
+Private Sub UseTemperatureWord As Boolean
+	Return xx >= 280dip
+End Sub
+
 Private Sub UseFullWindVectorLabels As Boolean
-	Return xx >= 340dip
+	Return xx >= 320dip
+End Sub
+
+Private Sub UseHeadCrossFullLabels As Boolean
+	Return xx >= 240dip
 End Sub
 
 Public Sub VibrateTap
