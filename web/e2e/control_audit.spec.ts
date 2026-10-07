@@ -458,8 +458,11 @@ test("every calculator input option fits across mobile widths", async ({ browser
             if (rect.left < -1 || rect.right > window.innerWidth + 1) {
               out.push({ context: label, kind: "control-outside", field: row.dataset.field, selector, text: el.textContent?.trim(), left: rect.left, right: rect.right });
             }
-            if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1) {
-              out.push({ context: label, kind: "clipped", field: row.dataset.field, selector, text: el.textContent?.trim(), scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, scrollHeight: el.scrollHeight, clientHeight: el.clientHeight });
+            const visibleText = el instanceof HTMLInputElement ? el.value : (el.textContent?.trim() ?? "");
+            const horizontalClip = visibleText.length > 0 && el.scrollWidth > el.clientWidth + 1;
+            const verticalClip = el.scrollHeight > el.clientHeight + 1;
+            if (horizontalClip || verticalClip) {
+              out.push({ context: label, kind: "clipped", field: row.dataset.field, selector, text: visibleText, scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, scrollHeight: el.scrollHeight, clientHeight: el.clientHeight });
             }
           }
         }
