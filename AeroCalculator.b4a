@@ -1098,6 +1098,34 @@ Sub Activity_Create(FirstTime As Boolean)
 		End Select
 	Next
 
+	' Subtle selector affordance, matching the airplane spinner without changing label text.
+	SetSelectorChevron(btnAltType)
+	SetSelectorChevron(btnAltUnit)
+	SetSelectorChevron(btnTempType)
+	SetSelectorChevron(btnTempUnit)
+	SetSelectorChevron(btnSpdType)
+	SetSelectorChevron(btnSpdUnit)
+	SetSelectorChevron(btnWeight)
+	SetSelectorChevron(btnWeightUnit)
+	SetSelectorChevron(btnSref)
+	SetSelectorChevron(btnSrefUnit)
+	SetSelectorChevron(btncref)
+	SetSelectorChevron(btncrefUnit)
+	SetSelectorChevron(btnCLmax)
+	SetSelectorChevron(btnCLmaxUnit)
+	SetSelectorChevron(btnNzType)
+	SetSelectorChevron(btnNzUnit)
+	SetSelectorChevron(btnAngle1Type)
+	SetSelectorChevron(btnAngle1Unit)
+	SetSelectorChevron(btnAngle2Type)
+	SetSelectorChevron(btnAngle2Unit)
+	SetSelectorChevron(btnHeadWind)
+	SetSelectorChevron(btnHeadWindUnit)
+	SetSelectorChevron(btnCrossWind)
+	SetSelectorChevron(btnCrossWindUnit)
+	SetSelectorChevron(btnWindRefAngle)
+	SetSelectorChevron(btnWindRefAngleUnit)
+
 	scvMain1.Panel.Height = (PanelNb * (ib*2+tb) + PanelNb* 1dip + 3dip)*sc
 	container.AddPage(pnlBack1,"Inputs")
 
@@ -2949,12 +2977,13 @@ Sub SpdType_Click
 		End If
 		btnSpdUnit.Visible = False
 		btnSpdDelta.Visible = True
-		' Keep the standard 39/32/17 column alignment: reuse the unit column for +Δ and Δ.
-		edtSpd.Width = 32%x
-		btnSpdDelta.Left = 80%x
-		btnSpdDelta.Width = 8%x
-		edtSpdDelta.Left = 89%x
-		edtSpdDelta.Width = 8%x
+		' Preserve the 39% label column and rebalance the remaining controls.
+		' Main factor stays widest; +Δ is compact; delta gets enough room for signed values.
+		edtSpd.Width = 26%x
+		btnSpdDelta.Left = 73%x
+		btnSpdDelta.Width = 10%x
+		edtSpdDelta.Left = 85%x
+		edtSpdDelta.Width = 12%x
 		edtSpdDelta.Visible = True
 		SetVsDeltaHint(True)
 	Else If indSpdType = 6 Then
@@ -4851,6 +4880,23 @@ Public Sub VibrateTap
 		jo.RunMethod("performHapticFeedback", Array As Object(3)) ' 3 = KEYBOARD_TAP
 	Catch
 		Log("VibrateTap: " & LastException.Message)
+	End Try
+End Sub
+
+Private Sub SetSelectorChevron(btn As Button)
+	' Keep selector text untouched (including RichString subscripts) and add only a tiny Android arrow.
+	Try
+		Dim ctxt As JavaObject
+		ctxt.InitializeContext
+		Dim res As JavaObject = ctxt.RunMethod("getResources", Null)
+		Dim arrowId As Int = res.RunMethod("getIdentifier", Array As Object("arrow_down_float", "drawable", "android"))
+		If arrowId <> 0 Then
+			Dim jo As JavaObject = btn
+			jo.RunMethod("setCompoundDrawablesWithIntrinsicBounds", Array As Object(0, 0, arrowId, 0))
+			jo.RunMethod("setCompoundDrawablePadding", Array As Object(1dip))
+		End If
+	Catch
+		Log("Selector chevron skipped: " & LastException.Message)
 	End Try
 End Sub
 
