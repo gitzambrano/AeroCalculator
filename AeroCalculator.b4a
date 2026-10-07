@@ -666,6 +666,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		    pnlInput.AddView(edtAlt, 50%x, ib*sc, 27%x, tb*sc)
 			edtAlt.Hint="Altitude"
 			edtAlt.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtAlt)
 			edtAlt.InputType = edtAlt.INPUT_TYPE_DECIMAL_NUMBERS
 			edtAlt.ForceDoneButton = True
 			edtAlt.TextSize = 13*sc
@@ -692,6 +693,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		    pnlInput.AddView(edtTemp, 50%x, ib*sc, 27%x, tb*sc)
 			edtTemp.Hint="Temperature"
 			edtTemp.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtTemp)
 			edtTemp.InputType = edtTemp.INPUT_TYPE_DECIMAL_NUMBERS
 			edtTemp.ForceDoneButton = True
 			edtTemp.TextSize = 13*sc
@@ -722,6 +724,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		    pnlInput.AddView(edtSpd, 50%x, ib*sc, 27%x, tb*sc)
 			edtSpd.Hint="Speed"
 			edtSpd.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtSpd)
 			edtSpd.TextSize = 13*sc
 			edtSpd.InputType = edtSpd.INPUT_TYPE_DECIMAL_NUMBERS
 			edtSpd.ForceDoneButton = True
@@ -750,6 +753,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				edtSpdDelta.Hint = "+ Δkt"	
 			End If
 			edtSpdDelta.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtSpdDelta)
 			edtSpdDelta.TextSize = 13*sc
 			edtSpdDelta.InputType = edtSpdDelta.INPUT_TYPE_DECIMAL_NUMBERS
 			edtSpdDelta.ForceDoneButton = True
@@ -778,6 +782,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		    pnlInput.AddView(edtWeight, 50%x, ib*sc, 27%x, tb*sc)
 			edtWeight.Hint="Weight"
 			edtWeight.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtWeight)
 			edtWeight.TextSize = 13*sc
 			edtWeight.InputType = edtWeight.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight.ForceDoneButton = True
@@ -813,6 +818,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtSref.Hint = "Reference Area"	
 			End If
 			edtSref.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtSref)
 			edtSref.TextSize = 13*sc
 			edtSref.InputType = edtSref.INPUT_TYPE_DECIMAL_NUMBERS
 			edtSref.ForceDoneButton = True
@@ -846,6 +852,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			edtcref.Hint = "Reference Chord"	
 			End If
 			edtcref.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtcref)
 			edtcref.TextSize = 13*sc
 			edtcref.InputType = edtcref.INPUT_TYPE_DECIMAL_NUMBERS
 			edtcref.ForceDoneButton = True
@@ -883,6 +890,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnCLmaxUnit.Enabled = True
 			edtCLmax.Hint="Max Lift Coeff."
 			edtCLmax.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtCLmax)
 			edtCLmax.TextSize = 13*sc
 			edtCLmax.InputType = edtCLmax.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax.ForceDoneButton = True
@@ -908,6 +916,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				edtNz.Hint = "Pull-up Load Factor"	
 			End If
 			edtNz.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtNz)
 			edtNz.TextSize = 13*sc
 			edtNz.InputType = edtNz.INPUT_TYPE_DECIMAL_NUMBERS
 			edtNz.ForceDoneButton = True
@@ -937,6 +946,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				edtAngle1.Hint = "Track Angle"
 			End If
 			edtAngle1.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtAngle1)
 			edtAngle1.TextSize = 13*sc
 			edtAngle1.InputType = edtAngle1.INPUT_TYPE_DECIMAL_NUMBERS
 			edtAngle1.ForceDoneButton = True
@@ -966,6 +976,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				edtAngle2.Hint = "Sideslip Angle"	
 			End If
 			edtAngle2.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtAngle2)
 			edtAngle2.TextSize = 13*sc
 			edtAngle2.InputType = edtAngle2.INPUT_TYPE_DECIMAL_NUMBERS
 			edtAngle2.ForceDoneButton = True
@@ -998,6 +1009,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				edtHeadWind.Hint = "HeadWind Speed"	
 			End If
 			edtHeadWind.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtHeadWind)
 			edtHeadWind.TextSize = 13*sc
 			edtHeadWind.InputType = edtHeadWind.INPUT_TYPE_DECIMAL_NUMBERS
 			edtHeadWind.ForceDoneButton = True
@@ -1030,6 +1042,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				edtCrossWind.Hint = "CrossWind Speed"	
 			End If
 			edtCrossWind.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtCrossWind)
 			edtCrossWind.TextSize = 13*sc
 			edtCrossWind.InputType = edtCrossWind.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCrossWind.ForceDoneButton = True
@@ -1063,6 +1076,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				edtWindRefAngle.Hint="Reference Direction"	
 			End If
 			edtWindRefAngle.Gravity = Gravity.CENTER
+			CenterEditTextContent(edtWindRefAngle)
 			edtWindRefAngle.TextSize = 13*sc
 			edtWindRefAngle.InputType = edtWindRefAngle.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWindRefAngle.ForceDoneButton = True
@@ -4365,6 +4379,21 @@ Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable
     stdGradient.AddState(stdGradient.State_Pressed, gdwPressed)
     stdGradient.AddState(stdGradient.State_Disabled, gdwDisabled)
     Return stdGradient
+End Sub
+
+Public Sub CenterEditTextContent(edt As EditText)
+	' Android EditText keeps asymmetric font/padding metrics even with Gravity.CENTER.
+	' Preserve horizontal padding, remove vertical padding, and center the glyph box itself.
+	edt.Gravity = Gravity.CENTER
+	Try
+		Dim jo As JavaObject = edt
+		Dim padLeft As Int = jo.RunMethod("getPaddingLeft", Null)
+		Dim padRight As Int = jo.RunMethod("getPaddingRight", Null)
+		jo.RunMethod("setIncludeFontPadding", Array(False))
+		jo.RunMethod("setPadding", Array(padLeft, 0, padRight, 0))
+	Catch
+		Log("CenterEditTextContent skipped: " & LastException.Message)
+	End Try
 End Sub
 
 Public Sub EditGradient(BgColor As Int, BorderColor As Int) As ColorDrawable
