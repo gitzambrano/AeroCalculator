@@ -671,6 +671,15 @@ sub.hp-sub {
   font-size: 15px;
   font-weight: 600;
 }
+.sheet-item span,
+.sheet-item small {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .sheet-item small {
   font-size: 12.5px;
   color: var(--muted);
@@ -1185,6 +1194,8 @@ sub.hp-sub {
 }
 .option-text-group {
   display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
   flex-direction: column;
   gap: 2px;
   overflow: hidden;
