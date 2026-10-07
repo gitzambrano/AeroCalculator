@@ -4252,31 +4252,31 @@ Sub WriteText
 	' Escrever Outputs nos Paineis
 	Select i
 	Case 0
-		lblVar.Text = MakePressureAltitude("Pressure Altitude H")
+		If UseOutputSymbols Then lblVar.Text = MakePressureAltitude("Pressure Altitude H") Else lblVar.Text = "Pressure Altitude"
 		lblRes.Text = NumberFormat2(Hp_ft * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hp_ft) Or IsInf(Hp_ft) Then
 			lblRes.Text = "----"
 		End If
 	Case 1
-		lblVar.Text = MakeSubscript("Geometric Altitude H", "GEOM", "")
+		If UseOutputSymbols Then lblVar.Text = MakeSubscript("Geometric Altitude H", "GEOM", "") Else lblVar.Text = "Geometric Altitude"
 		lblRes.Text = NumberFormat2(Hgeom * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeom) Or IsInf(Hgeom) Then
 			lblRes.Text = "----"
 		End If
 	Case 2
-		lblVar.Text = MakeSubscript("Geopotential Altitude H", "G", "")
+		If UseOutputSymbols Then lblVar.Text = MakeSubscript("Geopotential Altitude H", "G", "") Else lblVar.Text = "Geopotential Altitude"
 		lblRes.Text = NumberFormat2(Hgeop * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hgeop) Or IsInf(Hgeop) Then
 			lblRes.Text = "----"
 		End If
 	Case 3
-		lblVar.Text = MakeSubscript("Density Altitude H", "ρ", "")
+		If UseOutputSymbols Then lblVar.Text = MakeSubscript("Density Altitude H", "ρ", "") Else lblVar.Text = "Density Altitude"
 		lblRes.Text = NumberFormat2(Hd * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Hd) Or IsInf(Hd) Then
 			lblRes.Text = "----"
 		End If
 	Case 4
-		lblVar.Text = MakeSubscript("Temperature Altitude H", "T", "")
+		If UseOutputSymbols Then lblVar.Text = MakeSubscript("Temperature Altitude H", "T", "") Else lblVar.Text = "Temperature Altitude"
 		lblRes.Text = NumberFormat2(Htemp * k2alt, 1, 1 + d, 1 + d, False) & " " & manager.GetString("altitude")
 		If IsNan(Htemp) Or IsInf(Htemp) Then
 			lblRes.Text = "----"
@@ -4306,8 +4306,7 @@ Sub WriteText
 			lblRes.Text = "----"
 		End If
 	Case 9
-		' The full label leaves no gap before the value below 340 dp.
-		If UseTemperatureWord Then lblVar.Text = "Total Air Temperature TAT" Else lblVar.Text = "Total Air Temp TAT"
+		If UseOutputSymbols Then lblVar.Text = "Total Air Temperature TAT" Else lblVar.Text = "Total Air Temperature"
 		lblRes.Text = NumberFormat2(Ttot_degC * k2temp + c2temp, 1, 2 + d, 2 + d, False) & " " & manager.GetString("temperature")
 		If IsNan(Ttot_degC) Or IsInf(Ttot_degC) Then
 			lblRes.Text = "----"
@@ -5115,6 +5114,12 @@ Private Sub UseAirspeedFullLabels As Boolean
 End Sub
 
 Private Sub UseTemperatureWord As Boolean
+	Return xx >= 340dip
+End Sub
+
+Private Sub UseOutputSymbols As Boolean
+	' Below 340 dp, altitude and TAT output names drop their symbols; the
+	' symbols push the label against the value column.
 	Return xx >= 340dip
 End Sub
 

@@ -77,12 +77,20 @@ class TestSourceCharacterization(unittest.TestCase):
         # UI-1: wind direction is unavailable when wind speed is zero.
         self.assertIn("If IsNan(WD) Or IsInf(WD) Or Abs(WS) < 0.000000001 Then", text)
 
-    def test_android_narrow_total_temperature_label(self):
+    def test_android_narrow_output_labels_drop_symbols(self):
         text = (ROOT / "AeroCalculator.b4a").read_text(encoding="utf-8-sig")
 
-        # Below 340 dp the full TAT label touches its value; use the short form.
-        self.assertIn(
-            'If UseTemperatureWord Then lblVar.Text = "Total Air Temperature TAT" '
-            'Else lblVar.Text = "Total Air Temp TAT"',
-            text,
-        )
+        # Below 340 dp the altitude and TAT output names drop their symbols so
+        # the label does not touch the value.
+        match = re.search(r"(?ms)^Private Sub UseOutputSymbols\b(.*?)^End Sub", text)
+        self.assertIsNotNone(match)
+        self.assertIn("Return xx >= 340dip", match.group(1))
+        for name in (
+            "Pressure Altitude", "Geometric Altitude", "Geopotential Altitude",
+            "Density Altitude", "Temperature Altitude", "Total Air Temperature",
+        ):
+            with self.subTest(name=name):
+                self.assertRegex(
+                    text,
+                    rf'If UseOutputSymbols Then lblVar\.Text = .+ Else lblVar\.Text = "{name}"',
+                )

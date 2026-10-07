@@ -183,16 +183,16 @@ const resultNames = [
 
 // Static trusted markup is used here only for mathematical subscript typography.
 const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string>> = {
-  "Pressure Altitude": "Pressure Altitude H<sub class='hp-sub'>P</sub>",
-  "Geometric Altitude": "Geometric Altitude H<sub>GEOM</sub>",
-  "Geopotential Altitude": "Geopotential Altitude H<sub>G</sub>",
-  "Density Altitude": "Density Altitude H<sub>ρ</sub>",
-  "Temperature Altitude": "Temperature Altitude H<sub>T</sub>",
+  "Pressure Altitude": "Pressure Altitude <span class='result-symbol'>H<sub class='hp-sub'>P</sub></span>",
+  "Geometric Altitude": "Geometric Altitude <span class='result-symbol'>H<sub>GEOM</sub></span>",
+  "Geopotential Altitude": "Geopotential Altitude <span class='result-symbol'>H<sub>G</sub></span>",
+  "Density Altitude": "Density Altitude <span class='result-symbol'>H<sub>ρ</sub></span>",
+  "Temperature Altitude": "Temperature Altitude <span class='result-symbol'>H<sub>T</sub></span>",
   "Pressure": "Pressure p",
   "Density": "Density ρ",
   "Temperature": "Temperature OAT",
   "Delta ISA": "Δ ISA",
-  "Total Temperature": "Total Air Temperature TAT",
+  "Total Temperature": "Total Air Temperature <span class='result-symbol'>TAT</span>",
   "Viscosity": "Viscosity μ",
   "Sound Speed": "Sound Speed a",
   "Stall Speed Vs": "Stall Speed V<sub>S</sub>",

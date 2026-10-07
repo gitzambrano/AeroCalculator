@@ -80,6 +80,7 @@ Do not create arbitrary temporary directories or ad-hoc folders across the repos
    - Uppercase subscript notation for aerodynamic and atmospheric parameters ($H_P$, $H_{\mathrm{GEOM}}$, $H_G$, $H_\rho$, $H_T$, $S_{\mathrm{REF}}$, $c_{\mathrm{REF}}$, $C_{L,\mathrm{MAX}}$, $N_Z$, $V_S$).
    - Lowercase subscript preserved only for compressible dynamic impact pressure ($q_c$).
 3. Keep feature parity and synchronization between Android (B4A) and Web (TypeScript/Vite) clients for layouts, bottom sheets, options, and long-press technical help.
+4. Width-driven label fallbacks use the same thresholds on both clients. Below 340 dp/px, altitude and TAT output labels drop their symbols (Android `UseOutputSymbols`, web `.result-symbol`). Prefer dropping a redundant symbol to abbreviating the quantity name.
 
 ## Numerical changes
 

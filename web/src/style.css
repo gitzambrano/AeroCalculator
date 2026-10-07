@@ -1323,6 +1323,12 @@ sub.hp-sub {
   #result-tooltip-eq-box .katex { font-size: 1.0em; }
 }
 
+/* Same policy as Android UseOutputSymbols: below 340 px the altitude and TAT
+   output names stand alone, so the label keeps a gap before the value. */
+@media (max-width: 339px) {
+  .result-symbol { display: none; }
+}
+
 @media (max-width: 279px) {
   /* Preserve the fixed 54/46 result split and font size on ultra-narrow screens. */
   .result-row { padding-left: 0; padding-right: 0; }

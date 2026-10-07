@@ -294,6 +294,23 @@ test("output values stay on one line across mobile widths with long formatting",
   await context.close();
 });
 
+test("narrow output labels drop altitude and TAT symbols below 340 px", async ({ browser }) => {
+  const names = ["Pressure Altitude", "Geometric Altitude", "Geopotential Altitude", "Density Altitude", "Temperature Altitude", "Total Temperature"];
+  for (const [width, symbolsVisible] of [[320, false], [339, false], [340, true], [390, true]] as const) {
+    const context = await browser.newContext({ viewport: { width, height: 800 } });
+    const page = await context.newPage();
+    await page.goto("/");
+    await page.getByRole("button", { name: "CALCULATE" }).click();
+    for (const name of names) {
+      const row = page.locator(".result-row").filter({ has: page.locator(`[data-result="${name}"]`) });
+      const symbol = row.locator(".result-symbol");
+      if (symbolsVisible) await expect(symbol, `${width}px ${name}`).toBeVisible();
+      else await expect(symbol, `${width}px ${name}`).toBeHidden();
+    }
+    await context.close();
+  }
+});
+
 test("input label fallbacks switch at the intended mobile thresholds", async ({ browser }) => {
   const cases = [
     { width: 390, pressure: "Static Pressure", temp: "Temperature OAT", ground: "Ground Speed", qdyn: "Dynamic Pressure", qc: "Impact Pressure", windSpeed: "Wind Speed", windDir: "Wind Direction", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
