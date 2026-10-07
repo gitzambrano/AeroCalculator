@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, re, subprocess, sys, time
+import json, os, re, subprocess, sys, time
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -10,13 +10,21 @@ OUT=Path(f"smoke-results/api-{API}/input-matrix")
 OUT.mkdir(parents=True,exist_ok=True)
 REPORT=[]
 
-PROFILES=[
+FULL_VISUAL_AUDIT = os.environ.get("AEROCALC_FULL_VISUAL_AUDIT", "0") == "1"
+
+FULL_PROFILES=[
  ("280dp","560x1120","320"),
  ("320dp","640x1280","320"),
  ("360dp","720x1440","320"),
  ("393dp","1080x2160","440"),
  ("411dp","1080x2160","420"),
 ]
+QUICK_PROFILES=[
+ ("280dp","560x1120","320"),
+ ("360dp","720x1440","320"),
+ ("411dp","1080x2160","420"),
+]
+PROFILES = FULL_PROFILES if FULL_VISUAL_AUDIT else QUICK_PROFILES
 
 def run(*args,text=True,check=True):
  p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=text)
@@ -45,6 +53,7 @@ def dump(dirp,name):
  return ET.parse(p).getroot()
 
 def shot(dirp,name):
+ if not FULL_VISUAL_AUDIT: return
  dirp.mkdir(parents=True,exist_ok=True)
  p=dirp/f"{name}.png"
  with p.open("wb") as fh:
@@ -288,7 +297,7 @@ def main():
  for profile,size,density in PROFILES:
   exercise_profile(profile,size,density)
  (OUT/"report.json").write_text(json.dumps(REPORT,indent=2,ensure_ascii=False),encoding="utf-8")
- print(json.dumps({"profiles":[p[0] for p in PROFILES],"checks":len(REPORT)},indent=2))
+ print(json.dumps({"mode":"full-visual" if FULL_VISUAL_AUDIT else "quick","profiles":[p[0] for p in PROFILES],"checks":len(REPORT)},indent=2))
 
 try:
  main()
