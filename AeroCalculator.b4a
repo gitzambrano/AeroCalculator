@@ -1634,16 +1634,12 @@ Sub Pager_PageChanged (Position As Int)
 	
 End Sub
 
-Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
-	' Criar panels e labes com nomes dos avioes
-	Dim pnl As Panel: pnl.Initialize("")
-	pnl.Tag = ID
-	
-	Dim planeName As String = a.GetDefault(ID & "_Name", "")
+Private Sub AirplaneMetaSubtitle(ID As Int) As String
 	Dim srefVal As String = a.GetDefault(ID & "_S", "")
 	If srefVal.Length = 0 Then srefVal = a.GetDefault(ID & "_Sref", "")
 	Dim crefVal As String = a.GetDefault(ID & "_c", "")
 	If crefVal.Length = 0 Then crefVal = a.GetDefault(ID & "_cref", "")
+
 	Dim srefUnitIdx As Int = a.GetDefault(ID & "_Sunit", 0)
 	Dim crefUnitIdx As Int = a.GetDefault(ID & "_cunit", 0)
 	Dim sUnits() As String = Array As String("m²", "ft²", "in²", "cm²", "mm²")
@@ -1670,6 +1666,16 @@ Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
 	Else If crefVal.Length > 0 Then
 		If subStr.Length > 0 Then subStr = subStr & "  •  " & crefVal & " " & cUnitStr Else subStr = crefVal & " " & cUnitStr
 	End If
+	Return subStr
+End Sub
+
+Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
+	' Criar panels e labes com nomes dos avioes
+	Dim pnl As Panel: pnl.Initialize("")
+	pnl.Tag = ID
+	
+	Dim planeName As String = a.GetDefault(ID & "_Name", "")
+	Dim subStr As String = AirplaneMetaSubtitle(ID)
 
 	' TWO dedicated labels for pixel-perfect vertical hierarchy and clean spacing:
 	Dim lblTitle As Label: lblTitle.Initialize("")
@@ -2101,7 +2107,8 @@ Sub btnAirplanePicker_Click
 	If lst.NumberOfItems > 0 Then
 		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems - 1)
 		For ii = 0 To ListAirp.Size - 1
-			items.Add(a.GetDefault(ListAirp.Get(ii) & "_Name", "Unnamed Airplane") & "|Stored aircraft profile")
+			Dim planeID As Int = ListAirp.Get(ii)
+			items.Add(a.GetDefault(planeID & "_Name", "Unnamed Airplane") & "|" & AirplaneMetaSubtitle(planeID))
 		Next
 	End If
 
