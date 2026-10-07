@@ -237,7 +237,7 @@
       "symbol": "χ",
       "unit": "rad",
       "definition": "Track angle: direction of the ground-velocity vector.",
-      "equation": "Direction of Vground",
+      "equation": "Vground = Vair + Vwind",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Track"
@@ -248,7 +248,7 @@
       "symbol": "ψ",
       "unit": "rad",
       "definition": "Heading angle: direction the aircraft longitudinal axis points.",
-      "equation": "Direction of the aircraft longitudinal axis",
+      "equation": "ψ = aircraft heading",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Heading"
@@ -259,7 +259,7 @@
       "symbol": "β",
       "unit": "rad",
       "definition": "Sideslip angle β: angle between the aircraft heading and the air-relative velocity direction.",
-      "equation": "See documented wind convention",
+      "equation": "β = sideslip angle",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Sideslip"
@@ -270,7 +270,7 @@
       "symbol": "drift",
       "unit": "rad",
       "definition": "Drift angle: heading minus track.",
-      "equation": "drift = heading − track",
+      "equation": "drift = ψ − χ",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Drift"
@@ -281,7 +281,7 @@
       "symbol": "HW",
       "unit": "m/s",
       "definition": "Wind component along the selected runway/reference direction. Positive means headwind.",
-      "equation": "Wind projection against reference",
+      "equation": "HW = Vw cos(ψw − ψRWY)",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "HeadWind"
@@ -303,7 +303,7 @@
       "symbol": "CW",
       "unit": "m/s",
       "definition": "Wind component perpendicular to the selected runway/reference direction.",
-      "equation": "Wind projection across reference",
+      "equation": "CW = Vw sin(ψw − ψRWY)",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "CrossWind"
@@ -314,7 +314,7 @@
       "symbol": "RWY",
       "unit": "rad",
       "definition": "Reference direction used to resolve headwind and crosswind components.",
-      "equation": "Reference for wind components",
+      "equation": "ψRWY = runway heading",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "RwyAngle"
@@ -322,10 +322,10 @@
     "Wind Direction": {
       "full": "Wind direction from",
       "short": "Wind Direction",
-      "symbol": "θw",
+      "symbol": "wind from",
       "unit": "rad",
       "definition": "Direction from which the wind is referenced in the wind-vector input mode.",
-      "equation": "Meteorological direction from",
+      "equation": "ψw = meteorological wind direction",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Wind Dir"
@@ -479,7 +479,7 @@
       "symbol": "χ",
       "unit": "rad",
       "definition": "Track angle: direction of the ground-velocity vector.",
-      "equation": "Direction of Vground",
+      "equation": "Vground = Vair + Vwind",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Track"
@@ -490,7 +490,7 @@
       "symbol": "ψ",
       "unit": "rad",
       "definition": "Heading angle: direction the aircraft longitudinal axis points.",
-      "equation": "Direction of the aircraft longitudinal axis",
+      "equation": "ψ = aircraft heading",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Heading"
@@ -501,7 +501,7 @@
       "symbol": "drift",
       "unit": "rad",
       "definition": "Drift angle: heading minus track.",
-      "equation": "drift = heading − track",
+      "equation": "drift = ψ − χ",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Drift"
@@ -512,7 +512,7 @@
       "symbol": "β",
       "unit": "rad",
       "definition": "Sideslip angle β: angle between the aircraft heading and the air-relative velocity direction.",
-      "equation": "See documented wind convention",
+      "equation": "β = sideslip angle",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Sideslip"
@@ -567,7 +567,7 @@
       "symbol": "wind from",
       "unit": "rad",
       "definition": "Direction from which the wind is referenced in the wind-vector input mode.",
-      "equation": "Meteorological direction from",
+      "equation": "ψw = meteorological wind direction",
       "group": "Wind",
       "limits": "Within the documented atmosphere and subsonic model. No aircraft operating limit is implied.",
       "abbreviated": "Wind Direction"
