@@ -195,7 +195,12 @@ def main():
 
  select_menu('Send Feedback','feedback'); d,_=wait_text('Feedback and Bug Report','feedback-dialog'); rec('feedback-dialog',find_contains(d,'Choose the means') is not None,str(texts(d))); shot('feedback-dialog'); back(); return_to_main('feedback-return')
 
- select_menu('Settings','settings'); d,_=wait_text('Theme','settings-screen'); foreground('settings','preference'); rec('settings-items',find(d,'Altitude Unit') is not None and find(d,'Pressure Unit') is not None,str(texts(d)[:80])); layout(d,'settings'); shot('settings'); back(); return_to_main('settings-return')
+ select_menu('Settings','settings'); d,_=wait_text('Theme','settings-screen'); foreground('settings','.main'); rec('settings-items',find(d,'Altitude Unit') is not None and find(d,'Pressure Unit') is not None,str(texts(d)[:80])); layout(d,'settings'); shot('settings')
+ theme_btn=find(d,'Green Peace')
+ rec('settings-theme-button',theme_btn is not None,str(texts(d)[:80]))
+ if theme_btn is not None:
+  tap(theme_btn); td,_=wait_text('Ancient Brown','theme-sheet'); rec('theme-sheet',find(td,'Dark Shadows') is not None and find(td,'Orange Juice') is not None,str(texts(td)[:80])); layout(td,'theme-sheet'); shot('settings-theme-sheet'); cancel=find(td,'Cancel'); tap(cancel) if cancel is not None else back(); time.sleep(.5)
+ back(); return_to_main('settings-return')
 
  select_menu('Export Airplanes','export'); d,_=wait_text('OK','export-explorer'); rec('export-explorer',find(d,'OK') is not None,str(texts(d)[:80])); layout(d,'export-explorer'); shot('export-explorer'); back(); return_to_main('export-return')
 
