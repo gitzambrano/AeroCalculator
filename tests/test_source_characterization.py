@@ -37,7 +37,7 @@ class TestSourceCharacterization(unittest.TestCase):
             'ConvertTemperatureEdit(record, idx)',
             'ConvertEditByFactor(edtSpd, SpeedUnitFactor(record), SpeedUnitFactor(idx), 6)',
             'ConvertEditByFactor(edtWeight, MassUnitFactor(record), MassUnitFactor(idx), 6)',
-            'ConvertEditByFactor(edtSref, AreaUnitFactor(record), AreaUnitFactor(idx), 3)',
+            'ConvertEditByFactor(edtSref, AreaUnitFactor(record), AreaUnitFactor(idx), areaDecimals)',
             'ConvertEditByFactor(edtcref, LengthUnitFactor(record), LengthUnitFactor(idx), 6)',
             'ConvertEditByFactor(edtAngle1, AngleUnitFactor(record), AngleUnitFactor(idx), 6)',
             'ConvertEditByFactor(edtAngle2, AngleUnitFactor(record), AngleUnitFactor(idx), 6)',
@@ -47,6 +47,8 @@ class TestSourceCharacterization(unittest.TestCase):
         ):
             with self.subTest(snippet=snippet):
                 self.assertIn(snippet, text)
+
+        self.assertIn("If idx = 2 Then areaDecimals = 3", text)
 
         # Crosswind owns its unit state; it must never proxy the headwind unit picker.
         match = re.search(
