@@ -47,7 +47,7 @@
     "OAT": {
       "full": "Outside air temperature",
       "short": "OAT",
-      "symbol": "T",
+      "symbol": "OAT",
       "unit": "K",
       "definition": "Outside air temperature at the aircraft condition.",
       "equation": "T = TISA(Hp) + ΔT",
@@ -377,7 +377,7 @@
     "Temperature": {
       "full": "Outside air temperature",
       "short": "OAT",
-      "symbol": "T",
+      "symbol": "OAT",
       "unit": "K",
       "definition": "Outside air temperature at the aircraft condition.",
       "equation": "T = TISA(Hp) + ΔT",
@@ -617,15 +617,15 @@
       "abbreviated": "ρ"
     },
     "Total Temperature": {
-      "full": "Total temperature",
-      "short": "Tt",
-      "symbol": "Tt",
+      "full": "Total air temperature",
+      "short": "TAT",
+      "symbol": "TAT",
       "unit": "K",
       "definition": "Isentropic stagnation temperature for a calorically perfect gas.",
       "equation": "Tt = T (1 + (γ−1) M²/2)",
       "group": "Atmosphere",
       "limits": "Within the documented model. Unavailable values are not plotted.",
-      "abbreviated": "Tt"
+      "abbreviated": "TAT"
     },
     "Viscosity": {
       "full": "Dynamic viscosity",
