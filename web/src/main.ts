@@ -604,9 +604,41 @@ const FIELD_MODAL_TITLES: Record<string, string> = {
   angle2: "Lateral Angle Type",
   headWind: "Wind Input Type",
   windRef: "Reference Angle",
-  sref: "Wing Reference Area",
-  cref: "Wing Reference Chord",
+  sref: "Wing Area",
+  cref: "Wing Chord",
   crossWind: "Wind Input Type",
+};
+
+const FIELD_MODAL_OPTION_LABELS: Record<string, string> = {
+  TAS: "TAS",
+  CAS: "CAS",
+  EAS: "EAS",
+  Mach: "Mach",
+  CL: "Lift Coefficient",
+  "Vs Factor": "Stall-Speed Factor",
+  "Ground Speed": "Ground Speed",
+  Qdyn: "Dynamic Pressure",
+  Qc: "Impact Pressure",
+  Weight: "Custom Mass",
+  CLmax: "Custom Maximum Lift Coefficient",
+  Hp: "Pressure Altitude",
+  Hg: "Geometric Altitude",
+  P: "Pressure",
+  "Δ ISA": "Δ ISA",
+  OAT: "Outside Air Temperature",
+  NzPullup: "Normal Load Factor (Pull-up)",
+  NzTurn: "Normal Load Factor (Wind-up Turn)",
+  BankTurn: "Bank Angle (Wind-up Turn)",
+  Track: "Track Angle (Course)",
+  Heading: "Heading Angle",
+  Sideslip: "Sideslip Angle β",
+  Drift: "Drift Angle",
+  HeadWind: "Headwind / Crosswind",
+  "Wind Speed": "WindSpeed / WindDirection",
+  "Runway Angle": "Runway Reference Angle",
+  "Wind Direction": "Wind Direction",
+  Sref: "Wing Reference Area",
+  cref: "Mean Aerodynamic Chord",
 };
 
 const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
@@ -615,10 +647,10 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   CAS: "Calibrated airspeed",
   EAS: "Equivalent airspeed",
   Mach: "TAS / speed of sound",
-  CL: "Lift coefficient",
-  "Vs Factor": "Multiple of stall speed",
+  CL: "Aerodynamic lift coefficient",
+  "Vs Factor": "Multiple of reference stall speed",
   "Ground Speed": "Speed over ground",
-  Qdyn: "Dynamic pressure q = ½ ρ V²",
+  Qdyn: "q = ½ ρ V²",
   Qc: "Total pressure minus static pressure",
 
   // Weight
@@ -631,11 +663,11 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   Light: "Light configuration weight",
 
   // Flaps / CLmax
-  CLmax: "User-defined max lift coefficient",
+  CLmax: "User-defined maximum lift coefficient",
   "Flap 0": "Flap 0 (clean configuration) maximum lift coefficient",
 
   // Altitude
-  Hp: "Barometric altitude, ISA",
+  Hp: "Barometric altitude (H_p), ISA",
   Hg: "True height above MSL",
   P: "Direct static pressure input",
 
@@ -644,25 +676,25 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   OAT: "Outside air temperature",
 
   // Maneuver
-  NzPullup: "Symmetric pull-up (n = L/W)",
-  NzTurn: "Coordinated turn load factor",
-  BankTurn: "Coordinated turn bank angle",
+  NzPullup: "Symmetric pull-up: n = L/W",
+  NzTurn: "Coordinated turn: enter load factor",
+  BankTurn: "Coordinated turn: enter bank angle φ",
 
   // Angles
   Track: "Course over ground (True North)",
   Heading: "Aircraft nose heading (True North)",
   Sideslip: "Angle between heading and wind",
-  Drift: "Heading minus track angle",
+  Drift: "Angle between heading and track",
 
   // Wind
   HeadWind: "Runway wind components directly",
-  "Wind Speed": "Total wind speed magnitude",
+  "Wind Speed": "Total wind speed and direction",
   "Runway Angle": "Runway heading (True North)",
   "Wind Direction": "Direction wind blows from (True North)",
 
   // Geometry
   Sref: "Theoretical wing planform area",
-  cref: "Mean aerodynamic chord",
+  cref: "Wing MAC reference length",
   CrossWind: "Runway crosswind component directly",
 };
 
@@ -681,7 +713,8 @@ document.addEventListener("keydown", (e) => {
 });
 
 function openFieldOptionPicker(fieldId: string): void {
-  const typeSelect = document.getElementById(`${fieldId}-type`) as HTMLSelectElement | null;
+  const pickerFieldId = fieldId === "crossWind" ? "headWind" : fieldId;
+  const typeSelect = document.getElementById(`${pickerFieldId}-type`) as HTMLSelectElement | null;
   if (!typeSelect || typeSelect.disabled) return;
 
   const modal = byId("modal-options-selector");
@@ -689,7 +722,9 @@ function openFieldOptionPicker(fieldId: string): void {
   const listEl = byId("options-selector-list");
   if (!modal || !titleEl || !listEl) return;
 
-  const title = FIELD_MODAL_TITLES[fieldId] ?? "Select Option";
+  const title = pickerFieldId === "windRef"
+    ? (typeSelect.value === "Runway Angle" ? "Runway Angle" : "Wind Direction")
+    : (FIELD_MODAL_TITLES[pickerFieldId] ?? "Select Option");
   titleEl.textContent = title;
 
   listEl.innerHTML = "";
@@ -697,13 +732,9 @@ function openFieldOptionPicker(fieldId: string): void {
 
   Array.from(typeSelect.options).forEach((opt) => {
     const val = opt.value;
-    let label = opt.label || val;
-    if (fieldId === "weight" && val === "Weight") label = "Custom Mass";
-    else if (fieldId === "clmax" && val === "CLmax") label = "Custom C<sub>L,MAX</sub>";
-    else if (fieldId === "clmax" && val === "Flap 0") label = "Flap 0 (clean)";
-    else if (fieldId === "spd" && val === "Qc") label = "Impact Pressure q<sub>c</sub>";
-    else if (fieldId === "spd" && val === "Qdyn") label = "Dynamic Pressure q";
-    else if (DEFAULT_OPTION_LABELS[val]) label = DEFAULT_OPTION_LABELS[val];
+    let label = FIELD_MODAL_OPTION_LABELS[val] ?? opt.label ?? val;
+    if (val === "Flap 0") label = "Flap 0 (clean)";
+    else if (val.startsWith("Flap ")) label = val;
 
     let desc = FIELD_OPTION_DESCRIPTIONS[val];
     if (!desc && val.startsWith("Flap ")) {
@@ -762,6 +793,117 @@ function openFieldOptionPicker(fieldId: string): void {
   setOverlayOpen("modal-options-selector", true);
 }
 
+const UNIT_OPTION_DESCRIPTIONS: Record<string, string> = {
+  ft: "Feet — standard aviation",
+  m: "Meters — SI unit",
+  km: "Kilometers",
+  nm: "Nautical miles",
+  mi: "Statute miles",
+  in: "Inches",
+  mbar: "Millibar (hPa)",
+  Pa: "Pascal — SI unit",
+  hPa: "Hectopascal",
+  atm: "Standard atmosphere",
+  mmHg: "Millimeters of mercury",
+  psi: "Pounds per square inch",
+  "°C": "Degrees Celsius",
+  "°F": "Degrees Fahrenheit",
+  K: "Kelvin — absolute",
+  kt: "Knots — aviation standard",
+  "m/s": "Meters per second — SI unit",
+  "km/h": "Kilometers per hour",
+  mph: "Miles per hour",
+  "ft/s": "Feet per second",
+  kg: "Kilogram — SI unit",
+  lb: "Pound — US aviation",
+  ton: "Metric tonne (1000 kg)",
+  slug: "Slug — US customary",
+  oz: "Ounce",
+  "m²": "Square meters — SI unit",
+  "ft²": "Square feet",
+  "in²": "Square inches",
+  "cm²": "Square centimeters",
+  "mm²": "Square millimeters",
+  cm: "Centimeters",
+  mm: "Millimeters",
+  deg: "Degrees",
+  rad: "Radians",
+  "—": "Dimensionless quantity — no physical unit",
+};
+
+function inputUnitPickerTitle(fieldId: string): string {
+  if (fieldId === "alt") return selectValue("alt-type") === "P" ? "Pressure Unit" : "Altitude Unit";
+  if (fieldId === "temp") return "Temperature Unit";
+  if (fieldId === "spd") {
+    const speedType = selectValue("spd-type");
+    if (speedType === "Qdyn" || speedType === "Qc") return "Pressure Unit";
+    if (speedType === "Mach" || speedType === "CL" || speedType === "Vs Factor") return "Unit";
+    return "Speed Unit";
+  }
+  if (fieldId === "weight") return "Mass Unit";
+  if (fieldId === "sref") return "Wing Area Unit";
+  if (fieldId === "cref") return "Chord Unit";
+  if (fieldId === "headWind" || fieldId === "crossWind") return "Wind Speed Unit";
+  return "Angle Unit";
+}
+
+function openInputUnitPicker(fieldId: string): void {
+  const selectEl = document.getElementById(`${fieldId}-unit`) as HTMLSelectElement | null;
+  const modal = byId("modal-options-selector");
+  const titleEl = byId("options-selector-title");
+  const listEl = byId("options-selector-list");
+  if (!selectEl || selectEl.disabled || !modal || !titleEl || !listEl) return;
+
+  titleEl.textContent = inputUnitPickerTitle(fieldId);
+  listEl.innerHTML = "";
+
+  Array.from(selectEl.options).forEach((opt) => {
+    const itemEl = document.createElement("div");
+    itemEl.className = `option-item${opt.value === selectEl.value ? " selected" : ""}`;
+    itemEl.tabIndex = 0;
+    itemEl.setAttribute("role", "button");
+
+    const textGroup = document.createElement("div");
+    textGroup.className = "option-text-group";
+    const label = document.createElement("div");
+    label.className = "option-label";
+    label.textContent = opt.text;
+    textGroup.appendChild(label);
+
+    const desc = UNIT_OPTION_DESCRIPTIONS[opt.value] ?? UNIT_OPTION_DESCRIPTIONS[opt.text];
+    if (desc) {
+      const descEl = document.createElement("div");
+      descEl.className = "option-desc";
+      descEl.textContent = desc;
+      textGroup.appendChild(descEl);
+    }
+
+    const radio = document.createElement("div");
+    radio.className = "option-radio";
+    radio.appendChild(Object.assign(document.createElement("div"), { className: "option-radio-inner" }));
+    itemEl.append(textGroup, radio);
+
+    const choose = () => {
+      vibrateTap();
+      if (selectEl.value !== opt.value) {
+        selectEl.value = opt.value;
+        selectEl.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      closeOptionsModal();
+    };
+    itemEl.addEventListener("click", choose);
+    itemEl.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        choose();
+      }
+    });
+    listEl.appendChild(itemEl);
+  });
+
+  setOverlayOpen("modal-options-selector", true);
+}
+
 const SETTING_OPTION_DESCRIPTIONS: Record<string, Record<string, string>> = {
   "setting-theme": {
     "Green Peace": "Teal daylight interface",
@@ -771,8 +913,8 @@ const SETTING_OPTION_DESCRIPTIONS: Record<string, Record<string, string>> = {
     "Red Alert": "Crimson avionics on neutral surfaces",
     "Orange Juice": "Warm cockpit amber",
   },
-  "setting-altitude": { ft: "Feet", m: "Meters — SI unit", km: "Kilometers", nm: "Nautical-distance unit", mi: "Statute-distance unit", in: "Inches" },
-  "setting-pressure": { mbar: "Millibar", Pa: "Pascal — SI unit", hPa: "Hectopascal", atm: "Standard atmosphere", mmHg: "Millimeters of mercury", psi: "Pounds per square inch" },
+  "setting-altitude": { ft: "Feet — standard aviation", m: "Meters — SI unit", km: "Kilometers", nm: "Nautical miles", mi: "Statute miles", in: "Inches" },
+  "setting-pressure": { mbar: "Millibar (hPa)", Pa: "Pascal — SI unit", hPa: "Hectopascal", atm: "Standard atmosphere", mmHg: "Millimeters of mercury", psi: "Pounds per square inch" },
   "setting-temperature": { "°C": "Degrees Celsius", "°F": "Degrees Fahrenheit", K: "Kelvin — absolute" },
   "setting-speed": { kt: "Knots — aviation standard", "m/s": "Meters per second — SI unit", "km/h": "Kilometers per hour", mph: "Miles per hour", "ft/s": "Feet per second" },
   "setting-angle": { deg: "Degrees", rad: "Radians" },
@@ -1128,7 +1270,22 @@ function createInputRow(field: Field): HTMLElement {
   unit.setAttribute("aria-label", `${field.id} unit`);
   fillSelect(unit, field.unitOptions, field.defaultUnit);
   setHelper(unit, "Unit used for this input value. Changing the unit converts the current numeric value when applicable.");
-  unit.addEventListener("click", () => vibrateTap());
+  unit.addEventListener("pointerdown", (event) => {
+    if (unit.disabled) return;
+    event.preventDefault();
+    event.stopPropagation();
+    vibrateTap();
+    openInputUnitPicker(field.id);
+  });
+  unit.addEventListener("click", (event) => event.preventDefault());
+  unit.addEventListener("keydown", (event) => {
+    if (unit.disabled) return;
+    if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
+      event.preventDefault();
+      vibrateTap();
+      openInputUnitPicker(field.id);
+    }
+  });
   unit.addEventListener("change", () => vibrateTap());
   installTechnicalHold(unit, () => type.value);
 
