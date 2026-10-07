@@ -109,7 +109,7 @@ def swipe(up=True):
 def top(dirp):
  for i in range(12):
   r=dump(dirp,f"top-{i}")
-  if find_any(r,["Airplane"]): return r
+  if find_any(r,["Airplane"]) is not None: return r
   swipe(False)
  return dump(dirp,"top-final")
 
@@ -161,12 +161,16 @@ def open_picker(dirp,button_candidates,expected,state):
    if find_sheet_text(d,option) is not None: seen.add(option)
   if len(seen)==len(expected): break
   swipe(True)
- # Restore the sheet near its top so selection can search deterministically.
- for _ in range(8): swipe(False)
- d=dump(dirp,state+"-sheet")
+ # Do not drag downward to restore the list: downward pull is now the
+ # intentional bottom-sheet dismiss gesture. Close and reopen instead.
  missing=[x for x in expected if x not in seen]
  REPORT.append({"profile":dirp.name,"state":state+"-options","ok":not missing,"missing":missing,"texts":texts(d)[:120]})
  if missing: raise AssertionError(f"{dirp.name}:{state} missing options {missing}")
+ adb("shell","input","keyevent","4",check=False)
+ time.sleep(.3)
+ _,button=reachable(dirp,button_candidates)
+ tap(button); time.sleep(.35)
+ d=dump(dirp,state+"-sheet")
  shot(dirp,state+"-sheet")
  return d
 
