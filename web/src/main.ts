@@ -1110,7 +1110,7 @@ byId("settings-form").addEventListener("submit", (event) => {
 
 initializeHelpers();
 initializeSwipeNavigation();
-["(max-width: 340px)", "(max-width: 320px)", "(max-width: 300px)"].forEach((query) =>
+["(max-width: 359px)", "(max-width: 339px)", "(max-width: 319px)", "(max-width: 299px)"].forEach((query) =>
   window.matchMedia(query).addEventListener("change", refreshResponsiveOptionLabels)
 );
 
