@@ -702,6 +702,80 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
 const closeOptionsModal = () => {
   setOverlayOpen("modal-options-selector", false);
 };
+
+function installOptionsSwipeDismiss(): void {
+  const modal = byId("modal-options-selector");
+  const card = modal.querySelector<HTMLElement>(".options-modal-card");
+  const body = modal.querySelector<HTMLElement>(".options-modal-body");
+  if (!card) return;
+
+  let pointerId: number | null = null;
+  let startX = 0;
+  let startY = 0;
+  let dragY = 0;
+  let dragging = false;
+  let suppressClick = false;
+
+  const reset = (): void => {
+    card.style.transition = "";
+    card.style.transform = "";
+    pointerId = null;
+    dragY = 0;
+    dragging = false;
+  };
+
+  card.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" || event.button !== 0) return;
+    const target = event.target as HTMLElement | null;
+    if (target?.closest("button")) return;
+    pointerId = event.pointerId;
+    startX = event.clientX;
+    startY = event.clientY;
+    dragY = 0;
+    dragging = false;
+  }, true);
+
+  card.addEventListener("pointermove", (event) => {
+    if (pointerId !== event.pointerId) return;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    const startedInHeader = (event.target as HTMLElement | null)?.closest(".modal-header, .modal-handle") !== null;
+    const canPullBody = !body || body.scrollTop <= 1;
+    if (!dragging) {
+      if (dy <= 10 || Math.abs(dy) <= Math.abs(dx) * 1.15 || (!startedInHeader && !canPullBody)) return;
+      dragging = true;
+      card.setPointerCapture?.(event.pointerId);
+      card.style.transition = "none";
+    }
+    if (dy < 0) return;
+    dragY = dy;
+    event.preventDefault();
+    card.style.transform = `translateY(${Math.min(dy, 180)}px)`;
+  }, { capture: true, passive: false });
+
+  const finish = (event: PointerEvent): void => {
+    if (pointerId !== event.pointerId) return;
+    if (dragging) {
+      suppressClick = true;
+      event.preventDefault();
+      if (dragY >= 64) {
+        closeOptionsModal();
+      }
+    }
+    if (card.hasPointerCapture?.(event.pointerId)) card.releasePointerCapture(event.pointerId);
+    reset();
+  };
+
+  card.addEventListener("pointerup", finish, { capture: true });
+  card.addEventListener("pointercancel", finish, { capture: true });
+  card.addEventListener("click", (event) => {
+    if (!suppressClick) return;
+    suppressClick = false;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }, true);
+}
+installOptionsSwipeDismiss();
 byId("modal-options-close")?.addEventListener("click", closeOptionsModal);
 byId("options-selector-cancel")?.addEventListener("click", closeOptionsModal);
 byId("modal-options-selector")?.addEventListener("click", (e) => {
