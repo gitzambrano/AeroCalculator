@@ -724,7 +724,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Case 3
 		    btnSpdType.Initialize("btnSpdType")
 		    pnlInput.AddView(btnSpdType, 3%x, ib*sc, 39%x, tb*sc)
-			If UseLongInputLabels Then
+			If UseAirspeedFullLabels Then
 				btnSpdType.Text="Airspeed CAS"
 			Else
 				btnSpdType.Text="CAS"
