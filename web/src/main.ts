@@ -1184,7 +1184,7 @@ byId("settings-form").addEventListener("submit", (event) => {
 
 initializeHelpers();
 initializeSwipeNavigation();
-["(max-width: 359px)", "(max-width: 339px)", "(max-width: 319px)", "(max-width: 299px)", "(max-width: 279px)", "(max-width: 239px)"].forEach((query) =>
+["(max-width: 354px)", "(max-width: 349px)", "(max-width: 339px)", "(max-width: 329px)", "(max-width: 324px)", "(max-width: 319px)", "(max-width: 299px)", "(max-width: 289px)", "(max-width: 269px)", "(max-width: 259px)"].forEach((query) =>
   window.matchMedia(query).addEventListener("change", refreshResponsiveOptionLabels)
 );
 
@@ -1588,44 +1588,51 @@ function initializeSwipeNavigation(): void {
 }
 
 function responsiveOptionLabel(value: string, label: string): string {
-  // Width-driven fallbacks for the 39% selector column. Keep full labels until
-  // their measured text width plus selector padding/chevron becomes tight.
+  // Width-driven fallbacks for the 39% selector column. Thresholds include
+  // measured label width plus selector padding and the compact chevron.
   const width = window.innerWidth;
-  const under360 = width < 360;
+  const under355 = width < 355;
+  const under350 = width < 350;
   const under340 = width < 340;
+  const under330 = width < 330;
+  const under325 = width < 325;
   const under320 = width < 320;
   const under300 = width < 300;
-  const under280 = width < 280;
-  const under240 = width < 240;
+  const under290 = width < 290;
+  const under270 = width < 270;
+  const under260 = width < 260;
 
   if (value === "Hp") return label;
-  if (value === "Hg") return under320 ? "H<sub>GEOM</sub>" : label;
-  if (value === "P") return under340 ? "Pressure" : label;
-  if (value === "OAT") return under280 ? "OAT" : under340 ? "Temperature" : label;
-  if (value === "TAS") return under300 ? "TAS" : label;
-  if (value === "CAS") return under300 ? "CAS" : label;
-  if (value === "EAS") return under300 ? "EAS" : label;
+  if (value === "Hg") return under325 ? "H<sub>GEOM</sub>" : label;
+  if (value === "P") return under330 ? "Pressure" : label;
+  if (value === "OAT") return under270 ? "OAT" : under350 ? "Temperature" : label;
+  if (value === "TAS") return under290 ? "TAS" : label;
+  if (value === "CAS") return under290 ? "CAS" : label;
+  if (value === "EAS") return under290 ? "EAS" : label;
   if (value === "CL") return "C<sub>L</sub>";
-  if (value === "Sref" || value === "cref") return label;
+  if (value === "Sref") return label;
+  if (value === "cref") return under260 ? "c<sub>REF</sub>" : label;
   if (value === "CLmax") return "C<sub>L,MAX</sub>";
   if (value.startsWith("Flap ")) {
     const flapNum = value.slice(5);
     return under340 ? `C<sub>L,MAX</sub> F${flapNum}` : `Flap ${flapNum} - C<sub>L,MAX</sub>`;
   }
-  if (value === "Track") return label;
+  if (value === "Track") return under260 ? "Track" : label;
   if (value === "Heading") return under300 ? "Heading" : label;
   if (value === "Sideslip") return under300 ? "Sideslip" : label;
   if (value === "Drift") return label;
   if (value === "Runway Angle") return under300 ? "Rnwy Angle" : label;
-  if (value === "HeadWind") return under240 ? "HeadWnd" : "Headwind";
-  if (value === "CrossWind") return under240 ? "CrossWnd" : "Crosswind";
+  if (value === "HeadWind") return under260 ? "HeadWnd" : "Headwind";
+  if (value === "CrossWind") return under260 ? "CrossWnd" : "Crosswind";
   if (value === "Wind Speed") return under320 ? "Wind Spd" : "Wind Speed";
   if (value === "Wind Direction") return under320 ? "Wind Dir" : "Wind Direction";
   if (value === "Vs Factor") return label;
   if (value === "Ground Speed") return under300 ? "Grnd Spd" : label;
-  if (value === "Qdyn") return under360 ? "Dyn Press" : label;
-  if (value === "Qc") return under360 ? "Imp Press" : label;
-  if (value === "NzTurn" || value === "BankTurn") return label;
+  if (value === "Qdyn") return under355 ? "Dyn Press" : label;
+  if (value === "Qc") return under330 ? "Imp Press" : label;
+  if (value === "NzPullup") return under260 ? "N<sub>Z</sub>" : label;
+  if (value === "NzTurn") return under260 ? "N<sub>Z</sub>" : label;
+  if (value === "BankTurn") return under260 ? "Bank" : label;
   return label;
 }
 
