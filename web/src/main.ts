@@ -435,8 +435,9 @@ app.innerHTML = `
     <div id="field-tooltip" class="field-tooltip" role="tooltip" hidden></div>
 
     <!-- MODAL: CONTEXTUAL HELP & TOOLTIP WITH LATEX (RotorCalculator standard) -->
-    <div class="modal-overlay" id="modal-result-tooltip" aria-hidden="true">
-      <div class="modal-card">
+    <div class="modal-overlay help-overlay" id="modal-result-tooltip" aria-hidden="true">
+      <div class="modal-card help-sheet">
+        <div class="modal-handle"></div>
         <div class="modal-header">
           <div class="modal-title" id="result-tooltip-title">About • Parameter</div>
           <button type="button" class="modal-close-btn" id="modal-tooltip-close" data-close="modal-result-tooltip" aria-label="Close">&times;</button>
