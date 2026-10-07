@@ -1,4 +1,4 @@
-﻿B4A=true
+B4A=true
 Group=Default Group
 ModulesStructureVersion=1
 Type=Class
@@ -249,7 +249,7 @@ Public Sub Explorer As typResult
 	gd_pnlCartouche.CornerRadius = 10
 	pnlCartouche.Background = gd_pnlCartouche
 	edtFilename.Initialize("")
-	Main.CenterEditTextContent(edtFilename)
+	CenterEditTextContent(edtFilename)
 	edtFilename.TextSize = 16
 	edtFilename.InputType = Bit.Or(edtFilename.InputType, 0x80000)
 	edtFilename.SingleLine = True
@@ -335,7 +335,7 @@ Public Sub Explorer2(DarkTheme As Boolean) As typResult
 	pnlCartouche.Initialize("")
 	pnlCartouche.Color = Colors.Transparent
 	edtFilename.Initialize("")
-	Main.CenterEditTextContent(edtFilename)
+	CenterEditTextContent(edtFilename)
 	edtFilename.TextSize = 16
 	edtFilename.InputType = Bit.Or(edtFilename.InputType, 0x80000)
 	edtFilename.SingleLine = True
@@ -593,4 +593,19 @@ Private Sub btnOK_Click
 		Selection.ChosenFile = edtFilename.Text
 	End If
 	WaitUntilOK = False
+End Sub
+
+Private Sub CenterEditTextContent(edt As EditText)
+	' Android EditText keeps asymmetric font/padding metrics even with Gravity.CENTER.
+	' Preserve horizontal padding, remove vertical padding, and center the glyph box itself.
+	edt.Gravity = Gravity.CENTER
+	Try
+		Dim jo As JavaObject = edt
+		Dim padLeft As Int = jo.RunMethod("getPaddingLeft", Null)
+		Dim padRight As Int = jo.RunMethod("getPaddingRight", Null)
+		jo.RunMethod("setIncludeFontPadding", Array(False))
+		jo.RunMethod("setPadding", Array(padLeft, 0, padRight, 0))
+	Catch
+		Log("CenterEditTextContent skipped: " & LastException.Message)
+	End Try
 End Sub

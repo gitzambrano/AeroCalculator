@@ -429,7 +429,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl1.AddView(edtName,30%x, 8dip, 67%x, 34dip)
 			edtName.Hint = "Aircraft Name"	
 			edtName.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtName)
+			CenterEditTextContent(edtName)
 			edtName.InputType = edtName.INPUT_TYPE_TEXT
 			edtName.ForceDoneButton = True
 			edtName.TextSize = 13
@@ -458,7 +458,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl2.AddView(edtSref,30%x, 8dip, 45%x, 34dip)
 			edtSref.Hint = "Reference Area"	
 			edtSref.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtSref)
+			CenterEditTextContent(edtSref)
 			edtSref.InputType = edtSref.INPUT_TYPE_DECIMAL_NUMBERS
 			edtSref.ForceDoneButton = True
 			edtSref.TextSize = 13
@@ -495,7 +495,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl3.AddView(edtcref,30%x, 8dip, 45%x, 34dip)
 			edtcref.Hint = "Reference Chord"	
 			edtcref.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtcref)
+			CenterEditTextContent(edtcref)
 			edtcref.InputType = edtcref.INPUT_TYPE_DECIMAL_NUMBERS
 			edtcref.ForceDoneButton = True
 			edtcref.TextSize = 13
@@ -545,7 +545,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl4.AddView(edtWeight1,22%x, 50dip, 27%x, 34dip)
 			edtWeight1.Hint = "MTOW"	
 			edtWeight1.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtWeight1)
+			CenterEditTextContent(edtWeight1)
 			edtWeight1.InputType = edtWeight1.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight1.ForceDoneButton = True
 			edtWeight1.TextSize = 13
@@ -566,7 +566,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl4.AddView(edtWeight2,71%x, 50dip, 27%x, 34dip)
 			edtWeight2.Hint = "MLW"	
 			edtWeight2.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtWeight2)
+			CenterEditTextContent(edtWeight2)
 			edtWeight2.InputType = edtWeight2.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight2.ForceDoneButton = True
 			edtWeight2.TextSize = 13
@@ -587,7 +587,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl4.AddView(edtWeight3,22%x, 100dip, 27%x, 34dip)
 			edtWeight3.Hint = "MZFW"	
 			edtWeight3.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtWeight3)
+			CenterEditTextContent(edtWeight3)
 			edtWeight3.InputType = edtWeight3.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight3.ForceDoneButton = True
 			edtWeight3.TextSize = 13
@@ -608,7 +608,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl4.AddView(edtWeight4,71%x, 100dip, 27%x, 34dip)
 			edtWeight4.Hint = "BOW"	
 			edtWeight4.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtWeight4)
+			CenterEditTextContent(edtWeight4)
 			edtWeight4.InputType = edtWeight4.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight4.ForceDoneButton = True
 			edtWeight4.TextSize = 13
@@ -629,7 +629,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl4.AddView(edtWeight5,22%x, 150dip, 27%x, 34dip)
 			edtWeight5.Hint = "Heavy"	
 			edtWeight5.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtWeight5)
+			CenterEditTextContent(edtWeight5)
 			edtWeight5.InputType = edtWeight5.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight5.ForceDoneButton = True
 			edtWeight5.TextSize = 13
@@ -650,7 +650,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl4.AddView(edtWeight6,71%x, 150dip, 27%x, 34dip)
 			edtWeight6.Hint = "Light"	
 			edtWeight6.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtWeight6)
+			CenterEditTextContent(edtWeight6)
 			edtWeight6.InputType = edtWeight6.INPUT_TYPE_DECIMAL_NUMBERS
 			edtWeight6.ForceDoneButton = True
 			edtWeight6.TextSize = 13
@@ -695,7 +695,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax0,lblCLmax0.Width+2%x, 50dip, bb, 34dip)
 			edtCLmax0.Hint = "Flap 0"	
 			edtCLmax0.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax0)
+			CenterEditTextContent(edtCLmax0)
 			edtCLmax0.InputType = edtCLmax0.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax0.ForceDoneButton = True
 			edtCLmax0.TextSize = 13
@@ -716,7 +716,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax1,(lblCLmax1.Left+lblCLmax1.Width)+1%x, 50dip, bb, 34dip)
 			edtCLmax1.Hint = "Flap 1"	
 			edtCLmax1.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax1)
+			CenterEditTextContent(edtCLmax1)
 			edtCLmax1.InputType = edtCLmax1.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax1.ForceDoneButton = True
 			edtCLmax1.TextSize = 13
@@ -737,7 +737,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax2,lblCLmax2.Width+2%x, 100dip, bb, 34dip)
 			edtCLmax2.Hint = "Flap 2"	
 			edtCLmax2.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax2)
+			CenterEditTextContent(edtCLmax2)
 			edtCLmax2.InputType = edtCLmax2.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax2.ForceDoneButton = True
 			edtCLmax2.TextSize = 13
@@ -758,7 +758,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax3,(lblCLmax3.Left+lblCLmax3.Width)+1%x, 100dip, bb, 34dip)
 			edtCLmax3.Hint = "Flap 3"	
 			edtCLmax3.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax3)
+			CenterEditTextContent(edtCLmax3)
 			edtCLmax3.InputType = edtCLmax3.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax3.ForceDoneButton = True
 			edtCLmax3.TextSize = 13
@@ -779,7 +779,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax4,lblCLmax4.Width+2%x, 150dip, bb, 34dip)
 			edtCLmax4.Hint = "Flap 4"	
 			edtCLmax4.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax4)
+			CenterEditTextContent(edtCLmax4)
 			edtCLmax4.InputType = edtCLmax4.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax4.ForceDoneButton = True
 			edtCLmax4.TextSize = 13
@@ -800,7 +800,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax5,(lblCLmax5.Left+lblCLmax5.Width)+1%x, 150dip, bb, 34dip)
 			edtCLmax5.Hint = "Flap 5"	
 			edtCLmax5.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax5)
+			CenterEditTextContent(edtCLmax5)
 			edtCLmax5.InputType = edtCLmax5.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax5.ForceDoneButton = True
 			edtCLmax5.TextSize = 13
@@ -821,7 +821,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax6,lblCLmax6.Width+2%x, 200dip, bb, 34dip)
 			edtCLmax6.Hint = "Flap 6"	
 			edtCLmax6.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax6)
+			CenterEditTextContent(edtCLmax6)
 			edtCLmax6.InputType = edtCLmax6.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax6.ForceDoneButton = True
 			edtCLmax6.TextSize = 13
@@ -842,7 +842,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax7,(lblCLmax7.Left+lblCLmax7.Width)+1%x, 200dip, bb, 34dip)
 			edtCLmax7.Hint = "Flap 7"	
 			edtCLmax7.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax7)
+			CenterEditTextContent(edtCLmax7)
 			edtCLmax7.InputType = edtCLmax7.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax7.ForceDoneButton = True
 			edtCLmax7.TextSize = 13
@@ -863,7 +863,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax8,lblCLmax8.Width+2%x, 250dip, bb, 34dip)
 			edtCLmax8.Hint = "Flap 8"	
 			edtCLmax8.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax8)
+			CenterEditTextContent(edtCLmax8)
 			edtCLmax8.InputType = edtCLmax8.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax8.ForceDoneButton = True
 			edtCLmax8.TextSize = 13
@@ -884,7 +884,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax9,(lblCLmax9.Left+lblCLmax9.Width)+1%x, 250dip, bb, 34dip)
 			edtCLmax9.Hint = "Flap 9"	
 			edtCLmax9.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax9)
+			CenterEditTextContent(edtCLmax9)
 			edtCLmax9.InputType = edtCLmax9.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax9.ForceDoneButton = True
 			edtCLmax9.TextSize = 13
@@ -905,7 +905,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax10,lblCLmax10.Width+2%x, 300dip, bb, 34dip)
 			edtCLmax10.Hint = "Flap 10"	
 			edtCLmax10.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax10)
+			CenterEditTextContent(edtCLmax10)
 			edtCLmax10.InputType = edtCLmax10.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax10.ForceDoneButton = True
 			edtCLmax10.TextSize = 13
@@ -926,7 +926,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax11,(lblCLmax11.Left+lblCLmax11.Width)+1%x, 300dip, bb, 34dip)
 			edtCLmax11.Hint = "Flap 11"	
 			edtCLmax11.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax11)
+			CenterEditTextContent(edtCLmax11)
 			edtCLmax11.InputType = edtCLmax11.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax11.ForceDoneButton = True
 			edtCLmax11.TextSize = 13
@@ -947,7 +947,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax12,lblCLmax12.Width+2%x, 350dip, bb, 34dip)
 			edtCLmax12.Hint = "Flap 12"	
 			edtCLmax12.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax12)
+			CenterEditTextContent(edtCLmax12)
 			edtCLmax12.InputType = edtCLmax12.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax12.ForceDoneButton = True
 			edtCLmax12.TextSize = 13
@@ -968,7 +968,7 @@ Sub CreateItem(ii As Int, He As Int)
 		    pnl5.AddView(edtCLmax13,(lblCLmax13.Left+lblCLmax13.Width)+1%x, 350dip, bb, 34dip)
 			edtCLmax13.Hint = "Flap 13"	
 			edtCLmax13.Gravity = Gravity.CENTER
-			Main.CenterEditTextContent(edtCLmax13)
+			CenterEditTextContent(edtCLmax13)
 			edtCLmax13.InputType = edtCLmax13.INPUT_TYPE_DECIMAL_NUMBERS
 			edtCLmax13.ForceDoneButton = True
 			edtCLmax13.TextSize = 13
@@ -1409,6 +1409,21 @@ Private Sub ModernizeButton(btn As Button)
 		jo.RunMethod("setStateListAnimator", Array(Null))
 	Catch
 		Log("ModernizeButton skipped: " & LastException.Message)
+	End Try
+End Sub
+
+Private Sub CenterEditTextContent(edt As EditText)
+	' Android EditText keeps asymmetric font/padding metrics even with Gravity.CENTER.
+	' Preserve horizontal padding, remove vertical padding, and center the glyph box itself.
+	edt.Gravity = Gravity.CENTER
+	Try
+		Dim jo As JavaObject = edt
+		Dim padLeft As Int = jo.RunMethod("getPaddingLeft", Null)
+		Dim padRight As Int = jo.RunMethod("getPaddingRight", Null)
+		jo.RunMethod("setIncludeFontPadding", Array(False))
+		jo.RunMethod("setPadding", Array(padLeft, 0, padRight, 0))
+	Catch
+		Log("CenterEditTextContent skipped: " & LastException.Message)
 	End Try
 End Sub
 
