@@ -264,7 +264,7 @@ Private Sub pnlSheet_Click
 	' Consume click
 End Sub
 
-' Render compact mathematical identifiers such as H_p, S_{REF}, C_{L,MAX}, and m²
+' Render compact mathematical identifiers such as H_P, S_{REF}, C_{L,MAX}, and m²
 ' without exposing markup characters in native Android labels.
 Private Sub FormatScriptedText(Value As String) As CSBuilder
 	Dim cs As CSBuilder
@@ -297,8 +297,12 @@ Private Sub FormatScriptedText(Value As String) As CSBuilder
 			pos = subEnd
 		End If
 		Dim subValue As String = Value.SubString2(subStart, subEnd)
+		Dim baseChar As String = ""
+		If marker > 0 Then baseChar = Value.SubString2(marker - 1, marker)
+		' All Latin subscript letters are uppercase, except conventional impact pressure q_c.
+		If Not(baseChar = "q" And subValue = "c") Then subValue = subValue.ToUpperCase
 		Dim subShift As Int = 4dip
-		If subValue = "p" And marker > 0 And Value.SubString2(marker - 1, marker) = "H" Then subShift = 3dip
+		If subValue = "P" And baseChar = "H" Then subShift = 3dip
 		cs.VerticalAlign(subShift).RelativeSize(0.68).Append(subValue).Pop.Pop
 	Loop
 	Return cs
