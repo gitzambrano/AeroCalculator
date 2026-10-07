@@ -813,6 +813,28 @@ sub.hp-sub {
 .editor-actions { padding: 16px; }
 .danger-button { border: 1px solid #a40019; background: white; color: #a40019; padding: 10px 14px; }
 .simple-dialog { width: min(330px, calc(100% - 32px)); }
+.about-dialog { overflow: hidden; }
+.about-header {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--title);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+}
+.about-header button {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  color: white;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
 .about-content { padding: 24px; text-align: center; background: var(--input-bg); color: var(--button-text); }
 .about-content img {
   width: 64px;
