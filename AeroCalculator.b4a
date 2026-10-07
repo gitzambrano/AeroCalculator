@@ -2977,13 +2977,13 @@ Sub SpdType_Click
 		End If
 		btnSpdUnit.Visible = False
 		btnSpdDelta.Visible = True
-		' Preserve the 39% label column and rebalance the remaining controls.
-		' Main factor stays widest; +Δ is compact; delta gets enough room for signed values.
-		edtSpd.Width = 26%x
-		btnSpdDelta.Left = 73%x
-		btnSpdDelta.Width = 10%x
-		edtSpdDelta.Left = 85%x
-		edtSpdDelta.Width = 12%x
+		' Preserve the 39% label column and redistribute only the remaining space.
+		' The factor remains the primary numeric field; +Δ is compact; Δ remains usable.
+		edtSpd.Width = 28%x
+		btnSpdDelta.Left = 75%x
+		btnSpdDelta.Width = 9%x
+		edtSpdDelta.Left = 86%x
+		edtSpdDelta.Width = 11%x
 		edtSpdDelta.Visible = True
 		SetVsDeltaHint(True)
 	Else If indSpdType = 6 Then
