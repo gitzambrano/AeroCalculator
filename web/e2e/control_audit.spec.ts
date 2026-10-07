@@ -432,3 +432,90 @@ test("invalid edge inputs fail visibly without crashing the web app", async ({ p
   expect(errors).toEqual([]);
   await expect(page.locator(".app-shell")).toBeVisible();
 });
+
+test("every calculator input option fits across mobile widths", async ({ browser }) => {
+  test.setTimeout(240_000);
+  const widths = [280, 300, 320, 340, 360, 390, 430, 480];
+
+  const assertInputGeometry = async (page: Page, context: string): Promise<void> => {
+    const failures = await page.evaluate((label) => {
+      const visible = (el: HTMLElement): boolean => {
+        const style = getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        return style.display !== "none" && style.visibility !== "hidden" && !el.hasAttribute("hidden") && rect.width > 0 && rect.height > 0;
+      };
+      const out: Array<Record<string, unknown>> = [];
+      for (const row of document.querySelectorAll<HTMLElement>(".input-row")) {
+        if (!visible(row)) continue;
+        const rr = row.getBoundingClientRect();
+        if (rr.left < -1 || rr.right > window.innerWidth + 1) {
+          out.push({ context: label, kind: "row-outside", field: row.dataset.field, left: rr.left, right: rr.right, viewport: window.innerWidth });
+        }
+        for (const selector of [".field-select-display", ".field-button", ".value-input", ".speed-delta-label", ".speed-delta"]) {
+          for (const el of row.querySelectorAll<HTMLElement>(selector)) {
+            if (!visible(el)) continue;
+            const rect = el.getBoundingClientRect();
+            if (rect.left < -1 || rect.right > window.innerWidth + 1) {
+              out.push({ context: label, kind: "control-outside", field: row.dataset.field, selector, text: el.textContent?.trim(), left: rect.left, right: rect.right });
+            }
+            if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1) {
+              out.push({ context: label, kind: "clipped", field: row.dataset.field, selector, text: el.textContent?.trim(), scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, scrollHeight: el.scrollHeight, clientHeight: el.clientHeight });
+            }
+          }
+        }
+        for (const unit of row.querySelectorAll<HTMLElement>(".unit-select")) {
+          if (!visible(unit)) continue;
+          const rect = unit.getBoundingClientRect();
+          if (rect.left < -1 || rect.right > window.innerWidth + 1 || rect.width < 28) {
+            out.push({ context: label, kind: "unit-geometry", field: row.dataset.field, width: rect.width, left: rect.left, right: rect.right });
+          }
+        }
+      }
+      return out;
+    }, context);
+    expect(failures, context).toEqual([]);
+  };
+
+  const typeIds = [
+    "alt-type", "temp-type", "spd-type", "weight-type", "clmax-type",
+    "nz-type", "angle1-type", "angle2-type", "headWind-type", "windRef-type",
+  ];
+  const unitIds = [
+    "alt-unit", "temp-unit", "spd-unit", "weight-unit", "sref-unit", "cref-unit",
+    "clmax-unit", "nz-unit", "angle1-unit", "angle2-unit",
+    "headWind-unit", "crossWind-unit", "windRef-unit",
+  ];
+
+  for (const width of widths) {
+    const context = await browser.newContext({ viewport: { width, height: 900 } });
+    const page = await context.newPage();
+    await fresh(page);
+    await assertInputGeometry(page, `${width}:baseline`);
+
+    for (const id of typeIds) {
+      const selectEl = page.locator("#" + id);
+      if (await selectEl.count() === 0) continue;
+      const options = await selectEl.locator("option").evaluateAll((nodes) =>
+        nodes.map((n) => (n as HTMLOptionElement).value)
+      );
+      for (const value of options) {
+        await selectEl.selectOption(value);
+        await assertInputGeometry(page, `${width}:${id}=${value}`);
+
+        for (const unitId of unitIds) {
+          const unit = page.locator("#" + unitId);
+          if (await unit.count() === 0 || !(await unit.isVisible())) continue;
+          const unitOptions = await unit.locator("option").evaluateAll((nodes) =>
+            nodes.map((n) => (n as HTMLOptionElement).value)
+          );
+          for (const unitValue of unitOptions) {
+            await unit.selectOption(unitValue);
+            await assertInputGeometry(page, `${width}:${id}=${value}:${unitId}=${unitValue}`);
+          }
+        }
+      }
+    }
+    await context.close();
+  }
+});
+
