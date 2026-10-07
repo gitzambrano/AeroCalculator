@@ -21,6 +21,7 @@ printf '%s\n' "$resolved" > "$OUT_ROOT/resolved-activity.txt"
 
 if [[ "$FULL_VISUAL_AUDIT" == "1" ]]; then
   profiles=(
+    "micro:520x1040:320"
     "tiny:560x1120:320"
     "narrow:640x1280:320"
     "compact:720x1280:320"
