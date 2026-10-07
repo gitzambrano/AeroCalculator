@@ -28,8 +28,8 @@ async function assertCriticalTextNotClipped(page: Page): Promise<void> {
   const clipped = await page.evaluate(() => {
     const selectors = [
       ".brand", ".tab", ".field-button", ".result-name", ".result-value",
-      ".popup-menu button", ".airplane-name-button strong", ".editor-toolbar button",
-      ".settings-dialog label", ".dialog-buttons button",
+      ".sheet-item span", ".sheet-item small", ".airplane-name-button strong", ".editor-toolbar button",
+      ".setting-title", ".setting-desc", ".setting-choice", ".dialog-buttons button",
     ];
     return [...document.querySelectorAll<HTMLElement>(selectors.join(","))]
       .filter((el) => {
@@ -55,7 +55,7 @@ async function assertCriticalTextNotClipped(page: Page): Promise<void> {
 
 async function assertVisibleInteractiveElementsInsideViewport(page: Page): Promise<void> {
   const failures = await page.evaluate(() => {
-    const selector = ".tab,.icon-button,.field-select,.unit-select,.profile-select,.field-button,.value-input,dialog[open] button,dialog[open] input,dialog[open] select";
+    const selector = ".tab,.icon-button,.field-select,.unit-select,.profile-select,.field-button,.value-input,dialog[open] button,dialog[open] input,dialog[open] select,.modal-overlay.open button,.modal-overlay.open input";
     return [...document.querySelectorAll<HTMLElement>(selector)]
       .filter((el) => {
         const style = getComputedStyle(el);
