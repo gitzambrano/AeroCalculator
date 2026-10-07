@@ -4921,16 +4921,19 @@ Public Sub VibrateTap
 End Sub
 
 Private Sub SetSelectorChevron(btn As Button)
-	' Keep selector text untouched (including RichString subscripts) and add only a tiny Android arrow.
+	' Keep the selector affordance visible without reserving a large part of the label column.
 	Try
 		Dim ctxt As JavaObject
 		ctxt.InitializeContext
 		Dim res As JavaObject = ctxt.RunMethod("getResources", Null)
 		Dim arrowId As Int = res.RunMethod("getIdentifier", Array As Object("arrow_down_float", "drawable", "android"))
 		If arrowId <> 0 Then
+			Dim drawable As JavaObject = res.RunMethod("getDrawable", Array As Object(arrowId))
+			drawable.RunMethod("setBounds", Array As Object(0, 0, 6dip, 4dip))
 			Dim jo As JavaObject = btn
-			jo.RunMethod("setCompoundDrawablesWithIntrinsicBounds", Array As Object(0, 0, arrowId, 0))
-			jo.RunMethod("setCompoundDrawablePadding", Array As Object(1dip))
+			jo.RunMethod("setCompoundDrawables", Array As Object(Null, Null, drawable, Null))
+			jo.RunMethod("setCompoundDrawablePadding", Array As Object(2dip))
+			jo.RunMethod("setPadding", Array As Object(4dip, 0, 4dip, 0))
 		End If
 	Catch
 		Log("Selector chevron skipped: " & LastException.Message)
