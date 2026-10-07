@@ -94,3 +94,12 @@ class TestSourceCharacterization(unittest.TestCase):
                     text,
                     rf'If UseOutputSymbols Then lblVar\.Text = .+ Else lblVar\.Text = "{name}"',
                 )
+
+    def test_android_help_section_headers_follow_theme_contrast(self):
+        text = (ROOT / "ClsBottomSheet.bas").read_text(encoding="utf-8-sig")
+
+        # Small bold help headers need 4.5:1 contrast: dark tones on light
+        # theme backgrounds, bright tones on the dark themes.
+        self.assertIn("Private Sub SectionHeaderColor(onLight As Int, onDark As Int) As Int", text)
+        self.assertIn("lblModelHdr.TextColor = SectionHeaderColor(Colors.RGB(0, 102, 74), Colors.RGB(0, 180, 120))", text)
+        self.assertIn("lblUnitHdr.TextColor = SectionHeaderColor(Colors.RGB(143, 66, 0), Colors.RGB(230, 130, 0))", text)

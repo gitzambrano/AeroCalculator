@@ -447,11 +447,11 @@ app.innerHTML = `
           <div id="result-tooltip-desc" style="font-size: 14.5px; line-height: 1.6; color: var(--button-text); margin-bottom: 14px;"></div>
           <div id="result-tooltip-eq-box" style="display: none;"></div>
           <div id="result-tooltip-range-box" style="display: none; font-size: 13.5px; margin-bottom: 10px;">
-            <span style="font-weight: 700; color: #00a876;">Model / Assumptions: </span>
+            <span class="help-model-hdr">Model / Assumptions: </span>
             <span id="result-tooltip-range-text" style="color: var(--button-text);"></span>
           </div>
           <div id="result-tooltip-unit-box" style="display: none; font-size: 13.5px; margin-bottom: 16px;">
-            <span style="font-weight: 700; color: #d97706;">SI / Reference Unit: </span>
+            <span class="help-unit-hdr">SI / Reference Unit: </span>
             <span id="result-tooltip-unit-text" style="color: var(--button-text); font-weight: 700;"></span>
           </div>
           <button type="button" class="action-btn" id="btn-result-tooltip-ok" style="width: 100%; height: 42px; font-weight: 700; color: var(--accent); background: var(--button-a); border: 1px solid var(--button-border); border-radius: 8px; cursor: pointer;">OK</button>

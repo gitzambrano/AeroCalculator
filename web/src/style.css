@@ -1114,6 +1114,15 @@ sub.hp-sub {
   justify-content: center;
   padding: 0;
 }
+/* Help section headers keep 4.5:1 contrast: darker tones on light themes,
+   the bright tones on the dark themes (same rule as Android). */
+.help-model-hdr { font-weight: 700; color: #00664a; }
+.help-unit-hdr { font-weight: 700; color: #8f4200; }
+:root[data-theme="Dark Shadows"] .help-model-hdr,
+:root[data-theme="Blue Sky"] .help-model-hdr { color: #00b478; }
+:root[data-theme="Dark Shadows"] .help-unit-hdr,
+:root[data-theme="Blue Sky"] .help-unit-hdr { color: #e68200; }
+
 .help-sheet {
   width: min(100%, 520px);
   max-height: calc(100dvh - 40px);

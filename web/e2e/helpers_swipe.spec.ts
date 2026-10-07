@@ -122,6 +122,33 @@ test.describe("helpers and swipe navigation", () => {
     }
   });
 
+  test("help section headers keep readable contrast on light and dark themes", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "CALCULATE" }).click();
+    await page.locator(".result-row").first().click();
+    await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
+
+    const ratios = async (): Promise<number[]> => page.evaluate(() => {
+      const rgb = (value: string): number[] => (value.match(/\d+(\.\d+)?/g) ?? []).slice(0, 3).map(Number);
+      const lum = (c: number[]): number => {
+        const [r, g, b] = c.map((v) => { const s = v / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const sheet = document.querySelector<HTMLElement>("#modal-result-tooltip .help-sheet")
+        ?? document.querySelector<HTMLElement>("#modal-result-tooltip .modal-content")!;
+      const bg = lum(rgb(getComputedStyle(sheet).backgroundColor));
+      return [".help-model-hdr", ".help-unit-hdr"].map((selector) => {
+        const fg = lum(rgb(getComputedStyle(document.querySelector(selector)!).color));
+        return (Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05);
+      });
+    });
+
+    for (const theme of ["Green Peace", "Ancient Brown", "Dark Shadows", "Blue Sky"]) {
+      await page.evaluate((name) => { document.documentElement.dataset.theme = name; }, theme);
+      for (const ratio of await ratios()) expect(ratio, theme).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
   test("choice sheet dismisses with a downward swipe", async ({ page }) => {
     await page.goto("/");
     await page.locator('[data-field="spd"] .field-select-wrap').click();

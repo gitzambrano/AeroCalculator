@@ -484,7 +484,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 		Dim lblModelHdr As Label
 		lblModelHdr.Initialize("")
 		lblModelHdr.Text = "MODEL / ASSUMPTIONS"
-		lblModelHdr.TextColor = Colors.RGB(0, 180, 120) ' emerald green
+		lblModelHdr.TextColor = SectionHeaderColor(Colors.RGB(0, 102, 74), Colors.RGB(0, 180, 120)) ' emerald green
 		lblModelHdr.TextSize = 12
 		lblModelHdr.Typeface = Typeface.DEFAULT_BOLD
 		scvHelp.Panel.AddView(lblModelHdr, 20dip, y, contentW, 20dip)
@@ -505,7 +505,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 		Dim lblUnitHdr As Label
 		lblUnitHdr.Initialize("")
 		lblUnitHdr.Text = "SI / REFERENCE UNIT"
-		lblUnitHdr.TextColor = Colors.RGB(230, 130, 0) ' amber
+		lblUnitHdr.TextColor = SectionHeaderColor(Colors.RGB(143, 66, 0), Colors.RGB(230, 130, 0)) ' amber
 		lblUnitHdr.TextSize = 12
 		lblUnitHdr.Typeface = Typeface.DEFAULT_BOLD
 		scvHelp.Panel.AddView(lblUnitHdr, 20dip, y, contentW, 20dip)
@@ -528,6 +528,16 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	pnlSheet.AddView(scvHelp, 0, 56dip, 100%x, sheetH - 56dip)
 
 	act.AddView(pnlSheet, 0, 100%y - sheetH, 100%x, sheetH)
+End Sub
+
+' Keep small bold section headers at 4.5:1 contrast or better: darker tones on
+' light theme backgrounds, the bright tones on dark ones.
+Private Sub SectionHeaderColor(onLight As Int, onDark As Int) As Int
+	Dim r As Int = Bit.And(Bit.ShiftRight(mBackgroundColor, 16), 0xFF)
+	Dim g As Int = Bit.And(Bit.ShiftRight(mBackgroundColor, 8), 0xFF)
+	Dim b As Int = Bit.And(mBackgroundColor, 0xFF)
+	If 0.299 * r + 0.587 * g + 0.114 * b < 128 Then Return onDark
+	Return onLight
 End Sub
 
 Private Sub MeasureLabelHeight(lbl As Label, txt As String, textSize As Float, maxW As Int) As Int
