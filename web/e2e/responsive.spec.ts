@@ -93,8 +93,8 @@ for (const viewport of viewports) {
         expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(0.6);
 
         await page.locator("#spd-type").selectOption("Ground Speed");
-        await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText("Grnd Speed");
-        await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText("Rnwy Angle");
+        await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(viewport.width <= 320 ? "Grnd Speed" : "Ground Speed");
+        await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(viewport.width <= 340 ? "Rnwy Angle" : "Runway Angle");
       } else {
         await page.locator("#spd-type").selectOption("Ground Speed");
         await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText("Ground Speed");
