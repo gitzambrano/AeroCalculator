@@ -264,7 +264,7 @@ Private Sub pnlSheet_Click
 	' Consume click
 End Sub
 
-' Render compact mathematical identifiers such as H_p, S_{ref}, C_{L,max}, and m²
+' Render compact mathematical identifiers such as H_p, S_{REF}, C_{L,MAX}, and m²
 ' without exposing markup characters in native Android labels.
 Private Sub FormatScriptedText(Value As String) As CSBuilder
 	Dim cs As CSBuilder
