@@ -237,7 +237,8 @@ sub.hp-sub {
 .input-row {
   min-height: 56px;
   display: grid;
-  grid-template-columns: minmax(0, 46%) minmax(0, 27%) minmax(0, 21%);
+  /* Android parity: 44% / 27% / 17% of the row with ~3% gaps. */
+  grid-template-columns: minmax(0, 44fr) minmax(0, 27fr) minmax(0, 17fr);
   column-gap: 3%;
   align-items: stretch;
   padding: 6px 3%;
