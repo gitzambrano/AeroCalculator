@@ -1,0 +1,6 @@
+<en-US>
+Improved layouts for small screens: complete speed labels, wider unit buttons and aligned aircraft fields. Standard dropdown triangles and readable selected units. Swipe navigation follows the finger direction. Technical help explains Model Physics. Removed input hints and modal close icons. New installations contain no example aircraft. Fixed a startup crash after a restored airplane weight, crashes from incomplete numbers, and duplicated result rows.
+</en-US>
+<pt-BR>
+Layouts ajustados para telas pequenas: nomes de velocidade completos, unidades mais largas e campos do avião alinhados. Triângulos padronizados e unidades selecionadas legíveis. Swipes seguem a direção do dedo. Ajuda explica a física dos modelos. Dicas nos campos e X dos modais removidos. Instalações novas não incluem aviões de exemplo. Corrigido o app que fechava ao abrir com peso de avião salvo, números incompletos e linhas duplicadas.
+</pt-BR>

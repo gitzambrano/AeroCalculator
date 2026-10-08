@@ -206,3 +206,9 @@ R_{air}=\frac{V_T^2}{g\tan\phi},
 $$
 
 A steady wind translates the air-relative circular trajectory; the ground track is generally not a circle. Therefore ground speed shall not be substituted into these coordinated-turn equations.
+
+## Physical interpretation in technical help
+
+The quantity catalog stores a concise physical explanation for every input, output, and aircraft-data entry. Help distinguishes hydrostatic atmosphere, ideal-gas thermal state, pitot compression, aerodynamic force balance, coordinated-turn acceleration, and wind-vector projections. The calculation equations remain unchanged.
+
+Primary references for the flow interpretation are NASA Glenn’s [dynamic pressure](https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/dynamic-pressure/) and [isentropic flow equations](https://www.grc.nasa.gov/www/k-12/airplane/isentrop.html). Application-specific altitude conventions and display normalizations follow the equations documented above.

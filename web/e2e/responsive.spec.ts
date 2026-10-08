@@ -27,7 +27,7 @@ async function assertNoHorizontalOverflow(page: Page): Promise<void> {
 async function assertCriticalTextNotClipped(page: Page): Promise<void> {
   const clipped = await page.evaluate(() => {
     const selectors = [
-      ".brand", ".tab", ".field-button", ".result-name", ".result-value",
+      ".brand", ".tab", ".speed-delta-label", ".editor-row > label", ".editor-section-head strong", ".field-button", ".result-name", ".result-value",
       ".sheet-item span", ".sheet-item small", ".airplane-name-button strong", ".editor-toolbar button",
       ".setting-title", ".setting-desc", ".setting-choice", ".dialog-buttons button",
     ];
@@ -107,12 +107,12 @@ for (const viewport of viewports) {
       await assertCriticalTextNotClipped(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
 
-      // Vs Factor must preserve the same first two columns as every standard input row.
+      // Vs Factor must preserve the same label column and numeric start as every standard input row.
       await page.locator("#spd-type").selectOption("Vs Factor");
       await expect(page.locator("#spd-unit")).toBeHidden();
       await expect(page.locator("#spdDelta-label")).toBeVisible();
       await expect(page.locator("#spdDelta-value")).toBeVisible();
-      await expect(page.locator("#spdDelta-value")).toHaveAttribute("placeholder", "kt");
+      await expect(page.locator("#spdDelta-value")).toHaveAttribute("placeholder", "");
       const vsLayout = await page.evaluate(() => {
         const rect = (selector: string) => {
           const el = document.querySelector<HTMLElement>(selector);
@@ -140,7 +140,8 @@ for (const viewport of viewports) {
       expect(vsLayout.valueLeftDiff).toBeLessThanOrEqual(0.6);
       expect(vsLayout.spdValueWidth).toBeGreaterThan(vsLayout.deltaValueWidth);
       expect(vsLayout.deltaValueWidth).toBeGreaterThan(vsLayout.deltaButtonWidth);
-      expect(vsLayout.deltaButtonWidth).toBeLessThan(vsLayout.spdValueWidth * 0.5);
+      expect(vsLayout.deltaButtonWidth).toBeGreaterThan(vsLayout.spdValueWidth * 0.5);
+      await assertCriticalTextNotClipped(page);
       await assertNoHorizontalOverflow(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
 
@@ -168,7 +169,7 @@ for (const viewport of viewports) {
         expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(0.6);
 
         await page.locator("#spd-type").selectOption("Ground Speed");
-        await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(viewport.width < 380 ? "Grnd Spd" : "Ground Speed");
+        await expect(page.locator('[data-field="spd"] .field-select-display')).toHaveText(viewport.width < 360 ? "Grnd Spd" : "Ground Speed");
         await expect(page.locator('[data-field="windRef"] .field-select-display')).toHaveText(viewport.width < 320 ? "Rnwy Angle" : "Runway Angle");
       } else {
         await page.locator("#spd-type").selectOption("Ground Speed");
@@ -246,6 +247,26 @@ for (const viewport of viewports) {
 
       await page.getByRole("button", { name: "Add airplane" }).click();
       await expect(page.locator("#profile-editor")).toBeVisible();
+      await page.locator("#add-flap").click();
+      const editor = await page.evaluate(() => {
+        const rect = (id: string) => document.getElementById(id)!.getBoundingClientRect();
+        const first = rect("profile-weight-MTOW");
+        const second = rect("profile-weight-MLW");
+        const units = ["profile-sref-unit", "profile-cref-unit", "profile-weight-unit"].map(rect);
+        const fields = ["profile-sref", "profile-cref", "profile-flap-0"].map(rect);
+        const fonts = [...document.querySelectorAll<HTMLElement>(".editor-row:not(.editor-name-row) > label, .editor-section-head strong")].map(el => {
+          const s = getComputedStyle(el);
+          return `${s.fontFamily}/${s.fontSize}/${s.fontWeight}`;
+        });
+        return {
+          fieldDiffs: fields.map(r => Math.max(Math.abs(r.width-first.width), Math.abs(r.left-first.left))),
+          unitDiffs: units.map(r => Math.max(Math.abs(r.width-second.width), Math.abs(r.left-second.left))),
+          fonts,
+        };
+      });
+      expect(editor.fieldDiffs.every(d => d < 1)).toBe(true);
+      expect(editor.unitDiffs.every(d => d < 1)).toBe(true);
+      expect(new Set(editor.fonts).size).toBe(1);
       await assertNoHorizontalOverflow(page);
       await assertCriticalTextNotClipped(page);
       await assertVisibleInteractiveElementsInsideViewport(page);
@@ -315,7 +336,8 @@ test("input label fallbacks switch at the intended mobile thresholds", async ({ 
   const cases = [
     { width: 390, pressure: "Static Pressure", temp: "Temperature OAT", ground: "Ground Speed", qdyn: "Dynamic Pressure", qc: "Impact Pressure", windSpeed: "Wind Speed", windDir: "Wind Direction", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
     { width: 380, pressure: "Static Pressure", temp: "Temperature OAT", ground: "Ground Speed", qdyn: "Dynamic Pressure", qc: "Impact Pressure", windSpeed: "Wind Speed", windDir: "Wind Direction", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
-    { width: 379, pressure: "Pressure", temp: "Temperature", ground: "Grnd Spd", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
+    { width: 379, pressure: "Pressure", temp: "Temperature", ground: "Ground Speed", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Speed", windDir: "Wind Direction", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
+    { width: 360, pressure: "Pressure", temp: "Temperature", ground: "Ground Speed", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Speed", windDir: "Wind Direction", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
     { width: 340, pressure: "Pressure", temp: "Temperature", ground: "Grnd Spd", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
     { width: 339, pressure: "Pressure", temp: "OAT", ground: "Grnd Spd", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", head: "Headwind", cross: "Crosswind", runway: "Runway Angle" },
     { width: 319, pressure: "Pressure", temp: "OAT", ground: "Grnd Spd", qdyn: "Dyn Press", qc: "Imp Press", windSpeed: "Wind Spd", windDir: "Wind Dir", head: "Headwind", cross: "Crosswind", runway: "Rnwy Angle" },
@@ -357,4 +379,43 @@ test("input label fallbacks switch at the intended mobile thresholds", async ({ 
   }
 
   await context.close();
+});
+
+
+test("wind names refresh when resizing across 360 px", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto("/");
+  await page.locator("#headWind-type").selectOption("Wind Speed");
+  const direction = page.locator('[data-field="windRef"] .field-select-display');
+  await expect(direction).toHaveText("Wind Direction");
+  await page.setViewportSize({ width: 359, height: 800 });
+  await expect(direction).toHaveText("Wind Dir");
+  await page.setViewportSize({ width: 360, height: 800 });
+  await expect(direction).toHaveText("Wind Direction");
+});
+
+
+test("removing the last flap clears its value", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Add airplane", exact: true }).click();
+  await page.locator("#add-flap").click();
+  await page.locator("#profile-flap-0").fill("1.5");
+  await page.locator("#remove-flap").click();
+  await expect(page.locator("#profile-flap-0")).toBeHidden();
+  await page.locator("#add-flap").click();
+  await expect(page.locator("#profile-flap-0")).toHaveValue("");
+});
+
+
+test("editor symbols open help and empty fields have no hints", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Add airplane", exact: true }).click();
+  await expect(page.locator('#profile-editor input[placeholder]:not([placeholder=""])')).toHaveCount(0);
+  for (const symbol of ['label[for="profile-sref"]', 'label[for="profile-cref"]']) {
+    await page.locator(symbol).click();
+    await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
+    await expect(page.locator("#result-tooltip-desc")).not.toHaveText("");
+    await page.locator("#btn-result-tooltip-ok").click();
+    await expect(page.locator("#profile-editor")).toBeVisible();
+  }
 });

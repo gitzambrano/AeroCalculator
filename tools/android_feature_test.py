@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, os, re, subprocess, sys, time, xml.etree.ElementTree as ET
+import json, os, re, subprocess, sys, time, unicodedata, xml.etree.ElementTree as ET
 from pathlib import Path
 
 # ==============================================================================
@@ -31,7 +31,7 @@ def bounds(s):
  return tuple(map(int,m.groups())) if m else None
 def center(n):
  x1,y1,x2,y2=bounds(n.attrib['bounds']); return (x1+x2)//2,(y1+y2)//2
-def norm(s): return re.sub(r'[^a-z0-9]+','',(s or '').lower())
+def norm(s): return re.sub(r'[^a-z0-9]+','',unicodedata.normalize('NFKD',s or '').lower())
 
 DISPLAY_ALIASES = {
  'hp': {'hp','altitudehp'},
@@ -171,9 +171,12 @@ def edit(label,value):
   if lab is not None:
    p=pm.get(lab); e=next((x for x in p.iter('node') if x.attrib.get('class')=='android.widget.EditText'),None) if p is not None else None
    if e is not None:
-    tap(e); adb('shell','input','keyevent','123',check=False)
+    tap(e); time.sleep(.35); adb('shell','input','keyevent','123',check=False)
     for _ in range(18): adb('shell','input','keyevent','67',check=False)
-    adb('shell','input','text',str(value)); adb('shell','input','keyevent','4',check=False); time.sleep(.4); return
+    adb('shell','input','text',str(value)); time.sleep(.3)
+    ime=adb('shell','dumpsys','input_method')
+    if 'mInputShown=true' in ime or 'isInputViewShown=true' in ime: adb('shell','input','keyevent','4',check=False)
+    time.sleep(.4); return
   scroll(r,True)
  raise AssertionError('edit not found '+label)
 def result(label):
@@ -292,6 +295,29 @@ def audit_all_input_modes():
   choose_option(['Wind Speed','Wind Spd','WindSpd'],'Headwind / Crosswind',label+'-wind-components')
   foreground('audit-finish-'+label,'.main')
 
+def restored_airplane_weight_survives_restart():
+ # Regression: a saved airplane with a profile weight (MTOW) used to crash
+ # Activity_Resume on every launch, so the app only reopened after clearing data.
+ ext=f'/sdcard/Android/data/{PKG}/files'
+ profile=OUT/'restart-airplanes.txt'; tags=OUT/'restart-taglist.txt'
+ profile.write_text('N=1\n1_Name=Restart Jet\n1_S=16\n1_c=1.5\n1_Sunit=0\n1_cunit=0\n1_Wunit=0\n1_W1=1000\n1_F0=1.5\n',encoding='utf-8')
+ tags.write_text('1\n',encoding='utf-8')
+ adb('shell','am','force-stop',PKG); adb('shell','mkdir','-p',ext,check=False)
+ adb('push',str(profile),ext+'/airplanes.txt'); adb('push',str(tags),ext+'/taglist.txt')
+ adb('logcat','-c',check=False); adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(2.5)
+ foreground('restart-profile-launch','.main'); taptext('INPUTS'); time.sleep(.4)
+ top(); r=dump('restart-picker-entry'); tap(find(r,'Custom Airplane'))
+ d,n=wait_text('Restart Jet','restart-picker'); tap(n); time.sleep(.5)
+ r,w,_=until(['Weight'],'restart-weight-entry',12); tap(w)
+ d,n=wait_text('MTOW','restart-weight-sheet'); tap(n); time.sleep(.5)
+ adb('shell','input','keyevent','3'); time.sleep(1.2)
+ adb('shell','am','force-stop',PKG); adb('logcat','-c',check=False)
+ adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(2.5)
+ foreground('restart-profile-relaunch','.main'); top(); r=dump('restart-profile-restored')
+ rec('restart-profile-airplane-restored',find(r,'Restart Jet') is not None,str(texts(r)[:40]))
+ r,w,_=until(['MTOW'],'restart-profile-weight',12)
+ rec('restart-profile-weight-restored',w is not None,str(texts(r)[:60]))
+
 def main():
  adb('install','-r',APK); adb('shell','wm','size','1080x2340'); adb('shell','wm','density','440'); adb('shell','cmd','window','user-rotation','lock','0',check=False); adb('shell','pm','clear',PKG,check=False); adb('logcat','-c',check=False)
  adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(3); foreground('launch','.main')
@@ -299,9 +325,18 @@ def main():
  for t in ['AIRPLANES','INPUTS','CALCULATE','HP','OAT','CAS']: rec('input:'+t,find(r,t) is not None,str(texts(r)[:50]))
  rb,_,seen=until(['Headwind','HeadWind','HeadWnd','WindSpd','Wind Spd','Wind Speed'],'inputs-bottom'); rec('inputs-bottom',True,str(seen[-20:])); layout(rb,'inputs-bottom'); shot('inputs-bottom')
 
+
+ # Incomplete numeric editing must not crash backgrounding or restored startup.
+ for partial in ['.', '-']:
+  edit('OAT',partial)
+  adb('shell','input','keyevent','3'); time.sleep(.5)
+  adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(.8)
+  foreground('incomplete-number-'+norm(partial),'.main')
+  r=dump('incomplete-number-restored'); rec('incomplete-number-reopens:'+partial,find(r,'OAT') is not None,str(texts(r)[:30]))
+
  top(); r=dump('airplane-picker-entry'); plane_btn=find(r,'Custom Airplane'); rec('airplane-picker-button',plane_btn is not None,str(texts(r)[:60])); tap(plane_btn); time.sleep(.5)
- ap,_=wait_text('Boeing 737-800','airplane-picker')
- rec('airplane-picker-metadata',find_contains(ap,'124.6 m²') is not None and find_contains(ap,'79015 kg') is not None,str(texts(ap)[:100]))
+ ap,_=wait_text('Cancel','airplane-picker')
+ rec('fresh-install-no-example-airplanes',find_contains(ap,'Boeing') is None and find_contains(ap,'Airbus') is None,str(texts(ap)[:100]))
  layout(ap,'airplane-picker'); shot('airplane-picker', force=True)
  custom=find(ap,'Custom Airplane'); tap(custom) if custom is not None else back(); time.sleep(.4)
 
@@ -319,17 +354,16 @@ def main():
  rec('input-swipe-edit-found',e is not None,str(texts(r)[:60]))
  if e is not None:
   x1,y1,x2,y2=bounds(e.attrib.get('bounds','')); sy=(y1+y2)//2
-  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(int(w*.96)),str(sy),'350'); time.sleep(.8)
   d=dump('input-swipe-edit-calculate'); rec('input-swipe-edit-to-calculate',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
   taptext('INPUTS'); time.sleep(.4); top()
 
  r=dump('input-swipe-selector-entry'); selector=find(r,'CAS')
  rec('input-swipe-selector-found',selector is not None,str(texts(r)[:60]))
  if selector is not None:
-  # Start at the selector's inner edge: from its center the finger has too
-  # little room to the screen edge to reach the 72 dp swipe threshold.
+  # Start within the selector and move right to the adjacent Calculate tab.
   x1,y1,x2,y2=bounds(selector.attrib.get('bounds','')); sy=(y1+y2)//2
-  adb('shell','input','swipe',str(x2-12),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  adb('shell','input','swipe',str(x2-12),str(sy),str(int(w*.96)),str(sy),'350'); time.sleep(.8)
   d=dump('input-swipe-selector-calculate'); rec('input-swipe-selector-to-calculate',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
   taptext('INPUTS'); time.sleep(.4); top()
 
@@ -337,28 +371,49 @@ def main():
  rec('input-swipe-unit-found',unit is not None,str(texts(r)[:60]))
  if unit is not None:
   x1,y1,x2,y2=bounds(unit.attrib.get('bounds','')); sy=(y1+y2)//2
-  adb('shell','input','swipe',str((x1+x2)//2),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  adb('shell','input','swipe',str(x1+4),str(sy),str(int(w*.96)),str(sy),'350'); time.sleep(.8)
   d=dump('input-swipe-unit-calculate'); rec('input-swipe-unit-to-calculate',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
   taptext('INPUTS'); time.sleep(.4); top()
 
- # Start inside the right row margin, outside every selector/value/unit control.
+ # Results must return to Inputs when the swipe starts on a value.
+ taptext('CALCULATE'); time.sleep(.8)
+ for zone, start, end in [('value', .72, .12), ('label', .32, .08)]:
+  r=dump('results-swipe-'+zone+'-entry')
+  output=find_contains(r,'Pressure Altitude')
+  rec('results-swipe-'+zone+'-found',output is not None,str(texts(r)[:60]))
+  y1,y2=bounds(output.attrib['bounds'])[1::2]; sy=(y1+y2)//2
+  adb('shell','input','swipe',str(int(w*start)),str(sy),str(int(w*end)),str(sy),'350'); time.sleep(.8)
+  d=dump('results-swipe-'+zone+'-inputs')
+  rec('results-swipe-'+zone+'-to-inputs',find(d,'CAS') is not None,str(texts(d)[:80]))
+  taptext('CALCULATE'); time.sleep(.6)
+ # A right swipe at the final page must stay on Results.
+ r=dump('results-swipe-right-entry'); output=find_contains(r,'Pressure Altitude')
+ y1,y2=bounds(output.attrib['bounds'])[1::2]; sy=(y1+y2)//2
+ adb('shell','input','swipe',str(int(w*.12)),str(sy),str(int(w*.88)),str(sy),'350'); time.sleep(.8)
+ d=dump('results-swipe-right-boundary')
+ rec('results-swipe-right-stays-results',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
+ taptext('INPUTS'); time.sleep(.5); top()
+
+ # Start in the gap between the value and unit, outside Android system back-gesture edges.
  r=dump('input-swipe-margin-entry'); e=row_edit_node(r,'CAS')
  if e is not None:
   x1,y1,x2,y2=bounds(e.attrib.get('bounds','')); sy=(y1+y2)//2
-  adb('shell','input','swipe',str(int(w*.98)),str(sy),str(max(8,int(w*.12))),str(sy),'350'); time.sleep(.8)
+  adb('shell','input','swipe',str(int(w*.785)),str(sy),str(int(w*.98)),str(sy),'350'); time.sleep(.8)
   d=dump('input-swipe-margin-calculate'); rec('input-swipe-margin-to-calculate',find_contains(d,'Pressure Altitude') is not None,str(texts(d)[:80]))
   taptext('INPUTS'); time.sleep(.4)
 
  for lab,val in [('HP','0'),('OAT','15'),('CAS','100'),('Weight','1000'),('SREF','16'),('cREF','1.5'),('CL,MAX','1.5'),('NZ (Pull-up)','1')]: edit(lab,val)
  top(); taptext('CALCULATE'); time.sleep(1); foreground('calculate','.main'); r=dump('outputs-top'); layout(r,'outputs-top'); shot('outputs-top')
+ rec('recalculation-replaces-old-results',sum('Pressure Altitude' in n.attrib.get('text','') for n in nodes(r)) == 1,str(texts(r)[:60]))
  # The label carries a symbol (Pressure Altitude HP), so match by content and
  # require it: a silent skip would leave the output help untested.
  helper_label=find_contains(r,'Pressure Altitude')
  rec('output-helper-label',helper_label is not None,str(texts(r)[:60]))
  if helper_label is not None:
   tap(helper_label); time.sleep(.6); hd=dump('output-helper')
-  rec('output-helper-open',find_contains(hd,'MODEL / ASSUMPTIONS') is not None or find_contains(hd,'Definition') is not None,str(texts(hd)[:100]))
+  rec('output-helper-open',find_contains(hd,'MODEL PHYSICS') is not None or find_contains(hd,'Definition') is not None,str(texts(hd)[:100]))
   shot('output-helper'); back(); time.sleep(.5)
+  closed=dump('output-helper-back-dismissed'); rec('output-helper-back-dismisses',find_contains(closed,'MODEL PHYSICS') is None,str(texts(closed)[:30]))
  for lab,exp,tol in [('Pressure p',1013.25,1),('Temperature OAT',15,.2),('Density ρ',1.225,.03),('Calibrated Airspeed',100,.5)]:
   sv=result(lab); v=num(sv); rec('calc:'+lab,abs(v-exp)<=tol,f'{sv} expected {exp}±{tol}')
  r,_,seen=until(['AlongTrack Crosswind'],'outputs-bottom',18); rec('outputs-bottom',True,str(seen[-20:])); shot('outputs-bottom')
@@ -381,7 +436,7 @@ def main():
 
  select_menu('Send Feedback','feedback'); d,_=wait_text('Feedback and Bug Report','feedback-dialog'); rec('feedback-dialog',find_contains(d,'Choose the means') is not None,str(texts(d))); shot('feedback-dialog'); back(); return_to_main('feedback-return')
 
- select_menu('Settings','settings'); d,_=wait_text('Theme','settings-screen'); foreground('settings','.main'); rec('settings-items',find(d,'Altitude Unit') is not None and find(d,'Pressure Unit') is not None,str(texts(d)[:80])); layout(d,'settings'); shot('settings')
+ select_menu('Settings','settings'); d,_=wait_text('Green Peace','settings-screen'); foreground('settings','.main'); rec('settings-items',find_contains(d,'Altitude Unit') is not None and find_contains(d,'Pressure Unit') is not None,str(texts(d)[:80])); layout(d,'settings'); shot('settings')
  theme_btn=find(d,'Green Peace')
  rec('settings-theme-button',theme_btn is not None,str(texts(d)[:80]))
  if theme_btn is not None:
@@ -391,6 +446,8 @@ def main():
  select_menu('Export Airplanes','export'); d,_=wait_text('OK','export-explorer'); rec('export-explorer',find(d,'OK') is not None,str(texts(d)[:80])); layout(d,'export-explorer'); shot('export-explorer'); back(); return_to_main('export-return')
 
  select_menu('Import Airplanes','import'); time.sleep(1.2); d=dump('import-system-chooser'); rec('import-system-chooser',bool(texts(d,app_only=False)),str(texts(d,app_only=False)[:80])); shot('import-system-chooser'); back(); return_to_main('import-return')
+
+ restored_airplane_weight_survives_restart()
 
  # Full visual/state sweep is intentionally opt-in; quick CI remains mechanical and compact.
  if FULL_VISUAL_AUDIT:

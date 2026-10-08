@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 37
-	#VersionName: 3.32
+	#VersionCode: 38
+	#VersionName: 3.33
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -674,7 +674,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnAltType.TextSize = 15*sc
 			btnAltType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAlt.Initialize("edtAlt")
-		    pnlInput.AddView(edtAlt, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtAlt, 45%x, ib*sc, 28%x, tb*sc)
 			edtAlt.Hint = ""
 			edtAlt.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtAlt)
@@ -684,7 +684,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtAlt, edtAlt.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnAltUnit.Initialize("btnAltUnit")
 			btnAltUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnAltUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnAltUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnAltUnit.Text="ft"
 			btnAltUnit.TextSize = 15*sc
 			edtAlt.TextColor = ColorEdtText
@@ -701,7 +701,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnTempType.TextSize = 15*sc
 			btnTempType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtTemp.Initialize("edtTemp")
-		    pnlInput.AddView(edtTemp, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtTemp, 45%x, ib*sc, 28%x, tb*sc)
 			edtTemp.Hint = ""
 			edtTemp.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtTemp)
@@ -711,7 +711,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtTemp, edtTemp.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnTempUnit.Initialize("btnTempUnit")
 			btnTempUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnTempUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnTempUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnTempUnit.Text="°C"
 			btnTempUnit.TextSize = 15*sc
 			edtTemp.TextColor = ColorEdtText
@@ -732,7 +732,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSpdType.TextSize = 15*sc
 			btnSpdType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtSpd.Initialize("edtSpd")
-		    pnlInput.AddView(edtSpd, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtSpd, 45%x, ib*sc, 28%x, tb*sc)
 			edtSpd.Hint = ""
 			edtSpd.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtSpd)
@@ -742,7 +742,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtSpd, edtSpd.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnSpdUnit.Initialize("btnSpdUnit")
 			btnSpdUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnSpdUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnSpdUnit, 76%x, ib*sc, 21%x, tb*sc)
 			btnSpdUnit.Text="kt"
 			btnSpdUnit.TextSize = 15*sc
 			btnSpdDelta.Initialize("btnSpdDelta")
@@ -750,6 +750,9 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSpdDelta.Text = "+Δ"
 			btnSpdDelta.TextSize = 13*sc
 			btnSpdDelta.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
+			Dim deltaButton As JavaObject = btnSpdDelta
+			deltaButton.RunMethod("setSingleLine", Array(True))
+			deltaButton.RunMethod("setPadding", Array(2dip, 0, 2dip, 0))
 			btnSpdDelta.Visible = False
 			edtSpdDelta.Initialize("edtSpdDelta")
 		    pnlInput.AddView(edtSpdDelta, 89%x, ib*sc, 8%x, tb*sc)
@@ -781,7 +784,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnWeight.TextSize = 15*sc
 			btnWeight.Background =ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtWeight.Initialize("edtWeight")
-		    pnlInput.AddView(edtWeight, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtWeight, 45%x, ib*sc, 28%x, tb*sc)
 			edtWeight.Hint = ""
 			edtWeight.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtWeight)
@@ -791,7 +794,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtWeight, edtWeight.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnWeightUnit.Initialize("btnWeightUnit")
 			btnWeightUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnWeightUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnWeightUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnWeightUnit.Text="kg"
 			btnWeightUnit.TextSize = 15*sc
 			edtWeight.TextColor = ColorEdtText
@@ -810,7 +813,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnSref.TextSize = 15*sc
 			btnSref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtSref.Initialize("edtSref")
-		    pnlInput.AddView(edtSref, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtSref, 45%x, ib*sc, 28%x, tb*sc)
 			edtSref.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 			edtSref.Hint = ""
@@ -823,7 +826,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtSref, edtSref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnSrefUnit.Initialize("btnSrefUnit")
 			btnSrefUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnSrefUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnSrefUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnSrefUnit.Text="m²"
 			btnSrefUnit.TextSize = 15*sc
 			edtSref.TextColor = ColorEdtText
@@ -840,7 +843,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btncref.TextSize = 15*sc
 			btncref.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtcref.Initialize("edtcref")
-		    pnlInput.AddView(edtcref, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtcref, 45%x, ib*sc, 28%x, tb*sc)
 			edtcref.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>320dip Then
 			edtcref.Hint = ""
@@ -853,7 +856,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtcref, edtcref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btncrefUnit.Initialize("btncrefUnit")
 			btncrefUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btncrefUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btncrefUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btncrefUnit.Text="m"
 			btncrefUnit.TextSize = 15*sc
 			edtcref.TextColor = ColorEdtText
@@ -870,10 +873,10 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnCLmax.TextSize = 15*sc
 			btnCLmax.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtCLmax.Initialize("edtCLmax")
-		    pnlInput.AddView(edtCLmax, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtCLmax, 45%x, ib*sc, 28%x, tb*sc)
 			btnCLmaxUnit.Initialize("btnCLmaxUnit")
 			btnCLmaxUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnCLmaxUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnCLmaxUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnCLmaxUnit.Text = Chr(8212) ' — em dash
 			btnCLmaxUnit.TextSize = 15*sc
 			btnCLmaxUnit.TextColor = ColorButText1
@@ -900,7 +903,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnNzType.TextSize = 15*sc
 			btnNzType.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtNz.Initialize("edtNz")
-		    pnlInput.AddView(edtNz, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtNz, 45%x, ib*sc, 28%x, tb*sc)
 			edtNz.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 				edtNz.Hint = ""
@@ -913,7 +916,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtNz, edtNz.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnNzUnit.Initialize("btnNzUnit")
 			btnNzUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnNzUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnNzUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnNzUnit.Text="g"
 			btnNzUnit.TextSize = 15*sc
 			edtNz.TextColor = ColorEdtText
@@ -930,7 +933,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnAngle1Type.TextSize = 15*sc
 			btnAngle1Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAngle1.Initialize("edtAngle1")
-		    pnlInput.AddView(edtAngle1, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtAngle1, 45%x, ib*sc, 28%x, tb*sc)
 			edtAngle1.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 				edtAngle1.Hint = ""
@@ -943,7 +946,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtAngle1, edtAngle1.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnAngle1Unit.Initialize("btnAngle1Unit")
 			btnAngle1Unit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnAngle1Unit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnAngle1Unit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnAngle1Unit.Text="deg"
 			btnAngle1Unit.TextSize = 15*sc
 			edtAngle1.TextColor = ColorEdtText
@@ -960,7 +963,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnAngle2Type.TextSize = 15*sc
 			btnAngle2Type.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtAngle2.Initialize("edtAngle2")
-		    pnlInput.AddView(edtAngle2, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtAngle2, 45%x, ib*sc, 28%x, tb*sc)
 			edtAngle2.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>300dip Then
 				edtAngle2.Hint = ""
@@ -973,7 +976,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtAngle2, edtAngle2.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 			btnAngle2Unit.Initialize("btnAngle2Unit")
 			btnAngle2Unit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnAngle2Unit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnAngle2Unit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnAngle2Unit.Text="deg"
 			btnAngle2Unit.TextSize = 15*sc
 			edtAngle2.TextColor = ColorEdtText
@@ -994,7 +997,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnHeadWind.TextSize = 15*sc
 			btnHeadWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtHeadWind.Initialize("edtHeadWind")
-		    pnlInput.AddView(edtHeadWind, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtHeadWind, 45%x, ib*sc, 28%x, tb*sc)
 			edtHeadWind.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>340dip Then
 				edtHeadWind.Hint = ""
@@ -1007,7 +1010,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtHeadWind, edtHeadWind.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 	        btnHeadWindUnit.Initialize("btnHeadWindUnit")
 			btnHeadWindUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnHeadWindUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnHeadWindUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnHeadWindUnit.Text="kt"
 			btnHeadWindUnit.TextSize = 15*sc
 			edtHeadWind.TextColor = ColorEdtText
@@ -1028,7 +1031,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnCrossWind.TextSize = 15*sc
 			btnCrossWind.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtCrossWind.Initialize("edtCrossWind")
-		    pnlInput.AddView(edtCrossWind, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtCrossWind, 45%x, ib*sc, 28%x, tb*sc)
 			edtCrossWind.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>340dip Then
 				edtCrossWind.Hint = ""
@@ -1041,7 +1044,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtCrossWind, edtCrossWind.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 	        btnCrossWindUnit.Initialize("btnCrossWindUnit")
 			btnCrossWindUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnCrossWindUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnCrossWindUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnCrossWindUnit.Text="kt"
 			btnCrossWindUnit.TextSize = 15*sc
 			edtCrossWind.TextColor = ColorEdtText
@@ -1062,7 +1065,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			btnWindRefAngle.TextSize = 15*sc
 			btnWindRefAngle.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
 			edtWindRefAngle.Initialize("edtWindRefAngle")
-		    pnlInput.AddView(edtWindRefAngle, 45%x, ib*sc, 32%x, tb*sc)
+		    pnlInput.AddView(edtWindRefAngle, 45%x, ib*sc, 28%x, tb*sc)
 			edtWindRefAngle.Hint = ""
 			If sc > 1 Or ld = 1 Or xx>=340dip Then
 				edtWindRefAngle.Hint = ""
@@ -1075,7 +1078,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			filter.SetCustomFilter(edtWindRefAngle, edtWindRefAngle.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.-")
 	        btnWindRefAngleUnit.Initialize("btnWindRefAngleUnit")
 			btnWindRefAngleUnit.Background = ButtonGradient(Array As Int(ColorBut1, ColorBut2),Array As Int(ColorBut1, ColorButPressed))
-		    pnlInput.AddView(btnWindRefAngleUnit, 80%x, ib*sc, 17%x, tb*sc)
+		    pnlInput.AddView(btnWindRefAngleUnit, 76%x, ib*sc, 21%x, tb*sc)
 		    btnWindRefAngleUnit.Text="deg"
 			btnWindRefAngleUnit.TextSize = 15*sc
 			edtWindRefAngle.TextColor = ColorEdtText
@@ -1089,32 +1092,32 @@ Sub Activity_Create(FirstTime As Boolean)
 	Next
 
 	' Subtle selector affordance, matching the airplane spinner without changing label text.
-	SetSelectorChevron(btnAltType)
-	SetSelectorChevron(btnAltUnit)
-	SetSelectorChevron(btnTempType)
-	SetSelectorChevron(btnTempUnit)
-	SetSelectorChevron(btnSpdType)
-	SetSelectorChevron(btnSpdUnit)
-	SetSelectorChevron(btnWeight)
-	SetSelectorChevron(btnWeightUnit)
-	SetSelectorChevron(btnSref)
-	SetSelectorChevron(btnSrefUnit)
-	SetSelectorChevron(btncref)
-	SetSelectorChevron(btncrefUnit)
-	SetSelectorChevron(btnCLmax)
-	SetSelectorChevron(btnCLmaxUnit)
-	SetSelectorChevron(btnNzType)
-	SetSelectorChevron(btnNzUnit)
-	SetSelectorChevron(btnAngle1Type)
-	SetSelectorChevron(btnAngle1Unit)
-	SetSelectorChevron(btnAngle2Type)
-	SetSelectorChevron(btnAngle2Unit)
-	SetSelectorChevron(btnHeadWind)
-	SetSelectorChevron(btnHeadWindUnit)
-	SetSelectorChevron(btnCrossWind)
-	SetSelectorChevron(btnCrossWindUnit)
-	SetSelectorChevron(btnWindRefAngle)
-	SetSelectorChevron(btnWindRefAngleUnit)
+	SetSelectorChevron(btnAltType, ColorButText1)
+	SetSelectorChevron(btnAltUnit, ColorButText1)
+	SetSelectorChevron(btnTempType, ColorButText1)
+	SetSelectorChevron(btnTempUnit, ColorButText1)
+	SetSelectorChevron(btnSpdType, ColorButText1)
+	SetSelectorChevron(btnSpdUnit, ColorButText1)
+	SetSelectorChevron(btnWeight, ColorButText1)
+	SetSelectorChevron(btnWeightUnit, ColorButText1)
+	SetSelectorChevron(btnSref, ColorButText1)
+	SetSelectorChevron(btnSrefUnit, ColorButText1)
+	SetSelectorChevron(btncref, ColorButText1)
+	SetSelectorChevron(btncrefUnit, ColorButText1)
+	SetSelectorChevron(btnCLmax, ColorButText1)
+	SetSelectorChevron(btnCLmaxUnit, ColorButText1)
+	SetSelectorChevron(btnNzType, ColorButText1)
+	SetSelectorChevron(btnNzUnit, ColorButText1)
+	SetSelectorChevron(btnAngle1Type, ColorButText1)
+	SetSelectorChevron(btnAngle1Unit, ColorButText1)
+	SetSelectorChevron(btnAngle2Type, ColorButText1)
+	SetSelectorChevron(btnAngle2Unit, ColorButText1)
+	SetSelectorChevron(btnHeadWind, ColorButText1)
+	SetSelectorChevron(btnHeadWindUnit, ColorButText1)
+	SetSelectorChevron(btnCrossWind, ColorButText1)
+	SetSelectorChevron(btnCrossWindUnit, ColorButText1)
+	SetSelectorChevron(btnWindRefAngle, ColorButText1)
+	SetSelectorChevron(btnWindRefAngleUnit, ColorButText1)
 
 	scvMain1.Panel.Height = (PanelNb * (ib*2+tb) + PanelNb* 1dip + 3dip)*sc
 	container.AddPage(pnlBack1,"Inputs")
@@ -1232,6 +1235,7 @@ Sub Activity_Create(FirstTime As Boolean)
 
 	'Now we have a container with our panels just add it to the pager object
 	pager.Initialize2(container,"pager")
+	pager.PagingEnabled = False
 	
 	' Criando linha marcadora de pagina
 	line.Initialize("line")
@@ -1266,12 +1270,14 @@ Sub Activity_Create(FirstTime As Boolean)
 
 End Sub
 
-Public Sub GlobalScreenSwipe(Direction As Int)
-	If AeroSheet.IsInitialized And AeroSheet.IsShowing Then Return
-	If SettingsPopupOpen Then Return
-	If CurrentPage <> 1 Then Return
-	Dim target As Int = CurrentPage + Direction
-	If target < 0 Or target > 2 Then Return
+Public Sub CanGlobalScreenSwipe As Boolean
+	If AeroSheet.IsInitialized And AeroSheet.IsShowing Then Return False
+	Return Not(SettingsPopupOpen)
+End Sub
+
+Public Sub GlobalScreenSwipe(Direction As Int, StartPage As Int)
+	If Not(CanGlobalScreenSwipe) Then Return
+	Dim target As Int = Max(0, Min(2, StartPage + Direction))
 	Dim HideK As IME
 	HideK.Initialize("")
 	HideK.HideKeyboard
@@ -1372,26 +1378,27 @@ Sub Activity_Resume
 		spinnerPos = m.GetDefault("var32", 0)
 		indWeightType = m.GetDefault("var33", 0)
 		indCLmaxType = m.GetDefault("var34", 0)
-		' Inicializacoes
-		AltType_Click
-		AltUnit_Click
-		TempType_Click
-		TempUnit_Click
-		SpdType_Click
-	 	SpdUnit_Click
-		WeightUnit_Click
-	 	SrefUnit_Click
-		crefUnit_Click
-		NzType_Click
-		Angle1Type_Click
-		Angle1Unit_Click
-		Angle2Type_Click
-		Angle2Unit_Click
-		WindType
-		HeadWindUnit_Click
-		CrossWindUnit_Click
-		WindRefAngleUnit_Click
-	End If	
+	End If
+
+	' Apply selector labels on every resume, including a fresh install without lastmod.txt.
+	AltType_Click
+	AltUnit_Click
+	TempType_Click
+	TempUnit_Click
+	SpdType_Click
+	SpdUnit_Click
+	WeightUnit_Click
+	SrefUnit_Click
+	crefUnit_Click
+	NzType_Click
+	Angle1Type_Click
+	Angle1Unit_Click
+	Angle2Type_Click
+	Angle2Unit_Click
+	WindType
+	HeadWindUnit_Click
+	CrossWindUnit_Click
+	WindRefAngleUnit_Click
 
 	'Go to default page
 	If Airp.add=1 Or ID_edt>0 Then
@@ -1416,42 +1423,9 @@ Sub Activity_Resume
 	Else
 		N = 0
 	End If
-	If N = 0 Then
-		N = 2
-		a.Put("N", 2)
-		a.Put("1_Name", "Boeing 737-800")
-		a.Put("1_S", "124.6")
-		a.Put("1_c", "4.17")
-		a.Put("1_Sunit", 0)
-		a.Put("1_cunit", 0)
-		a.Put("1_Wunit", 0)
-		a.Put("1_W1", "79015")
-		a.Put("1_W2", "66361")
-		a.Put("1_W3", "62731")
-		a.Put("1_W4", "41413")
-		a.Put("1_F0", "1.8")
-		a.Put("1_F1", "1.9")
-		a.Put("1_F2", "2.0")
-		a.Put("1_F3", "2.2")
-		
-		a.Put("2_Name", "Airbus A320-200")
-		a.Put("2_S", "122.6")
-		a.Put("2_c", "4.19")
-		a.Put("2_Sunit", 0)
-		a.Put("2_cunit", 0)
-		a.Put("2_Wunit", 0)
-		a.Put("2_W1", "78000")
-		a.Put("2_W2", "66000")
-		a.Put("2_W3", "62500")
-		a.Put("2_W4", "42600")
-		a.Put("2_F0", "1.75")
-		a.Put("2_F1", "1.85")
-		a.Put("2_F2", "2.1")
-		a.Put("2_F3", "2.3")
+	If Not(a.ContainsKey("N")) Then
+		a.Put("N", 0)
 		File.WriteMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt", a)
-		Dim tagL As List: tagL.Initialize
-		tagL.Add(1): tagL.Add(2)
-		File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", tagL)
 	End If
 	
 	Dim ListAirp As List
@@ -1520,12 +1494,12 @@ Sub Activity_Resume
 	If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
 		ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
 		For ii = 0 To ListAirp.Size-1
-			spnAirp.Add(a.Get(ListAirp.Get(ii) & "_Name"))
+			spnAirp.Add(a.GetDefault(ListAirp.Get(ii) & "_Name", ""))
 		Next
 	Else
 		If N<>0 Then
 			For ii = 1 To N
-				spnAirp.Add(a.Get(ii & "_Name"))
+				spnAirp.Add(a.GetDefault(ii & "_Name", ""))
 			Next
 		End If
 	End If
@@ -1533,7 +1507,7 @@ Sub Activity_Resume
 	If hasStableAirplaneState Then
 		spinnerPos = 0
 		If restoredAirplaneID > 0 Then
-			Dim restoredPos As Int = ListAirp.IndexOf(restoredAirplaneID)
+			Dim restoredPos As Int = IndexOfAirplaneID(ListAirp, restoredAirplaneID)
 			If restoredPos >= 0 Then spinnerPos = restoredPos + 1
 		End If
 	End If
@@ -1652,7 +1626,7 @@ Sub Pager_PageChanged (Position As Int)
 		spnAirp.Clear
 		spnAirp.Add("Custom Airplane")
 		For ii = 0 To ListAirp.Size-1
-			spnAirp.Add(a.Get(ListAirp.Get(ii) & "_Name"))
+			spnAirp.Add(a.GetDefault(ListAirp.Get(ii) & "_Name", ""))
 		Next
 	Else If CurrentPage = 0 Then
 		Dim HideK As IME
@@ -1726,12 +1700,14 @@ Sub CreateItem(ii As Int, He As Int, ID As Int) As Panel
 	lblTitle.TextSize = 15
 	lblTitle.Gravity = Gravity.CENTER_VERTICAL
 	lblTitle.SingleLine = True
+	lblTitle.Ellipsize = "END"
 
 	lblSub.Text = subStr
 	lblSub.TextColor = ColorEdtHint
 	lblSub.TextSize = 12.5
 	lblSub.Gravity = Gravity.CENTER_VERTICAL
 	lblSub.SingleLine = True
+	lblSub.Ellipsize = "END"
 
 	Try
 		Dim joT As JavaObject = lblTitle
@@ -2049,14 +2025,14 @@ Sub pnlTransp4_Touch (Action As Int, X As Float, Y As Float) As Boolean
 		a.Put(ii & "_F11", a.GetDefault((ID_add) & "_F11",""))
 		a.Put(ii & "_F12", a.GetDefault((ID_add) & "_F12",""))
 		a.Put(ii & "_F13", a.GetDefault((ID_add) & "_F13",""))
-		a.Put(ii & "_Sunit", a.Get((ID_add) & "_Sunit"))
-		a.Put(ii & "_cunit", a.Get((ID_add) & "_cunit"))
-		a.Put(ii & "_Wunit", a.Get((ID_add) & "_Wunit"))
+		a.Put(ii & "_Sunit", a.GetDefault((ID_add) & "_Sunit", 0))
+		a.Put(ii & "_cunit", a.GetDefault((ID_add) & "_cunit", 0))
+		a.Put(ii & "_Wunit", a.GetDefault((ID_add) & "_Wunit", 0))
 		a.Put("N", (N + 1))
 		lst.AddCustomItem(ii, CreateItem(ii, He, ii), He)
 		lst.ResizePanel
 		File.WriteMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt", a)
-		spnAirp.Add(a.Get(ii & "_Name"))
+		spnAirp.Add(a.GetDefault(ii & "_Name", ""))
 		Dim ListAirp As List
 		ListAirp.Initialize
 		ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
@@ -2114,7 +2090,7 @@ Public Sub SelectAirplane(ID As Int)
 	Else If File.Exists(rp.GetSafeDirDefaultExternal(""), "taglist.txt") Then
 		ListAirp = File.ReadList(rp.GetSafeDirDefaultExternal(""), "taglist.txt")
 	End If
-	Dim pos As Int = ListAirp.IndexOf(ID)
+	Dim pos As Int = IndexOfAirplaneID(ListAirp, ID)
 	If pos >= 0 Then
 		spnAirp.SelectedIndex = pos + 1
 		spnAirp_ItemClick(pos + 1, spnAirp.SelectedItem)
@@ -2138,17 +2114,12 @@ Sub SpinnerCreate
 	btnAirplanePicker.TextColor = ColorEdtText
 	btnAirplanePicker.Gravity = Gravity.CENTER
 	btnAirplanePicker.SingleLine = True
+	btnAirplanePicker.Ellipsize = "END"
 	btnAirplanePicker.Background = EditGradient(ColorEdt, ColorPnlLine2)
 	panelspn.AddView(btnAirplanePicker, 0, 0, panelspn.Width, panelspn.Height)
 	ModernizeButton(btnAirplanePicker)
 
-	Dim lblSpnChevron As Label
-	lblSpnChevron.Initialize("lblSpnChevron")
-	lblSpnChevron.Text = Chr(9662)
-	lblSpnChevron.TextSize = 10 * sc
-	lblSpnChevron.TextColor = ColorEdtText
-	lblSpnChevron.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.CENTER_HORIZONTAL)
-	panelspn.AddView(lblSpnChevron, panelspn.Width - 20dip * sc, 0, 18dip * sc, panelspn.Height)
+	SetSelectorChevron(btnAirplanePicker, ColorEdtText)
 End Sub
 
 Sub lblSpnChevron_Click
@@ -3027,7 +2998,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x 
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 1 Then
 		If UseAirspeedFullLabels Then
@@ -3038,7 +3009,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 2 Then
 		If UseAirspeedFullLabels Then
@@ -3049,7 +3020,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 3 Then
 		btnSpdType.Text = "Mach"
@@ -3058,7 +3029,7 @@ Sub SpdType_Click
 		btnSpdUnit.Enabled = True
 		btnSpdUnit.Text = Chr(8212) ' em dash: dimensionless
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 4 Then
 		edtSpd.Hint = ""
@@ -3067,7 +3038,7 @@ Sub SpdType_Click
 		btnSpdUnit.Enabled = True
 		btnSpdUnit.Text = Chr(8212) ' em dash: dimensionless
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 5 Then
 		btnSpdType.Text = MakeSubscript("V", "S", " Factor")
@@ -3075,12 +3046,12 @@ Sub SpdType_Click
 		btnSpdUnit.Visible = False
 		btnSpdDelta.Visible = True
 		' Preserve the 39% label column and redistribute only the remaining space.
-		' The factor remains the primary numeric field; +Δ is compact; Δ remains usable.
-		edtSpd.Width = 28%x
-		btnSpdDelta.Left = 75%x
-		btnSpdDelta.Width = 9%x
-		edtSpdDelta.Left = 86%x
-		edtSpdDelta.Width = 11%x
+		' Reserve enough width for the complete +Δ label and the delta speed value.
+		edtSpd.Width = 22%x
+		btnSpdDelta.Left = 69%x
+		btnSpdDelta.Width = 12%x
+		edtSpdDelta.Left = 83%x
+		edtSpdDelta.Width = 14%x
 		edtSpdDelta.Visible = True
 		SetVsDeltaHint(True)
 	Else If indSpdType = 6 Then
@@ -3092,7 +3063,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 7 Then
 		If UseGroundFullLabels Then
@@ -3103,7 +3074,7 @@ Sub SpdType_Click
 		btnSpdUnit.Visible = True
 		edtSpd.Text = NumberFormat2(GPSspeed / kSpd, 1, 1, 1, False)
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 8 Then
 		If UseFullInputLabels Then
@@ -3116,7 +3087,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	Else If indSpdType = 9 Then
 		If UseImpactFullLabels Then
@@ -3129,7 +3100,7 @@ Sub SpdType_Click
 		edtSpd.Hint = ""
 		btnSpdUnit.Visible = True
 		btnSpdDelta.Visible = False
-		edtSpd.Width = 32%x
+		edtSpd.Width = 28%x
 		edtSpdDelta.Visible = False
 	End If
 	SpdUnit_Click
@@ -3215,8 +3186,14 @@ Sub Weight_Click
 		Else If ii = 6 Then
 			btnWeight.Text  = "Light"
 		End If
+		If ii > 6 Then
+			' The stored weight choice no longer exists, for example after the profile was deleted.
+			indWeightType = 0
+			Weight_Click
+			Return
+		End If
 		edtWeight.Text = a.GetDefault(ID_inp & "_W" & ii,"")
-		indWeightUnit = a.Get(ID_inp & "_Wunit")
+		indWeightUnit = a.GetDefault(ID_inp & "_Wunit", 0)
 		WeightUnit_Click
 	End If
 End Sub
@@ -3256,6 +3233,12 @@ Sub CLmax_Click
 			End If
 			If count=indCLmaxType Then Exit
 		Next
+		If ii > 14 Then
+			' The stored flap choice no longer exists, for example after the profile was deleted.
+			indCLmaxType = 0
+			CLmax_Click
+			Return
+		End If
 		If UseFlapFullLabels Then
 			btnCLmax.Text = MakeSubscript("Flap " & (ii-1) & " - C", "L,MAX", "")
 		Else
@@ -3739,6 +3722,7 @@ Sub Calculate
 	End If
 	
 	' Criando Panels de Outputs
+	scvMain2.Panel.RemoveAllViews
 	Dim resultRightPad As Int = 8dip
 	If xx < 280dip Then resultRightPad = 0
 	For i=0 To PanelNb1-1
@@ -3782,50 +3766,50 @@ End Sub
 
 Sub DefaultInputs
 		' Setar default caso usuario nao preencha campos
-	If edtAlt.Text.CompareTo("")=0 Then
+	If Not(IsFiniteNumericText(edtAlt.Text)) Then
 		edtAlt.Text = 0
 	End If
-	If edtTemp.Text.CompareTo("")=0 Then
+	If Not(IsFiniteNumericText(edtTemp.Text)) Then
 		edtTemp.Text = 0
 	End If
-	If edtSpd.Text.CompareTo("")=0 Then
+	If Not(IsFiniteNumericText(edtSpd.Text)) Then
 		edtSpd.Text = 0
 	End If
-	If edtSpdDelta.Text.CompareTo("")=0 Then
+	If Not(IsFiniteNumericText(edtSpdDelta.Text)) Then
 		edtSpdDelta.Text = 0
 	End If
-	If edtWeight.Text.CompareTo("")=0 Then
+	If Not(IsFiniteNumericText(edtWeight.Text)) Then
 		edtWeight.Text =  1
 	End If
-	If edtSref.Text.CompareTo("")=0 Then
+	If Not(IsFiniteNumericText(edtSref.Text)) Then
 		edtSref.Text =  1
 	End If
-	If edtcref.Text.CompareTo("")=0 Then
+	If Not(IsFiniteNumericText(edtcref.Text)) Then
 		edtcref.Text =  1
 	End If
-	If edtCLmax.Text.CompareTo("")=0 Then
+	If Not(IsFiniteNumericText(edtCLmax.Text)) Then
 		edtCLmax.Text =  1 
 	End If
-	If edtNz.Text.CompareTo("") = 0 Then
+	If Not(IsFiniteNumericText(edtNz.Text)) Then
 		If indNzType=0 Or indNzType=1 Then
 			edtNz.Text = 1
 		Else If indNzType = 2 Then
 			edtNz.Text = 0
 		End If
 	End If
-	If edtAngle1.Text.CompareTo("") = 0 Then
+	If Not(IsFiniteNumericText(edtAngle1.Text)) Then
 		edtAngle1.Text = 0
 	End If
-	If edtAngle2.Text.CompareTo("") = 0 Then
+	If Not(IsFiniteNumericText(edtAngle2.Text)) Then
 		edtAngle2.Text = 0
 	End If
-	If edtHeadWind.Text.CompareTo("") = 0 Then
+	If Not(IsFiniteNumericText(edtHeadWind.Text)) Then
 		edtHeadWind.Text = 0
 	End If
-	If edtCrossWind.Text.CompareTo("") = 0 Or indWindType=1 Then
+	If Not(IsFiniteNumericText(edtCrossWind.Text)) Or indWindType=1 Then
 		edtCrossWind.Text = 0
 	End If
-	If edtWindRefAngle.Text.CompareTo("") = 0 Then
+	If Not(IsFiniteNumericText(edtWindRefAngle.Text)) Then
 		edtWindRefAngle.Text = 0
 	End If
 	
@@ -4789,6 +4773,8 @@ Sub MenuCall (MenuItem As Int)
 							a.Put((N+ii) & "_W2", a1.GetDefault((ii)& "_W2",""))
 							a.Put((N+ii) & "_W3", a1.GetDefault((ii) & "_W3",""))
 							a.Put((N+ii) & "_W4", a1.GetDefault((ii) & "_W4",""))
+							a.Put((N+ii) & "_W5", a1.GetDefault((ii) & "_W5",""))
+							a.Put((N+ii) & "_W6", a1.GetDefault((ii) & "_W6",""))
 							a.Put((N+ii) & "_F0", a1.GetDefault((ii) & "_F0",""))
 							a.Put((N+ii) & "_F1", a1.GetDefault((ii) & "_F1",""))
 							a.Put((N+ii) & "_F2", a1.GetDefault((ii) & "_F2",""))
@@ -4799,6 +4785,10 @@ Sub MenuCall (MenuItem As Int)
 							a.Put((N+ii) & "_F7", a1.GetDefault((ii) & "_F7",""))
 							a.Put((N+ii) & "_F8", a1.GetDefault((ii) & "_F8",""))
 							a.Put((N+ii) & "_F9", a1.GetDefault((ii) & "_F9",""))
+							a.Put((N+ii) & "_F10", a1.GetDefault((ii) & "_F10",""))
+							a.Put((N+ii) & "_F11", a1.GetDefault((ii) & "_F11",""))
+							a.Put((N+ii) & "_F12", a1.GetDefault((ii) & "_F12",""))
+							a.Put((N+ii) & "_F13", a1.GetDefault((ii) & "_F13",""))
 							a.Put((N+ii) & "_Sunit", a1.GetDefault((ii) & "_Sunit",0))
 							a.Put((N+ii) & "_cunit", a1.GetDefault((ii) & "_cunit",0))
 							a.Put((N+ii) & "_Wunit", a1.GetDefault((ii) & "_Wunit",0))
@@ -4916,7 +4906,7 @@ End Sub
 Private Sub ConvertEditByFactor(Field As EditText, OldFactor As Double, NewFactor As Double, MaxDecimals As Int)
 	If Not(Field.IsInitialized) Then Return
 	Dim raw As String = Field.Text.Trim
-	If raw.Length = 0 Or Not(IsNumber(raw)) Or NewFactor = 0 Then Return
+	If raw.Length = 0 Or Not(IsFiniteNumericText(raw)) Or NewFactor = 0 Then Return
 	Dim currentValue As Double = raw
 	Dim converted As Double = currentValue * OldFactor / NewFactor
 	Field.Text = FormatInputValue(converted, MaxDecimals)
@@ -5013,7 +5003,7 @@ End Sub
 Private Sub ConvertTemperatureEdit(OldUnit As Int, NewUnit As Int)
 	If Not(edtTemp.IsInitialized) Then Return
 	Dim raw As String = edtTemp.Text.Trim
-	If raw.Length = 0 Or Not(IsNumber(raw)) Then Return
+	If raw.Length = 0 Or Not(IsFiniteNumericText(raw)) Then Return
 	Dim isDelta As Boolean = (indTempType = 0)
 	Dim currentValue As Double = raw
 	Dim kelvinValue As Double = TemperatureToKelvin(currentValue, OldUnit, isDelta)
@@ -5098,7 +5088,7 @@ Private Sub UseGeometryFullLabels As Boolean
 End Sub
 
 Private Sub UseGroundFullLabels As Boolean
-	Return xx >= 380dip
+	Return xx >= 360dip
 End Sub
 
 Private Sub UseMediumInputLabels As Boolean
@@ -5124,7 +5114,7 @@ Private Sub UseOutputSymbols As Boolean
 End Sub
 
 Private Sub UseFullWindVectorLabels As Boolean
-	Return xx >= 380dip
+	Return xx >= 360dip
 End Sub
 
 Private Sub UseHeadCrossFullLabels As Boolean
@@ -5140,27 +5130,23 @@ Public Sub VibrateTap
 	End Try
 End Sub
 
-Private Sub SetSelectorChevron(btn As Button)
-	' Keep the selector affordance visible without reserving a large part of the label column.
+Private Sub SetSelectorChevron(btn As Button, ArrowColor As Int)
+	' Use one solid triangle for quantity, unit, and airplane selectors.
 	Try
-		Dim ctxt As JavaObject
-		ctxt.InitializeContext
-		Dim res As JavaObject = ctxt.RunMethod("getResources", Null)
-		Dim arrowId As Int = res.RunMethod("getIdentifier", Array As Object("arrow_down_float", "drawable", "android"))
-		If arrowId <> 0 Then
-			Dim drawable As JavaObject = res.RunMethod("getDrawable", Array As Object(arrowId))
-			drawable.RunMethod("setBounds", Array As Object(0, 0, 6dip, 4dip))
-			Dim jo As JavaObject = btn
-			jo.RunMethod("setCompoundDrawables", Array As Object(Null, Null, drawable, Null))
-			jo.RunMethod("setCompoundDrawablePadding", Array As Object(2dip))
-			jo.RunMethod("setPadding", Array As Object(4dip, 0, 4dip, 0))
-		End If
+		Dim native As JavaObject = Me
+		Dim drawable As JavaObject = native.RunMethod("createSelectorChevron", Array As Object(ArrowColor, 4dip, 3dip))
+		drawable.RunMethod("setBounds", Array As Object(0, 0, 4dip, 3dip))
+		Dim jo As JavaObject = btn
+		jo.RunMethod("setCompoundDrawables", Array As Object(Null, Null, drawable, Null))
+		jo.RunMethod("setCompoundDrawablePadding", Array As Object(2dip))
+		jo.RunMethod("setPadding", Array As Object(2dip, 0, 2dip, 0))
 	Catch
 		Log("Selector chevron skipped: " & LastException.Message)
 	End Try
 End Sub
 
 Private Sub ModernizeButton(btn As Button)
+	btn.SingleLine = True
 	Try
 		Dim jo As JavaObject = btn
 		jo.RunMethod("setAllCaps", Array(False))
@@ -5277,15 +5263,7 @@ Private Sub OpenSettingsPopup
 	lblTitle.Typeface = Typeface.DEFAULT_BOLD
 	lblTitle.TextSize = 18
 	lblTitle.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
-	titleBar.AddView(lblTitle, 20dip, 0, cardW - 76dip, 52dip)
-	Dim btnClose As Button
-	btnClose.Initialize("btnCloseSettings")
-	btnClose.Text = Chr(215)
-	btnClose.TextColor = ColorEdtHint
-	btnClose.TextSize = 24
-	btnClose.Color = Colors.Transparent
-	titleBar.AddView(btnClose, cardW - 54dip, 2dip, 48dip, 48dip)
-
+	titleBar.AddView(lblTitle, 20dip, 0, cardW - 40dip, 52dip)
 	' Scrollable, explanatory settings rows
 	Dim scv As ScrollView
 	scv.Initialize(contentH)
@@ -5845,7 +5823,7 @@ Sub ShowTechnicalHelp(Field As String)
 	Case "windRef"
 		If indWindType = 0 Then Key = "Runway Angle" Else Key = "Wind Direction"
 	Case "airplane"
-		AeroSheet.ShowHelp(Activity, "Airplane Selection", "Airplane Selection" & CRLF & CRLF & "Definition: Select an aircraft profile from the saved aircraft library, or modify the individual geometric parameters directly." & CRLF & CRLF & "Model: Stored aircraft configuration database.")
+		AeroSheet.ShowHelp(Activity, "Airplane Selection", "Airplane Selection" & CRLF & CRLF & "Definition: Select an aircraft profile from the saved aircraft library, or modify the individual geometric parameters directly." & CRLF & CRLF & "Model Physics: A profile supplies reference geometry, masses, and flap lift limits to the aerodynamic equations. These are aircraft-data inputs; the calculator does not infer aircraft characteristics from its name.")
 		Return
 	Case Else
 		Key = Field
@@ -6050,7 +6028,41 @@ Public Sub ConfigureAirplaneSpinner(spn As Spinner)
 	End Try
 End Sub
 
+
+' Finds an airplane ID in a tag list. Lists read from taglist.txt hold strings, so compare as numbers.
+Public Sub IndexOfAirplaneID(IDs As List, ID As Int) As Int
+	If IDs.IsInitialized = False Then Return -1
+	For i = 0 To IDs.Size - 1
+		Dim value As String = IDs.Get(i)
+		If IsNumber(value) Then
+			Dim candidate As Double = value
+			If candidate = ID Then Return i
+		End If
+	Next
+	Return -1
+End Sub
+
+Public Sub IsFiniteNumericText(Value As String) As Boolean
+  If Not(IsNumber(Value)) Then Return False
+  Dim parsed As Double = Value
+  Return parsed = parsed And Abs(parsed) <= 1.7976931348623157E308
+End Sub
+
 #If Java
+public static android.graphics.drawable.Drawable createSelectorChevron(int color, int width, int height) {
+    android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888);
+    android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+    android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+    paint.setColor(color);
+    android.graphics.Path triangle = new android.graphics.Path();
+    triangle.moveTo(0, 0);
+    triangle.lineTo(width, 0);
+    triangle.lineTo(width / 2f, height);
+    triangle.close();
+    canvas.drawPath(triangle, paint);
+    return new android.graphics.drawable.BitmapDrawable(anywheresoftware.b4a.BA.applicationContext.getResources(), bitmap);
+}
+
 public static void restartActivity() {
     try {
         if (mostCurrent != null) {
@@ -6145,33 +6157,37 @@ public static boolean processGlobalSwipe(android.view.MotionEvent event) {
                 aeroSwipeDownY = event.getRawY();
                 aeroSwipeTracking = true;
                 aeroSwipeHorizontal = false;
+                aeroSwipePage = mostCurrent._pager.getCurrentPage();
+                aeroSwipeNavigationAllowed = _canglobalscreenswipe();
                 return false;
             case android.view.MotionEvent.ACTION_MOVE:
                 if (!aeroSwipeTracking) return false;
                 float mdx = event.getRawX() - aeroSwipeDownX;
                 float mdy = event.getRawY() - aeroSwipeDownY;
-                if (Math.abs(mdx) >= 28f * density && Math.abs(mdx) > Math.abs(mdy) * 1.35f) {
+                if (aeroSwipeNavigationAllowed && Math.abs(mdx) >= 28f * density && Math.abs(mdx) > Math.abs(mdy) * 1.35f) {
                     aeroSwipeHorizontal = true;
                 }
-                return false;
+                return aeroSwipeHorizontal;
             case android.view.MotionEvent.ACTION_UP:
                 if (!aeroSwipeTracking) return false;
                 float dx = event.getRawX() - aeroSwipeDownX;
                 float dy = event.getRawY() - aeroSwipeDownY;
                 boolean valid = aeroSwipeHorizontal
-                    && Math.abs(dx) >= 72f * density
+                    && Math.abs(dx) >= 48f * density
                     && Math.abs(dx) > Math.abs(dy) * 1.35f;
+                boolean claimed = aeroSwipeHorizontal;
                 aeroSwipeTracking = false;
                 aeroSwipeHorizontal = false;
                 if (valid) {
-                    int direction = dx < 0 ? 1 : -1;
+                    int direction = dx > 0 ? 1 : -1;
                     try {
-                        processBA.raiseEvent2(null, true, "globalscreenswipe", false, Integer.valueOf(direction));
+                        processBA.raiseEvent2(null, true, "globalscreenswipe", false, Integer.valueOf(direction), Integer.valueOf(aeroSwipePage));
                     } catch (Exception ex) {
                         android.util.Log.e("AERO_SWIPE", "callback error: " + ex.getMessage(), ex);
                     }
                     return true;
                 }
+                if (claimed) return true;
                 boolean downSwipe = dy >= 64f * density && Math.abs(dy) > Math.abs(dx) * 1.2f;
                 if (downSwipe) {
                     try {
@@ -6196,6 +6212,9 @@ private static float aeroSwipeDownX;
 private static float aeroSwipeDownY;
 private static boolean aeroSwipeTracking;
 private static boolean aeroSwipeHorizontal;
+private static int aeroSwipePage;
+private static boolean aeroSwipeNavigationAllowed;
+private boolean aeroSwipeChildCancelled;
 
 public static void tintImageView(Object ivObj, int color) {
     try {
@@ -6227,8 +6246,19 @@ public static void tintImageView(Object ivObj, int color) {
 
 @Override
 public boolean dispatchTouchEvent(android.view.MotionEvent event) {
+    if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) aeroSwipeChildCancelled = false;
     boolean handled = processGlobalSwipe(event);
-    if (handled) return true;
+    if (handled) {
+        // Cancel the child once so the pager and controls do not complete the same gesture.
+        if (!aeroSwipeChildCancelled) {
+            android.view.MotionEvent cancel = android.view.MotionEvent.obtain(event);
+            cancel.setAction(android.view.MotionEvent.ACTION_CANCEL);
+            super.dispatchTouchEvent(cancel);
+            cancel.recycle();
+            aeroSwipeChildCancelled = true;
+        }
+        return true;
+    }
     return super.dispatchTouchEvent(event);
 }
 #End If

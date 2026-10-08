@@ -2,6 +2,27 @@
 
 All notable changes to the repository should be recorded here.
 
+## [3.33] - 2026-10-08
+
+### Fixed
+
+- Android no longer crashes on every launch after a profile weight (for example MTOW) was saved. The restore compared an integer ID with the strings read from `taglist.txt`, fell back to Custom, and then read a missing unit key. Users had to clear app data to recover.
+- A stored weight or flap choice that no longer exists falls back to Custom instead of crashing.
+- A fresh install shows the correct temperature selector label (OAT) instead of Δ ISA.
+- Importing airplanes keeps the Heavy and Light weights and flaps 10 to 13.
+- Android equation boxes use the same notation as the help text and the web (H_P, S_REF, C_L,MAX, V_S). `tools/generate_latex_assets.js` now reads the equations from `AeroNames.bas`.
+
+### Changed
+
+- Swipe navigation follows the finger: right to the tab on the right, left to the tab on the left.
+- Wider unit column, complete speed and wind labels, and a complete +Δ control.
+- One solid triangle style for every dropdown, including the aircraft editor units.
+- Aircraft editor fields, units, and section labels are aligned; long airplane names end with an ellipsis.
+- Input hints and close (X) buttons removed; tapping editor symbols opens help.
+- New installations contain no example airplanes.
+- Help text explains the model physics of each quantity.
+- Results are replaced, not appended, on recalculation; incomplete numbers no longer crash.
+
 ## [3.32] - 2026-10-07
 
 ### Changed

@@ -346,12 +346,12 @@ def assert_fallback_composite(profile,root):
  expect_visible_text(profile,"fallback-pressure-exact",root,"Static Pressure" if dp>=380 else ("Pressure" if dp>=300 else "P"))
  expect_visible_text(profile,"fallback-temperature-exact",root,"Temperature OAT" if dp>=380 else ("Temperature" if dp>=340 else "OAT"))
  expect_visible_text(profile,"fallback-dynamic-exact",root,"Dynamic Pressure" if dp>=380 else ("Dyn Press" if dp>=300 else "q"))
- expect_visible_text(profile,"fallback-wind-speed-exact",root,"Wind Speed" if dp>=380 else ("Wind Spd" if dp>=300 else "WindSpd"))
- expect_visible_text(profile,"fallback-wind-direction-exact",root,"Wind Direction" if dp>=380 else ("Wind Dir" if dp>=300 else "WindDir"))
+ expect_visible_text(profile,"fallback-wind-speed-exact",root,"Wind Speed" if dp>=360 else ("Wind Spd" if dp>=300 else "WindSpd"))
+ expect_visible_text(profile,"fallback-wind-direction-exact",root,"Wind Direction" if dp>=360 else ("Wind Dir" if dp>=300 else "WindDir"))
 
 def assert_fallback_compact(profile,root):
  dp=int(profile.removesuffix("dp"))
- expect_visible_text(profile,"fallback-ground-exact",root,"Ground Speed" if dp>=380 else "Grnd Spd")
+ expect_visible_text(profile,"fallback-ground-exact",root,"Ground Speed" if dp>=360 else "Grnd Spd")
  expect_visible_text(profile,"fallback-headwind-exact",root,"Headwind" if dp>=300 else "HeadWnd")
  expect_visible_text(profile,"fallback-crosswind-exact",root,"Crosswind" if dp>=300 else "CrossWnd")
  expect_visible_text(profile,"fallback-runway-exact",root,"Runway Angle" if dp>=320 else "Rnwy Angle")

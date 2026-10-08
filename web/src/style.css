@@ -238,7 +238,7 @@ sub.hp-sub {
   min-height: 56px;
   display: grid;
   /* Android parity: narrower label, wider numeric value, same unit column. */
-  grid-template-columns: minmax(0, 39fr) minmax(0, 32fr) minmax(0, 17fr);
+  grid-template-columns: minmax(0, 39fr) minmax(0, 28fr) minmax(0, 21fr);
   column-gap: 3%;
   align-items: stretch;
   padding: 6px 3%;
@@ -268,7 +268,7 @@ sub.hp-sub {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px 0 8px;
+  padding: 0 8px 0 4px;
   pointer-events: none;
   font-size: 15px;
   color: var(--button-text, #111);
@@ -287,12 +287,12 @@ sub.hp-sub {
   min-width: 0;
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 6px;
-  /* Match the Android selector: a 6x4 chevron 4px from the edge, 2px from the text. */
-  padding: 0 12px 0 10px;
+  /* Match the Android selector: a 4x3 chevron 2px from the edge, 2px from the text. */
+  padding: 0 8px 0 4px;
   font-size: 15px;
   color: var(--button-text, #111);
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4'%3E%3Cpath d='M0 0h6L3 4z' fill='%23737b7a'/%3E%3C/svg%3E") right 4px center / 6px 4px no-repeat,
+    var(--selector-chevron) right 2px center / 4px 3px no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
@@ -338,9 +338,9 @@ sub.hp-sub {
    */
   grid-template-columns:
     minmax(0, 39fr) 3%
-    minmax(0, 28fr) 1.5%
-    minmax(0, 9fr) 1.5%
-    minmax(0, 12fr);
+    minmax(0, 22fr) 1.5%
+    minmax(0, 12fr) 1.5%
+    minmax(0, 15fr);
   column-gap: 0;
 }
 .speed-row.vs-factor-mode > .field-select-wrap { grid-column: 1; }
@@ -420,7 +420,7 @@ sub.hp-sub {
   text-align-last: center;
   color: var(--button-text, #111);
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4'%3E%3Cpath d='M0 0h6L3 4z' fill='%23737b7a'/%3E%3C/svg%3E") right 8px center / 6px 4px no-repeat,
+    var(--profile-chevron) right 2px center / 4px 3px no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 4px;
@@ -761,16 +761,16 @@ sub.hp-sub {
 .editor-row {
   min-height: 50px;
   display: grid;
-  grid-template-columns: 20% 55% 20%;
-  gap: 1%;
+  grid-template-columns: minmax(0, 20fr) 1fr minmax(0, 27fr) 22fr minmax(0, 27fr);
+  column-gap: 0;
   align-items: center;
-  padding: 7px 1%;
+  padding: 7px 2% 7px 1%;
   border-bottom: 1px solid var(--divider);
 }
-.editor-row > label { font-size: 15px; font-weight: 600; color: var(--button-text, inherit); white-space: nowrap; }
-.editor-name-row {
-  grid-template-columns: 20% 78% !important;
-}
+.editor-row > label { grid-column: 1 / 3; font-size: 15px; font-weight: 700; color: var(--button-text, inherit); white-space: nowrap; line-height: 1.2; }
+.editor-row > input { grid-column: 3; }
+.editor-row > select { grid-column: 5; }
+.editor-name-row > input { grid-column: 3 / 6; }
 .editor-row input, .editor-row select,
 .weight-grid input, .flap-grid input, .editor-section-head select {
   min-width: 0;
@@ -791,25 +791,30 @@ sub.hp-sub {
 .editor-section-head {
   min-height: 50px;
   display: grid;
-  grid-template-columns: 1fr 20%;
+  grid-template-columns: minmax(0, 20fr) 1fr minmax(0, 27fr) 22fr minmax(0, 27fr);
   align-items: center;
-  padding: 7px 1%;
+  padding: 7px 2% 7px 1%;
 }
-.editor-section-head strong { font-size: 15px; color: var(--button-text); }
+.editor-section-head strong { grid-column: 1 / 4; font-size: 15px; font-weight: 700; color: var(--button-text); }
+.editor-section-head > select, .editor-section-head > button { grid-column: 5; }
 .weight-grid, .flap-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
+  grid-template-columns: minmax(0, 48fr) minmax(0, 48fr);
+  column-gap: calc(100% / 97);
+  padding: 0 2% 0 1%;
 }
 .weight-grid label, .flap-grid label {
   min-height: 50px;
   display: grid;
-  grid-template-columns: 42% 58%;
+  grid-template-columns: minmax(0, 20fr) 1fr minmax(0, 27fr);
   align-items: center;
-  padding: 7px 2%;
+  padding: 7px 0;
+  text-align: right;
   font-size: 14px;
   color: var(--button-text);
 }
+.weight-grid input, .flap-grid input { grid-column: 3; }
+.editor-row input, .weight-grid input, .flap-grid input { padding: 0 4px; font-size: 13px; }
 .add-flap {
   justify-self: end;
   width: 38px;
@@ -983,13 +988,14 @@ sub.hp-sub {
   padding: 0 26px 0 10px;
 }
 .setting-choice::after {
-  content: "▾";
+  content: "";
   position: absolute;
-  right: 10px;
+  right: 2px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--field-text);
-  font-size: 11px;
+  width: 4px;
+  height: 3px;
+  background: var(--profile-chevron) center / 4px 3px no-repeat;
 }
 .settings-dialog .check-row input {
   justify-self: end;
@@ -1315,10 +1321,10 @@ sub.hp-sub {
   .brand-row { grid-template-columns: 46px 1fr 42px 42px; padding-left: 10px; }
   .brand { font-size: 21px; }
   .brand-icon { width: 35px; height: 35px; }
-  .input-row { grid-template-columns: minmax(0, 39fr) minmax(0, 32fr) minmax(0, 17fr); min-height: 56px; }
+  .input-row { grid-template-columns: minmax(0, 39fr) minmax(0, 28fr) minmax(0, 21fr); min-height: 56px; }
   .airplane-row { grid-template-columns: minmax(0, 39fr) minmax(0, 52fr); }
   .field-select, .unit-select, .value-input, .field-select-display { font-size: 14px; padding-left: 8px; padding-right: 8px; }
-  .field-select { padding-right: 12px; background-position: right 4px center, center; }
+  .field-select { padding-right: 12px; background-position: right 2px center, center; }
   .field-select-display { padding-right: 12px; }
   .result-row { padding-left: 4px; padding-right: 4px; }
   .profile-dialog {
@@ -1356,9 +1362,10 @@ sub.hp-sub {
     padding-left: 5px;
     padding-right: 5px;
   }
+  .value-input { padding-left: 2px; padding-right: 2px; }
   .field-select {
     padding-right: 12px;
-    background-position: right 4px center, center;
+    background-position: right 2px center, center;
   }
   .field-select-display {
     padding-right: 12px;
@@ -1372,9 +1379,7 @@ sub.hp-sub {
   .settings-footer { padding-left: 14px; padding-right: 14px; }
   .setting-title { font-size: 13px; }
   .setting-desc { font-size: 11px; }
-  .weight-grid, .flap-grid { grid-template-columns: 1fr; }
-  .editor-row { grid-template-columns: 24% minmax(0, 1fr) 20%; }
-  .editor-row > label { font-size: 12px; }
+  .editor-row > label, .editor-section-head strong { font-size: 13px; }
   .airplane-list-row { grid-template-columns: 40px minmax(0, 1fr) 40px 40px 40px; }
   .airplane-name-button { padding-left: 6px; padding-right: 6px; }
   .airplane-duplicate-button, .airplane-edit-button, .airplane-delete-button { font-size: 18px; }
@@ -1390,4 +1395,21 @@ sub.hp-sub {
 
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
+}
+
+@media (max-width: 400px) {
+  .editor-row > label, .editor-section-head strong { font-size: 13px; }
+}
+
+@media (max-width: 319px) {
+  .editor-row > label, .editor-section-head strong { font-size: 11.5px; }
+}
+
+.flap-actions { grid-column: 5; display: flex; justify-content: space-between; gap: 4%; }
+.flap-actions .add-flap { width: 48%; height: 44px; }
+
+.editor-row > select, .editor-section-head > select {
+  appearance: none;
+  background: var(--selector-chevron) right 2px center / 4px 3px no-repeat, linear-gradient(var(--button-a), var(--button-b));
+  padding-right: 8px;
 }

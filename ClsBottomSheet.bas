@@ -25,6 +25,7 @@ Sub Class_Globals
 	Private mSelectedTextColor As Int
 	Private mDividerColor As Int
 	Private mPending As Boolean
+	Private mShowing As Boolean
 	Private mDragStartX As Float
 	Private mDragStartY As Float
 	Private mDragTracking As Boolean
@@ -60,6 +61,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	pnlOverlay.Initialize("pnlOverlay")
 	pnlOverlay.Color = Colors.ARGB(178, 0, 0, 0)
 	act.AddView(pnlOverlay, 0, 0, 100%x, 100%y)
+	mShowing = True
 
 	' Premium bottom sheet
 	pnlSheet.Initialize("pnlSheetDrag")
@@ -100,15 +102,8 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	lblTitle.TextColor = mTextColor
 	lblTitle.Typeface = Typeface.DEFAULT_BOLD
 	lblTitle.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
-	pnlSheet.AddView(lblTitle, 20dip, 16dip, 100%x - 76dip, 44dip)
+	pnlSheet.AddView(lblTitle, 20dip, 16dip, 100%x - 40dip, 44dip)
 
-	Dim btnClose As Button
-	btnClose.Initialize("btnSheetClose")
-	btnClose.Text = Chr(215)
-	btnClose.TextSize = 24
-	btnClose.TextColor = mTextColor
-	btnClose.Color = Colors.Transparent
-	pnlSheet.AddView(btnClose, 100%x - 52dip, 18dip, 44dip, 40dip)
 
 	Dim scrollHeight As Int = sheetHeight - 64dip - 60dip
 	scvItems.Initialize(Max(scvH, scrollHeight))
@@ -215,6 +210,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 End Sub
 
 Private Sub CloseViews
+	mShowing = False
 	If pnlSheet.IsInitialized Then
 		Try
 			pnlSheet.RemoveView
@@ -238,7 +234,7 @@ Public Sub Dismiss
 End Sub
 
 Public Sub getIsShowing As Boolean
-	Return mPending
+	Return mShowing
 End Sub
 
 Public Sub getCanSwipeDismiss As Boolean
@@ -365,6 +361,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	pnlOverlay.Initialize("pnlOverlay")
 	pnlOverlay.Color = Colors.ARGB(170, 0, 0, 0)
 	act.AddView(pnlOverlay, 0, 0, 100%x, 100%y)
+	mShowing = True
 
 	' Sheet panel
 	pnlSheet.Initialize("pnlSheet")
@@ -403,8 +400,8 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 			eqText = part.SubString(9).Trim
 		Else If part.StartsWith("SI/reference unit:") Then
 			unitText = part.SubString(18).Trim
-		Else If part.StartsWith("Model:") Then
-			modelText = part.SubString(6).Trim
+		Else If part.StartsWith("Model Physics:") Then
+			modelText = part.SubString(14).Trim
 		Else If part.StartsWith("Typical range:") Then
 			If modelText.Length > 0 Then modelText = modelText & CRLF
 			modelText = modelText & part
@@ -420,16 +417,8 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	lblTitle.TextColor = mTitleColor
 	lblTitle.Typeface = Typeface.DEFAULT_BOLD
 	lblTitle.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
-	pnlSheet.AddView(lblTitle, 20dip, 16dip, 100%x - 68dip, 40dip)
+	pnlSheet.AddView(lblTitle, 20dip, 16dip, 100%x - 40dip, 40dip)
 
-	' Close X button
-	Dim btnClose As Button
-	btnClose.Initialize("pnlOverlay")
-	btnClose.Text = Chr(0xD7) ' ×
-	btnClose.TextSize = 22
-	btnClose.TextColor = mTextColor
-	btnClose.Color = Colors.Transparent
-	pnlSheet.AddView(btnClose, 100%x - 48dip, 16dip, 40dip, 40dip)
 
 	' Content scroll view
 	Dim scvHelp As ScrollView
@@ -483,7 +472,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	If modelText.Length > 0 Then
 		Dim lblModelHdr As Label
 		lblModelHdr.Initialize("")
-		lblModelHdr.Text = "MODEL / ASSUMPTIONS"
+		lblModelHdr.Text = "MODEL PHYSICS"
 		lblModelHdr.TextColor = SectionHeaderColor(Colors.RGB(0, 102, 74), Colors.RGB(0, 180, 120)) ' emerald green
 		lblModelHdr.TextSize = 12
 		lblModelHdr.Typeface = Typeface.DEFAULT_BOLD

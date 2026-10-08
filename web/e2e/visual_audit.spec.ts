@@ -115,12 +115,12 @@ for (const viewport of cases) {
         clientY: 240,
         bubbles: true,
       });
-      await page.locator("#modal-tooltip-close").click();
+      await page.locator("#btn-result-tooltip-ok").click();
     } else {
-      await speedSelector.hover();
-      await expect(page.locator("#field-tooltip")).toBeVisible();
+      await speedSelector.dispatchEvent("contextmenu");
+      await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
       await shot(page, dir, "02-speed-helper");
-      await page.mouse.move(1, 1);
+      await page.locator("#btn-result-tooltip-ok").click();
     }
     await shot(page, dir, "03-inputs-full", true);
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
@@ -132,7 +132,7 @@ for (const viewport of cases) {
     await page.locator(".result-row").first().click();
     await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
     await shot(page, dir, "05b-output-helper");
-    await page.locator("#modal-tooltip-close").click();
+    await page.locator("#btn-result-tooltip-ok").click();
     await shot(page, dir, "06-calculate-full", true);
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await shot(page, dir, "07-calculate-bottom");
@@ -155,7 +155,7 @@ for (const viewport of cases) {
     await page.getByRole("button", { name: "More options" }).click();
     await page.getByRole("button", { name: "About" }).click();
     await shot(page, dir, "11-about");
-    await page.getByRole("button", { name: "Close about" }).click();
+    await page.getByRole("button", { name: "OK", exact: true }).click();
 
     await page.getByRole("button", { name: "AIRPLANES" }).click();
     await shot(page, dir, "12-airplanes-empty");

@@ -56,18 +56,18 @@ test.describe("helpers and swipe navigation", () => {
         clientY: 240,
         bubbles: true,
       });
-      await page.locator("#modal-tooltip-close").click();
+      await page.locator("#btn-result-tooltip-ok").click();
       await expect(page.locator("#modal-result-tooltip")).not.toHaveClass(/open/);
     };
 
-    await expect(page.locator("#field-tooltip")).toBeHidden();
+    await expect(page.locator("#field-tooltip")).toHaveCount(0);
     await longPress('[data-field="spd"] .field-select-wrap', 31);
 
     await page.locator("#spd-type").selectOption("Mach");
     await longPress("#spd-value", 32);
 
     await longPress('[data-field="windRef"] .field-select-wrap', 33);
-    await expect(page.locator("#field-tooltip")).toBeHidden();
+    await expect(page.locator("#field-tooltip")).toHaveCount(0);
   });
 
   test("all input type and unit choice sheets are populated and single-line", async ({ page }) => {
@@ -117,7 +117,7 @@ test.describe("helpers and swipe navigation", () => {
       await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
       await expect(page.locator("#result-tooltip-title")).not.toHaveText("");
       await expect(page.locator("#result-tooltip-desc")).not.toHaveText("");
-      await page.locator("#modal-tooltip-close").click();
+      await page.locator("#btn-result-tooltip-ok").click();
       await expect(page.locator("#modal-result-tooltip")).not.toHaveClass(/open/);
     }
   });
@@ -186,20 +186,23 @@ test.describe("helpers and swipe navigation", () => {
     await expect(page.locator("#modal-options-selector")).not.toHaveClass(/open/);
   });
 
-  test("horizontal finger swipe changes tabs like the Android ViewPager", async ({ page }) => {
+  test("horizontal finger swipe navigates in the finger direction", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("button", { name: "INPUTS" })).toHaveAttribute("aria-selected", "true");
 
-    await swipe(page, 330, 70);
+    await swipe(page, 70, 330);
     await expect(page.getByRole("button", { name: "CALCULATE" })).toHaveAttribute("aria-selected", "true");
 
     await swipe(page, 70, 330);
+    await expect(page.getByRole("button", { name: "CALCULATE" })).toHaveAttribute("aria-selected", "true");
+
+    await swipe(page, 330, 70);
     await expect(page.getByRole("button", { name: "INPUTS" })).toHaveAttribute("aria-selected", "true");
 
-    await swipe(page, 70, 330);
+    await swipe(page, 330, 70);
     await expect(page.getByRole("button", { name: "AIRPLANES" })).toHaveAttribute("aria-selected", "true");
 
-    await swipe(page, 70, 330);
+    await swipe(page, 330, 70);
     await expect(page.getByRole("button", { name: "AIRPLANES" })).toHaveAttribute("aria-selected", "true");
 
     await swipe(page, 330, 70, 300, 560);
@@ -211,9 +214,11 @@ test.describe("helpers and swipe navigation", () => {
     await page.getByRole("button", { name: "More options" }).click();
     await page.getByRole("button", { name: "Settings" }).click();
     await expect(page.locator("#settings-dialog")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Close settings" })).toHaveCount(0);
 
     await swipe(page, 330, 70);
     await expect(page.getByRole("button", { name: "INPUTS" })).toHaveAttribute("aria-selected", "true");
     await expect(page.locator("#settings-dialog")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Close settings" })).toHaveCount(0);
   });
 });

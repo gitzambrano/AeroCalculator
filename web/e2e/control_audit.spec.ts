@@ -182,7 +182,7 @@ test("all top-level navigation and menu controls work", async ({ page }) => {
   await page.getByRole("button", { name: "More options" }).click();
   const feedback = page.getByRole("link", { name: "Send Feedback" });
   await expect(feedback).toHaveAttribute("href", "mailto:flightdyn@gmail.com?subject=AeroCalculator%20Feedback");
-  await page.getByRole("button", { name: "Close menu" }).click();
+  await page.keyboard.press("Escape");
 
   await page.getByRole("button", { name: "More options" }).click();
   await page.getByRole("button", { name: "About" }).click();

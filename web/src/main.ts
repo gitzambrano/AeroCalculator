@@ -311,7 +311,7 @@ app.innerHTML = `
         <div class="modal-handle"></div>
         <div class="sheet-header">
           <strong>Menu</strong>
-          <button type="button" class="sheet-close" id="main-menu-close" aria-label="Close menu">&times;</button>
+
         </div>
         <button type="button" class="sheet-item" data-menu="clear"><span>Clear Inputs</span><small>Reset all flight-condition entries</small></button>
         <button type="button" class="sheet-item" data-menu="import"><span>Import Airplanes</span><small>Restore or merge aircraft profiles</small></button>
@@ -331,16 +331,16 @@ app.innerHTML = `
           <button type="button" id="profile-cancel">✕&nbsp;&nbsp;Cancel</button>
         </div>
         <div class="editor-scroll">
-          <div class="editor-row editor-name-row"><label for="profile-name">Name</label><input id="profile-name" type="text" placeholder="Aircraft Name" /></div>
-          <div class="editor-row"><label for="profile-sref">Area S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" placeholder="Reference Area" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
-          <div class="editor-row"><label for="profile-cref">Chord c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" placeholder="Reference Chord" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
+          <div class="editor-row editor-name-row"><label for="profile-name">Name</label><input id="profile-name" type="text" /></div>
+          <div class="editor-row"><label for="profile-sref">Area S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
+          <div class="editor-row"><label for="profile-cref">Chord c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
           <section class="editor-section">
             <div class="editor-section-head"><strong>Weight</strong><select id="profile-weight-unit" aria-label="Aircraft weight unit"><option>kg</option><option>lb</option><option>ton</option><option>slug</option><option>oz</option></select></div>
-            <div class="weight-grid"><label>MTOW<input id="profile-weight-MTOW" inputmode="decimal" placeholder="MTOW" /></label><label>MLW<input id="profile-weight-MLW" inputmode="decimal" placeholder="MLW" /></label><label>MZFW<input id="profile-weight-MZFW" inputmode="decimal" placeholder="MZFW" /></label><label>BOW<input id="profile-weight-BOW" inputmode="decimal" placeholder="BOW" /></label><label>Heavy<input id="profile-weight-Heavy" inputmode="decimal" placeholder="Heavy" /></label><label>Light<input id="profile-weight-Light" inputmode="decimal" placeholder="Light" /></label></div>
+            <div class="weight-grid"><label>MTOW<input id="profile-weight-MTOW" inputmode="decimal" /></label><label>MLW<input id="profile-weight-MLW" inputmode="decimal" /></label><label>MZFW<input id="profile-weight-MZFW" inputmode="decimal" /></label><label>BOW<input id="profile-weight-BOW" inputmode="decimal" /></label><label>Heavy<input id="profile-weight-Heavy" inputmode="decimal" /></label><label>Light<input id="profile-weight-Light" inputmode="decimal" /></label></div>
           </section>
           <section class="editor-section">
-            <div class="editor-section-head"><strong>C<sub>L,MAX</sub></strong><button type="button" id="add-flap" class="add-flap" aria-label="Add flap maximum lift coefficient">＋</button></div>
-            <div class="flap-grid" id="flap-grid"><label data-flap-row="0" hidden>Flap 0<input id="profile-flap-0" inputmode="decimal" placeholder="Flap 0" /></label><label data-flap-row="1" hidden>Flap 1<input id="profile-flap-1" inputmode="decimal" placeholder="Flap 1" /></label><label data-flap-row="2" hidden>Flap 2<input id="profile-flap-2" inputmode="decimal" placeholder="Flap 2" /></label><label data-flap-row="3" hidden>Flap 3<input id="profile-flap-3" inputmode="decimal" placeholder="Flap 3" /></label><label data-flap-row="4" hidden>Flap 4<input id="profile-flap-4" inputmode="decimal" placeholder="Flap 4" /></label><label data-flap-row="5" hidden>Flap 5<input id="profile-flap-5" inputmode="decimal" placeholder="Flap 5" /></label><label data-flap-row="6" hidden>Flap 6<input id="profile-flap-6" inputmode="decimal" placeholder="Flap 6" /></label><label data-flap-row="7" hidden>Flap 7<input id="profile-flap-7" inputmode="decimal" placeholder="Flap 7" /></label><label data-flap-row="8" hidden>Flap 8<input id="profile-flap-8" inputmode="decimal" placeholder="Flap 8" /></label><label data-flap-row="9" hidden>Flap 9<input id="profile-flap-9" inputmode="decimal" placeholder="Flap 9" /></label><label data-flap-row="10" hidden>Flap 10<input id="profile-flap-10" inputmode="decimal" placeholder="Flap 10" /></label><label data-flap-row="11" hidden>Flap 11<input id="profile-flap-11" inputmode="decimal" placeholder="Flap 11" /></label><label data-flap-row="12" hidden>Flap 12<input id="profile-flap-12" inputmode="decimal" placeholder="Flap 12" /></label><label data-flap-row="13" hidden>Flap 13<input id="profile-flap-13" inputmode="decimal" placeholder="Flap 13" /></label></div>
+            <div class="editor-section-head"><strong>C<sub>L,MAX</sub></strong><div class="flap-actions"><button type="button" id="add-flap" class="add-flap" aria-label="Add flap maximum lift coefficient">＋</button><button type="button" id="remove-flap" class="add-flap" aria-label="Remove last flap maximum lift coefficient">−</button></div></div>
+            <div class="flap-grid" id="flap-grid"><label data-flap-row="0" hidden>Flap 0<input id="profile-flap-0" inputmode="decimal" /></label><label data-flap-row="1" hidden>Flap 1<input id="profile-flap-1" inputmode="decimal" /></label><label data-flap-row="2" hidden>Flap 2<input id="profile-flap-2" inputmode="decimal" /></label><label data-flap-row="3" hidden>Flap 3<input id="profile-flap-3" inputmode="decimal" /></label><label data-flap-row="4" hidden>Flap 4<input id="profile-flap-4" inputmode="decimal" /></label><label data-flap-row="5" hidden>Flap 5<input id="profile-flap-5" inputmode="decimal" /></label><label data-flap-row="6" hidden>Flap 6<input id="profile-flap-6" inputmode="decimal" /></label><label data-flap-row="7" hidden>Flap 7<input id="profile-flap-7" inputmode="decimal" /></label><label data-flap-row="8" hidden>Flap 8<input id="profile-flap-8" inputmode="decimal" /></label><label data-flap-row="9" hidden>Flap 9<input id="profile-flap-9" inputmode="decimal" /></label><label data-flap-row="10" hidden>Flap 10<input id="profile-flap-10" inputmode="decimal" /></label><label data-flap-row="11" hidden>Flap 11<input id="profile-flap-11" inputmode="decimal" /></label><label data-flap-row="12" hidden>Flap 12<input id="profile-flap-12" inputmode="decimal" /></label><label data-flap-row="13" hidden>Flap 13<input id="profile-flap-13" inputmode="decimal" /></label></div>
           </section>
           <div class="editor-actions" id="profile-delete-wrap" hidden>
             <button type="button" class="danger-button" id="profile-delete">Delete Airplane</button>
@@ -352,7 +352,7 @@ app.innerHTML = `
     <dialog class="simple-dialog about-dialog" id="about-dialog">
       <div class="about-header">
         <span>About</span>
-        <button type="button" data-close-dialog="about-dialog" aria-label="Close about">&times;</button>
+
       </div>
       <div class="about-content">
         <img src="${iconUrl}" alt="" />
@@ -366,7 +366,7 @@ app.innerHTML = `
       <div class="settings-dialog settings-sheet">
         <div class="modal-handle"></div>
         <form id="settings-form">
-          <div class="settings-header"><span>Settings</span><button type="button" class="settings-close" id="settings-close" aria-label="Close settings">&times;</button></div>
+          <div class="settings-header"><span>Settings</span></div>
           <div class="settings-body">
           <h3>DISPLAY</h3>
           <div class="setting-row">
@@ -433,7 +433,6 @@ app.innerHTML = `
         </form>
       </div>
     </div>
-    <div id="field-tooltip" class="field-tooltip" role="tooltip" hidden></div>
 
     <!-- MODAL: CONTEXTUAL HELP & TOOLTIP WITH LATEX (RotorCalculator standard) -->
     <div class="modal-overlay help-overlay" id="modal-result-tooltip" aria-hidden="true">
@@ -441,13 +440,13 @@ app.innerHTML = `
         <div class="modal-handle"></div>
         <div class="modal-header">
           <div class="modal-title" id="result-tooltip-title">About • Parameter</div>
-          <button type="button" class="modal-close-btn" id="modal-tooltip-close" data-close="modal-result-tooltip" aria-label="Close">&times;</button>
+
         </div>
         <div class="modal-body">
           <div id="result-tooltip-desc" style="font-size: 14.5px; line-height: 1.6; color: var(--button-text); margin-bottom: 14px;"></div>
           <div id="result-tooltip-eq-box" style="display: none;"></div>
           <div id="result-tooltip-range-box" style="display: none; font-size: 13.5px; margin-bottom: 10px;">
-            <span class="help-model-hdr">Model / Assumptions: </span>
+            <span class="help-model-hdr">Model Physics: </span>
             <span id="result-tooltip-range-text" style="color: var(--button-text);"></span>
           </div>
           <div id="result-tooltip-unit-box" style="display: none; font-size: 13.5px; margin-bottom: 16px;">
@@ -465,7 +464,7 @@ app.innerHTML = `
         <div class="modal-handle"></div>
         <div class="modal-header">
           <div class="modal-title" id="options-selector-title">Select Option</div>
-          <button type="button" class="modal-close-btn" id="modal-options-close" data-close="modal-options-selector" aria-label="Close">&times;</button>
+
         </div>
         <div class="options-modal-body">
           <div class="options-list" id="options-selector-list"></div>
@@ -489,7 +488,7 @@ export function showContextualHelp(key: string): void {
     title: key,
     desc: RESULT_HELPERS[key] || `Technical documentation for ${key}.`,
     eq: "",
-    model: "Within the documented atmosphere and subsonic flight model.",
+    model: "",
     unit: "",
   };
 
@@ -530,6 +529,8 @@ export function showContextualHelp(key: string): void {
     unitBox.style.display = "none";
   }
 
+  const editor = byId("profile-editor") as HTMLDialogElement;
+  (editor.open ? editor : app!).append(byId("modal-result-tooltip"));
   setOverlayOpen("modal-result-tooltip", true);
 }
 
@@ -537,14 +538,15 @@ export function showContextualHelp(key: string): void {
 
 const closeTooltipModal = () => {
   setOverlayOpen("modal-result-tooltip", false);
+  app.append(byId("modal-result-tooltip"));
 };
-byId("modal-tooltip-close")?.addEventListener("click", closeTooltipModal);
 byId("btn-result-tooltip-ok")?.addEventListener("click", closeTooltipModal);
 byId("modal-result-tooltip")?.addEventListener("click", (e) => {
   if (e.target === byId("modal-result-tooltip")) closeTooltipModal();
 });
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && byId("modal-result-tooltip")?.classList.contains("open")) {
+    e.preventDefault();
     closeTooltipModal();
   }
 });
@@ -776,7 +778,6 @@ function installOptionsSwipeDismiss(): void {
   }, true);
 }
 installOptionsSwipeDismiss();
-byId("modal-options-close")?.addEventListener("click", closeOptionsModal);
 byId("options-selector-cancel")?.addEventListener("click", closeOptionsModal);
 byId("modal-options-selector")?.addEventListener("click", (e) => {
   if (e.target === byId("modal-options-selector")) closeOptionsModal();
@@ -1128,7 +1129,6 @@ byId("more-menu").addEventListener("click", (event) => {
   vibrateTap();
   setOverlayOpen("main-menu", true);
 });
-byId("main-menu-close")?.addEventListener("click", () => setOverlayOpen("main-menu", false));
 byId("main-menu").addEventListener("click", (event) => {
   if (event.target === byId("main-menu")) setOverlayOpen("main-menu", false);
 });
@@ -1152,12 +1152,28 @@ byId("profile-save").addEventListener("click", (event) => {
 });
 byId("profile-delete").addEventListener("click", deleteEditingProfile);
 byId("add-flap").addEventListener("click", showNextFlapRow);
+byId("remove-flap").addEventListener("click", () => {
+  if (visibleFlapRows === 0) return;
+  visibleFlapRows -= 1;
+  (byId(`profile-flap-${visibleFlapRows}`) as HTMLInputElement).value = "";
+  renderFlapRows();
+});
+for (const [selector, key] of [['label[for="profile-sref"]', "Sref"], ['label[for="profile-cref"]', "cref"], ["#profile-editor .editor-section-head strong", "Weight"], ["#profile-editor .editor-section:last-of-type .editor-section-head strong", "CLmax"]]) {
+  const caption = document.querySelector<HTMLElement>(selector);
+  if (!caption) continue;
+  caption.tabIndex = 0;
+  caption.setAttribute("role", "button");
+  caption.addEventListener("click", (event) => { event.preventDefault(); showContextualHelp(key); });
+  caption.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showContextualHelp(key); }
+  });
+}
+window.addEventListener("resize", fitEditorChordLabel);
 (byId("profile-import") as HTMLInputElement).addEventListener("change", importSelectedFile);
 document.querySelectorAll<HTMLButtonElement>("[data-close-dialog]").forEach((button) => {
   button.addEventListener("click", () => (byId(button.dataset.closeDialog ?? "") as HTMLDialogElement).close());
 });
 byId("settings-cancel").addEventListener("click", () => setOverlayOpen("settings-dialog", false));
-byId("settings-close")?.addEventListener("click", () => setOverlayOpen("settings-dialog", false));
 byId("settings-dialog").addEventListener("click", (event) => {
   if (event.target === byId("settings-dialog")) setOverlayOpen("settings-dialog", false);
 });
@@ -1182,9 +1198,8 @@ byId("settings-form").addEventListener("submit", (event) => {
   saveOutputSettings();
 });
 
-initializeHelpers();
 initializeSwipeNavigation();
-["(max-width: 354px)", "(max-width: 349px)", "(max-width: 339px)", "(max-width: 329px)", "(max-width: 324px)", "(max-width: 319px)", "(max-width: 299px)", "(max-width: 289px)", "(max-width: 269px)", "(max-width: 259px)"].forEach((query) =>
+["(max-width: 379px)", "(max-width: 359px)", "(max-width: 354px)", "(max-width: 349px)", "(max-width: 339px)", "(max-width: 329px)", "(max-width: 324px)", "(max-width: 319px)", "(max-width: 299px)", "(max-width: 289px)", "(max-width: 269px)", "(max-width: 259px)"].forEach((query) =>
   window.matchMedia(query).addEventListener("change", refreshResponsiveOptionLabels)
 );
 
@@ -1415,7 +1430,7 @@ function createInputRow(field: Field): HTMLElement {
     delta.className = "value-input calc-control speed-delta";
     delta.inputMode = "decimal";
     delta.autocomplete = "off";
-    delta.placeholder = "kt";
+    delta.placeholder = "";
     delta.value = "";
     delta.hidden = true;
     delta.setAttribute("aria-label", "Stall-speed-factor delta in knots");
@@ -1449,80 +1464,6 @@ function updateInputHelpers(fieldId: string): void {
   if (wrap) setHelper(wrap, helper);
   const selectedLabel = type.selectedOptions[0]?.textContent?.trim() || fieldId;
   value.setAttribute("aria-label", `${selectedLabel} value`);
-}
-
-function initializeHelpers(): void {
-  const tooltip = byId("field-tooltip");
-  let activeTarget: HTMLElement | null = null;
-
-  const show = (target: HTMLElement): void => {
-    if (window.innerWidth <= 430 || window.matchMedia("(pointer: coarse)").matches) return;
-    const text = target.dataset.helper?.trim();
-    if (!text) return;
-    activeTarget = target;
-    tooltip.textContent = text;
-    tooltip.hidden = false;
-    tooltip.style.left = "8px";
-    tooltip.style.top = "8px";
-
-    requestAnimationFrame(() => {
-      if (activeTarget !== target || tooltip.hidden) return;
-      const rect = target.getBoundingClientRect();
-      const tip = tooltip.getBoundingClientRect();
-      const margin = 8;
-      const left = Math.min(
-        Math.max(margin, rect.left + rect.width / 2 - tip.width / 2),
-        Math.max(margin, window.innerWidth - tip.width - margin),
-      );
-      const below = rect.bottom + 8;
-      const top = below + tip.height <= window.innerHeight - margin
-        ? below
-        : Math.max(margin, rect.top - tip.height - 8);
-      tooltip.style.left = `${left}px`;
-      tooltip.style.top = `${top}px`;
-    });
-  };
-
-  const hide = (target?: HTMLElement): void => {
-    if (target && activeTarget !== target) return;
-    activeTarget = null;
-    tooltip.hidden = true;
-  };
-
-  let focusHelperLockUntil = 0;
-  document.addEventListener("pointerover", (event) => {
-    if ((event as PointerEvent).pointerType === "touch" || performance.now() < focusHelperLockUntil) return;
-    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
-    if (target) show(target);
-  });
-  document.addEventListener("pointerout", (event) => {
-    if ((event as PointerEvent).pointerType === "touch") return;
-    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
-    if (target) hide(target);
-  });
-  document.addEventListener("focusin", (event) => {
-    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
-    if (target) {
-      focusHelperLockUntil = performance.now() + 150;
-      show(target);
-    }
-  });
-  document.addEventListener("focusout", (event) => {
-    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
-    if (target) hide(target);
-  });
-  document.addEventListener("click", (event) => {
-    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-helper]");
-    if (target && (target.classList.contains("result-row") || target.classList.contains("field-button") || target.classList.contains("field-select-wrap"))) {
-      if (activeTarget === target && !tooltip.hidden) {
-        hide(target);
-      } else {
-        show(target);
-      }
-    }
-  });
-  window.addEventListener("scroll", () => hide(), { passive: true });
-  window.addEventListener("resize", () => hide(), { passive: true });
 }
 
 function currentPageName(): typeof PAGE_ORDER[number] {
@@ -1570,7 +1511,7 @@ function initializeSwipeNavigation(): void {
 
     const current = currentPageName();
     const index = PAGE_ORDER.indexOf(current);
-    const nextIndex = dx < 0 ? index + 1 : index - 1;
+    const nextIndex = dx > 0 ? index + 1 : index - 1;
     if (nextIndex < 0 || nextIndex >= PAGE_ORDER.length) return;
 
     event.preventDefault();
@@ -1624,11 +1565,11 @@ function responsiveOptionLabel(value: string, label: string): string {
 
   if (value === "HeadWind") return under300 ? "HeadWnd" : "Headwind";
   if (value === "CrossWind") return under300 ? "CrossWnd" : "Crosswind";
-  if (value === "Wind Speed") return under300 ? "WindSpd" : under380 ? "Wind Spd" : "Wind Speed";
-  if (value === "Wind Direction") return under300 ? "WindDir" : under380 ? "Wind Dir" : "Wind Direction";
+  if (value === "Wind Speed") return under300 ? "WindSpd" : width < 360 ? "Wind Spd" : "Wind Speed";
+  if (value === "Wind Direction") return under300 ? "WindDir" : width < 360 ? "Wind Dir" : "Wind Direction";
 
   if (value === "Vs Factor") return label;
-  if (value === "Ground Speed") return under380 ? "Grnd Spd" : label;
+  if (value === "Ground Speed") return width < 360 ? "Grnd Spd" : label;
   if (value === "Qdyn") return under300 ? "q" : under380 ? "Dyn Press" : label;
   if (value === "Qc") return under300 ? "q<sub>c</sub>" : under380 ? "Imp Press" : label;
   if (value === "NzPullup") return under260 ? "N<sub>Z</sub>" : label;
@@ -2056,6 +1997,14 @@ function openProfileEditor(id?: string): void {
   renderFlapRows();
   byId("profile-delete-wrap").hidden = !profile;
   (byId("profile-editor") as HTMLDialogElement).showModal();
+  fitEditorChordLabel();
+}
+
+function fitEditorChordLabel(): void {
+  const label = document.querySelector<HTMLElement>('label[for="profile-cref"]');
+  if (!label) return;
+  label.innerHTML = "Chord c<sub>REF</sub>";
+  if (label.clientWidth > 0 && label.scrollWidth > label.clientWidth + 1) label.innerHTML = "c<sub>REF</sub>";
 }
 
 function closeProfileEditor(): void {
@@ -2073,6 +2022,7 @@ function renderFlapRows(): void {
     row.hidden = Number(row.dataset.flapRow) >= visibleFlapRows;
   });
   (byId("add-flap") as HTMLButtonElement).disabled = visibleFlapRows >= 14;
+  (byId("remove-flap") as HTMLButtonElement).disabled = visibleFlapRows === 0;
 }
 
 function saveProfileFromEditor(): void {
@@ -2228,6 +2178,12 @@ function saveOutputSettings(): void {
 
 function applyTheme(): void {
   document.documentElement.dataset.theme = settings.theme;
+  const style = getComputedStyle(document.documentElement);
+  for (const [name, color] of [["selector-chevron", "--button-text"], ["profile-chevron", "--field-text"]]) {
+    const fill = style.getPropertyValue(color).trim();
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="4" height="3"><path d="M0 0h4L2 3z" fill="${fill}"/></svg>`;
+    document.documentElement.style.setProperty(`--${name}`, `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
+  }
 }
 
 function clearInputs(): void {

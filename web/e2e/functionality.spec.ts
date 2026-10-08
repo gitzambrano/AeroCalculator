@@ -377,3 +377,13 @@ test("installed PWA remains usable offline after the first load", async ({ page,
   await expect(page.locator(".app-shell")).toBeVisible();
   await expect(page.locator(".input-row")).toHaveCount(14);
 });
+
+
+test("fresh installs start with zero saved airplanes", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "AIRPLANES", exact: true }).click();
+  await expect(page.locator(".airplane-list-row")).toHaveCount(0);
+  await page.reload();
+  await page.getByRole("button", { name: "AIRPLANES", exact: true }).click();
+  await expect(page.locator(".airplane-list-row")).toHaveCount(0);
+});

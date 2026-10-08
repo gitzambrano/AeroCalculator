@@ -210,7 +210,7 @@ Sub Activity_Create (FirstTime As Boolean)
 	pnltitle.AddView(paneldiv,  50%x, 0, 1dip, pnltitle.Height)
 	
 	AeroSheet.Initialize(Me, "AeroSheet")
-	AeroSheet.SetColors(Main.ColorPnlTitle, Main.ColorPnlInput5, Main.ColorButText1, Main.ColorPnlLine, Main.ColorPnlLine3)
+	AeroSheet.SetColors(Main.ColorPnlTitle, Main.ColorPnlInput5, Main.ColorButText1, Main.ColorEdtText, Main.ColorPnlLine3)
 End Sub
 
 Sub Activity_Resume
@@ -226,9 +226,9 @@ Sub Activity_Resume
 		edtWeight5.Text = Main.a.GetDefault(ID & "_W5","")
 		edtWeight6.Text = Main.a.GetDefault(ID & "_W6","")
 
-		indSrefUnit = Main.a.Get(ID & "_Sunit")
-		indcrefUnit = Main.a.Get(ID & "_cunit")
-		indWeightUnit = Main.a.Get(ID & "_Wunit")
+		indSrefUnit = Main.a.GetDefault(ID & "_Sunit", 0)
+		indcrefUnit = Main.a.GetDefault(ID & "_cunit", 0)
+		indWeightUnit = Main.a.GetDefault(ID & "_Wunit", 0)
 		add = 0
 		SrefUnit
 		crefUnit
@@ -258,7 +258,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 100dip
 			scvMain0.Panel.Height = 450dip
-			pnlTransp2.Top = 50dip
 		End If
 		If f1.CompareTo("")<>0 And f1.CompareTo("null")<>0 Then
 			For ii=5 To 2 Step-1
@@ -267,7 +266,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 100dip
 			scvMain0.Panel.Height = 450dip
-			pnlTransp2.Top = 50dip
 		End If		
 		If f2.CompareTo("")<>0 And f2.CompareTo("null")<>0 Then
 			For ii=7 To 2 Step-1
@@ -276,7 +274,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 150dip
 			scvMain0.Panel.Height = 500dip
-			pnlTransp2.Top = 100dip
 		End If
 		If f3.CompareTo("")<>0 And f3.CompareTo("null")<>0  Then
 			For ii=9 To 2 Step-1
@@ -285,7 +282,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 150dip
 			scvMain0.Panel.Height = 500dip
-			pnlTransp2.Top = 100dip
 		End If		
 		If f4.CompareTo("")<>0 And f4.CompareTo("null")<>0 Then
 			For ii=11 To 2 Step-1
@@ -294,7 +290,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 200dip
 			scvMain0.Panel.Height = 550dip
-			pnlTransp2.Top = 150dip
 		End If
 		If f5.CompareTo("")<>0 And f5.CompareTo("null")<>0 Then
 			For ii=13 To 2 Step-1
@@ -303,7 +298,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 200dip
 			scvMain0.Panel.Height = 550dip
-			pnlTransp2.Top = 150dip
 		End If
 		If f6.CompareTo("")<>0 And f6.CompareTo("null")<>0 Then
 			For ii=15 To 2 Step-1
@@ -312,7 +306,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 250dip
 			scvMain0.Panel.Height = 600dip
-			pnlTransp2.Top = 200dip
 		End If
 		If f7.CompareTo("")<>0 And f7.CompareTo("null")<>0 Then
 			For ii=17 To 2 Step-1
@@ -321,7 +314,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 250dip
 			scvMain0.Panel.Height = 600dip
-			pnlTransp2.Top = 200dip
 		End If
 		If f8.CompareTo("")<>0 And f8.CompareTo("null")<>0 Then
 			For ii=19 To 2 Step-1
@@ -330,7 +322,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 300dip
 			scvMain0.Panel.Height = 650dip
-			pnlTransp2.Top = 250dip
 		End If
 		If f9.CompareTo("")<>0 And f9.CompareTo("null")<>0 Then
 			For ii=21 To 2 Step-1
@@ -339,7 +330,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 300dip
 			scvMain0.Panel.Height = 650dip
-			pnlTransp2.Top = 250dip
 		End If
 		If f10.CompareTo("")<>0 And f10.CompareTo("null")<>0 Then
 			For ii=23 To 2 Step-1
@@ -348,7 +338,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 350dip
 			scvMain0.Panel.Height = 700dip
-			pnlTransp2.Top = 300dip
 		End If
 		If f11.CompareTo("")<>0 And f11.CompareTo("null")<>0 Then
 			For ii=25 To 2 Step-1
@@ -357,7 +346,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 350dip
 			scvMain0.Panel.Height = 700dip
-			pnlTransp2.Top = 300dip
 		End If
 		If f12.CompareTo("")<>0 And f12.CompareTo("null")<>0 Then
 			For ii=27 To 2 Step-1
@@ -366,7 +354,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 400dip
 			scvMain0.Panel.Height = 750dip
-			pnlTransp2.Top = 350dip
 		End If
 		If f13.CompareTo("")<>0 And f13.CompareTo("null")<>0 Then
 			For ii=29 To 2 Step-1
@@ -375,7 +362,6 @@ Sub Activity_Resume
 			Next
 			pnl5.Height = 400dip
 			scvMain0.Panel.Height = 750dip
-			pnlTransp2.Top =350dip
 		End If
 		
 		Dim pd As Panel
@@ -408,6 +394,8 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Sub CreateItem(ii As Int, He As Int)
+	Dim sectionTextSize As Float = 15
+	If root.Width < 320dip Then sectionTextSize = 13
 	Dim pnldiv As Panel : pnldiv.Initialize("")
 	pnldiv.Color = Main.ColorPnlLine3
 	Dim filter As IME
@@ -418,16 +406,16 @@ Sub CreateItem(ii As Int, He As Int)
 			scvMain0.Panel.AddView(pnl1, 0, 0, 100%x, He)
 			pnl1.AddView (pnldiv,0,(pnl1.Height-1dip),100%x,1dip)
 			Dim lblName As Label: lblName.Initialize("")
-			lblName.Gravity = Gravity.LEFT
+			lblName.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
 			lblName.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			lblName.Text = "Name"
 			lblName.TextColor = Main.ColorButText1
-			lblName.TextSize = 15
+			lblName.TextSize = sectionTextSize
 			lblName.Typeface = Typeface.DEFAULT_BOLD
-			pnl1.AddView(lblName, 1%x, 8dip, 28%x, 34dip)
+			pnl1.AddView(lblName, 1%x, 8dip, 20%x, 34dip)
 			edtName.Initialize("edtName")
-		    pnl1.AddView(edtName,30%x, 8dip, 67%x, 34dip)
-			edtName.Hint = "Aircraft Name"	
+		    pnl1.AddView(edtName,22%x, 8dip, 76%x, 34dip)
+			edtName.Hint = ""
 			edtName.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtName)
 			edtName.InputType = edtName.INPUT_TYPE_TEXT
@@ -442,8 +430,8 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl2.Color = Main.ColorPnlInput1
 			scvMain0.Panel.AddView(pnl2, 0, pnl1.Height + pnl1.Top, 100%x, He)
 			pnl2.AddView (pnldiv,0,pnl2.Height-1dip,100%x,1dip)
-			Dim lblSref As Label: lblSref.Initialize("")
-			lblSref.Gravity = Gravity.LEFT
+			Dim lblSref As Label: lblSref.Initialize("lblSref")
+			lblSref.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
 			lblSref.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			Dim rs1 As RichString
 			rs1.Initialize("Area S{T}{S}REF{T}{S}")
@@ -451,12 +439,13 @@ Sub CreateItem(ii As Int, He As Int)
 			rs1.RelativeSize2(.7,"{T}")
 			lblSref.Text = rs1
 			lblSref.TextColor = Main.ColorButText1
-			lblSref.TextSize = 13
+			lblSref.TextSize = sectionTextSize
 			lblSref.Typeface = Typeface.DEFAULT_BOLD
-			pnl2.AddView(lblSref, 1%x, 8dip, 28%x, 34dip)
+			lblSref.SingleLine = True
+			pnl2.AddView(lblSref, 1%x, 8dip, 21%x, 34dip)
 			edtSref.Initialize("edtSref")
-		    pnl2.AddView(edtSref,30%x, 8dip, 45%x, 34dip)
-			edtSref.Hint = "Reference Area"	
+		    pnl2.AddView(edtSref,22%x, 8dip, 27%x, 34dip)
+			edtSref.Hint = ""
 			edtSref.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtSref)
 			edtSref.InputType = edtSref.INPUT_TYPE_DECIMAL_NUMBERS
@@ -465,10 +454,11 @@ Sub CreateItem(ii As Int, He As Int)
 			filter.SetCustomFilter(edtSref, edtSref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btnSrefUnit.Initialize("btnSrefUnit")
 			btnSrefUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorButPressed))
-		    pnl2.AddView(btnSrefUnit,76%x, 8dip, 22%x, 34dip)
+		    pnl2.AddView(btnSrefUnit,71%x, 8dip, 27%x, 34dip)
 		    btnSrefUnit.Text="m²"
-			btnSrefUnit.TextSize = 11
+			btnSrefUnit.TextSize = 13
 			ModernizeButton(btnSrefUnit)
+			SetSelectorChevron(btnSrefUnit, Main.ColorButText1)
 			edtSref.TextColor = Main.ColorEdtText
 			edtSref.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtSref.HintColor = Main.ColorEdtHint
@@ -479,8 +469,8 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl3.Color = Main.ColorPnlInput1
 			scvMain0.Panel.AddView(pnl3,0,pnl2.Height+pnl2.Top,100%x,He)
 			pnl3.AddView (pnldiv,0,pnl3.Height-1dip,100%x,1dip)
-			Dim lblcref As Label: lblcref.Initialize("")
-			lblcref.Gravity = Gravity.LEFT
+			Dim lblcref As Label: lblcref.Initialize("lblcref")
+			lblcref.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
 			lblcref.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			Dim rs2 As RichString
 			rs2.Initialize("Chord c{T}{S}REF{T}{S}")
@@ -488,12 +478,23 @@ Sub CreateItem(ii As Int, He As Int)
 			rs2.RelativeSize2(.7,"{T}")
 			lblcref.Text = rs2
 			lblcref.TextColor = Main.ColorButText1
-			lblcref.TextSize = 13
+			lblcref.TextSize = sectionTextSize
 			lblcref.Typeface = Typeface.DEFAULT_BOLD
-			pnl3.AddView(lblcref, 1%x, 8dip, 28%x, 34dip)
+			lblcref.SingleLine = True
+			pnl3.AddView(lblcref, 1%x, 8dip, 21%x, 34dip)
+			Dim chordView As JavaObject = lblcref
+			Dim textLayout As JavaObject
+			textLayout.InitializeStatic("android.text.Layout")
+			Dim chordWidth As Float = textLayout.RunMethod("getDesiredWidth", Array(chordView.RunMethod("getText", Null), chordView.RunMethod("getPaint", Null)))
+			If chordWidth > lblcref.Width Then
+				rs2.Initialize("c{T}{S}REF{T}{S}")
+				rs2.Subscript2("{S}")
+				rs2.RelativeSize2(.7,"{T}")
+				lblcref.Text = rs2
+			End If
 			edtcref.Initialize("edtcref")
-		    pnl3.AddView(edtcref,30%x, 8dip, 45%x, 34dip)
-			edtcref.Hint = "Reference Chord"	
+		    pnl3.AddView(edtcref,22%x, 8dip, 27%x, 34dip)
+			edtcref.Hint = ""
 			edtcref.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtcref)
 			edtcref.InputType = edtcref.INPUT_TYPE_DECIMAL_NUMBERS
@@ -502,10 +503,11 @@ Sub CreateItem(ii As Int, He As Int)
 			filter.SetCustomFilter(edtcref, edtcref.INPUT_TYPE_DECIMAL_NUMBERS, "0123456789.")
 			btncrefUnit.Initialize("btncrefUnit")
 			btncrefUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorButPressed))
-		    pnl3.AddView(btncrefUnit,76%x, 8dip, 22%x, 34dip)
+		    pnl3.AddView(btncrefUnit,71%x, 8dip, 27%x, 34dip)
 		    btncrefUnit.Text="m"
-			btncrefUnit.TextSize = 11
+			btncrefUnit.TextSize = 13
 			ModernizeButton(btncrefUnit)
+			SetSelectorChevron(btncrefUnit, Main.ColorButText1)
 			edtcref.TextColor = Main.ColorEdtText
 			edtcref.Background = EditGradient(Main.ColorEdt, Main.ColorPnlLine2)
 			edtcref.HintColor = Main.ColorEdtHint
@@ -517,21 +519,22 @@ Sub CreateItem(ii As Int, He As Int)
 			scvMain0.Panel.AddView(pnl4,0,pnl3.Height+pnl3.Top,100%x,He)
 			pnl4.AddView (pnldiv,0,pnl4.Height-1dip,100%x,1dip)
 			
-			Dim lblWeight As Label: lblWeight.Initialize("")
-			lblWeight.Gravity = Gravity.LEFT
+			Dim lblWeight As Label: lblWeight.Initialize("lblWeight")
+			lblWeight.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
 			lblWeight.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			lblWeight.Text = "Weight"
 			lblWeight.TextColor = Main.ColorButText1
-			lblWeight.TextSize = 15
+			lblWeight.TextSize = sectionTextSize
 			lblWeight.Typeface = Typeface.DEFAULT_BOLD
 			pnl4.AddView(lblWeight, 1%x, 8dip, 20%x, 34dip)
 		
 			btnWeightUnit.Initialize("btnWeightUnit")
 			btnWeightUnit.Background = ButtonGradient(Array As Int(Main.ColorBut1, Main.ColorBut2),Array As Int(Main.ColorBut1, Main.ColorButPressed))
-		    pnl4.AddView(btnWeightUnit,77%x, 8dip, 20%x, 34dip)
+		    pnl4.AddView(btnWeightUnit,71%x, 8dip, 27%x, 34dip)
 		    btnWeightUnit.Text="kg"
-			btnWeightUnit.TextSize = 11
+			btnWeightUnit.TextSize = 13
 			ModernizeButton(btnWeightUnit)
+			SetSelectorChevron(btnWeightUnit, Main.ColorButText1)
 			btnWeightUnit.TextColor = Main.ColorButText1
 		
 		 	Dim lblWeight1 As Label: lblWeight1.Initialize("")
@@ -543,7 +546,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl4.AddView(lblWeight1, 1%x, 50dip, 20%x, 34dip)
 			edtWeight1.Initialize("edtWeight1")
 		    pnl4.AddView(edtWeight1,22%x, 50dip, 27%x, 34dip)
-			edtWeight1.Hint = "MTOW"	
+			edtWeight1.Hint = ""
 			edtWeight1.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtWeight1)
 			edtWeight1.InputType = edtWeight1.INPUT_TYPE_DECIMAL_NUMBERS
@@ -564,7 +567,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl4.AddView(lblWeight2, 50%x, 50dip, 20%x, 34dip)
 			edtWeight2.Initialize("edtWeight2")
 		    pnl4.AddView(edtWeight2,71%x, 50dip, 27%x, 34dip)
-			edtWeight2.Hint = "MLW"	
+			edtWeight2.Hint = ""
 			edtWeight2.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtWeight2)
 			edtWeight2.InputType = edtWeight2.INPUT_TYPE_DECIMAL_NUMBERS
@@ -585,7 +588,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl4.AddView(lblWeight3, 1%x, 100dip, 20%x, 34dip)
 			edtWeight3.Initialize("edtWeight3")
 		    pnl4.AddView(edtWeight3,22%x, 100dip, 27%x, 34dip)
-			edtWeight3.Hint = "MZFW"	
+			edtWeight3.Hint = ""
 			edtWeight3.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtWeight3)
 			edtWeight3.InputType = edtWeight3.INPUT_TYPE_DECIMAL_NUMBERS
@@ -606,7 +609,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl4.AddView(lblWeight4, 50%x, 100dip, 20%x, 34dip)
 			edtWeight4.Initialize("edtWeight4")
 		    pnl4.AddView(edtWeight4,71%x, 100dip, 27%x, 34dip)
-			edtWeight4.Hint = "BOW"	
+			edtWeight4.Hint = ""
 			edtWeight4.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtWeight4)
 			edtWeight4.InputType = edtWeight4.INPUT_TYPE_DECIMAL_NUMBERS
@@ -627,7 +630,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl4.AddView(lblWeight5, 1%x, 150dip, 20%x, 34dip)
 			edtWeight5.Initialize("edtWeight5")
 		    pnl4.AddView(edtWeight5,22%x, 150dip, 27%x, 34dip)
-			edtWeight5.Hint = "Heavy"	
+			edtWeight5.Hint = ""
 			edtWeight5.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtWeight5)
 			edtWeight5.InputType = edtWeight5.INPUT_TYPE_DECIMAL_NUMBERS
@@ -648,7 +651,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl4.AddView(lblWeight6, 50%x, 150dip, 20%x, 34dip)
 			edtWeight6.Initialize("edtWeight6")
 		    pnl4.AddView(edtWeight6,71%x, 150dip, 27%x, 34dip)
-			edtWeight6.Hint = "Light"	
+			edtWeight6.Hint = ""
 			edtWeight6.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtWeight6)
 			edtWeight6.InputType = edtWeight6.INPUT_TYPE_DECIMAL_NUMBERS
@@ -669,12 +672,12 @@ Sub CreateItem(ii As Int, He As Int)
 			rs3.Initialize("C{T}{S}L,MAX{T}{S}")
 			rs3.Subscript2("{S}")
 			rs3.RelativeSize2(.7,"{T}")
-			lblCLmax.Initialize("")
-			lblCLmax.Gravity = Gravity.LEFT
+			lblCLmax.Initialize("lblCLmax")
+			lblCLmax.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.LEFT)
 			lblCLmax.Tag = ii 'The panel tag is reserved, so we use the label tag (this will be used later to sort)
 			lblCLmax.Text = rs3
 			lblCLmax.TextColor = Main.ColorButText1
-			lblCLmax.TextSize = 15
+			lblCLmax.TextSize = sectionTextSize
 			lblCLmax.Typeface = Typeface.DEFAULT_BOLD
 			pnl5.AddView(lblCLmax, 1%x, 8dip, 20%x, 34dip)
 		
@@ -682,7 +685,7 @@ Sub CreateItem(ii As Int, He As Int)
 			Dim bb As Double
 		
 			aa = 20%x
-			bb = 18%x
+			bb = 27%x
 		
 			Dim lblCLmax0 As Label: lblCLmax0.Initialize("")
 			lblCLmax0.Gravity = Bit.Or(Gravity.CENTER_VERTICAL, Gravity.RIGHT)
@@ -693,7 +696,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax0, 1%x, 50dip, aa, 34dip)
 			edtCLmax0.Initialize("edtCLmax0")
 		    pnl5.AddView(edtCLmax0,lblCLmax0.Width+2%x, 50dip, bb, 34dip)
-			edtCLmax0.Hint = "Flap 0"	
+			edtCLmax0.Hint = ""
 			edtCLmax0.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax0)
 			edtCLmax0.InputType = edtCLmax0.INPUT_TYPE_DECIMAL_NUMBERS
@@ -714,7 +717,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax1, (edtCLmax0.Left+edtCLmax0.Width)+1%x, 50dip, aa, 34dip)
 			edtCLmax1.Initialize("edtCLmax1")
 		    pnl5.AddView(edtCLmax1,(lblCLmax1.Left+lblCLmax1.Width)+1%x, 50dip, bb, 34dip)
-			edtCLmax1.Hint = "Flap 1"	
+			edtCLmax1.Hint = ""
 			edtCLmax1.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax1)
 			edtCLmax1.InputType = edtCLmax1.INPUT_TYPE_DECIMAL_NUMBERS
@@ -735,7 +738,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax2, 1%x, 100dip, aa, 34dip)
 			edtCLmax2.Initialize("edtCLmax2")
 		    pnl5.AddView(edtCLmax2,lblCLmax2.Width+2%x, 100dip, bb, 34dip)
-			edtCLmax2.Hint = "Flap 2"	
+			edtCLmax2.Hint = ""
 			edtCLmax2.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax2)
 			edtCLmax2.InputType = edtCLmax2.INPUT_TYPE_DECIMAL_NUMBERS
@@ -756,7 +759,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax3, (edtCLmax2.Left+edtCLmax2.Width)+1%x, 100dip, aa, 34dip)
 			edtCLmax3.Initialize("edtCLmax3")
 		    pnl5.AddView(edtCLmax3,(lblCLmax3.Left+lblCLmax3.Width)+1%x, 100dip, bb, 34dip)
-			edtCLmax3.Hint = "Flap 3"	
+			edtCLmax3.Hint = ""
 			edtCLmax3.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax3)
 			edtCLmax3.InputType = edtCLmax3.INPUT_TYPE_DECIMAL_NUMBERS
@@ -777,7 +780,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax4, 1%x, 150dip, aa, 34dip)
 			edtCLmax4.Initialize("edtCLmax4")
 		    pnl5.AddView(edtCLmax4,lblCLmax4.Width+2%x, 150dip, bb, 34dip)
-			edtCLmax4.Hint = "Flap 4"	
+			edtCLmax4.Hint = ""
 			edtCLmax4.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax4)
 			edtCLmax4.InputType = edtCLmax4.INPUT_TYPE_DECIMAL_NUMBERS
@@ -798,7 +801,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax5, (edtCLmax4.Left+edtCLmax4.Width)+1%x, 150dip, aa, 34dip)
 			edtCLmax5.Initialize("edtCLmax5")
 		    pnl5.AddView(edtCLmax5,(lblCLmax5.Left+lblCLmax5.Width)+1%x, 150dip, bb, 34dip)
-			edtCLmax5.Hint = "Flap 5"	
+			edtCLmax5.Hint = ""
 			edtCLmax5.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax5)
 			edtCLmax5.InputType = edtCLmax5.INPUT_TYPE_DECIMAL_NUMBERS
@@ -819,7 +822,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax6, 1%x, 200dip, aa, 34dip)
 			edtCLmax6.Initialize("edtCLmax6")
 		    pnl5.AddView(edtCLmax6,lblCLmax6.Width+2%x, 200dip, bb, 34dip)
-			edtCLmax6.Hint = "Flap 6"	
+			edtCLmax6.Hint = ""
 			edtCLmax6.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax6)
 			edtCLmax6.InputType = edtCLmax6.INPUT_TYPE_DECIMAL_NUMBERS
@@ -840,7 +843,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax7, (edtCLmax6.Left+edtCLmax6.Width)+1%x, 200dip, aa, 34dip)
 			edtCLmax7.Initialize("edtCLmax7")
 		    pnl5.AddView(edtCLmax7,(lblCLmax7.Left+lblCLmax7.Width)+1%x, 200dip, bb, 34dip)
-			edtCLmax7.Hint = "Flap 7"	
+			edtCLmax7.Hint = ""
 			edtCLmax7.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax7)
 			edtCLmax7.InputType = edtCLmax7.INPUT_TYPE_DECIMAL_NUMBERS
@@ -861,7 +864,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax8, 1%x, 250dip, aa, 34dip)
 			edtCLmax8.Initialize("edtCLmax8")
 		    pnl5.AddView(edtCLmax8,lblCLmax8.Width+2%x, 250dip, bb, 34dip)
-			edtCLmax8.Hint = "Flap 8"	
+			edtCLmax8.Hint = ""
 			edtCLmax8.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax8)
 			edtCLmax8.InputType = edtCLmax8.INPUT_TYPE_DECIMAL_NUMBERS
@@ -882,7 +885,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax9, (edtCLmax8.Left+edtCLmax8.Width)+1%x, 250dip, aa, 34dip)
 			edtCLmax9.Initialize("edtCLmax9")
 		    pnl5.AddView(edtCLmax9,(lblCLmax9.Left+lblCLmax9.Width)+1%x, 250dip, bb, 34dip)
-			edtCLmax9.Hint = "Flap 9"	
+			edtCLmax9.Hint = ""
 			edtCLmax9.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax9)
 			edtCLmax9.InputType = edtCLmax9.INPUT_TYPE_DECIMAL_NUMBERS
@@ -903,7 +906,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax10, 1%x, 300dip, aa, 34dip)
 			edtCLmax10.Initialize("edtCLmax10")
 		    pnl5.AddView(edtCLmax10,lblCLmax10.Width+2%x, 300dip, bb, 34dip)
-			edtCLmax10.Hint = "Flap 10"	
+			edtCLmax10.Hint = ""
 			edtCLmax10.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax10)
 			edtCLmax10.InputType = edtCLmax10.INPUT_TYPE_DECIMAL_NUMBERS
@@ -924,7 +927,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax11, (edtCLmax10.Left+edtCLmax10.Width)+1%x, 300dip, aa, 34dip)
 			edtCLmax11.Initialize("edtCLmax11")
 		    pnl5.AddView(edtCLmax11,(lblCLmax11.Left+lblCLmax11.Width)+1%x, 300dip, bb, 34dip)
-			edtCLmax11.Hint = "Flap 11"	
+			edtCLmax11.Hint = ""
 			edtCLmax11.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax11)
 			edtCLmax11.InputType = edtCLmax11.INPUT_TYPE_DECIMAL_NUMBERS
@@ -945,7 +948,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax12, 1%x, 350dip, aa, 34dip)
 			edtCLmax12.Initialize("edtCLmax12")
 		    pnl5.AddView(edtCLmax12,lblCLmax12.Width+2%x, 350dip, bb, 34dip)
-			edtCLmax12.Hint = "Flap 12"	
+			edtCLmax12.Hint = ""
 			edtCLmax12.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax12)
 			edtCLmax12.InputType = edtCLmax12.INPUT_TYPE_DECIMAL_NUMBERS
@@ -966,7 +969,7 @@ Sub CreateItem(ii As Int, He As Int)
 			pnl5.AddView(lblCLmax13, (edtCLmax12.Left+edtCLmax12.Width)+1%x, 350dip, aa, 34dip)
 			edtCLmax13.Initialize("edtCLmax13")
 		    pnl5.AddView(edtCLmax13,(lblCLmax13.Left+lblCLmax13.Width)+1%x, 350dip, bb, 34dip)
-			edtCLmax13.Hint = "Flap 13"	
+			edtCLmax13.Hint = ""
 			edtCLmax13.Gravity = Gravity.CENTER
 			CenterEditTextContent(edtCLmax13)
 			edtCLmax13.InputType = edtCLmax13.INPUT_TYPE_DECIMAL_NUMBERS
@@ -1025,8 +1028,8 @@ Sub CreateItem(ii As Int, He As Int)
 			pnlTransp2.Initialize("pnlTransp2")
 			pnlTransp1.Color = Colors.Transparent
 			pnlTransp2.Color = Colors.Transparent
-			pnl5.AddView(pnlTransp1,(edtCLmax1.Left+edtCLmax1.Width)+2%x, 2dip, (pnl5.Width-edtCLmax1.Left-edtCLmax1.Width)-3%x, 40dip)
-			pnl5.AddView(pnlTransp2,(edtCLmax1.Left+edtCLmax1.Width)+2%x, 50dip,(pnl5.Width-edtCLmax1.Left-edtCLmax1.Width)-3%x, 34dip)
+			pnl5.AddView(pnlTransp1,71%x, 2dip, 13%x, 40dip)
+			pnl5.AddView(pnlTransp2,85%x, 2dip, 13%x, 40dip)
 			pnlTransp1.AddView(img11, pnlTransp1.Width-34dip, 10dip, 34dip, 34dip)
 			pnlTransp2.AddView(img22, 20dip, 9dip, 34dip, 34dip)
 			img11.Height = 12dip
@@ -1153,6 +1156,7 @@ Sub pnlTransparent3_Touch (Action As Int, X As Float, Y As Float)
 		pp.Color = Main.ColorEdt
 	Case Activity.ACTION_UP
 		pp.Color = Colors.Transparent
+	If Not(ValidateAircraftInputs) Then Return
 	' Escreve variaveis no arquivo interno airplanes.txt
 	If Main.ID_edt < 1 Then
 		Main.a.Put("N", ID)
@@ -1210,6 +1214,7 @@ Sub DialogCancel
 	Msgbox2Async("Are you sure you want to discard changes?","Warning","Save","Cancel","Discard",LoadBitmap(File.DirAssets,"icon_warning.png"),True)
 	Wait For Msgbox_Result (confirm2 As Int)
 	If confirm2 = DialogResponse.POSITIVE Then
+		If Not(ValidateAircraftInputs) Then Return
 	' Escreve variaveis no arquivo interno airplanes.txt
 		If Main.ID_edt < 1 Then
 			Main.a.Put("N", ID)
@@ -1288,36 +1293,29 @@ Sub pnlTransp1_Touch (Action As Int, X As Float, Y As Float) As Boolean
 			pnl5.Height = 100dip
 			scvMain0.Panel.Height = 500dip
 			pnlTransp2.Visible = True
-			pnlTransp2.Top = 50dip
 			If ii > 5 And ii<10 Then
 					pnl5.Height = 150dip
 					scvMain0.Panel.Height = 550dip
-					pnlTransp2.Top = 100dip
 			End If
 			If ii > 9 And ii<14 Then
 					pnl5.Height = 200dip
 					scvMain0.Panel.Height = 600dip
-					pnlTransp2.Top = 150dip
 			End If
 			If ii > 13 And ii<18 Then
 					pnl5.Height = 250dip
 					scvMain0.Panel.Height = 650dip
-					pnlTransp2.Top = 200dip
 			End If
 			If ii > 17 And ii<22 Then
 					pnl5.Height = 300dip
 					scvMain0.Panel.Height = 700dip
-					pnlTransp2.Top = 250dip
 			End If
 			If ii > 21 And ii<26 Then
 					pnl5.Height = 350dip
 					scvMain0.Panel.Height = 750dip
-					pnlTransp2.Top = 300dip
 			End If
 			If ii > 25 Then
 					pnl5.Height = 400dip
 					scvMain0.Panel.Height = 800dip
-					pnlTransp2.Top = 350dip
 			End If
 			pd = pnl5.GetView(0)
 			pd.Top = pnl5.Height-1dip
@@ -1355,32 +1353,26 @@ Sub pnlTransp2_Touch (Action As Int, X As Float, Y As Float) As Boolean
 				If ii < 28 Then
 					pnl5.Height = 350dip
 					scvMain0.Panel.Height = 750dip
-					pnlTransp2.Top = 300dip
 				End If
 				If ii < 24 And ii>19 Then
 					pnl5.Height = 300dip
 					scvMain0.Panel.Height = 700dip
-					pnlTransp2.Top = 250dip
 				End If
 				If ii < 20 And ii>15 Then
 					pnl5.Height = 250dip
 					scvMain0.Panel.Height = 650dip
-					pnlTransp2.Top = 200dip
 				End If
 				If ii < 16 And ii>11 Then
 					pnl5.Height = 200dip
 					scvMain0.Panel.Height = 600dip
-					pnlTransp2.Top = 150dip
 				End If
 				If ii < 12 And ii>7 Then
 					pnl5.Height = 150dip
 					scvMain0.Panel.Height = 550dip
-					pnlTransp2.Top = 100dip
 				End If
 				If ii < 8 And ii>2 Then
 					pnl5.Height = 100dip
 					scvMain0.Panel.Height = 500dip
-					pnlTransp2.Top =50dip
 				End If	
 				If ii < 4 Then
 					pnl5.Height = 50dip
@@ -1403,12 +1395,29 @@ Public Sub EditGradient(BgColor As Int, BorderColor As Int) As ColorDrawable
 End Sub
 
 Private Sub ModernizeButton(btn As Button)
+	btn.SingleLine = True
 	Try
 		Dim jo As JavaObject = btn
 		jo.RunMethod("setAllCaps", Array(False))
 		jo.RunMethod("setStateListAnimator", Array(Null))
 	Catch
 		Log("ModernizeButton skipped: " & LastException.Message)
+	End Try
+End Sub
+
+' Matches the Inputs selectors: one solid triangle, no vertical padding so descenders stay visible.
+Private Sub SetSelectorChevron(btn As Button, ArrowColor As Int)
+	Try
+		Dim native As JavaObject
+		native.InitializeStatic("flightdyn.aerocalculator.main")
+		Dim drawable As JavaObject = native.RunMethod("createSelectorChevron", Array As Object(ArrowColor, 4dip, 3dip))
+		drawable.RunMethod("setBounds", Array As Object(0, 0, 4dip, 3dip))
+		Dim jo As JavaObject = btn
+		jo.RunMethod("setCompoundDrawables", Array As Object(Null, Null, drawable, Null))
+		jo.RunMethod("setCompoundDrawablePadding", Array As Object(2dip))
+		jo.RunMethod("setPadding", Array As Object(2dip, 0, 2dip, 0))
+	Catch
+		Log("Selector chevron skipped: " & LastException.Message)
 	End Try
 End Sub
 
@@ -1457,3 +1466,37 @@ Sub ButtonGradient(ColorList() As Int,ColorList2() As Int) As StateListDrawable
     Return stdGradient
 End Sub
 
+
+Sub lblSref_Click
+	AeroSheet.ShowHelp(Activity, "Sref", AeroNames.Help("Sref"))
+End Sub
+
+Sub lblcref_Click
+	AeroSheet.ShowHelp(Activity, "cref", AeroNames.Help("cref"))
+End Sub
+
+Sub lblCLmax_Click
+	AeroSheet.ShowHelp(Activity, "CLmax", AeroNames.Help("CLmax"))
+End Sub
+
+Sub lblWeight_Click
+	AeroSheet.ShowHelp(Activity, "Weight", AeroNames.Help("Weight"))
+End Sub
+
+Private Sub ValidateAircraftInputs As Boolean
+  Dim fields() As EditText = Array As EditText(edtSref, edtcref, edtWeight1, edtWeight2, edtWeight3, edtWeight4, edtWeight5, edtWeight6, edtCLmax0, edtCLmax1, edtCLmax2, edtCLmax3, edtCLmax4, edtCLmax5, edtCLmax6, edtCLmax7, edtCLmax8, edtCLmax9, edtCLmax10, edtCLmax11, edtCLmax12, edtCLmax13)
+  For Each field As EditText In fields
+    If field.Text.Trim.Length > 0 And Not(IsFiniteAircraftNumber(field.Text)) Then
+      ToastMessageShow("Enter a valid number before saving.", False)
+      field.RequestFocus
+      Return False
+    End If
+  Next
+  Return True
+End Sub
+
+Private Sub IsFiniteAircraftNumber(Value As String) As Boolean
+  If Not(IsNumber(Value)) Then Return False
+  Dim parsed As Double = Value
+  Return parsed = parsed And Abs(parsed) <= 1.7976931348623157E308
+End Sub
