@@ -373,7 +373,9 @@ def fill_vsfactor(dirp):
   tap(e)
   for _ in range(12): adb("shell","input","keyevent","67",check=False)
   adb("shell","input","text","1.30" if k==0 else "10")
-  adb("shell","input","keyevent","4",check=False)
+  # Back closes the app on INPUTS when no soft keyboard is shown, so only hide a visible IME.
+  ime=adb("shell","dumpsys","input_method",check=False)
+  if "mInputShown=true" in ime or "isInputViewShown=true" in ime: adb("shell","input","keyevent","4",check=False)
  r=dump(dirp,"vsfactor-filled"); record(dirp.name,"vsfactor-filled",r); shot(dirp,"vsfactor-filled",force=True)
 
 def exercise_profile(label,size,density):
