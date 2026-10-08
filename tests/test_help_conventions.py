@@ -1,54 +1,141 @@
-"""Verify technical help wording and sign conventions across web and Android."""
+"""Regression tests for synchronized aircraft help text and selector spacing."""
+from __future__ import annotations
+
 import json
+import re
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CAT = json.loads((ROOT / "docs/quantity_catalog.json").read_text(encoding="utf-8"))
-APK = (ROOT / "AeroNames.bas").read_text(encoding="utf-8")
+ANDROID = (ROOT / "AeroNames.bas").read_text(encoding="utf-8")
+MAIN_B4A = (ROOT / "AeroCalculator.b4a").read_text(encoding="utf-8-sig")
+AIRP_B4A = (ROOT / "Airp.bas").read_text(encoding="utf-8-sig")
 WEB = (ROOT / "web/src/catalog.ts").read_text(encoding="utf-8")
-MAIN = (ROOT / "web/src/main.ts").read_text(encoding="utf-8")
+WEB_MAIN = (ROOT / "web/src/main.ts").read_text(encoding="utf-8")
+CSS = (ROOT / "web/src/style.css").read_text(encoding="utf-8")
+
+
+def _web_entries() -> dict[str, dict[str, str]]:
+    entries = {}
+    pattern = r'^  "((?:\\.|[^"\\])+)": \{([\s\S]*?)^  \},'
+    for match in re.finditer(pattern, WEB, re.MULTILINE):
+        key = json.loads('"' + match.group(1) + '"')
+        body = match.group(2)
+        desc = re.search(r'^    desc: ("(?:\\.|[^"\\])*"),\s*$', body, re.MULTILINE)
+        model = re.search(r'^    model: ("(?:\\.|[^"\\])*"),\s*$', body, re.MULTILINE)
+        if desc and model:
+            entries[key] = {"definition": json.loads(desc.group(1)), "physics": json.loads(model.group(1))}
+    return entries
+
+
+def _ts_helpers(name: str) -> dict[str, str]:
+    pattern = rf'const {re.escape(name)}: Record<string, string> = \{{(.*?)\n\}};'
+    match = re.search(pattern, WEB_MAIN, re.DOTALL)
+    assert match is not None, name
+    return {
+        json.loads('"' + key + '"'): json.loads(value)
+        for key, value in re.findall(r'^  "((?:\\.|[^"\\])+)": ("(?:\\.|[^"\\])*"),$', match.group(1), re.MULTILINE)
+    }
+
+
+def _android_cases() -> dict[str, str]:
+    cases = list(re.finditer(r'^    Case "([^"]+)"\s*$', ANDROID, re.MULTILINE))
+    return {
+        match.group(1): ANDROID[match.end():cases[i + 1].start() if i + 1 < len(cases) else len(ANDROID)]
+        for i, match in enumerate(cases)
+    }
+
 
 class HelpConventionTests(unittest.TestCase):
-    def test_angles(self):
-        i = CAT["inputs"]
-        for key in ("Heading", "Track", "Wind Direction", "Runway Angle"):
-            with self.subTest(key=key):
-                self.assertIn("true north", i[key]["definition"])
-                self.assertIn("Positive: clockwise", i[key]["definition"])
-        self.assertIn("nose to the right", i["Heading"]["definition"])
-        self.assertIn("relative wind coming from the right", i["Sideslip"]["definition"])
-        self.assertIn("wind coming from the right", i["CrossWind"]["definition"])
-        self.assertIn("wind from ahead", i["HeadWind"]["definition"])
+    def test_all_input_output_editor_help_texts_match(self):
+        """Every catalog entry must agree with the APK and the web modal."""
+        web = _web_entries()
+        android = _android_cases()
+        input_helper = _ts_helpers("FIELD_HELPERS")
+        result_helper = _ts_helpers("RESULT_HELPERS")
 
-    def test_pressures_and_physics(self):
-        for section, cas, eas in (("inputs", "CAS", "EAS"),
-                                  ("results", "Calibrated Airspeed", "Equivalent Airspeed")):
-            self.assertIn("same impact pressure", CAT[section][cas]["definition"])
-            self.assertIn("same dynamic pressure", CAT[section][eas]["definition"])
-        self.assertIn("Sutherland", CAT["results"]["Viscosity"]["physics"])
+        for section in ("inputs", "results", "editor"):
+            for key, item in CAT[section].items():
+                with self.subTest(section=section, key=key):
+                    # Both clients use the same definition and physical intuition.
+                    android_key = "Vs Factor Output" if section == "results" and key == "Vs Factor" else key
+                    web_key = android_key
+                    self.assertIn(android_key, android)
+                    self.assertIn("Definition: " + item["definition"], android[android_key])
+                    if item["physics"]:
+                        self.assertIn("Model Physics: " + item["physics"], android[android_key])
+                    self.assertIn(web_key, web)
+                    self.assertEqual(item["definition"], web[web_key]["definition"])
+                    self.assertEqual(item["physics"], web[web_key]["physics"])
+                    if section == "inputs":
+                        self.assertEqual(item["definition"], input_helper[key])
+                    if section == "results":
+                        self.assertEqual(item["definition"], result_helper[key])
+
+    def test_common_quantities_are_identical_across_input_output(self):
+        pairs = (
+            ("Hp", "Pressure Altitude"),
+            ("Hg", "Geometric Altitude"),
+            ("P", "Pressure"),
+            ("Δ ISA", "Delta ISA"),
+            ("OAT", "Temperature"),
+            ("TAS", "True Airspeed"),
+            ("CAS", "Calibrated Airspeed"),
+            ("EAS", "Equivalent Airspeed"),
+            ("CL", "Lift Coefficient CL"),
+            ("Qdyn", "Dynamic Pressure"),
+            ("Qc", "Impact Pressure"),
+            ("Heading", "Heading Angle Ψ"),
+            ("Track", "Track Angle"),
+            ("Sideslip", "Sideslip Angle β"),
+            ("Drift", "Drift Angle"),
+        )
+        for incoming, outgoing in pairs:
+            with self.subTest(input=incoming, output=outgoing):
+                self.assertEqual(CAT["inputs"][incoming]["definition"],
+                                 CAT["results"][outgoing]["definition"])
+
+    def test_physical_definitions_and_sign_conventions(self):
+        for section, key in (("inputs", "P"), ("results", "Pressure"),
+                             ("results", "Density")):
+            self.assertIn("ideal gas law", CAT[section][key]["definition"])
+        self.assertIn("Sutherland's law", CAT["results"]["Viscosity"]["definition"])
+        self.assertIn("shear stress", CAT["results"]["Viscosity"]["definition"])
+        self.assertIn("Kinetic energy per unit volume", CAT["inputs"]["Qdyn"]["definition"])
+        self.assertIn("onset of stall", CAT["inputs"]["CLmax"]["definition"])
+        self.assertIn("equals CLmax", CAT["results"]["Stall Speed Vs"]["definition"])
+        self.assertIn("nose to the right", CAT["inputs"]["Heading"]["definition"])
+        self.assertIn("relative wind coming from the right", CAT["inputs"]["Sideslip"]["definition"])
+        self.assertIn("wind coming from the right", CAT["inputs"]["CrossWind"]["definition"])
+        self.assertIn("same impact pressure", CAT["inputs"]["CAS"]["definition"])
+        self.assertIn("same dynamic pressure", CAT["inputs"]["EAS"]["definition"])
+        self.assertIn("manufacturer", CAT["editor"]["mass.BOW"]["definition"])
         self.assertIn("molecular momentum transport", CAT["results"]["Viscosity"]["physics"])
         self.assertIn("11 km", CAT["results"]["Temperature Altitude"]["physics"])
+        self.assertIn('showContextualHelp(name === "Vs Factor" ? "Vs Factor Output" : name)', WEB_MAIN)
+        self.assertIn('If k = "Vs Factor" Then k = "Vs Factor Output"', MAIN_B4A)
 
-    def test_weights_and_factor(self):
-        for key in ("mass.MTOW", "mass.MLW", "mass.MZFW", "mass.BOW"):
-            self.assertIn("weight", CAT["editor"][key]["full"])
-        self.assertIn("manufacturer", CAT["editor"]["mass.BOW"]["definition"])
-        self.assertNotIn("operator", CAT["editor"]["mass.BOW"]["definition"])
-        self.assertIn("multiplier", CAT["inputs"]["Vs Factor"]["definition"])
-        self.assertIn("Ratio of current calibrated airspeed", CAT["results"]["Vs Factor"]["definition"])
-        self.assertIn('showContextualHelp(name === "Vs Factor" ? "Vs Factor Output" : name)', MAIN)
-        self.assertIn('If k = "Vs Factor" Then k = "Vs Factor Output"', (ROOT / "AeroCalculator.b4a").read_text(encoding="utf-8"))
+    def test_chevron_inset_preserves_android_text_width(self):
+        for name, source in (("Main", MAIN_B4A), ("Airplanes", AIRP_B4A)):
+            with self.subTest(client=name):
+                self.assertIn('setCompoundDrawablePadding", Array As Object(1dip)', source)
+                self.assertIn('setPadding", Array As Object(1dip, 0, 4dip, 0)', source)
+                self.assertIn("arrowW = 4dip", source)
+                self.assertIn("arrowH = 3dip", source)
+                self.assertIn("arrowW = 6dip", source)
+                self.assertIn("arrowH = 4dip", source)
+        old_horizontal_spacing_dp = 2 + 2 + 2
+        new_horizontal_spacing_dp = 1 + 1 + 4
+        self.assertEqual(old_horizontal_spacing_dp, new_horizontal_spacing_dp)
 
-    def test_sync(self):
-        for section in CAT.values():
-            for key, item in section.items():
-                with self.subTest(key=key):
-                    self.assertIn("Definition: " + item["definition"], APK)
-                    if item["physics"]:
-                        self.assertIn("Model Physics: " + item["physics"], APK)
-        for key in ("Heading", "Sideslip", "CrossWind", "CAS", "EAS"):
-            self.assertIn("desc: " + json.dumps(CAT["inputs"][key]["definition"], ensure_ascii=False), WEB)
+    def test_web_chevron_inset_and_label_space(self):
+        self.assertIn("background-position: right 4px center, center;", CSS)
+        self.assertNotIn("right 2px center", CSS)
+        self.assertIn(".field-select { padding-right: 10px; padding-left: 2px; }", CSS)
+        self.assertIn("padding: 0 10px 0 2px;", CSS)
+        self.assertEqual(8 + 4, 10 + 2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -24,7 +24,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Pressure": {
     title: "Static pressure \u2022 P",
-    desc: "Absolute static pressure of the surrounding air.",
+    desc: "Absolute static pressure of the surrounding air, related to density and absolute temperature by the ideal gas law.",
     eq: "p = \u03c1 R T",
     model: "The ISA hydrostatic pressure profile represents the weight of the air column above the selected level. Local density then follows the ideal-gas relation using the entered temperature.",
     unit: "Pa",
@@ -67,14 +67,14 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Lift Coefficient CL": {
     title: "Lift coefficient \u2022 C<sub>L</sub>",
-    desc: "Aerodynamic lift coefficient based on dynamic pressure and wing reference area. Positive: lift toward the aircraft upper side.",
+    desc: "Aerodynamic lift divided by the product of dynamic pressure and wing reference area. Positive: lift toward the aircraft upper side.",
     eq: "CL = n m g0 / (q S)",
     model: "The lift equation balances aerodynamic lift against the selected normal load, n times weight. Increasing mass or load factor requires more dynamic pressure or a larger lift coefficient.",
     unit: "\u2014",
   },
   "Dynamic Pressure": {
     title: "Dynamic pressure \u2022 q",
-    desc: "Dynamic pressure of the air-relative flow. Nonnegative.",
+    desc: "Kinetic energy per unit volume of the air-relative flow. Nonnegative.",
     eq: "q = \u00bd \u03c1 TAS\u00b2",
     model: "Dynamic pressure is kinetic energy per unit volume of moving air. It scales aerodynamic forces and rises with density and the square of true airspeed.",
     unit: "Pa",
@@ -179,7 +179,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Density": {
     title: "Air density \u2022 \u03c1",
-    desc: "Mass of air per unit volume. Positive scalar.",
+    desc: "Mass of air per unit volume, calculated from static pressure and absolute temperature using the ideal gas law. Positive scalar.",
     eq: "\u03c1 = p / (R T)",
     model: "The ideal-gas equation links density to static pressure and absolute temperature for dry air. At the same pressure, heating expands the air and reduces its mass per unit volume.",
     unit: "kg/m\u00b3",
@@ -193,7 +193,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Viscosity": {
     title: "Dynamic viscosity \u2022 \u03bc",
-    desc: "Dynamic viscosity of air at the local static temperature. Positive scalar.",
+    desc: "Dynamic viscosity of air relates shear stress to velocity gradient; its temperature dependence is modeled by Sutherland's law. Positive scalar.",
     eq: "\u03bc = \u03bc0 (T0 + C)/(T + C) (T/T0)^(3/2)",
     model: "Air viscosity represents molecular momentum transport. Sutherland's law models its dependence on static temperature: dynamic viscosity increases with temperature and sets the viscous scale in Reynolds number.",
     unit: "Pa\u00b7s",
@@ -207,7 +207,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Stall Speed Vs": {
     title: "Reference stall speed \u2022 V<sub>S</sub>",
-    desc: "Reference 1-g stall speed for the selected aircraft mass and configuration, expressed as CAS. Nonnegative.",
+    desc: "Reference 1-g calibrated airspeed at which the required lift coefficient equals CLmax for the selected aircraft mass and configuration. Nonnegative.",
     eq: "V_S,TAS = \u221a(2 m g0 / (\u03c1 S_REF C_L,MAX)); displayed V_S,CAS = CAS(V_S,TAS)",
     model: "At the 1-g stall reference, maximum lift just balances weight. The result is converted from TAS to CAS; maneuver load factor does not alter this reference value.",
     unit: "m/s",
@@ -333,7 +333,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "P": {
     title: "Static pressure \u2022 P",
-    desc: "Absolute static pressure of the surrounding air.",
+    desc: "Absolute static pressure of the surrounding air, related to density and absolute temperature by the ideal gas law.",
     eq: "p = \u03c1 R T",
     model: "The ISA hydrostatic pressure profile represents the weight of the air column above the selected level. Local density then follows the ideal-gas relation using the entered temperature.",
     unit: "Pa",
@@ -375,14 +375,14 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "CL": {
     title: "Lift coefficient \u2022 C<sub>L</sub>",
-    desc: "Aerodynamic lift coefficient based on dynamic pressure and wing reference area. Positive: lift toward the aircraft upper side.",
+    desc: "Aerodynamic lift divided by the product of dynamic pressure and wing reference area. Positive: lift toward the aircraft upper side.",
     eq: "CL = n m g0 / (q S)",
     model: "The lift equation balances aerodynamic lift against the selected normal load, n times weight. Increasing mass or load factor requires more dynamic pressure or a larger lift coefficient.",
     unit: "\u2014",
   },
   "Qdyn": {
     title: "Dynamic pressure \u2022 q",
-    desc: "Dynamic pressure of the air-relative flow. Nonnegative.",
+    desc: "Kinetic energy per unit volume of the air-relative flow. Nonnegative.",
     eq: "q = \u00bd \u03c1 TAS\u00b2",
     model: "Dynamic pressure is kinetic energy per unit volume of moving air. It scales aerodynamic forces and rises with density and the square of true airspeed.",
     unit: "Pa",
@@ -417,7 +417,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "CLmax": {
     title: "Maximum lift coefficient \u2022 C<sub>L,MAX</sub>",
-    desc: "Maximum lift coefficient for the selected aircraft configuration. Positive coefficient.",
+    desc: "Maximum lift coefficient attainable at the onset of stall for the selected aircraft configuration. Positive coefficient.",
     eq: "V_S,TAS = \u221a(2 m g0 / (\u03c1 S_REF C_L,MAX))",
     model: "The limiting lift coefficient sets the lowest 1-g speed that can support the aircraft weight. Its value must come from aircraft data for the chosen flap configuration; the calculator does not predict it from geometry.",
     unit: "\u2014",

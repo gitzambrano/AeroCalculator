@@ -1,0 +1,10 @@
+<en-US>
+Clearer atmospheric and aerodynamic help, including named gas and viscosity laws.
+Synchronized input and output help on Android and web.
+Dropdown arrows moved inward slightly without reducing text space.
+</en-US>
+<pt-BR>
+Ajuda atmosférica e aerodinâmica mais clara, com leis físicas identificadas.
+Ajuda das entradas e saídas sincronizada no Android e na web.
+Setas dos menus levemente recuadas, sem reduzir o espaço do texto.
+</pt-BR>

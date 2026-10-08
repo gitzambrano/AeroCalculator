@@ -268,7 +268,7 @@ sub.hp-sub {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8px 0 4px;
+  padding: 0 10px 0 2px;
   pointer-events: none;
   font-size: 15px;
   color: var(--button-text, #111);
@@ -287,17 +287,19 @@ sub.hp-sub {
   min-width: 0;
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 6px;
-  /* Match the Android selector: a 4x3 chevron 2px from the edge, 2px from the text. */
+  /* Selector triangle inset 4px; leave the original 4x3 / 6x4 triangle sizes unchanged. */
   padding: 0 8px 0 4px;
   font-size: 15px;
   color: var(--button-text, #111);
   background:
-    var(--selector-chevron) right 2px center / var(--chevron-w) var(--chevron-h) no-repeat,
+    var(--selector-chevron) right 4px center / var(--chevron-w) var(--chevron-h) no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
   transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
+/* Preserve label width after shifting the chevron inward: 8+4 = 10+2 px. */
+.field-select { padding-right: 10px; padding-left: 2px; }
 /* Never hide unit selector — show dash for dimensionless fields */
 .input-tail {
   display: block;
@@ -420,7 +422,7 @@ sub.hp-sub {
   text-align-last: center;
   color: var(--button-text, #111);
   background:
-    var(--profile-chevron) right 2px center / var(--chevron-w) var(--chevron-h) no-repeat,
+    var(--profile-chevron) right 4px center / var(--chevron-w) var(--chevron-h) no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 4px;
@@ -990,7 +992,7 @@ sub.hp-sub {
 .setting-choice::after {
   content: "";
   position: absolute;
-  right: 2px;
+  right: 4px;
   top: 50%;
   transform: translateY(-50%);
   width: var(--chevron-w);
@@ -1324,7 +1326,7 @@ sub.hp-sub {
   .input-row { grid-template-columns: minmax(0, 39fr) minmax(0, 28fr) minmax(0, 21fr); min-height: 56px; }
   .airplane-row { grid-template-columns: minmax(0, 39fr) minmax(0, 52fr); }
   .field-select, .unit-select, .value-input, .field-select-display { font-size: 14px; padding-left: 8px; padding-right: 8px; }
-  .field-select { padding-right: 12px; background-position: right 2px center, center; }
+  .field-select { padding-right: 12px; background-position: right 4px center, center; }
   .field-select-display { padding-right: 12px; }
   .result-row { padding-left: 4px; padding-right: 4px; }
   .profile-dialog {
@@ -1365,7 +1367,7 @@ sub.hp-sub {
   .value-input { padding-left: 2px; padding-right: 2px; }
   .field-select {
     padding-right: 12px;
-    background-position: right 2px center, center;
+    background-position: right 4px center, center;
   }
   .field-select-display {
     padding-right: 12px;
@@ -1410,7 +1412,7 @@ sub.hp-sub {
 
 .editor-row > select, .editor-section-head > select {
   appearance: none;
-  background: var(--selector-chevron) right 2px center / var(--chevron-w) var(--chevron-h) no-repeat, linear-gradient(var(--button-a), var(--button-b));
+  background: var(--selector-chevron) right 4px center / var(--chevron-w) var(--chevron-h) no-repeat, linear-gradient(var(--button-a), var(--button-b));
   padding-right: 8px;
 }
 

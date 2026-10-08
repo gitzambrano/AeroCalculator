@@ -1442,11 +1442,12 @@ Private Sub SetSelectorChevron(btn As Button, ArrowColor As Int)
 		Dim native As JavaObject
 		native.InitializeStatic("flightdyn.aerocalculator.main")
 		Dim drawable As JavaObject = native.RunMethod("createSelectorChevron", Array As Object(ArrowColor, arrowW, arrowH))
+		' Preserve text width: old fixed spacing 2 + 2 + 2 = new 1 + 1 + 4 dp.
 		drawable.RunMethod("setBounds", Array As Object(0, 0, arrowW, arrowH))
 		Dim jo As JavaObject = btn
 		jo.RunMethod("setCompoundDrawables", Array As Object(Null, Null, drawable, Null))
-		jo.RunMethod("setCompoundDrawablePadding", Array As Object(2dip))
-		jo.RunMethod("setPadding", Array As Object(2dip, 0, 2dip, 0))
+		jo.RunMethod("setCompoundDrawablePadding", Array As Object(1dip))
+		jo.RunMethod("setPadding", Array As Object(1dip, 0, 4dip, 0))
 	Catch
 		Log("Selector chevron skipped: " & LastException.Message)
 	End Try

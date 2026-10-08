@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.36] - 2026-10-08
+
+### Changed
+
+- Clarified seven physical definitions (ideal gas law for pressure/density, Sutherland viscosity, dynamic pressure, lift coefficient, maximum lift coefficient, and 1-g CAS stall speed).
+- Synchronized corresponding definitions between the Android and web help catalogs, input helpers, and output helpers without altering equations or numerical physics.
+- Recessed all Android dropdown triangles by 2 dp, preserving selector text width through a compensated drawable gap and left padding; matched a 4 px edge inset on web.
+- Added comprehensive help-parity and selector-padding regression tests.
+
+
 ## [3.35] - 2026-10-08
 
 ### Changed
