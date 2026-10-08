@@ -292,7 +292,7 @@ sub.hp-sub {
   font-size: 15px;
   color: var(--button-text, #111);
   background:
-    var(--selector-chevron) right 2px center / 4px 3px no-repeat,
+    var(--selector-chevron) right 2px center / var(--chevron-w) var(--chevron-h) no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   cursor: pointer;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
@@ -420,7 +420,7 @@ sub.hp-sub {
   text-align-last: center;
   color: var(--button-text, #111);
   background:
-    var(--profile-chevron) right 2px center / 4px 3px no-repeat,
+    var(--profile-chevron) right 2px center / var(--chevron-w) var(--chevron-h) no-repeat,
     linear-gradient(var(--button-a), var(--button-b));
   border: 1px solid var(--button-border, #d5dce6);
   border-radius: 4px;
@@ -993,9 +993,9 @@ sub.hp-sub {
   right: 2px;
   top: 50%;
   transform: translateY(-50%);
-  width: 4px;
-  height: 3px;
-  background: var(--profile-chevron) center / 4px 3px no-repeat;
+  width: var(--chevron-w);
+  height: var(--chevron-h);
+  background: var(--profile-chevron) center / var(--chevron-w) var(--chevron-h) no-repeat;
 }
 .settings-dialog .check-row input {
   justify-self: end;
@@ -1410,6 +1410,12 @@ sub.hp-sub {
 
 .editor-row > select, .editor-section-head > select {
   appearance: none;
-  background: var(--selector-chevron) right 2px center / 4px 3px no-repeat, linear-gradient(var(--button-a), var(--button-b));
+  background: var(--selector-chevron) right 2px center / var(--chevron-w) var(--chevron-h) no-repeat, linear-gradient(var(--button-a), var(--button-b));
   padding-right: 8px;
+}
+
+/* One triangle shape for every dropdown; slightly larger from 400 px, like Android from 400 dp. */
+:root { --chevron-w: 4px; --chevron-h: 3px; }
+@media (min-width: 400px) {
+  :root { --chevron-w: 6px; --chevron-h: 4px; }
 }

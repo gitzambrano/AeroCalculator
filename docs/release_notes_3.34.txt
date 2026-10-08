@@ -1,0 +1,24 @@
+<en-US>
+Selection sheets reach screen bottom on Android 15/16.
+Choosing an aircraft selects first weight and flap.
+Editor asks before discarding only when changed.
+Back on Inputs requires second tap in 2s; Airplanes returns to Inputs.
+Larger dropdown triangles at 400+ dp.
+First launch no longer recreates screen.
+Airplane import shows one notice and standard rows.
+C_L,MAX + and - buttons centered on label.
+iOS Safari no longer zooms on inputs.
+Profiles without saved units no longer crash.
+</en-US>
+<pt-BR>
+Listas de seleção vão até o fim da tela no Android 15/16.
+Escolher um avião seleciona o 1º peso e flap.
+Editor só pergunta se descarta se algo mudou.
+Voltar em Inputs pede 2º toque em 2s; em Airplanes volta a Inputs.
+Triângulos dos dropdowns maiores em 400+ dp.
+Primeira abertura mais rápida sem recriar tela.
+Importação com aviso único e linhas padrão.
+Botões + e - do C_L,MAX centralizados no rótulo.
+No iPhone, site sem zoom ao focar campos.
+Perfis sem unidade salva não quebram o app.
+</pt-BR>

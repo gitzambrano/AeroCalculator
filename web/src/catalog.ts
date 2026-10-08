@@ -1,4 +1,4 @@
-// Auto-generated catalog from docs/quantity_catalog.json
+// Help catalog, maintained by hand. Keep in sync with AeroNames.bas and docs/quantity_catalog.json.
 export interface CatalogItem {
   title: string;
   desc: string;

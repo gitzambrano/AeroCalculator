@@ -17,7 +17,8 @@ OUT.mkdir(parents=True, exist_ok=True)
 R = {'api': API, 'mode': 'full-visual' if FULL_VISUAL_AUDIT else 'quick', 'checks': []}
 
 def run(*a,check=True,text=True):
- p=subprocess.run(a,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=text)
+ # Decode as UTF-8 explicitly: the Windows default codec cannot read some dumpsys output.
+ p=subprocess.run(a,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=text,encoding='utf-8' if text else None,errors='replace' if text else None)
  if check and p.returncode: raise RuntimeError(f"{' '.join(a)}\n{p.stdout}\n{p.stderr}")
  return p.stdout.strip() if text else p.stdout
 
@@ -72,6 +73,11 @@ def display_size():
     m=re.search(r'Override size: (\d+)x(\d+)',size) or re.search(r'Physical size: (\d+)x(\d+)',size)
     return tuple(map(int,m.groups()))
 
+def density_scale():
+    d=adb('shell','wm','density')
+    m=re.search(r'Override density: (\d+)',d) or re.search(r'Physical density: (\d+)',d)
+    return int(m.group(1))/160
+
 def nodes(root): return [n for n in root.iter('node') if n.attrib.get('package')==PKG]
 def allnodes(root): return list(root.iter('node'))
 def texts(root,app_only=True):
@@ -106,7 +112,7 @@ def foreground(stage,expected=None):
  rec('foreground:'+stage,PKG in line,line); rec('alive:'+stage,bool(adb('shell','pidof',PKG,check=False)),line)
  if expected: rec('activity:'+stage,expected.lower() in line.lower(),line)
  l=adb('logcat','-d',check=False); (OUT/f'{stage}-logcat.txt').write_text(l,encoding='utf-8',errors='replace')
- rec('runtime:'+stage,re.search(rf'FATAL EXCEPTION|ANR in {re.escape(PKG)}|Process: {re.escape(PKG)}.*has died',l,re.I) is None,'runtime failure')
+ rec('runtime:'+stage,re.search(rf'AndroidRuntime: Process: {re.escape(PKG)}|ANR in {re.escape(PKG)}|Process: {re.escape(PKG)}.*has died',l,re.I) is None,'runtime failure')
 def scrollview(root): return next((n for n in nodes(root) if n.attrib.get('class')=='android.widget.ScrollView' and n.attrib.get('scrollable')=='true'),None)
 def scroll(root,up=True,required=True):
  sv=scrollview(root)
@@ -308,8 +314,10 @@ def restored_airplane_weight_survives_restart():
  foreground('restart-profile-launch','.main'); taptext('INPUTS'); time.sleep(.4)
  top(); r=dump('restart-picker-entry'); tap(find(r,'Custom Airplane'))
  d,n=wait_text('Restart Jet','restart-picker'); tap(n); time.sleep(.5)
- r,w,_=until(['Weight'],'restart-weight-entry',12); tap(w)
- d,n=wait_text('MTOW','restart-weight-sheet'); tap(n); time.sleep(.5)
+ # Selecting a profile starts from its first stored weight and flap.
+ r,w,_=until(['MTOW'],'restart-weight-entry',12)
+ rec('profile-auto-weight',w is not None,str(texts(r)[:60]))
+ rec('profile-auto-flap',any('F0' in t.replace(' ','') or 'Flap0' in t.replace(' ','') for t in texts(r)),str(texts(r)[:60]))
  adb('shell','input','keyevent','3'); time.sleep(1.2)
  adb('shell','am','force-stop',PKG); adb('logcat','-c',check=False)
  adb('shell','monkey','-p',PKG,'-c','android.intent.category.LAUNCHER','1'); time.sleep(2.5)
@@ -347,6 +355,14 @@ def main():
  top(); r=dump('sheet-swipe-entry'); tap(find(r,'HP')); d,_=wait_text('Pressure Altitude','sheet-swipe-open')
  w,h=display_size(); adb('shell','input','swipe',str(w//2),str(int(h*.55)),str(w//2),str(int(h*.82)),'350'); time.sleep(.7)
  d=dump('sheet-swipe-dismissed'); rec('sheet-swipe-down-dismiss',find(d,'Altitude Type') is None,str(texts(d)[:80]))
+
+ # Regression: with Android 15+ edge-to-edge the sheet was placed in Activity coordinates and
+ # stopped above the content bottom, leaving the last input row visible and tappable below it.
+ top(); r=dump('sheet-bottom-entry'); tap(find(r,'HP')); d,_=wait_text('Pressure Altitude','sheet-bottom-open')
+ cancel=find(d,'Cancel'); pager=next((n for n in nodes(d) if n.attrib.get('class','').endswith('ViewPager')),None)
+ gap=bounds(pager.attrib['bounds'])[3]-bounds(cancel.attrib['bounds'])[3] if cancel is not None and pager is not None else None
+ rec('sheet-reaches-content-bottom',gap is not None and 0<=gap<=int(24*density_scale()),f'gap={gap}')
+ back(); time.sleep(.4)
 
  # Inputs -> Calculate must work regardless of where the finger starts.
  top(); r=dump('input-swipe-entry')
@@ -424,9 +440,23 @@ def main():
   before=tuple(texts(r)); scroll(r,True,required=False); r2=dump('editor-bottom'); rec('editor-scroll',tuple(texts(r2))!=before,str(texts(r2)[:80])); shot('editor-bottom')
  else:
   rec('editor-fits-without-scroll',True,str(texts(r)[:80]))
+ # An unchanged editor closes without the discard prompt.
+ c=find(dump('editor-close'),'Cancel'); tap(c) if c is not None else back(); time.sleep(.8)
+ d=dump('editor-unchanged-close'); rec('editor-unchanged-no-prompt',find_contains(d,'discard changes') is None,str(texts(d,app_only=False)[:40]))
+ return_to_main('editor-unchanged-return')
+ # A changed editor asks before discarding.
+ taptext('AIRPLANES'); header_icon('plus'); foreground('aircraft-editor-changed','.airp')
+ r=dump('editor-changed'); e=next((n for n in nodes(r) if n.attrib.get('class')=='android.widget.EditText'),None)
+ rec('editor-name-field',e is not None,str(texts(r)[:40])); tap(e); adb('shell','input','text','Draft'); time.sleep(.4)
+ ime=adb('shell','dumpsys','input_method',check=False)
+ if 'mInputShown=true' in ime or 'isInputViewShown=true' in ime: back()
  c=find(dump('editor-close'),'Cancel'); tap(c) if c is not None else back(); d,_=wait_text('Discard','editor-discard')
  rec('editor-discard-dialog',find_contains(d,'discard changes') is not None,str(texts(d))); shot('editor-discard-dialog'); tap(find(d,'Discard'))
  return_to_main('editor-discard-return')
+
+ # Back on INPUTS asks for a second press instead of closing the app.
+ taptext('INPUTS'); time.sleep(.4); back(); time.sleep(.6)
+ foreground('inputs-single-back','.main')
 
  open_menu('main-menu'); back(); return_to_main('menu-close')
 

@@ -6,7 +6,7 @@ AeroCalculator is available on Android and in the browser at https://gitzambrano
 
 AeroCalculator uses three main pages: Airplanes, Inputs, and Outputs.
 
-A horizontal swipe to the right selects the adjacent tab on the right; a swipe to the left selects the adjacent tab on the left, in the Airplanes, Inputs, Outputs order. Swipes at the first or last page remain on that page. Open dialogs and settings block page swipes.
+A horizontal swipe to the right selects the adjacent tab on the right; a swipe to the left selects the adjacent tab on the left, in the Airplanes, Inputs, Outputs order. Swipes at the first or last page remain on that page. Open dialogs and settings block page swipes. On Android, Back on Airplanes or Outputs returns to Inputs; on Inputs, a second Back within 2 s closes the app.
 
 Use **Airplanes** to manage aircraft data. Use **Inputs** to select the physical quantities and units for a calculation. Use **Calculate** to update **Outputs**.
 
@@ -20,7 +20,7 @@ An aircraft profile can store:
 - CLmax values for flap configurations;
 - the units associated with stored geometry and mass values.
 
-Select a profile before a calculation when you want the stored values to populate the corresponding inputs. Use custom values when a profile value does not apply.
+Select a profile before a calculation when you want the stored values to populate the corresponding inputs. Use custom values when a profile value does not apply. Selecting a profile also selects its first stored mass and its first flap CLmax; choose another named value or the custom entry from the selector.
 
 ## 3. Altitude or pressure input
 
@@ -74,7 +74,7 @@ Changing a unit changes representation, not the physical state. See `units_and_c
 
 The application displays an unavailable marker when a result is non-finite or cannot be represented. Do not interpret an unavailable field as zero.
 
-Aircraft editor values share column widths across area, chord, weights, and flaps. Add and remove flap controls sit side by side in the lift coefficient header. Editor captions remain on one line; the chord caption falls back to cREF only when the full caption cannot fit. Modal headers omit close icons; use the existing Cancel, OK, Back, or outside-tap action to dismiss them.
+Aircraft editor values share column widths across area, chord, weights, and flaps. Add and remove flap controls sit side by side in the lift coefficient header. Editor captions remain on one line; the chord caption falls back to cREF only when the full caption cannot fit. Modal headers omit close icons; use the existing Cancel, OK, Back, or outside-tap action to dismiss them. Cancel in the aircraft editor asks before discarding only when a field changed.
 
 Ground Speed uses its full caption from 360 dp, matching the wind-vector labels; narrower layouts retain their existing abbreviation and symbol fallbacks. Empty inputs have no hint text. Tap the reference-area, reference-chord, mass, or maximum-lift symbol in the aircraft editor to open technical help.
 

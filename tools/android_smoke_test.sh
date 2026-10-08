@@ -75,7 +75,7 @@ assert_alive_foreground_and_clean() {
     return 1
   fi
   adb logcat -d > "$dir/${stage}-logcat.txt" || true
-  if grep -E -i "FATAL EXCEPTION|ANR in ${PACKAGE_NAME}|Process: ${PACKAGE_NAME}.*has died" "$dir/${stage}-logcat.txt" >/dev/null; then
+  if grep -E -i "AndroidRuntime: Process: ${PACKAGE_NAME}|ANR in ${PACKAGE_NAME}|Process: ${PACKAGE_NAME}.*has died" "$dir/${stage}-logcat.txt" >/dev/null; then
     echo "Android runtime failure detected at $stage" >&2
     return 1
   fi

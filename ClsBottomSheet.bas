@@ -26,6 +26,7 @@ Sub Class_Globals
 	Private mDividerColor As Int
 	Private mPending As Boolean
 	Private mShowing As Boolean
+	Private mContainer As Panel
 	Private mDragStartX As Float
 	Private mDragStartY As Float
 	Private mDragTracking As Boolean
@@ -60,7 +61,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	' Dimmed overlay
 	pnlOverlay.Initialize("pnlOverlay")
 	pnlOverlay.Color = Colors.ARGB(178, 0, 0, 0)
-	act.AddView(pnlOverlay, 0, 0, 100%x, 100%y)
+	AddToHost(act, pnlOverlay, 0, 0, 100%x, 100%y)
 	mShowing = True
 
 	' Premium bottom sheet
@@ -92,7 +93,7 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	Dim contentHeight As Int = 64dip + scvH + 64dip
 	Dim maxHeight As Int = 100%y - 40dip
 	Dim sheetHeight As Int = Min(contentHeight, maxHeight)
-	act.AddView(pnlSheet, 0, 100%y - sheetHeight, 100%x, sheetHeight)
+	AddToHost(act, pnlSheet, 0, 100%y - sheetHeight, 100%x, sheetHeight)
 
 	pnlSheet.AddView(pnlHandle, (100%x - 42dip) / 2, 8dip, 42dip, 4dip)
 
@@ -207,6 +208,21 @@ Public Sub Show(act As Activity, items As List, title As String, selectedIndex A
 	mPending = True
 	Wait For Sheet_Result(idx As Int)
 	Return idx
+End Sub
+
+' Sheets belong in the system-bar-safe content panel. With Android 15+ edge-to-edge,
+' 100%y is the content height, so adding them to the Activity would leave the bottom rows
+' of the content uncovered and tappable below the sheet.
+Public Sub SetContainer(Container As Panel)
+	mContainer = Container
+End Sub
+
+Private Sub AddToHost(act As Activity, v As View, Left As Int, Top As Int, Width As Int, Height As Int)
+	If mContainer.IsInitialized Then
+		mContainer.AddView(v, Left, Top, Width, Height)
+	Else
+		act.AddView(v, Left, Top, Width, Height)
+	End If
 End Sub
 
 Private Sub CloseViews
@@ -360,7 +376,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	' Overlay
 	pnlOverlay.Initialize("pnlOverlay")
 	pnlOverlay.Color = Colors.ARGB(170, 0, 0, 0)
-	act.AddView(pnlOverlay, 0, 0, 100%x, 100%y)
+	AddToHost(act, pnlOverlay, 0, 0, 100%x, 100%y)
 	mShowing = True
 
 	' Sheet panel
@@ -516,7 +532,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	Dim sheetH As Int = Min(56dip + scvHelp.Panel.Height, maxSheetH)
 	pnlSheet.AddView(scvHelp, 0, 56dip, 100%x, sheetH - 56dip)
 
-	act.AddView(pnlSheet, 0, 100%y - sheetH, 100%x, sheetH)
+	AddToHost(act, pnlSheet, 0, 100%y - sheetH, 100%x, sheetH)
 End Sub
 
 ' Keep small bold section headers at 4.5:1 contrast or better: darker tones on

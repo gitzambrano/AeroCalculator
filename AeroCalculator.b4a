@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 38
-	#VersionName: 3.33
+	#VersionCode: 39
+	#VersionName: 3.34
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -309,6 +309,7 @@ Sub Globals
 	Dim ID_rem As Int
 	Dim ID_add As Int
 	Dim lastAirpClickTime As Long
+	Dim lastBackPressTime As Long
 	Dim lastAirpClickID As Int
 
 	'Variaveis globais de Inputs
@@ -1255,6 +1256,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	AddMenus
 
 	AeroSheet.Initialize(Me, "AeroSheet")
+	AeroSheet.SetContainer(root)
 	AeroSheet.SetColors(ColorEdtText, ColorPnlInput2, ColorButText1, ColorEdtText, ColorPnlLine3)
 	SettingsPopupOpen = False
 
@@ -1291,14 +1293,9 @@ Public Sub GlobalScreenSwipeDown
 End Sub
 
 Sub Activity_Resume
-	
-	If manager.GetUpdatedKeys.Size>0 Then
-		Dim phn As Phone
-		phn.SetScreenOrientation(0)
-		phn.SetScreenOrientation(1)
-		phn.SetScreenOrientation(-1)
-	End If
-	
+	' Settings apply in place (units recalculate, theme calls RestartActivity), so no
+	' orientation toggle is needed to recreate the activity after preference changes.
+
 	pnlTransparent1.Color =  Colors.Transparent
 	
 	Dim HideK As IME
@@ -2156,6 +2153,7 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 	ListAirp.Initialize
 	ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
 	
+	Dim profileChanged As Boolean = spinnerPos <> Position
 	If spinnerPos<>Position Then
 	indWeightType = 0
 	indCLmaxType = 0
@@ -2272,12 +2270,24 @@ Sub spnAirp_ItemClick (Position As Int, Value As Object)
 			CLmaxS.Add("Flap 13|Flap 13 maximum lift coefficient")
 		End If
 		
-		indSrefUnit = a.Get(ID_inp & "_Sunit")
-		indcrefUnit = a.Get(ID_inp & "_cunit")
-		indWeightUnit = a.Get(ID_inp & "_Wunit")
+		indSrefUnit = a.GetDefault(ID_inp & "_Sunit", 0)
+		indcrefUnit = a.GetDefault(ID_inp & "_cunit", 0)
+		indWeightUnit = a.GetDefault(ID_inp & "_Wunit", 0)
 		SrefUnit_Click
 		crefUnit_Click
 		WeightUnit_Click
+		If profileChanged Then
+			' A newly selected profile starts from its first stored weight and flap, so the
+			' calculation never silently falls back to the 1 kg / CL,MAX = 1 defaults.
+			If WeightS.Size > 1 Then
+				indWeightType = 1
+				Weight_Click
+			End If
+			If CLmaxS.Size > 1 Then
+				indCLmaxType = 1
+				CLmax_Click
+			End If
+		End If
 	End If
 
 End Sub
@@ -3522,9 +3532,15 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the ev
 			CloseSettingsPopup
 			Return True
 		End If
-		If CurrentPage = 2 Then
+		If CurrentPage <> 1 Then
 			pager.GotoPage(1, True)
-			Return True 
+			Return True
+		End If
+		' On INPUTS, require a second Back within 2 s so a stray press does not close the app.
+		If DateTime.Now - lastBackPressTime > 2000 Then
+			lastBackPressTime = DateTime.Now
+			ToastMessageShow("Press back again to exit", False)
+			Return True
 		End If
 	End If
 	Return False
@@ -4763,7 +4779,7 @@ Sub MenuCall (MenuItem As Int)
 					End If
 					If cfmover=DialogResponse.POSITIVE Then
 						Dim ii,N,He As Int
-						He = 50dip
+						He = 68dip
 						N = a.GetDefault("N",0)
 						For ii= 1 To N1
 							a.Put((N+ii) & "_Name", a1.GetDefault((ii) & "_Name",""))
@@ -4792,17 +4808,18 @@ Sub MenuCall (MenuItem As Int)
 							a.Put((N+ii) & "_Sunit", a1.GetDefault((ii) & "_Sunit",0))
 							a.Put((N+ii) & "_cunit", a1.GetDefault((ii) & "_cunit",0))
 							a.Put((N+ii) & "_Wunit", a1.GetDefault((ii) & "_Wunit",0))
-							a.Put("N", (N + N1))
 							lst.AddCustomItem((N+ii), CreateItem((N+ii), He, (N+ii)), He)
-							lst.ResizePanel
-							File.WriteMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt", a)
-							spnAirp.Add(a.Get((N+ii) & "_Name"))
-							Dim ListAirp As List
-							ListAirp.Initialize
-							ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
-							File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", ListAirp)
-							ToastMessageShow(N1 & " Imported Airplanes.", True)
+							spnAirp.Add(a.GetDefault((N+ii) & "_Name", ""))
 						Next
+						' Save once and notify once after all profiles are added.
+						a.Put("N", (N + N1))
+						lst.ResizePanel
+						File.WriteMap(rp.GetSafeDirDefaultExternal(""), "airplanes.txt", a)
+						Dim ListAirp As List
+						ListAirp.Initialize
+						ListAirp = lst.CreateTagList(0, 0, lst.NumberOfItems-1)
+						File.WriteList(rp.GetSafeDirDefaultExternal(""), "taglist.txt", ListAirp)
+						ToastMessageShow(N1 & " Imported Airplanes.", True)
 					End If
 				Else
 					Msgbox2Async("File importing not successfull", "Error", "OK","","",LoadBitmap(File.DirAssets,"icon_error.png"),True)
@@ -5132,10 +5149,17 @@ End Sub
 
 Private Sub SetSelectorChevron(btn As Button, ArrowColor As Int)
 	' Use one solid triangle for quantity, unit, and airplane selectors.
+	' Wider screens (400 dp and up) get a slightly larger triangle of the same shape.
+	Dim arrowW As Int = 4dip
+	Dim arrowH As Int = 3dip
+	If 100%x >= 400dip Then
+		arrowW = 6dip
+		arrowH = 4dip
+	End If
 	Try
 		Dim native As JavaObject = Me
-		Dim drawable As JavaObject = native.RunMethod("createSelectorChevron", Array As Object(ArrowColor, 4dip, 3dip))
-		drawable.RunMethod("setBounds", Array As Object(0, 0, 4dip, 3dip))
+		Dim drawable As JavaObject = native.RunMethod("createSelectorChevron", Array As Object(ArrowColor, arrowW, arrowH))
+		drawable.RunMethod("setBounds", Array As Object(0, 0, arrowW, arrowH))
 		Dim jo As JavaObject = btn
 		jo.RunMethod("setCompoundDrawables", Array As Object(Null, Null, drawable, Null))
 		jo.RunMethod("setCompoundDrawablePadding", Array As Object(2dip))

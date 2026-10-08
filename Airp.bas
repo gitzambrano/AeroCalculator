@@ -89,6 +89,9 @@ Sub Globals
 	Dim imeInsets As IME
 	
 	
+	' Editor state when the screen opened; Cancel and Back skip the discard prompt when unchanged.
+	Dim EditorSnapshot As String
+	Dim SnapshotTaken As Boolean
 End Sub
 
 Sub Activity_Create (FirstTime As Boolean)
@@ -210,19 +213,20 @@ Sub Activity_Create (FirstTime As Boolean)
 	pnltitle.AddView(paneldiv,  50%x, 0, 1dip, pnltitle.Height)
 	
 	AeroSheet.Initialize(Me, "AeroSheet")
+	AeroSheet.SetContainer(root)
 	AeroSheet.SetColors(Main.ColorPnlTitle, Main.ColorPnlInput5, Main.ColorButText1, Main.ColorEdtText, Main.ColorPnlLine3)
 End Sub
 
 Sub Activity_Resume
 	If Main.ID_edt > 0 Then
 		ID = Main.ID_edt
-		edtName.Text = Main.a.Get(ID & "_Name")
-		edtSref.Text = Main.a.Get(ID & "_S")
-		edtcref.Text = Main.a.Get(ID & "_c")
-		edtWeight1.Text = Main.a.Get(ID & "_W1")
-		edtWeight2.Text = Main.a.Get(ID & "_W2")
-		edtWeight3.Text = Main.a.Get(ID & "_W3")
-		edtWeight4.Text = Main.a.Get(ID & "_W4")
+		edtName.Text = Main.a.GetDefault(ID & "_Name", "")
+		edtSref.Text = Main.a.GetDefault(ID & "_S", "")
+		edtcref.Text = Main.a.GetDefault(ID & "_c", "")
+		edtWeight1.Text = Main.a.GetDefault(ID & "_W1", "")
+		edtWeight2.Text = Main.a.GetDefault(ID & "_W2", "")
+		edtWeight3.Text = Main.a.GetDefault(ID & "_W3", "")
+		edtWeight4.Text = Main.a.GetDefault(ID & "_W4", "")
 		edtWeight5.Text = Main.a.GetDefault(ID & "_W5","")
 		edtWeight6.Text = Main.a.GetDefault(ID & "_W6","")
 
@@ -387,6 +391,10 @@ Sub Activity_Resume
 		add=1
 	End If
 	scvMain0.Panel.Height = pnl1.Height+pnl2.Height+pnl3.Height+pnl4.Height+pnl5.Height + 50dip
+	If Not(SnapshotTaken) Then
+		EditorSnapshot = EditorState
+		SnapshotTaken = True
+	End If
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -1028,8 +1036,8 @@ Sub CreateItem(ii As Int, He As Int)
 			pnlTransp2.Initialize("pnlTransp2")
 			pnlTransp1.Color = Colors.Transparent
 			pnlTransp2.Color = Colors.Transparent
-			pnl5.AddView(pnlTransp1,71%x, 2dip, 13%x, 40dip)
-			pnl5.AddView(pnlTransp2,85%x, 2dip, 13%x, 40dip)
+			pnl5.AddView(pnlTransp1,71%x, 5dip, 13%x, 40dip)
+			pnl5.AddView(pnlTransp2,85%x, 5dip, 13%x, 40dip)
 			pnlTransp1.AddView(img11, pnlTransp1.Width-34dip, 10dip, 34dip, 34dip)
 			pnlTransp2.AddView(img22, 20dip, 9dip, 34dip, 34dip)
 			img11.Height = 12dip
@@ -1210,7 +1218,23 @@ Sub pnlTransparent2_Touch (Action As Int, X As Float, Y As Float)
 	End Select
 End Sub
 
+Private Sub EditorState As String
+	Dim sb As StringBuilder
+	sb.Initialize
+	For Each e As EditText In Array As EditText(edtName, edtSref, edtcref, edtWeight1, edtWeight2, edtWeight3, edtWeight4, edtWeight5, edtWeight6, edtCLmax0, edtCLmax1, edtCLmax2, edtCLmax3, edtCLmax4, edtCLmax5, edtCLmax6, edtCLmax7, edtCLmax8, edtCLmax9, edtCLmax10, edtCLmax11, edtCLmax12, edtCLmax13)
+		sb.Append(e.Text).Append(Chr(30))
+	Next
+	sb.Append(indSrefUnit).Append(Chr(30)).Append(indcrefUnit).Append(Chr(30)).Append(indWeightUnit)
+	Return sb.ToString
+End Sub
+
 Sub DialogCancel
+	If SnapshotTaken And EditorState = EditorSnapshot Then
+		add = -1
+		Main.ID_edt = 0
+		Activity.Finish
+		Return
+	End If
 	Msgbox2Async("Are you sure you want to discard changes?","Warning","Save","Cancel","Discard",LoadBitmap(File.DirAssets,"icon_warning.png"),True)
 	Wait For Msgbox_Result (confirm2 As Int)
 	If confirm2 = DialogResponse.POSITIVE Then
@@ -1407,11 +1431,18 @@ End Sub
 
 ' Matches the Inputs selectors: one solid triangle, no vertical padding so descenders stay visible.
 Private Sub SetSelectorChevron(btn As Button, ArrowColor As Int)
+	' Wider screens (400 dp and up) get a slightly larger triangle of the same shape.
+	Dim arrowW As Int = 4dip
+	Dim arrowH As Int = 3dip
+	If 100%x >= 400dip Then
+		arrowW = 6dip
+		arrowH = 4dip
+	End If
 	Try
 		Dim native As JavaObject
 		native.InitializeStatic("flightdyn.aerocalculator.main")
-		Dim drawable As JavaObject = native.RunMethod("createSelectorChevron", Array As Object(ArrowColor, 4dip, 3dip))
-		drawable.RunMethod("setBounds", Array As Object(0, 0, 4dip, 3dip))
+		Dim drawable As JavaObject = native.RunMethod("createSelectorChevron", Array As Object(ArrowColor, arrowW, arrowH))
+		drawable.RunMethod("setBounds", Array As Object(0, 0, arrowW, arrowH))
 		Dim jo As JavaObject = btn
 		jo.RunMethod("setCompoundDrawables", Array As Object(Null, Null, drawable, Null))
 		jo.RunMethod("setCompoundDrawablePadding", Array As Object(2dip))

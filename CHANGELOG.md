@@ -2,6 +2,30 @@
 
 All notable changes to the repository should be recorded here.
 
+## [3.34] - 2026-10-08
+
+### Fixed
+
+- Android 15+ edge-to-edge: bottom sheets and help sheets are hosted in the system-bar-safe content panel. They were placed in Activity coordinates, stopped about 48 dp above the content bottom, and left the last input row visible and tappable below the sheet.
+- Missing unit keys in a profile no longer crash airplane selection or the editor.
+- Web: a stored input state of `null` no longer breaks startup.
+
+### Changed
+
+- Selecting an airplane starts from its first stored weight and flap (Android and web), so results never fall back silently to 1 kg and C_L,MAX = 1.
+- The aircraft editor asks before discarding only when a field changed (Android and web).
+- Android Back on INPUTS needs a second press within 2 s to close the app; Back on AIRPLANES returns to INPUTS.
+- Dropdown triangles grow from 4×3 to 6×4 at 400 dp/px and wider.
+- Android first launch no longer recreates the screen three times; the obsolete orientation toggle for the old settings screen is removed.
+- Importing airplanes shows one notice and uses the standard row height.
+- The C_L,MAX add and remove buttons are centered on their label.
+- Web: iOS Safari no longer zooms into inputs on focus.
+
+### Repository
+
+- The Android input matrix hides the keyboard only when it is visible, and selects sheet options inside the sheet list instead of occluded rows behind it.
+- Feature regression `sheet-reaches-content-bottom`.
+
 ## [3.33] - 2026-10-08
 
 ### Fixed

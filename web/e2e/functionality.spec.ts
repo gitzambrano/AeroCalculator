@@ -256,8 +256,10 @@ test("aircraft profile create, select and Android-compatible export work end to 
   await select(page, "weight-type", "MTOW");
   await expect(page.locator("#weight-value")).toHaveValue("12000");
   await expect(page.locator("#clmax-type option")).toHaveCount(2);
+  // A newly selected profile starts from its first stored flap instead of the custom CL,MAX.
+  await expect(page.locator('[data-field="clmax"] .field-select-display')).toContainText("Flap 0");
+  await select(page, "clmax-type", "CLmax");
   await expect(page.locator('[data-field="clmax"] .field-select-display')).toHaveText("CL,MAX");
-  await expect(page.locator('[data-field="clmax"] .field-select-display')).not.toContainText("Flap 0");
   await select(page, "clmax-type", "Flap 0");
   await expect(page.locator('[data-field="clmax"] .field-select-display')).toContainText("Flap 0");
   await expect(page.locator("#clmax-value")).toHaveValue("1.6");
@@ -386,4 +388,37 @@ test("fresh installs start with zero saved airplanes", async ({ page }) => {
   await page.reload();
   await page.getByRole("button", { name: "AIRPLANES", exact: true }).click();
   await expect(page.locator(".airplane-list-row")).toHaveCount(0);
+});
+
+test("selecting an airplane starts from its first weight and flap", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Add airplane" }).click();
+  await fill(page, "profile-name", "Auto Jet");
+  await fill(page, "profile-sref", "40");
+  await fill(page, "profile-cref", "3");
+  await fill(page, "profile-weight-MLW", "9000");
+  await page.locator("#add-flap").click();
+  await fill(page, "profile-flap-0", "1.7");
+  await page.locator("#profile-save").click();
+  await page.getByRole("button", { name: "INPUTS" }).click();
+  await expect(page.locator("#weight-type")).toHaveValue("MLW");
+  await expect(page.locator("#weight-value")).toHaveValue("9000");
+  await expect(page.locator("#clmax-type")).toHaveValue("Flap 0");
+  await expect(page.locator("#clmax-value")).toHaveValue("1.7");
+});
+
+test("editor cancel asks before discarding only when something changed", async ({ page }) => {
+  await page.goto("/");
+  let dialogs = 0;
+  page.on("dialog", (dialog) => { dialogs += 1; void dialog.accept(); });
+  await page.getByRole("button", { name: "Add airplane" }).click();
+  await page.locator("#profile-cancel").click();
+  await expect(page.locator("#profile-editor")).not.toBeVisible();
+  expect(dialogs).toBe(0);
+
+  await page.getByRole("button", { name: "Add airplane" }).click();
+  await fill(page, "profile-name", "Draft");
+  await page.locator("#profile-cancel").click();
+  await expect(page.locator("#profile-editor")).not.toBeVisible();
+  expect(dialogs).toBe(1);
 });

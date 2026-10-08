@@ -276,6 +276,7 @@ let profiles = loadProfiles(localStorage);
 let selectedProfileId = localStorage.getItem(SELECTED_PROFILE_KEY) ?? "custom";
 let editingProfileId: string | null = null;
 let visibleFlapRows = 0;
+let editorSnapshot = "";
 
 app.innerHTML = `
   <main class="app-shell">
@@ -1145,7 +1146,7 @@ document.querySelectorAll<HTMLButtonElement>("[data-menu]").forEach((button) => 
 byId("feedback-link").addEventListener("click", () => {
   setOverlayOpen("main-menu", false);
 });
-byId("profile-cancel").addEventListener("click", closeProfileEditor);
+byId("profile-cancel").addEventListener("click", cancelProfileEditor);
 byId("profile-save").addEventListener("click", (event) => {
   event.preventDefault();
   saveProfileFromEditor();
@@ -1709,11 +1710,9 @@ function duplicateStoredProfile(id: string): void {
 
   profiles = next;
   saveProfiles(localStorage, profiles);
-  selectedProfileId = duplicate.id;
-  localStorage.setItem(SELECTED_PROFILE_KEY, selectedProfileId);
-  renderProfiles();
   renderAirplaneSelector();
   applyProfileSelection(duplicate.id, false);
+  renderProfiles();
 }
 
 function moveProfileRowAtY(list: HTMLElement, row: HTMLElement, clientY: number): void {
@@ -1914,6 +1913,7 @@ function selectedProfile(): AircraftProfile | undefined {
 }
 
 function applyProfileSelection(id: string, recalc = true): void {
+  const previousProfileId = selectedProfileId;
   selectedProfileId = profiles.some((p) => p.id === id) ? id : "custom";
   localStorage.setItem(SELECTED_PROFILE_KEY, selectedProfileId);
   const picker = document.getElementById("airplane-select") as HTMLSelectElement | null;
@@ -1943,6 +1943,15 @@ function applyProfileSelection(id: string, recalc = true): void {
     preserveSelect(weightSelect, weightOptions, "Weight");
     const flapOptions = ["CLmax", ...profile.clmax.flatMap((value, index) => value === null ? [] : [`Flap ${index}`])];
     preserveSelect(clSelect, flapOptions, "CLmax");
+    // A newly selected profile starts from its first stored weight and flap, so the
+    // calculation never silently falls back to the 1 kg / CL,MAX = 1 defaults.
+    if (selectedProfileId !== previousProfileId) {
+      if (weightOptions.length > 1) weightSelect.value = weightOptions[1];
+      if (flapOptions.length > 1) clSelect.value = flapOptions[1];
+      updateTypeSelectDisplay(weightSelect);
+      updateTypeSelectDisplay(clSelect);
+      applyProfileNamedValue();
+    }
   }
 
   syncSelectPreviousValues();
@@ -1998,6 +2007,19 @@ function openProfileEditor(id?: string): void {
   byId("profile-delete-wrap").hidden = !profile;
   (byId("profile-editor") as HTMLDialogElement).showModal();
   fitEditorChordLabel();
+  editorSnapshot = editorState();
+}
+
+// Values of every editor field; Cancel asks before discarding only when this changed.
+function editorState(): string {
+  return Array.from(document.querySelectorAll<HTMLInputElement | HTMLSelectElement>("#profile-editor input, #profile-editor select"))
+    .map((el) => el.value)
+    .join("|");
+}
+
+function cancelProfileEditor(): void {
+  if (editorState() !== editorSnapshot && !window.confirm("Discard changes?")) return;
+  closeProfileEditor();
 }
 
 function fitEditorChordLabel(): void {
@@ -2048,11 +2070,9 @@ function saveProfileFromEditor(): void {
 
   profiles = upsertProfile(profiles, profile);
   saveProfiles(localStorage, profiles);
-  selectedProfileId = profile.id;
-  localStorage.setItem(SELECTED_PROFILE_KEY, selectedProfileId);
-  renderProfiles();
   renderAirplaneSelector();
   applyProfileSelection(profile.id, false);
+  renderProfiles();
   closeProfileEditor();
   activatePage("airplanes");
 }
@@ -2101,6 +2121,8 @@ function restoreInputState(): void {
   } catch {
     return;
   }
+  // A stored "null" or non-object value must not break startup.
+  if (!state || typeof state !== "object") return;
 
   const typeIds = fields.map((field) => `${field.id}-type`);
   for (const id of typeIds) {
@@ -2181,7 +2203,7 @@ function applyTheme(): void {
   const style = getComputedStyle(document.documentElement);
   for (const [name, color] of [["selector-chevron", "--button-text"], ["profile-chevron", "--field-text"]]) {
     const fill = style.getPropertyValue(color).trim();
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="4" height="3"><path d="M0 0h4L2 3z" fill="${fill}"/></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="4" height="3" viewBox="0 0 4 3" preserveAspectRatio="none"><path d="M0 0h4L2 3z" fill="${fill}"/></svg>`;
     document.documentElement.style.setProperty(`--${name}`, `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
   }
 }

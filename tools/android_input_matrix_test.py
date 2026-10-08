@@ -37,7 +37,8 @@ QUICK_PROFILES=[
 PROFILES = FULL_PROFILES if FULL_VISUAL_AUDIT else QUICK_PROFILES
 
 def run(*args,text=True,check=True):
- p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=text)
+ # Decode as UTF-8 explicitly: the Windows default codec cannot read some dumpsys output.
+ p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=text,encoding='utf-8' if text else None,errors='replace' if text else None)
  if check and p.returncode:
   raise RuntimeError(" ".join(args)+"\n"+str(p.stdout))
  return p.stdout
@@ -96,11 +97,18 @@ def find_any(root,candidates):
 def find_sheet_text(root,wanted):
  # Ignore rows clipped at the list edge: a tap on a sliver of a row lands on
  # the sheet chrome instead of selecting the option.
+ # uiautomator also reports the occluded input rows behind the sheet, so prefer
+ # matches inside the sheet list (the last ScrollView in the dump).
  q=norm(wanted); found=[]
+ lists=[bounds(n.attrib.get("bounds","")) for n in nodes(root) if n.attrib.get("class","").endswith("ScrollView")]
+ sheet=lists[-1] if len(lists)>1 else None
  for n in nodes(root):
   if norm(n.attrib.get("text",""))==q:
    b=bounds(n.attrib.get("bounds",""))
    if b and b[2]>b[0] and b[3]-b[1]>=30: found.append((b[1],n))
+ if sheet:
+  inside=[(y,n) for y,n in found if bounds(n.attrib["bounds"])[1]>=sheet[1] and bounds(n.attrib["bounds"])[3]<=sheet[3]]
+  if inside: found=inside
  return max(found,key=lambda x:x[0])[1] if found else None
 
 def tap(n):
@@ -359,17 +367,16 @@ def assert_fallback_compact(profile,root):
 def fill_vsfactor(dirp):
  choose(dirp,FIELDS["speed"]["buttons"],FIELDS["speed"]["expected"],"Stall-Speed Factor","vsfactor")
  r,n=reachable(dirp,FIELDS["speed"]["buttons"])
- pm=parent_map(r); p=pm.get(n); edits=[]
- for _ in range(4):
-  if p is None: break
-  edits=[]
-  for x in p.iter("node"):
-   if x.attrib.get("class")=="android.widget.EditText":
-    b=bounds(x.attrib.get("bounds",""))
-    if b and b[2]>b[0]: edits.append((b[0],x))
-  if len(edits)>=2: break
-  p=pm.get(p)
- for k,(_,e) in enumerate(sorted(edits)):
+ # All input rows share one parent panel, so select only the factor and delta fields
+ # whose vertical centers lie within the Vs Factor row.
+ row=bounds(n.attrib.get("bounds",""))
+ edits=[]
+ for x in nodes(r):
+  if x.attrib.get("class")=="android.widget.EditText":
+   b=bounds(x.attrib.get("bounds",""))
+   if b and b[2]>b[0] and row[1]<=(b[1]+b[3])//2<=row[3]: edits.append((b[0],x))
+ if len(edits)!=2: raise AssertionError(f"vsfactor: expected factor and delta fields, found {len(edits)}")
+ for k,(_,e) in enumerate(sorted(edits,key=lambda t:t[0])):
   tap(e)
   for _ in range(12): adb("shell","input","keyevent","67",check=False)
   adb("shell","input","text","1.30" if k==0 else "10")
