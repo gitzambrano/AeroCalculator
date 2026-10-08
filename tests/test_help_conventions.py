@@ -121,8 +121,8 @@ class HelpConventionTests(unittest.TestCase):
             with self.subTest(client=name):
                 self.assertIn('setCompoundDrawablePadding", Array As Object(1dip)', source)
                 self.assertIn('setPadding", Array As Object(1dip, 0, 4dip, 0)', source)
-                self.assertIn("arrowW = 4dip", source)
-                self.assertIn("arrowH = 3dip", source)
+                self.assertIn("Dim arrowW As Int = 4dip", source)
+                self.assertIn("Dim arrowH As Int = 3dip", source)
                 self.assertIn("arrowW = 6dip", source)
                 self.assertIn("arrowH = 4dip", source)
         old_horizontal_spacing_dp = 2 + 2 + 2
