@@ -1,0 +1,12 @@
+<en-US>
+Clearer aircraft, atmosphere and navigation help with explicit sign conventions.
+CAS and EAS now distinguish impact and dynamic pressure.
+Basic Operating Weight is manufacturer-defined.
+Preserved physical-model explanations and equations.
+</en-US>
+<pt-BR>
+Ajuda técnica mais clara, incluindo convenções de sinais.
+CAS e EAS distinguem pressão de impacto e pressão dinâmica.
+BOW conforme definição do fabricante.
+Preservadas explicações dos modelos físicos e equações.
+</pt-BR>

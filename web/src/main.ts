@@ -75,36 +75,36 @@ function vibrateTap(): void {
 }
 
 const FIELD_HELPERS: Record<string, string> = {
-  "Hp": "Pressure altitude: altitude in the ISA atmosphere corresponding to the entered static pressure.",
-  "Hg": "Geometric altitude: physical height above mean sea level.",
-  "P": "Static atmospheric pressure. AeroCalculator converts it to pressure altitude.",
-  "Δ ISA": "Temperature deviation from the ISA temperature at the current pressure altitude.",
-  "OAT": "Outside air temperature at the aircraft condition.",
-  "TAS": "True Airspeed: aircraft speed relative to the surrounding air mass.",
-  "CAS": "Calibrated Airspeed: indicated airspeed corrected for instrument/position error and compressibility using the standard sea-level reference.",
-  "EAS": "Equivalent Airspeed: speed at standard sea-level density with the same dynamic pressure as the current flight condition.",
-  "Mach": "Mach number: True Airspeed divided by the local speed of sound.",
-  "CL": "Lift coefficient. With mass, load factor and reference area, it defines the required dynamic pressure.",
-  "Vs Factor": "Multiplier applied to the 1-g calibrated stall speed. The optional +Δ term is added in knots.",
-  "Ground Speed": "Aircraft speed relative to the ground. Wind and direction inputs are used to recover the air-relative velocity.",
-  "Qdyn": "Dynamic pressure for the current air density and true airspeed.",
-  "Qc": "Impact pressure: total pressure minus static pressure for the documented subsonic model.",
-  "Weight": "Aircraft mass used for lift, stall-speed and maneuver calculations.",
-  "Sref": "Wing reference area used in aerodynamic force and coefficient calculations.",
-  "cref": "Wing reference chord used to calculate Reynolds number.",
-  "CLmax": "Maximum lift coefficient used to calculate the 1-g stall speed.",
-  "NzPullup": "Normal load factor for a pull-up maneuver. Bank angle is zero.",
-  "NzTurn": "Normal load factor in a coordinated level turn. Bank angle is derived from n = 1/cos(φ).",
-  "BankTurn": "Bank angle for a coordinated level turn. Load factor is derived from n = 1/cos(φ).",
-  "Track": "Track angle: direction of the ground-velocity vector.",
-  "Heading": "Heading angle: direction the aircraft longitudinal axis points.",
-  "Sideslip": "Sideslip angle β: angle between the aircraft heading and the air-relative velocity direction.",
-  "Drift": "Drift angle: heading minus track.",
-  "HeadWind": "Wind component along the selected runway/reference direction. Positive means headwind.",
-  "Wind Speed": "Wind-vector magnitude. Use Wind Direction for its direction.",
-  "CrossWind": "Wind component perpendicular to the selected runway/reference direction.",
-  "Runway Angle": "Reference direction used to resolve headwind and crosswind components.",
-  "Wind Direction": "Direction from which the wind is referenced in the wind-vector input mode.",
+  "Hp": "ISA altitude corresponding to the local static pressure. Positive: pressure below ISA sea-level pressure.",
+  "Hg": "Geometric height above mean sea level. Positive: above mean sea level.",
+  "P": "Absolute static pressure of the surrounding air.",
+  "Δ ISA": "Difference between actual static air temperature and ISA temperature at the same pressure altitude. Positive: warmer than ISA.",
+  "OAT": "Static temperature of the surrounding air.",
+  "TAS": "Magnitude of aircraft velocity relative to the surrounding air. Nonnegative.",
+  "CAS": "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition. Nonnegative.",
+  "EAS": "Airspeed at ISA sea-level conditions producing the same dynamic pressure as the actual flight condition. Nonnegative.",
+  "Mach": "Ratio of true airspeed to local speed of sound. Nonnegative.",
+  "CL": "Aerodynamic lift coefficient based on dynamic pressure and wing reference area. Positive: lift toward the aircraft upper side.",
+  "Vs Factor": "Input multiplier applied to reference 1-g stall speed in CAS, with an optional additive CAS increment. Nonnegative multiplier.",
+  "Ground Speed": "Magnitude of aircraft horizontal velocity relative to the ground. Nonnegative.",
+  "Qdyn": "Dynamic pressure of the air-relative flow. Nonnegative.",
+  "Qc": "Difference between stagnation pressure and static pressure. Nonnegative in the adopted subsonic model.",
+  "Weight": "Aircraft weight, expressed as mass in the selected units for aerodynamic calculations. Nonnegative.",
+  "Sref": "Wing reference area used to define aerodynamic coefficients. Positive area.",
+  "cref": "Wing reference chord used to calculate Reynolds number. Positive length.",
+  "CLmax": "Maximum lift coefficient for the selected aircraft configuration. Positive coefficient.",
+  "NzPullup": "Ratio of aerodynamic lift to aircraft weight in an unbanked maneuver. Positive: lift toward the aircraft upper side.",
+  "NzTurn": "Load factor in a coordinated level turn. Positive and not less than 1 in the adopted model.",
+  "BankTurn": "Aircraft bank angle in a coordinated level turn. Positive: right wing down.",
+  "Track": "Direction of the aircraft horizontal ground-velocity vector, measured clockwise from true north. Positive: clockwise (ground-velocity vector to the right).",
+  "Heading": "Direction in which the aircraft nose points, measured clockwise from true north. Positive: clockwise (nose to the right).",
+  "Sideslip": "Angle between the aircraft longitudinal axis and the incoming relative wind. Positive: relative wind coming from the right.",
+  "Drift": "Angular difference between heading and ground track (heading minus track). Positive: heading to the right of track.",
+  "HeadWind": "Wind component along the selected runway/reference direction. Positive: wind from ahead. Negative: tailwind.",
+  "Wind Speed": "Magnitude of horizontal wind velocity. Nonnegative.",
+  "CrossWind": "Wind component perpendicular to the selected runway/reference direction. Positive: wind coming from the right. Negative: wind from the left.",
+  "Runway Angle": "Direction of the selected runway/reference axis, measured clockwise from true north. Positive: clockwise (reference direction to the right).",
+  "Wind Direction": "Direction from which the wind blows, measured clockwise from true north. Positive: clockwise (wind-from direction to the right).",
 };
 
 function helperFor(fieldId: string, typeValue: string): string {
@@ -210,48 +210,48 @@ const RESULT_DISPLAY_LABELS: Partial<Record<(typeof resultNames)[number], string
 };
 
 const RESULT_HELPERS: Record<string, string> = {
-  "Pressure Altitude": "Pressure altitude: ISA altitude corresponding to static pressure.",
-  "Geometric Altitude": "Geometric altitude: physical height above mean sea level.",
-  "Geopotential Altitude": "Geopotential altitude used by the standard-atmosphere model.",
-  "Density Altitude": "ISA altitude with the same air density as the current condition.",
-  "Temperature Altitude": "Altitude returned by the documented ISA temperature-altitude convention.",
-  "Pressure": "Static atmospheric pressure.",
-  "Density": "Air density: mass of air per unit volume.",
-  "Temperature": "Outside air temperature.",
-  "Delta ISA": "Temperature deviation from the ISA temperature at the current pressure altitude.",
-  "Total Temperature": "Total air temperature (TAT) for the documented isentropic model.",
-  "Viscosity": "Dynamic air viscosity from the documented temperature correlation.",
-  "Sound Speed": "Local speed of sound in the ideal-gas model.",
-  "True Airspeed": "Aircraft speed relative to the surrounding air mass.",
-  "Calibrated Airspeed": "Calibrated airspeed from the documented pitot-static model.",
-  "Equivalent Airspeed": "Airspeed at standard sea-level density with the same dynamic pressure.",
-  "Ground Speed": "Aircraft speed relative to the ground.",
-  "Stall Speed Vs": "Reference 1-g stall speed.",
-  "Vs Factor": "Multiplier applied to the reference 1-g stall speed.",
-  "Lift Coefficient CL": "Required lift coefficient for the selected condition.",
-  "Mach": "True airspeed divided by the local speed of sound.",
-  "Reynolds": "Reynolds number based on the reference chord.",
-  "Pressure Ratio δ": "Static pressure divided by standard sea-level pressure.",
-  "Density Ratio σ": "Air density divided by standard sea-level density.",
-  "Temperature Ratio θ": "Absolute temperature divided by standard sea-level temperature.",
-  "Dynamic Pressure": "Dynamic pressure for the current density and true airspeed.",
-  "Impact Pressure": "Total pressure minus static pressure.",
-  "Total Pressure": "Stagnation pressure for the documented subsonic model.",
-  "DynPressure * S / g": "Dynamic-pressure force equivalent for the selected reference area.",
-  "Lift Force": "Aerodynamic lift required by the selected condition.",
-  "Weight/Delta W/δ": "Aircraft weight normalized by pressure ratio.",
-  "Load Factor Nz": "Normal load factor for the selected maneuver.",
-  "Bank Angle φ": "Bank angle for the coordinated level-turn relation.",
-  "Turn Radius": "Signed coordinated level-turn radius.",
-  "Turn Rate": "Signed coordinated level-turn angular rate.",
-  "Track Angle": "Ground-track course angle.",
-  "Heading Angle Ψ": "Aircraft nose heading angle.",
-  "Drift Angle": "Heading minus track angle.",
-  "Sideslip Angle β": "Angle between aircraft heading and relative wind.",
-  "Wind Speed": "Horizontal wind-vector magnitude.",
-  "Wind Direction": "Meteorological direction from which the wind blows.",
-  "AlongTrack Headwind": "Wind component along the ground track.",
-  "AlongTrack Crosswind": "Wind component perpendicular to the ground track.",
+  "Pressure Altitude": "ISA altitude corresponding to the local static pressure. Positive: pressure below ISA sea-level pressure.",
+  "Geometric Altitude": "Geometric height above mean sea level. Positive: above mean sea level.",
+  "Geopotential Altitude": "Altitude equivalent to gravitational potential energy per unit mass under constant standard gravity. Positive: above the reference datum.",
+  "Density Altitude": "ISA altitude corresponding to the actual air density. Positive: above ISA sea level.",
+  "Temperature Altitude": "Tropospheric ISA altitude corresponding to actual static temperature, limited to 11 km in this model. Positive: above ISA sea level.",
+  "Pressure": "Absolute static pressure of the surrounding air.",
+  "Density": "Mass of air per unit volume. Positive scalar.",
+  "Temperature": "Static temperature of the surrounding air.",
+  "Delta ISA": "Difference between actual static air temperature and ISA temperature at the same pressure altitude. Positive: warmer than ISA.",
+  "Total Temperature": "Stagnation temperature obtained by adiabatically bringing the air-relative flow to rest.",
+  "Viscosity": "Dynamic viscosity of air at the local static temperature. Positive scalar.",
+  "Sound Speed": "Speed of propagation of small pressure disturbances in the surrounding air. Positive scalar.",
+  "True Airspeed": "Magnitude of aircraft velocity relative to the surrounding air. Nonnegative.",
+  "Calibrated Airspeed": "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition. Nonnegative.",
+  "Equivalent Airspeed": "Airspeed at ISA sea-level conditions producing the same dynamic pressure as the actual flight condition. Nonnegative.",
+  "Ground Speed": "Magnitude of aircraft horizontal velocity relative to the ground. Nonnegative.",
+  "Stall Speed Vs": "Reference 1-g stall speed for the selected aircraft mass and configuration, expressed as CAS. Nonnegative.",
+  "Vs Factor": "Ratio of current calibrated airspeed to reference 1-g stall speed in CAS. Nonnegative.",
+  "Lift Coefficient CL": "Aerodynamic lift coefficient based on dynamic pressure and wing reference area. Positive: lift toward the aircraft upper side.",
+  "Mach": "Ratio of true airspeed to local speed of sound. Nonnegative.",
+  "Reynolds": "Ratio of inertial to viscous effects based on true airspeed and reference chord. Nonnegative.",
+  "Pressure Ratio δ": "Ratio of local static pressure to standard sea-level pressure. Positive scalar.",
+  "Density Ratio σ": "Ratio of local air density to standard sea-level density. Positive scalar.",
+  "Temperature Ratio θ": "Ratio of local absolute temperature to standard sea-level absolute temperature. Positive scalar.",
+  "Dynamic Pressure": "Dynamic pressure of the air-relative flow. Nonnegative.",
+  "Impact Pressure": "Difference between stagnation pressure and static pressure. Nonnegative in the adopted subsonic model.",
+  "Total Pressure": "Stagnation pressure of the air-relative flow under isentropic conditions.",
+  "DynPressure * S / g": "Aerodynamic reference force qS expressed numerically in kilogram-force (kgf). Nonnegative.",
+  "Lift Force": "Aerodynamic lift force required by the selected load factor. Positive: lift toward the aircraft upper side.",
+  "Weight/Delta W/δ": "Aircraft weight divided by atmospheric pressure ratio δ. Positive for positive aircraft weight.",
+  "Load Factor Nz": "Ratio of aerodynamic lift to aircraft weight. Positive: lift toward the aircraft upper side.",
+  "Bank Angle φ": "Aircraft bank angle in a coordinated level turn. Positive: right wing down.",
+  "Turn Radius": "Signed radius of a coordinated level turn relative to the air mass. Positive: right turn. Negative: left turn.",
+  "Turn Rate": "Rate of change of aircraft heading in a coordinated level turn. Positive: clockwise (right turn).",
+  "Track Angle": "Direction of the aircraft horizontal ground-velocity vector, measured clockwise from true north. Positive: clockwise (ground-velocity vector to the right).",
+  "Heading Angle Ψ": "Direction in which the aircraft nose points, measured clockwise from true north. Positive: clockwise (nose to the right).",
+  "Drift Angle": "Angular difference between heading and ground track (heading minus track). Positive: heading to the right of track.",
+  "Sideslip Angle β": "Angle between the aircraft longitudinal axis and the incoming relative wind. Positive: relative wind coming from the right.",
+  "Wind Speed": "Magnitude of horizontal wind velocity. Nonnegative.",
+  "Wind Direction": "Direction from which the wind blows, measured clockwise from true north. Positive: clockwise (wind-from direction to the right).",
+  "AlongTrack Headwind": "Wind component along the aircraft ground track. Positive: wind from ahead. Negative: tailwind.",
+  "AlongTrack Crosswind": "Wind component perpendicular to the aircraft ground track. Positive: wind coming from the right. Negative: wind from the left.",
 }
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -1082,7 +1082,7 @@ for (const name of resultNames) {
   li.dataset.helper = RESULT_HELPERS[name] ?? name;
   li.dataset.name = name;
   li.innerHTML = `<span class="result-name">${RESULT_DISPLAY_LABELS[name] ?? name}</span><span class="result-value na" data-result="${name}">----</span>`;
-  li.addEventListener("click", () => showContextualHelp(name));
+  li.addEventListener("click", () => showContextualHelp(name === "Vs Factor" ? "Vs Factor Output" : name));
   resultsList.append(li);
 }
 
@@ -1168,6 +1168,12 @@ for (const [selector, key] of [['label[for="profile-sref"]', "Sref"], ['label[fo
   caption.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showContextualHelp(key); }
   });
+}
+for (const id of ["MTOW", "MLW", "MZFW", "BOW", "Heavy", "Light"]) {
+  installTechnicalHold(byId(`profile-weight-${id}`), () => `mass.${id}`);
+}
+for (let flapIndex = 0; flapIndex < 14; flapIndex += 1) {
+  installTechnicalHold(byId(`profile-flap-${flapIndex}`), () => "CLmaxFlap");
 }
 window.addEventListener("resize", fitEditorChordLabel);
 (byId("profile-import") as HTMLInputElement).addEventListener("change", importSelectedFile);

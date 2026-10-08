@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 39
-	#VersionName: 3.34
+	#VersionCode: 40
+	#VersionName: 3.35
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -5867,6 +5867,7 @@ Sub ShowResultHelp(idx As Int)
 		"Sideslip Angle β", "Wind Speed", "Wind Direction", "AlongTrack Headwind", "AlongTrack Crosswind")
 	If idx >= 0 And idx < keys.Length Then
 		Dim k As String = keys(idx)
+		If k = "Vs Factor" Then k = "Vs Factor Output"
 		Dim helpText As String = AeroNames.Help(k)
 		AeroSheet.ShowHelp(Activity, k, helpText)
 	End If

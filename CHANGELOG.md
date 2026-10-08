@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.35] - 2026-10-08
+
+### Changed
+
+- Unified concise definitions across web and Android help for all input, output, and aircraft-data quantities.
+- Documented true-north navigation azimuths and positive heading, track, sideslip, drift, headwind, and crosswind conventions.
+- Defined CAS and EAS through ISA sea-level impact-pressure and dynamic-pressure equivalence.
+- Preserved informative model physics for viscosity (Sutherland's law), compressibility, and atmospheric altitude limits.
+- Defined Basic Operating Weight as manufacturer-specified and retained conventional MTOW, MLW, and MZFW weight nomenclature.
+- Distinguished the input stall-speed factor from its computed output ratio.
+- Exposed technical long-press help on web aircraft weight and flap coefficient fields.
+
+
 All notable changes to the repository should be recorded here.
 
 ## [3.34] - 2026-10-08
