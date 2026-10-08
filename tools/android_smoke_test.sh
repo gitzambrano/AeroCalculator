@@ -99,7 +99,9 @@ wait_for_ui_text() {
       sleep 0.4
       return 0
     fi
-    sleep 0.35
+    # Back-to-back uiautomator calls can return without writing a dump while
+    # the previous instance is still shutting down; give it time.
+    sleep 0.7
   done
   echo "Timed out waiting for UI pattern: $pattern" >&2
   return 1
@@ -126,13 +128,13 @@ tap_text() {
   local text="$1" tmp="$OUT_ROOT/tap-node.xml" xy
   # Never reuse a dump from an earlier profile: a failed dump would otherwise
   # tap stale coordinates from a different screen size.
-  for _ in 1 2 3; do
+  for _ in 1 2 3 4 5; do
     rm -f "$tmp"
     adb shell rm -f /sdcard/tap-node.xml >/dev/null 2>&1 || true
     adb shell uiautomator dump /sdcard/tap-node.xml >/dev/null 2>&1 || true
     adb pull /sdcard/tap-node.xml "$tmp" >/dev/null 2>&1 || true
     [[ -s "$tmp" ]] && break
-    sleep 0.6
+    sleep 0.8
   done
   if [[ ! -s "$tmp" ]]; then
     echo "uiautomator dump failed while looking for: $text" >&2

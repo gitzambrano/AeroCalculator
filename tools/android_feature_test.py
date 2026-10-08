@@ -359,7 +359,7 @@ def main():
   tap(helper_label); time.sleep(.6); hd=dump('output-helper')
   rec('output-helper-open',find_contains(hd,'MODEL / ASSUMPTIONS') is not None or find_contains(hd,'Definition') is not None,str(texts(hd)[:100]))
   shot('output-helper'); back(); time.sleep(.5)
- for lab,exp,tol in [('Pressure',1013.25,1),('Temperature',15,.2),('Density',1.225,.03),('Calibrated Airspeed',100,.5)]:
+ for lab,exp,tol in [('Pressure p',1013.25,1),('Temperature OAT',15,.2),('Density ρ',1.225,.03),('Calibrated Airspeed',100,.5)]:
   sv=result(lab); v=num(sv); rec('calc:'+lab,abs(v-exp)<=tol,f'{sv} expected {exp}±{tol}')
  r,_,seen=until(['AlongTrack Crosswind'],'outputs-bottom',18); rec('outputs-bottom',True,str(seen[-20:])); shot('outputs-bottom')
 
