@@ -46,6 +46,7 @@ export const KEY_EQUATIONS_LATEX: Record<string, string> = {
   "Stall Speed Vs": "V_{S,\\mathrm{TAS}} = \\sqrt{\\frac{2 \\, m \\, g_0}{\\rho \\, S_{\\mathrm{REF}} \\, C_{L,\\mathrm{MAX}}}}",
   "Vs": "V_{S,\\mathrm{TAS}} = \\sqrt{\\frac{2 \\, m \\, g_0}{\\rho \\, S_{\\mathrm{REF}} \\, C_{L,\\mathrm{MAX}}}}",
   "CLmax": "V_{S,\\mathrm{TAS}} = \\sqrt{\\frac{2 \\, m \\, g_0}{\\rho \\, S_{\\mathrm{REF}} \\, C_{L,\\mathrm{MAX}}}}",
+  "CLmaxFlap": "V_{S,\\mathrm{TAS}} = \\sqrt{\\frac{2 \\, m \\, g_0}{\\rho \\, S_{\\mathrm{REF}} \\, C_{L,\\mathrm{MAX}}}}",
   "Reynolds": "\\mathrm{Re} = \\frac{\\rho \\, \\mathrm{TAS} \\, c_{\\mathrm{REF}}}{\\mu}",
   "Re": "\\mathrm{Re} = \\frac{\\rho \\, \\mathrm{TAS} \\, c_{\\mathrm{REF}}}{\\mu}",
   "Qdyn": "q = \\frac{1}{2} \\rho \\, \\mathrm{TAS}^2",
