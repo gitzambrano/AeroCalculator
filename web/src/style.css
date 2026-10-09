@@ -452,11 +452,14 @@ sub.hp-sub {
 .profile-select option {
   text-align: center;
 }
-/* The active aircraft selector uses the primary color of the chosen theme. */
+/* Match the center numeric-value column on every theme.
+   The aircraft name is a data value, not a primary-color action button. */
 .airplane-select-button {
-  color: white;
-  border-color: var(--title);
-  background: var(--selector-chevron) right 4px center / var(--chevron-w) var(--chevron-h) no-repeat, var(--title);
+  color: var(--field-text, #111);
+  border-color: var(--field-border, var(--button-border, #d5dce6));
+  background: var(--selector-chevron) right 4px center / var(--chevron-w) var(--chevron-h) no-repeat;
+  background-color: var(--field-bg);
+  box-shadow: none;
 }
 .airplane-select-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 

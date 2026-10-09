@@ -92,18 +92,53 @@ test("aircraft editor unit modal uses the standard themed picker above fullscree
 test("custom airplane and About follow the current theme and APK version", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#airplane-select-button")).toContainText("Custom Airplane");
-  const colors = await page.locator("#airplane-select-button").evaluate((el) => ({
-    actual: getComputedStyle(el).backgroundColor,
-    expected: getComputedStyle(document.documentElement).getPropertyValue("--title").trim(),
-  }));
-  // The airplane button uses a background declaration with the theme's --title.
-  expect(colors.expected).toBeTruthy();
+  // The selected aircraft must have the exact same field colors as the
+  // middle numeric column in EVERY light and dark theme.
+  await page.addStyleTag({ content: "* { transition: none !important; }" });
+  for (const theme of ["Green Peace", "Ancient Brown", "Dark Shadows", "Blue Sky", "Red Alert", "Orange Juice"]) {
+    const colors = await page.evaluate((name) => {
+      document.documentElement.dataset.theme = name;
+      const selectedAircraft = getComputedStyle(document.querySelector("#airplane-select-button")!);
+      const numericValue = getComputedStyle(document.querySelector("#alt-value")!);
+      return {
+        selected: {
+          background: selectedAircraft.backgroundColor,
+          text: selectedAircraft.color,
+          border: selectedAircraft.borderTopColor,
+        },
+        center: {
+          background: numericValue.backgroundColor,
+          text: numericValue.color,
+          border: numericValue.borderTopColor,
+        },
+      };
+    }, theme);
+    expect(colors.selected, theme).toEqual(colors.center);
+  }
   await page.locator("#more-menu").click();
   await page.locator('[data-menu="about"]').click();
   await expect(page.locator("#about-dialog")).toBeVisible();
   await expect(page.locator("#about-version")).toHaveText(/\d{4} \/ version 3\.37/);
   await expect(page.locator("#about-dialog")).toContainText("Gustavo José Zambrano");
   await expect(page.locator("#about-dialog")).toContainText("flightdyn@gmail.com");
+});
+
+test("selected aircraft follows numeric field colors on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.addStyleTag({ content: "* { transition: none !important; }" });
+  for (const theme of ["Green Peace", "Ancient Brown", "Dark Shadows", "Blue Sky", "Red Alert", "Orange Juice"]) {
+    const values = await page.evaluate((name) => {
+      document.documentElement.dataset.theme = name;
+      const a = getComputedStyle(document.querySelector("#airplane-select-button")!);
+      const center = getComputedStyle(document.querySelector("#alt-value")!);
+      return {
+        aircraft: [a.backgroundColor, a.color, a.borderTopColor],
+        center: [center.backgroundColor, center.color, center.borderTopColor],
+      };
+    }, theme);
+    expect(values.aircraft, theme).toEqual(values.center);
+  }
 });
 
 test.describe("mobile input unit tap vs horizontal swipe", () => {
