@@ -5848,7 +5848,7 @@ Sub ShowTechnicalHelp(Field As String)
 	Case "windRef"
 		If indWindType = 0 Then Key = "Runway Angle" Else Key = "Wind Direction"
 	Case "airplane"
-		AeroSheet.ShowHelp(Activity, "Airplane Selection", "Airplane Selection" & CRLF & CRLF & "Definition: Select an aircraft profile from the saved aircraft library, or modify the individual geometric parameters directly." & CRLF & CRLF & "Model Physics: A profile supplies reference geometry, masses, and flap lift limits to the aerodynamic equations. These are aircraft-data inputs; the calculator does not infer aircraft characteristics from its name.")
+		AeroSheet.ShowHelp(Activity, "Airplane Selection", "Airplane Selection" & CRLF & CRLF & "Definition: Select an aircraft profile from the saved aircraft library, or modify the individual geometric parameters directly.")
 		Return
 	Case Else
 		Key = Field

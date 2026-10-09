@@ -9,8 +9,7 @@
       "equation": "pISA(Hp) = p",
       "group": "Atmosphere",
       "limits": "Pressure-altitude model: −5 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
-      "abbreviated": "Hp",
-      "physics": "Hydrostatic balance relates pressure to altitude in the layered ISA atmosphere. Inverting that pressure profile gives an equivalent pressure altitude, not a measurement of height above the ground."
+      "abbreviated": "Hp"
     },
     "Hg": {
       "full": "Geometric altitude",
@@ -21,8 +20,7 @@
       "equation": "H = r h / (r + h)",
       "group": "Atmosphere",
       "limits": "Pressure-altitude model: −5 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
-      "abbreviated": "Hg",
-      "physics": "Geometric height measures distance above sea level. The spherical-Earth conversion accounts for weakening gravity when converting between geometric and geopotential altitude."
+      "abbreviated": "Hg"
     },
     "P": {
       "full": "Static pressure",
@@ -33,8 +31,7 @@
       "equation": "p = ρ R T",
       "group": "Atmosphere",
       "limits": "Pressure-altitude model: −5 to 84.852 km geopotential. Geometric altitude is converted before the atmosphere calculation.",
-      "abbreviated": "P",
-      "physics": "The ISA hydrostatic pressure profile represents the weight of the air column above the selected level. Local density then follows the ideal-gas relation using the entered temperature."
+      "abbreviated": "P"
     },
     "Δ ISA": {
       "full": "ISA temperature deviation",
@@ -44,8 +41,7 @@
       "definition": "Difference between actual static air temperature and ISA temperature at the same pressure altitude. Positive: warmer than ISA.",
       "equation": "ΔT = T − TISA(Hp)",
       "group": "Atmosphere",
-      "abbreviated": "Δ ISA",
-      "physics": "The temperature offset changes the local thermal state at the same pressure altitude. Warmer air at fixed pressure has lower density; colder air has higher density."
+      "abbreviated": "Δ ISA"
     },
     "OAT": {
       "full": "Outside air temperature",
@@ -55,8 +51,7 @@
       "definition": "Static temperature of the surrounding air.",
       "equation": "T = TISA(Hp) + ΔT",
       "group": "Atmosphere",
-      "abbreviated": "OAT",
-      "physics": "Static air temperature sets density and sound speed. Adding the ISA temperature offset gives the local temperature without changing the selected pressure level."
+      "abbreviated": "OAT"
     },
     "TAS": {
       "full": "True airspeed",
@@ -66,8 +61,7 @@
       "definition": "Magnitude of aircraft velocity relative to the surrounding air. Nonnegative.",
       "equation": "TAS = M a",
       "group": "Airspeed",
-      "abbreviated": "TAS",
-      "physics": "True airspeed measures motion through the air mass. Combining it with local density sets dynamic pressure; combining it with local sound speed gives Mach number."
+      "abbreviated": "TAS"
     },
     "CAS": {
       "full": "Calibrated Airspeed",
@@ -77,8 +71,7 @@
       "definition": "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition. Nonnegative.",
       "equation": "CAS = a0 √[2/(γ−1) ((qc/p0 + 1)^((γ−1)/γ) − 1)]",
       "group": "Airspeed",
-      "abbreviated": "CAS",
-      "physics": "The subsonic isentropic Pitot relation converts actual impact pressure to the speed that gives the same impact pressure at ISA sea level; compressibility is included."
+      "abbreviated": "CAS"
     },
     "EAS": {
       "full": "Equivalent airspeed",
@@ -88,8 +81,7 @@
       "definition": "Airspeed at ISA sea-level conditions producing the same dynamic pressure as the actual flight condition. Nonnegative.",
       "equation": "EAS = TAS √(ρ/ρ0)",
       "group": "Airspeed",
-      "abbreviated": "EAS",
-      "physics": "Equivalent airspeed preserves dynamic pressure: q = 0.5 ρ TAS² = 0.5 ρ₀ EAS². Unlike CAS, it is not defined by impact pressure."
+      "abbreviated": "EAS"
     },
     "Mach": {
       "full": "Mach number",
@@ -100,8 +92,7 @@
       "equation": "M = TAS / a",
       "group": "Airspeed",
       "limits": "0 ≤ M < 1 for the current compressibility model.",
-      "abbreviated": "Mach",
-      "physics": "Mach compares airspeed with the speed of pressure disturbances in the local air. The pitot conversion used here describes subsonic, isentropic deceleration with gamma = 1.4."
+      "abbreviated": "Mach"
     },
     "CL": {
       "full": "Lift coefficient",
@@ -111,8 +102,7 @@
       "definition": "Aerodynamic lift divided by the product of dynamic pressure and wing reference area. Positive: lift toward the aircraft upper side.",
       "equation": "CL = n m g0 / (q S)",
       "group": "Aerodynamics",
-      "abbreviated": "CL",
-      "physics": "The lift equation balances aerodynamic lift against the selected normal load, n times weight. Increasing mass or load factor requires more dynamic pressure or a larger lift coefficient."
+      "abbreviated": "CL"
     },
     "Vs Factor": {
       "full": "Stall speed factor",
@@ -122,8 +112,7 @@
       "definition": "Input multiplier applied to reference 1-g stall speed in CAS, with an optional additive CAS increment. Nonnegative multiplier.",
       "equation": "CAS = factor × Vs,CAS + ΔCAS",
       "group": "Airspeed",
-      "abbreviated": "Vs Fac.",
-      "physics": "The input factor scales the 1-g stall speed expressed as CAS; the optional additive increment is specified in knots. It does not change the reference stall speed or model accelerated stall."
+      "abbreviated": "Vs Fac."
     },
     "Ground Speed": {
       "full": "Ground speed",
@@ -133,8 +122,7 @@
       "definition": "Magnitude of aircraft horizontal velocity relative to the ground. Nonnegative.",
       "equation": "Vground = Vair + Vwind",
       "group": "Wind",
-      "abbreviated": "Grd Spd",
-      "physics": ""
+      "abbreviated": "Grd Spd"
     },
     "Qdyn": {
       "full": "Dynamic pressure",
@@ -144,8 +132,7 @@
       "definition": "Kinetic energy per unit volume of the air-relative flow. Nonnegative.",
       "equation": "q = ½ ρ TAS²",
       "group": "Aerodynamics",
-      "abbreviated": "Qdyn",
-      "physics": "Dynamic pressure is kinetic energy per unit volume of moving air. It scales aerodynamic forces and rises with density and the square of true airspeed."
+      "abbreviated": "Qdyn"
     },
     "Qc": {
       "full": "Impact pressure",
@@ -155,8 +142,7 @@
       "definition": "Difference between stagnation pressure and static pressure. Nonnegative in the adopted subsonic model.",
       "equation": "qc = p [(1 + (γ−1) M²/2)^(γ/(γ−1)) − 1]",
       "group": "Airspeed",
-      "abbreviated": "Qc",
-      "physics": "A pitot opening brings the flow to rest and converts kinetic energy into compression. Impact pressure is stagnation minus static pressure; it approaches dynamic pressure at low Mach number."
+      "abbreviated": "Qc"
     },
     "Weight": {
       "full": "Aircraft mass",
@@ -166,8 +152,7 @@
       "definition": "Aircraft weight, expressed as mass in the selected units for aerodynamic calculations. Nonnegative.",
       "equation": "W = m g0",
       "group": "Aerodynamics",
-      "abbreviated": "Weight",
-      "physics": "Although traditionally labeled weight, this input is a mass-equivalent value in kg (or other mass units). Gravitational weight force is W = m g₀."
+      "abbreviated": "Weight"
     },
     "Sref": {
       "full": "Wing reference area",
@@ -177,8 +162,7 @@
       "definition": "Wing reference area used to define aerodynamic coefficients. Positive area.",
       "equation": "L = q Sref CL",
       "group": "Aerodynamics",
-      "abbreviated": "Sref",
-      "physics": "Reference area is the chosen normalization area in the lift equation. A larger area produces more lift at the same dynamic pressure and lift coefficient; it does not determine wing shape."
+      "abbreviated": "Sref"
     },
     "cref": {
       "full": "Reference chord",
@@ -188,8 +172,7 @@
       "definition": "Wing reference chord used to calculate Reynolds number. Positive length.",
       "equation": "Re = ρ TAS cref / μ",
       "group": "Aerodynamics",
-      "abbreviated": "cref",
-      "physics": "Reference chord sets the length scale for Reynolds number. Comparing inertial transport with molecular viscosity at that scale characterizes the flow regime; this calculation does not predict transition or separation."
+      "abbreviated": "cref"
     },
     "CLmax": {
       "full": "Maximum lift coefficient",
@@ -199,8 +182,7 @@
       "definition": "Maximum lift coefficient attainable at the onset of stall for the selected aircraft configuration. Positive coefficient.",
       "equation": "Vs,TAS = √(2 m g0 / (ρ Sref CLmax))",
       "group": "Aerodynamics",
-      "abbreviated": "CLmax",
-      "physics": "The limiting lift coefficient sets the lowest 1-g speed that can support the aircraft weight. Its value must come from aircraft data for the chosen flap configuration; the calculator does not predict it from geometry."
+      "abbreviated": "CLmax"
     },
     "NzPullup": {
       "full": "Pull-up load factor",
@@ -210,8 +192,7 @@
       "definition": "Ratio of aerodynamic lift to aircraft weight in an unbanked maneuver. Positive: lift toward the aircraft upper side.",
       "equation": "L = n m g0",
       "group": "Maneuver",
-      "abbreviated": "Nz (Pull-up)",
-      "physics": "Normal load factor is lift divided by weight. The unbanked pull-up model increases lift demand without introducing the bank relation used for a level turn."
+      "abbreviated": "Nz (Pull-up)"
     },
     "NzTurn": {
       "full": "Level turn load factor",
@@ -222,8 +203,7 @@
       "equation": "n = 1 / cos φ",
       "group": "Maneuver",
       "limits": "Coordinated level turn: n ≥ 1 and |bank| < 90°.",
-      "abbreviated": "Nz (Turn)",
-      "physics": "In a coordinated level turn, the vertical component of lift balances weight and the horizontal component provides centripetal acceleration. This gives n = 1/cos(bank), with bank magnitude below 90 degrees."
+      "abbreviated": "Nz (Turn)"
     },
     "BankTurn": {
       "full": "Level turn bank angle",
@@ -234,8 +214,7 @@
       "equation": "n = 1 / cos φ",
       "group": "Maneuver",
       "limits": "Coordinated level turn: n ≥ 1 and |bank| < 90°.",
-      "abbreviated": "Bank (Turn)",
-      "physics": "In a coordinated level turn, the vertical component of lift balances weight and the horizontal component provides centripetal acceleration. This gives n = 1/cos(bank), with bank magnitude below 90 degrees."
+      "abbreviated": "Bank (Turn)"
     },
     "Track": {
       "full": "Ground track angle",
@@ -245,8 +224,7 @@
       "definition": "Direction of the aircraft horizontal ground-velocity vector, measured clockwise from true north. Positive: clockwise (ground-velocity vector to the right).",
       "equation": "Vground = Vair + Vwind",
       "group": "Wind",
-      "abbreviated": "Track",
-      "physics": ""
+      "abbreviated": "Track"
     },
     "Heading": {
       "full": "Aircraft heading",
@@ -256,8 +234,7 @@
       "definition": "Direction in which the aircraft nose points, measured clockwise from true north. Positive: clockwise (nose to the right).",
       "equation": "ψ = aircraft heading",
       "group": "Wind",
-      "abbreviated": "Heading",
-      "physics": ""
+      "abbreviated": "Heading"
     },
     "Sideslip": {
       "full": "Sideslip angle",
@@ -267,8 +244,7 @@
       "definition": "Angle between the aircraft longitudinal axis and the incoming relative wind. Positive: relative wind coming from the right.",
       "equation": "β = sideslip angle",
       "group": "Wind",
-      "abbreviated": "Sideslip",
-      "physics": ""
+      "abbreviated": "Sideslip"
     },
     "Drift": {
       "full": "Drift angle",
@@ -278,8 +254,7 @@
       "definition": "Angular difference between heading and ground track (heading minus track). Positive: heading to the right of track.",
       "equation": "drift = ψ − χ",
       "group": "Wind",
-      "abbreviated": "Drift",
-      "physics": ""
+      "abbreviated": "Drift"
     },
     "HeadWind": {
       "full": "Reference headwind",
@@ -289,8 +264,7 @@
       "definition": "Wind component along the selected runway/reference direction. Positive: wind from ahead. Negative: tailwind.",
       "equation": "HW = Vw cos(ψw − ψRWY)",
       "group": "Wind",
-      "abbreviated": "HeadWind",
-      "physics": ""
+      "abbreviated": "HeadWind"
     },
     "Wind Speed": {
       "full": "Wind speed",
@@ -300,8 +274,7 @@
       "definition": "Magnitude of horizontal wind velocity. Nonnegative.",
       "equation": "Vw = √(HW² + CW²)",
       "group": "Wind",
-      "abbreviated": "Wind Speed",
-      "physics": ""
+      "abbreviated": "Wind Speed"
     },
     "CrossWind": {
       "full": "Reference crosswind",
@@ -311,8 +284,7 @@
       "definition": "Wind component perpendicular to the selected runway/reference direction. Positive: wind coming from the right. Negative: wind from the left.",
       "equation": "CW = Vw sin(ψw − ψRWY)",
       "group": "Wind",
-      "abbreviated": "CrossWind",
-      "physics": ""
+      "abbreviated": "CrossWind"
     },
     "Runway Angle": {
       "full": "Runway reference angle",
@@ -322,8 +294,7 @@
       "definition": "Direction of the selected runway/reference axis, measured clockwise from true north. Positive: clockwise (reference direction to the right).",
       "equation": "ψRWY = runway heading",
       "group": "Wind",
-      "abbreviated": "RwyAngle",
-      "physics": ""
+      "abbreviated": "RwyAngle"
     },
     "Wind Direction": {
       "full": "Wind direction from",
@@ -333,8 +304,7 @@
       "definition": "Direction from which the wind blows, measured clockwise from true north. Positive: clockwise (wind-from direction to the right).",
       "equation": "ψw = meteorological wind direction",
       "group": "Wind",
-      "abbreviated": "Wind Dir",
-      "physics": ""
+      "abbreviated": "Wind Dir"
     }
   },
   "editor": {
@@ -351,8 +321,7 @@
       "use": "Reference mass for takeoff-condition calculations when selected.",
       "dependencies": [
         "aircraft profile"
-      ],
-      "physics": "The conventional aircraft-data name uses weight, while the profile stores the numerical mass equivalent used by the calculator."
+      ]
     },
     "mass.MLW": {
       "full": "Maximum landing weight",
@@ -367,8 +336,7 @@
       "use": "Reference mass for landing-condition calculations when selected.",
       "dependencies": [
         "aircraft profile"
-      ],
-      "physics": "The conventional aircraft-data name uses weight, while the profile stores the numerical mass equivalent used by the calculator."
+      ]
     },
     "mass.MZFW": {
       "full": "Maximum zero-fuel weight",
@@ -383,8 +351,7 @@
       "use": "Reference mass for zero-fuel-mass calculations when selected.",
       "dependencies": [
         "aircraft profile"
-      ],
-      "physics": "The conventional aircraft-data name uses weight, while the profile stores the numerical mass equivalent used by the calculator."
+      ]
     },
     "mass.BOW": {
       "full": "Basic operating weight",
@@ -399,8 +366,7 @@
       "use": "Stored reference mass for calculations that use the selected aircraft mass.",
       "dependencies": [
         "aircraft profile"
-      ],
-      "physics": ""
+      ]
     },
     "mass.Heavy": {
       "full": "Heavy reference weight",
@@ -415,8 +381,7 @@
       "use": "User-defined reference mass for calculations that use the selected aircraft mass.",
       "dependencies": [
         "aircraft profile"
-      ],
-      "physics": "Heavy is a user-defined loading reference, not a regulatory weight limit."
+      ]
     },
     "mass.Light": {
       "full": "Light reference weight",
@@ -431,8 +396,7 @@
       "use": "User-defined reference mass for calculations that use the selected aircraft mass.",
       "dependencies": [
         "aircraft profile"
-      ],
-      "physics": "Light is a user-defined loading reference, not a regulatory weight limit."
+      ]
     },
     "CLmaxFlap": {
       "full": "Maximum lift coefficient by flap setting",
@@ -450,8 +414,7 @@
         "mass",
         "air density",
         "wing reference area"
-      ],
-      "physics": "The limiting lift coefficient sets the lowest 1-g speed that can support the aircraft weight. Its value must come from aircraft data for the chosen flap configuration; the calculator does not predict it from geometry."
+      ]
     }
   },
   "results": {
@@ -464,8 +427,7 @@
       "equation": "pISA(Hp) = p",
       "group": "Atmosphere",
       "limits": "Pressure-altitude model: −5 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
-      "abbreviated": "Hp",
-      "physics": "Hydrostatic balance relates pressure to altitude in the layered ISA atmosphere. Inverting that pressure profile gives an equivalent pressure altitude, not a measurement of height above the ground."
+      "abbreviated": "Hp"
     },
     "Geometric Altitude": {
       "full": "Geometric altitude",
@@ -476,8 +438,7 @@
       "equation": "h = r H / (r − H)",
       "group": "Atmosphere",
       "limits": "Pressure-altitude model: −5 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
-      "abbreviated": "Hg",
-      "physics": "Geometric height measures distance above sea level. The spherical-Earth conversion accounts for weakening gravity when converting between geometric and geopotential altitude."
+      "abbreviated": "Hg"
     },
     "Pressure": {
       "full": "Static pressure",
@@ -487,8 +448,7 @@
       "definition": "Absolute static pressure of the surrounding air, related to density and absolute temperature by the ideal gas law.",
       "equation": "p = ρ R T",
       "group": "Atmosphere",
-      "abbreviated": "P",
-      "physics": "The ISA hydrostatic pressure profile represents the weight of the air column above the selected level. Local density then follows the ideal-gas relation using the entered temperature."
+      "abbreviated": "P"
     },
     "Temperature": {
       "full": "Outside air temperature",
@@ -498,8 +458,7 @@
       "definition": "Static temperature of the surrounding air.",
       "equation": "T = TISA(Hp) + ΔT",
       "group": "Atmosphere",
-      "abbreviated": "OAT",
-      "physics": "Static air temperature sets density and sound speed. Adding the ISA temperature offset gives the local temperature without changing the selected pressure level."
+      "abbreviated": "OAT"
     },
     "Delta ISA": {
       "full": "ISA temperature deviation",
@@ -509,8 +468,7 @@
       "definition": "Difference between actual static air temperature and ISA temperature at the same pressure altitude. Positive: warmer than ISA.",
       "equation": "ΔT = T − TISA(Hp)",
       "group": "Atmosphere",
-      "abbreviated": "Δ ISA",
-      "physics": "The temperature offset changes the local thermal state at the same pressure altitude. Warmer air at fixed pressure has lower density; colder air has higher density."
+      "abbreviated": "Δ ISA"
     },
     "True Airspeed": {
       "full": "True airspeed",
@@ -520,8 +478,7 @@
       "definition": "Magnitude of aircraft velocity relative to the surrounding air. Nonnegative.",
       "equation": "TAS = M a",
       "group": "Airspeed",
-      "abbreviated": "TAS",
-      "physics": "True airspeed measures motion through the air mass. Combining it with local density sets dynamic pressure; combining it with local sound speed gives Mach number."
+      "abbreviated": "TAS"
     },
     "Calibrated Airspeed": {
       "full": "Calibrated Airspeed",
@@ -531,8 +488,7 @@
       "definition": "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition. Nonnegative.",
       "equation": "CAS = a0 √[2/(γ−1) ((qc/p0 + 1)^((γ−1)/γ) − 1)]",
       "group": "Airspeed",
-      "abbreviated": "CAS",
-      "physics": "The subsonic isentropic Pitot relation converts actual impact pressure to the speed that gives the same impact pressure at ISA sea level; compressibility is included."
+      "abbreviated": "CAS"
     },
     "Equivalent Airspeed": {
       "full": "Equivalent airspeed",
@@ -542,8 +498,7 @@
       "definition": "Airspeed at ISA sea-level conditions producing the same dynamic pressure as the actual flight condition. Nonnegative.",
       "equation": "EAS = TAS √(ρ/ρ0)",
       "group": "Airspeed",
-      "abbreviated": "EAS",
-      "physics": "Equivalent airspeed preserves dynamic pressure: q = 0.5 ρ TAS² = 0.5 ρ₀ EAS². Unlike CAS, it is not defined by impact pressure."
+      "abbreviated": "EAS"
     },
     "Lift Coefficient CL": {
       "full": "Lift coefficient",
@@ -554,8 +509,7 @@
       "equation": "CL = n m g0 / (q S)",
       "group": "Aerodynamics",
       "limits": "Available when dynamic pressure and reference area are positive. The sign follows the selected load factor.",
-      "abbreviated": "CL",
-      "physics": "The lift equation balances aerodynamic lift against the selected normal load, n times weight. Increasing mass or load factor requires more dynamic pressure or a larger lift coefficient."
+      "abbreviated": "CL"
     },
     "Dynamic Pressure": {
       "full": "Dynamic pressure",
@@ -565,8 +519,7 @@
       "definition": "Kinetic energy per unit volume of the air-relative flow. Nonnegative.",
       "equation": "q = ½ ρ TAS²",
       "group": "Aerodynamics",
-      "abbreviated": "Qdyn",
-      "physics": "Dynamic pressure is kinetic energy per unit volume of moving air. It scales aerodynamic forces and rises with density and the square of true airspeed."
+      "abbreviated": "Qdyn"
     },
     "Impact Pressure": {
       "full": "Impact pressure",
@@ -576,8 +529,7 @@
       "definition": "Difference between stagnation pressure and static pressure. Nonnegative in the adopted subsonic model.",
       "equation": "qc = p [(1 + (γ−1) M²/2)^(γ/(γ−1)) − 1]",
       "group": "Airspeed",
-      "abbreviated": "Qc",
-      "physics": "A pitot opening brings the flow to rest and converts kinetic energy into compression. Impact pressure is stagnation minus static pressure; it approaches dynamic pressure at low Mach number."
+      "abbreviated": "Qc"
     },
     "Bank Angle φ": {
       "full": "Level turn bank angle",
@@ -588,8 +540,7 @@
       "equation": "n = 1 / cos φ",
       "group": "Maneuver",
       "limits": "Coordinated level turn: n ≥ 1 and |bank| < 90°.",
-      "abbreviated": "BankTurn",
-      "physics": "In a coordinated level turn, the vertical component of lift balances weight and the horizontal component provides centripetal acceleration. This gives n = 1/cos(bank), with bank magnitude below 90 degrees."
+      "abbreviated": "BankTurn"
     },
     "Track Angle": {
       "full": "Ground track angle",
@@ -599,8 +550,7 @@
       "definition": "Direction of the aircraft horizontal ground-velocity vector, measured clockwise from true north. Positive: clockwise (ground-velocity vector to the right).",
       "equation": "Vground = Vair + Vwind",
       "group": "Wind",
-      "abbreviated": "Track",
-      "physics": ""
+      "abbreviated": "Track"
     },
     "Heading Angle Ψ": {
       "full": "Aircraft heading",
@@ -610,8 +560,7 @@
       "definition": "Direction in which the aircraft nose points, measured clockwise from true north. Positive: clockwise (nose to the right).",
       "equation": "ψ = aircraft heading",
       "group": "Wind",
-      "abbreviated": "Heading",
-      "physics": ""
+      "abbreviated": "Heading"
     },
     "Drift Angle": {
       "full": "Drift angle",
@@ -621,8 +570,7 @@
       "definition": "Angular difference between heading and ground track (heading minus track). Positive: heading to the right of track.",
       "equation": "drift = ψ − χ",
       "group": "Wind",
-      "abbreviated": "Drift",
-      "physics": ""
+      "abbreviated": "Drift"
     },
     "Sideslip Angle β": {
       "full": "Sideslip angle",
@@ -632,8 +580,7 @@
       "definition": "Angle between the aircraft longitudinal axis and the incoming relative wind. Positive: relative wind coming from the right.",
       "equation": "β = sideslip angle",
       "group": "Wind",
-      "abbreviated": "Sideslip",
-      "physics": ""
+      "abbreviated": "Sideslip"
     },
     "Ground Speed": {
       "full": "Ground speed",
@@ -643,8 +590,7 @@
       "definition": "Magnitude of aircraft horizontal velocity relative to the ground. Nonnegative.",
       "equation": "Vground = Vair + Vwind",
       "group": "Wind",
-      "abbreviated": "Ground Speed",
-      "physics": ""
+      "abbreviated": "Ground Speed"
     },
     "Vs Factor": {
       "full": "Stall speed factor",
@@ -654,8 +600,7 @@
       "definition": "Ratio of current calibrated airspeed to reference 1-g stall speed in CAS. Nonnegative.",
       "equation": "CAS / Vs,CAS",
       "group": "Airspeed",
-      "abbreviated": "Vs Factor",
-      "physics": "This dimensionless output is current CAS divided by the 1-g reference stall CAS. It is not an accelerated-stall speed or a maneuver load factor."
+      "abbreviated": "Vs Factor"
     },
     "Mach": {
       "full": "Mach number",
@@ -666,8 +611,7 @@
       "equation": "M = TAS / a",
       "group": "Airspeed",
       "limits": "0 ≤ M < 1 for the current compressibility model.",
-      "abbreviated": "Mach",
-      "physics": "Mach compares airspeed with the speed of pressure disturbances in the local air. The pitot conversion used here describes subsonic, isentropic deceleration with gamma = 1.4."
+      "abbreviated": "Mach"
     },
     "Wind Speed": {
       "full": "Wind speed",
@@ -677,8 +621,7 @@
       "definition": "Magnitude of horizontal wind velocity. Nonnegative.",
       "equation": "Vw = √(HW² + CW²)",
       "group": "Wind",
-      "abbreviated": "Wind Speed",
-      "physics": ""
+      "abbreviated": "Wind Speed"
     },
     "Wind Direction": {
       "full": "Wind direction from",
@@ -688,8 +631,7 @@
       "definition": "Direction from which the wind blows, measured clockwise from true north. Positive: clockwise (wind-from direction to the right).",
       "equation": "ψw = meteorological wind direction",
       "group": "Wind",
-      "abbreviated": "Wind Direction",
-      "physics": ""
+      "abbreviated": "Wind Direction"
     },
     "Geopotential Altitude": {
       "full": "Geopotential altitude",
@@ -700,8 +642,7 @@
       "equation": "H = r h / (r + h); for Hp/P input, H = Hp − 29.271247 ΔT ln(p/p0)",
       "group": "Atmosphere",
       "limits": "Pressure-altitude model: −5 to 84.852 km geopotential. See the documented geometric-altitude temperature convention.",
-      "abbreviated": "H",
-      "physics": "Geopotential height represents gravitational potential using standard gravity. When derived from pressure altitude, the calculator applies its specified temperature-offset model; this is not simply geometric height."
+      "abbreviated": "H"
     },
     "Density Altitude": {
       "full": "Density altitude",
@@ -711,8 +652,7 @@
       "definition": "ISA altitude corresponding to the actual air density. Positive: above ISA sea level.",
       "equation": "ρISA(Hρ) = ρ",
       "group": "Atmosphere",
-      "abbreviated": "Hρ",
-      "physics": "Density altitude is the ISA level with the same air density as the current condition. It summarizes density effects on aerodynamic forces without claiming that the aircraft is physically at that height."
+      "abbreviated": "Hρ"
     },
     "Temperature Altitude": {
       "full": "Temperature altitude",
@@ -722,8 +662,7 @@
       "definition": "Tropospheric ISA altitude corresponding to actual static temperature, limited to 11 km in this model. Positive: above ISA sea level.",
       "equation": "TISA(HT) = T",
       "group": "Atmosphere",
-      "abbreviated": "HT",
-      "physics": "The calculation uses the tropospheric ISA lapse rate and caps temperatures at or below 216.65 K at 11 km. Temperature alone cannot identify a unique altitude across all ISA layers."
+      "abbreviated": "HT"
     },
     "Density": {
       "full": "Air density",
@@ -733,8 +672,7 @@
       "definition": "Mass of air per unit volume, calculated from static pressure and absolute temperature using the ideal gas law. Positive scalar.",
       "equation": "ρ = p / (R T)",
       "group": "Atmosphere",
-      "abbreviated": "ρ",
-      "physics": "The ideal-gas equation links density to static pressure and absolute temperature for dry air. At the same pressure, heating expands the air and reduces its mass per unit volume."
+      "abbreviated": "ρ"
     },
     "Total Temperature": {
       "full": "Total air temperature",
@@ -744,8 +682,7 @@
       "definition": "Stagnation temperature obtained by adiabatically bringing the air-relative flow to rest.",
       "equation": "Tt = T (1 + (γ−1) M²/2)",
       "group": "Atmosphere",
-      "abbreviated": "TAT",
-      "physics": "Adiabatic deceleration converts kinetic energy into internal energy, raising temperature as the air is brought to rest. The ideal stagnation relation uses a constant specific-heat ratio of 1.4, without a probe recovery correction."
+      "abbreviated": "TAT"
     },
     "Viscosity": {
       "full": "Dynamic viscosity",
@@ -755,8 +692,7 @@
       "definition": "Dynamic viscosity of air relates shear stress to velocity gradient; its temperature dependence is modeled by Sutherland's law. Positive scalar.",
       "equation": "Sutherland relation",
       "group": "Atmosphere",
-      "abbreviated": "μ",
-      "physics": "Air viscosity represents molecular momentum transport. Sutherland's law models its dependence on static temperature: dynamic viscosity increases with temperature and sets the viscous scale in Reynolds number."
+      "abbreviated": "μ"
     },
     "Sound Speed": {
       "full": "Speed of sound",
@@ -766,8 +702,7 @@
       "definition": "Speed of propagation of small pressure disturbances in the surrounding air. Positive scalar.",
       "equation": "a = √(γ R T)",
       "group": "Atmosphere",
-      "abbreviated": "a",
-      "physics": "Small pressure disturbances propagate through ideal air at a speed set by absolute temperature and the specific-heat ratio. Warmer air has a higher sound speed."
+      "abbreviated": "a"
     },
     "Stall Speed Vs": {
       "full": "Reference stall speed",
@@ -777,8 +712,7 @@
       "definition": "Reference 1-g calibrated airspeed at which the required lift coefficient equals CLmax for the selected aircraft mass and configuration. Nonnegative.",
       "equation": "Vs,TAS = √(2 m g0 / (ρ S CLmax)); displayed Vs,CAS = CAS(Vs,TAS)",
       "group": "Airspeed",
-      "abbreviated": "Vs",
-      "physics": "At the 1-g stall reference, maximum lift just balances weight. The result is converted from TAS to CAS; maneuver load factor does not alter this reference value."
+      "abbreviated": "Vs"
     },
     "Reynolds": {
       "full": "Reynolds number",
@@ -788,8 +722,7 @@
       "definition": "Ratio of inertial to viscous effects based on true airspeed and reference chord. Nonnegative.",
       "equation": "Re = ρ TAS cref / μ",
       "group": "Aerodynamics",
-      "abbreviated": "Re",
-      "physics": "Reynolds number compares inertial and viscous effects over the reference chord. Increasing speed, density, or chord increases this ratio; increasing viscosity reduces it."
+      "abbreviated": "Re"
     },
     "Pressure Ratio δ": {
       "full": "Pressure ratio",
@@ -799,8 +732,7 @@
       "definition": "Ratio of local static pressure to standard sea-level pressure. Positive scalar.",
       "equation": "δ = p / p0",
       "group": "Atmosphere",
-      "abbreviated": "δ",
-      "physics": "Dividing static pressure by standard sea-level pressure gives a dimensionless atmospheric pressure scale. It is used to normalize weight and compare conditions across pressure levels."
+      "abbreviated": "δ"
     },
     "Density Ratio σ": {
       "full": "Density ratio",
@@ -810,8 +742,7 @@
       "definition": "Ratio of local air density to standard sea-level density. Positive scalar.",
       "equation": "σ = ρ / ρ0",
       "group": "Atmosphere",
-      "abbreviated": "σ",
-      "physics": "The density ratio compares local air density with standard sea-level density. Its square root relates true and equivalent airspeed at equal dynamic pressure."
+      "abbreviated": "σ"
     },
     "Temperature Ratio θ": {
       "full": "Temperature ratio",
@@ -821,8 +752,7 @@
       "definition": "Ratio of local absolute temperature to standard sea-level absolute temperature. Positive scalar.",
       "equation": "θ = T / T0",
       "group": "Atmosphere",
-      "abbreviated": "θ",
-      "physics": "The temperature ratio compares absolute local temperature with the standard sea-level temperature. Absolute temperature is required because molecular thermal energy sets sound speed and the ideal-gas density relation."
+      "abbreviated": "θ"
     },
     "Total Pressure": {
       "full": "Total pressure",
@@ -832,8 +762,7 @@
       "definition": "Stagnation pressure of the air-relative flow under isentropic conditions.",
       "equation": "pt = p + qc",
       "group": "Airspeed",
-      "abbreviated": "pt",
-      "physics": "Stagnation pressure is the pressure after ideal subsonic, isentropic deceleration to rest. Adding pitot impact pressure to static pressure gives this total pressure; shocks and flow losses are not modeled."
+      "abbreviated": "pt"
     },
     "DynPressure * S / g": {
       "full": "Dynamic pressure force equivalent",
@@ -843,8 +772,7 @@
       "definition": "Aerodynamic reference force qS expressed numerically in kilogram-force (kgf). Nonnegative.",
       "equation": "q S / g0 (displayed as kgf)",
       "group": "Aerodynamics",
-      "abbreviated": "qS/g0",
-      "physics": "Dynamic pressure times reference area gives an aerodynamic force scale before multiplying by a force coefficient. Dividing by standard gravity expresses that force in kgf; it is not aircraft mass."
+      "abbreviated": "qS/g0"
     },
     "Lift Force": {
       "full": "Lift force",
@@ -854,8 +782,7 @@
       "definition": "Aerodynamic lift force required by the selected load factor. Positive: lift toward the aircraft upper side.",
       "equation": "L / g0 = q S CL / g0 (displayed as kgf)",
       "group": "Aerodynamics",
-      "abbreviated": "L",
-      "physics": "Lift is dynamic pressure times reference area and lift coefficient, and equals the selected normal load times weight. The displayed kgf value converts that force using standard gravity."
+      "abbreviated": "L"
     },
     "Weight/Delta W/δ": {
       "full": "Weight divided by pressure ratio",
@@ -865,8 +792,7 @@
       "definition": "Aircraft weight divided by atmospheric pressure ratio δ. Positive for positive aircraft weight.",
       "equation": "W / (δ g0) (displayed as kgf)",
       "group": "Aerodynamics",
-      "abbreviated": "W/δ",
-      "physics": "Dividing weight by pressure ratio normalizes the aircraft load to standard sea-level pressure. The kgf display is a force normalization, not a change in the actual aircraft mass."
+      "abbreviated": "W/δ"
     },
     "Load Factor Nz": {
       "full": "Normal load factor",
@@ -876,8 +802,7 @@
       "definition": "Ratio of aerodynamic lift to aircraft weight. Positive: lift toward the aircraft upper side.",
       "equation": "n = 1 / cos φ (coordinated level turn)",
       "group": "Maneuver",
-      "abbreviated": "n",
-      "physics": "Normal load factor measures lift relative to weight. In the level-turn mode it follows the vertical lift balance; in pull-up mode it is supplied directly."
+      "abbreviated": "n"
     },
     "Turn Radius": {
       "full": "Turn radius",
@@ -887,8 +812,7 @@
       "definition": "Signed radius of a coordinated level turn relative to the air mass. Positive: right turn. Negative: left turn.",
       "equation": "r = TAS² / (g0 tan φ)",
       "group": "Maneuver",
-      "abbreviated": "r",
-      "physics": "The radius and turn rate use true airspeed in a coordinated level-turn model. A steady wind translates the air-relative circular path; the ground path is not generally circular."
+      "abbreviated": "r"
     },
     "Turn Rate": {
       "full": "Turn rate",
@@ -898,8 +822,7 @@
       "definition": "Rate of change of aircraft heading in a coordinated level turn. Positive: clockwise (right turn).",
       "equation": "ω = g0 tan φ / TAS",
       "group": "Maneuver",
-      "abbreviated": "ω",
-      "physics": "The rate is calculated for a coordinated, constant-altitude turn using true airspeed and bank angle. The sign follows turn direction, not wind direction."
+      "abbreviated": "ω"
     },
     "AlongTrack Headwind": {
       "full": "Along-track headwind",
@@ -909,8 +832,7 @@
       "definition": "Wind component along the aircraft ground track. Positive: wind from ahead. Negative: tailwind.",
       "equation": "Projection against ground track",
       "group": "Wind",
-      "abbreviated": "HWχ",
-      "physics": ""
+      "abbreviated": "HWχ"
     },
     "AlongTrack Crosswind": {
       "full": "Along-track crosswind",
@@ -920,8 +842,7 @@
       "definition": "Wind component perpendicular to the aircraft ground track. Positive: wind coming from the right. Negative: wind from the left.",
       "equation": "Projection across ground track",
       "group": "Wind",
-      "abbreviated": "CWχ",
-      "physics": ""
+      "abbreviated": "CWχ"
     }
   }
 }

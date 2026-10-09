@@ -401,7 +401,6 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 	Dim defText As String = ""
 	Dim eqText As String = ""
 	Dim unitText As String = ""
-	Dim modelText As String = ""
 
 	If rawParts.Length > 0 And rawParts(0).Trim.Length > 0 Then
 		headerTitle = rawParts(0).Trim
@@ -416,11 +415,6 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 			eqText = part.SubString(9).Trim
 		Else If part.StartsWith("SI/reference unit:") Then
 			unitText = part.SubString(18).Trim
-		Else If part.StartsWith("Model Physics:") Then
-			modelText = part.SubString(14).Trim
-		Else If part.StartsWith("Typical range:") Then
-			If modelText.Length > 0 Then modelText = modelText & CRLF
-			modelText = modelText & part
 		Else If defText.Length = 0 Then
 			defText = part
 		End If
@@ -484,28 +478,7 @@ Public Sub ShowHelp(act As Activity, key As String, fullText As String)
 		y = y + eqH + 8dip + 14dip
 	End If
 
-	' 3. Model / Limits
-	If modelText.Length > 0 Then
-		Dim lblModelHdr As Label
-		lblModelHdr.Initialize("")
-		lblModelHdr.Text = "MODEL PHYSICS"
-		lblModelHdr.TextColor = SectionHeaderColor(Colors.RGB(0, 102, 74), Colors.RGB(0, 180, 120)) ' emerald green
-		lblModelHdr.TextSize = 12
-		lblModelHdr.Typeface = Typeface.DEFAULT_BOLD
-		scvHelp.Panel.AddView(lblModelHdr, 20dip, y, contentW, 20dip)
-		y = y + 22dip
-
-		Dim lblModelBody As Label
-		lblModelBody.Initialize("")
-		lblModelBody.Text = modelText
-		lblModelBody.TextColor = mTextColor
-		lblModelBody.TextSize = 13.5
-		Dim modH As Int = MeasureLabelHeight(lblModelBody, modelText, 13.5, contentW)
-		scvHelp.Panel.AddView(lblModelBody, 20dip, y, contentW, modH)
-		y = y + modH + 14dip
-	End If
-
-	' 4. SI / Reference Unit
+	' 3. SI / Reference Unit
 	If unitText.Length > 0 Then
 		Dim lblUnitHdr As Label
 		lblUnitHdr.Initialize("")

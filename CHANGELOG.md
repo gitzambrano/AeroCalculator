@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Removed the separate **Model Physics** section from all Android and web help. Existing parameter definitions, equations, and reference units remain unchanged.
+- Removed obsolete model fields and associated display logic and adjusted regression tests to enforce definition-only help.
 - Clarified seven physical definitions (ideal gas law for pressure/density, Sutherland viscosity, dynamic pressure, lift coefficient, maximum lift coefficient, and 1-g CAS stall speed).
 - Synchronized corresponding definitions between the Android and web help catalogs, input helpers, and output helpers without altering equations or numerical physics.
 - Recessed all Android dropdown triangles by 2 dp, preserving selector text width through a compensated drawable gap and left padding; matched a 4 px edge inset on web.

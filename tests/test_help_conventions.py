@@ -23,9 +23,8 @@ def _web_entries() -> dict[str, dict[str, str]]:
         key = json.loads('"' + match.group(1) + '"')
         body = match.group(2)
         desc = re.search(r'^    desc: ("(?:\\.|[^"\\])*"),\s*$', body, re.MULTILINE)
-        model = re.search(r'^    model: ("(?:\\.|[^"\\])*"),\s*$', body, re.MULTILINE)
-        if desc and model:
-            entries[key] = {"definition": json.loads(desc.group(1)), "physics": json.loads(model.group(1))}
+        if desc:
+            entries[key] = {"definition": json.loads(desc.group(1))}
     return entries
 
 
@@ -58,20 +57,29 @@ class HelpConventionTests(unittest.TestCase):
         for section in ("inputs", "results", "editor"):
             for key, item in CAT[section].items():
                 with self.subTest(section=section, key=key):
-                    # Both clients use the same definition and physical intuition.
+                    # Both clients use the same concise definition.
                     android_key = "Vs Factor Output" if section == "results" and key == "Vs Factor" else key
                     web_key = android_key
                     self.assertIn(android_key, android)
                     self.assertIn("Definition: " + item["definition"], android[android_key])
-                    if item["physics"]:
-                        self.assertIn("Model Physics: " + item["physics"], android[android_key])
                     self.assertIn(web_key, web)
                     self.assertEqual(item["definition"], web[web_key]["definition"])
-                    self.assertEqual(item["physics"], web[web_key]["physics"])
                     if section == "inputs":
                         self.assertEqual(item["definition"], input_helper[key])
                     if section == "results":
                         self.assertEqual(item["definition"], result_helper[key])
+
+    def test_no_separate_model_physics_in_any_help(self):
+        for section, items in CAT.items():
+            for key, item in items.items():
+                with self.subTest(section=section, key=key):
+                    self.assertNotIn("physics", item)
+                    self.assertTrue(item["definition"].strip())
+        self.assertNotIn("Model Physics", ANDROID)
+        self.assertNotIn("Model Physics", MAIN_B4A)
+        self.assertNotIn("model: ", WEB)
+        self.assertNotIn('result-tooltip-range-box', WEB_MAIN)
+        self.assertNotIn('modelText', (ROOT / "ClsBottomSheet.bas").read_text(encoding="utf-8-sig"))
 
     def test_common_quantities_are_identical_across_input_output(self):
         pairs = (
@@ -111,8 +119,7 @@ class HelpConventionTests(unittest.TestCase):
         self.assertIn("same impact pressure", CAT["inputs"]["CAS"]["definition"])
         self.assertIn("same dynamic pressure", CAT["inputs"]["EAS"]["definition"])
         self.assertIn("manufacturer", CAT["editor"]["mass.BOW"]["definition"])
-        self.assertIn("molecular momentum transport", CAT["results"]["Viscosity"]["physics"])
-        self.assertIn("11 km", CAT["results"]["Temperature Altitude"]["physics"])
+        self.assertIn("11 km", CAT["results"]["Temperature Altitude"]["definition"])
         self.assertIn('showContextualHelp(name === "Vs Factor" ? "Vs Factor Output" : name)', WEB_MAIN)
         self.assertIn('If k = "Vs Factor" Then k = "Vs Factor Output"', MAIN_B4A)
 

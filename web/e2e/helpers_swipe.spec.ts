@@ -137,7 +137,7 @@ test.describe("helpers and swipe navigation", () => {
       const sheet = document.querySelector<HTMLElement>("#modal-result-tooltip .help-sheet")
         ?? document.querySelector<HTMLElement>("#modal-result-tooltip .modal-content")!;
       const bg = lum(rgb(getComputedStyle(sheet).backgroundColor));
-      return [".help-model-hdr", ".help-unit-hdr"].map((selector) => {
+      return [".help-unit-hdr"].map((selector) => {
         const fg = lum(rgb(getComputedStyle(document.querySelector(selector)!).color));
         return (Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05);
       });

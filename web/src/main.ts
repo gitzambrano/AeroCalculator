@@ -450,10 +450,6 @@ app.innerHTML = `
         <div class="modal-body">
           <div id="result-tooltip-desc" style="font-size: 14.5px; line-height: 1.6; color: var(--button-text); margin-bottom: 14px;"></div>
           <div id="result-tooltip-eq-box" style="display: none;"></div>
-          <div id="result-tooltip-range-box" style="display: none; font-size: 13.5px; margin-bottom: 10px;">
-            <span class="help-model-hdr">Model Physics: </span>
-            <span id="result-tooltip-range-text" style="color: var(--button-text);"></span>
-          </div>
           <div id="result-tooltip-unit-box" style="display: none; font-size: 13.5px; margin-bottom: 16px;">
             <span class="help-unit-hdr">SI / Reference Unit: </span>
             <span id="result-tooltip-unit-text" style="color: var(--button-text); font-weight: 700;"></span>
@@ -493,7 +489,6 @@ export function showContextualHelp(key: string): void {
     title: key,
     desc: RESULT_HELPERS[key] || `Technical documentation for ${key}.`,
     eq: "",
-    model: "",
     unit: "",
   };
 
@@ -514,15 +509,6 @@ export function showContextualHelp(key: string): void {
   } else if (eqBox) {
     eqBox.innerHTML = "";
     eqBox.style.display = "none";
-  }
-
-  const rangeBox = byId("result-tooltip-range-box");
-  const rangeText = byId("result-tooltip-range-text");
-  if (item.model && rangeBox && rangeText) {
-    rangeText.textContent = item.model;
-    rangeBox.style.display = "block";
-  } else if (rangeBox) {
-    rangeBox.style.display = "none";
   }
 
   const unitBox = byId("result-tooltip-unit-box");
