@@ -1,15 +1,5 @@
 # Changelog
 
-## [3.36.1] - 2026-10-08
-
-### Fixed (web only)
-
-- Made input unit dropdowns reliably open the themed choice sheet on mouse clicks and touch taps, using an accessible button above the native select.
-- Preserved long-press contextual help, keyboard access, and physical-value conversion when units change.
-- Kept dimensionless inputs disabled and re-enabled the unit control when the input quantity changes back.
-- Added real browser click, touch, keyboard, and long-press regression tests.
-
-
 ## [3.36] - 2026-10-08
 
 ### Changed
@@ -18,6 +8,12 @@
 - Synchronized corresponding definitions between the Android and web help catalogs, input helpers, and output helpers without altering equations or numerical physics.
 - Recessed all Android dropdown triangles by 2 dp, preserving selector text width through a compensated drawable gap and left padding; matched a 4 px edge inset on web.
 - Added comprehensive help-parity and selector-padding regression tests.
+
+### Fixed (web)
+
+- Restored reliable unit dropdown opening on touch and mouse with an accessible button over the native unit select.
+- Preserved long-press help, keyboard access, physical-value conversion, and dimensionless input state.
+- Added browser-level click, touch, keyboard, and long-press regression tests.
 
 
 ## [3.35] - 2026-10-08
