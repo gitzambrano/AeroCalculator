@@ -99,7 +99,7 @@ test.describe("helpers and swipe navigation", () => {
     for (const fieldId of fieldIds) {
       const unit = page.locator(`#${fieldId}-unit`);
       if (await unit.isDisabled()) continue;
-      await unit.click();
+      await page.locator(`#${fieldId}-unit-trigger`).click();
       await expect(page.locator("#modal-options-selector")).toBeVisible();
       await expect(page.locator("#modal-options-selector .option-item").first()).toBeVisible();
       await page.locator("#options-selector-cancel").click();

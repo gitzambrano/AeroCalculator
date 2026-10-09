@@ -1469,7 +1469,10 @@ function createInputRow(field: Field): HTMLElement {
     if (event.pointerType === "touch" && touchPointerId === event.pointerId && !pointerMoved && !longPressed) {
       ignoreSyntheticClickUntil = performance.now() + 650;
       event.preventDefault();
-      openUnit();
+      // Let the browser dispatch its compatibility click first. If the
+      // sheet appears during pointerup, the synthetic click may be retargeted
+      // to its backdrop and immediately close it.
+      window.setTimeout(openUnit, 45);
     }
     touchPointerId = null;
   });

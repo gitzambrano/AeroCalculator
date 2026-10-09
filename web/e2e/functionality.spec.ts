@@ -101,7 +101,7 @@ test("custom airplane and About follow the current theme and APK version", async
   await page.locator("#more-menu").click();
   await page.locator('[data-menu="about"]').click();
   await expect(page.locator("#about-dialog")).toBeVisible();
-  await expect(page.locator("#about-version")).toHaveText(/d{4} \/ version 3\.36/);
+  await expect(page.locator("#about-version")).toHaveText(/\d{4} \/ version 3\.36/);
   await expect(page.locator("#about-dialog")).toContainText("Gustavo José Zambrano");
   await expect(page.locator("#about-dialog")).toContainText("flightdyn@gmail.com");
 });
