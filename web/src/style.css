@@ -471,6 +471,11 @@ sub.hp-sub {
 .page.active {
   touch-action: pan-y;
 }
+/* Horizontal page gestures must start over selectors without opening them. */
+#page-inputs .field-select-wrap,
+#page-inputs .unit-select-trigger {
+  touch-action: pan-y;
+}
 .page.swipe-in-left {
   animation: page-swipe-in-left 170ms ease-out;
 }
@@ -746,19 +751,25 @@ sub.hp-sub {
   box-shadow: 0 8px 32px rgb(0 0 0 / 0.18);
 }
 .profile-dialog {
-  width: min(calc(100% - 32px), 860px);
-  height: auto;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   max-width: none;
-  max-height: min(calc(100dvh - 32px), 850px);
-  margin: 16px auto;
-  border-radius: 16px;
+  max-height: none;
+  box-sizing: border-box;
+  margin: 0;
+  border-radius: 0;
   overflow: hidden;
 }
 .profile-dialog::backdrop, .simple-dialog::backdrop { background: rgb(0 0 0 / 0.38); }
-.profile-dialog form { max-height: min(calc(100dvh - 32px), 850px); display: flex; flex-direction: column; }
+.profile-dialog form { height: 100%; max-height: none; display: flex; flex-direction: column; }
 .editor-toolbar {
-  height: 50px;
-  flex: 0 0 50px;
+  height: calc(50px + env(safe-area-inset-top));
+  flex: 0 0 calc(50px + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: 1fr 1fr;
   background: var(--title);
@@ -773,9 +784,10 @@ sub.hp-sub {
 .editor-toolbar button + button { border-left: 1px solid white; }
 .editor-scroll {
   overflow-y: auto;
-  max-height: calc(100dvh - 82px);
+  max-height: none;
   flex: 1 1 auto;
   min-height: 0;
+  padding-bottom: env(safe-area-inset-bottom);
   background: var(--input-bg);
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -1350,13 +1362,7 @@ sub.hp-sub {
   .field-select { padding-right: 12px; background-position: right 4px center, center; }
   .field-select-display { padding-right: 12px; }
   .result-row { padding-left: 4px; padding-right: 4px; }
-  .profile-dialog {
-    width: calc(100% - 16px);
-    height: auto;
-    max-height: calc(100dvh - 24px);
-    margin: 12px auto;
-    border-radius: 14px;
-  }
+  /* Airplane editor remains full-screen on small viewports. */
   .airplane-list-row { grid-template-columns: 44px minmax(0, 1fr) 44px 44px 44px; }
   #result-tooltip-eq-box .katex { font-size: 1.0em; }
 }

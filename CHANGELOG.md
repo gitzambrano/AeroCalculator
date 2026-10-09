@@ -16,6 +16,14 @@
 - Added browser-level click, touch, keyboard, and long-press regression tests.
 - Fixed stale PWA pages by fetching navigation documents from the network first, while retaining offline fallback.
 - Reloads previously controlled tabs on service-worker upgrades; preserves unrelated caches on the same origin.
+- Opened the aircraft editor as a true full-screen dialog on mobile and desktop.
+- Converted aircraft editor wing area, chord, and all six reference weights when a unit changes; retained empty fields and physical values on round trips.
+- Prevented horizontal swipe navigation from activating input controls or long-press help inadvertently.
+- Added desktop and mobile end-to-end coverage for editor layout, unit conversion, and swipe suppression.
+
+### Fixed (Android)
+
+- Converted aircraft editor area, chord, and the six reference weights on unit selection, matching input behavior.
 
 
 ## [3.35] - 2026-10-08

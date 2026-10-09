@@ -1063,6 +1063,50 @@ Public Sub VibrateTap
 	End Try
 End Sub
 
+' Convert the numerical field as its unit changes, preserving physical meaning.
+' Retain blanks and unfinished text without silently replacing it with zero.
+Private Sub ConvertAircraftEdit(Field As EditText, OldFactor As Double, NewFactor As Double)
+	If Not(Field.IsInitialized) Or NewFactor = 0 Then Return
+	Dim raw As String = Field.Text.Trim.Replace(",", ".")
+	If raw.Length = 0 Or Not(IsNumber(raw)) Then Return
+	Dim currentValue As Double = raw
+	Dim converted As Double = currentValue * OldFactor / NewFactor
+	Field.Text = NumberFormat2(converted, 1, 12, 0, False)
+End Sub
+
+Private Sub AircraftAreaFactor(Index As Int) As Double
+	Select Index
+		Case 0: Return 1
+		Case 1: Return 0.3048 * 0.3048
+		Case 2: Return 0.0254 * 0.0254
+		Case 3: Return 0.01 * 0.01
+		Case 4: Return 0.001 * 0.001
+	End Select
+	Return 1
+End Sub
+
+Private Sub AircraftLengthFactor(Index As Int) As Double
+	Select Index
+		Case 0: Return 1
+		Case 1: Return 0.3048
+		Case 2: Return 0.0254
+		Case 3: Return 0.01
+		Case 4: Return 0.001
+	End Select
+	Return 1
+End Sub
+
+Private Sub AircraftWeightFactor(Index As Int) As Double
+	Select Index
+		Case 0: Return 1
+		Case 1: Return 0.45359237
+		Case 2: Return 1000
+		Case 3: Return 14.5939029
+		Case 4: Return 0.028349523125
+	End Select
+	Return 1
+End Sub
+
 Sub btnSrefUnit_Click
 	VibrateTap
 	Dim items As List
@@ -1075,6 +1119,7 @@ Sub btnSrefUnit_Click
 	Dim record As Int = indSrefUnit
 	Wait For (AeroSheet.Show(Activity, items, "Wing Area Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then ConvertAircraftEdit(edtSref, AircraftAreaFactor(record), AircraftAreaFactor(idx))
 	indSrefUnit = idx
 	SrefUnit
 End Sub
@@ -1106,6 +1151,7 @@ Sub btncrefUnit_Click
 	Dim record As Int = indcrefUnit
 	Wait For (AeroSheet.Show(Activity, items, "Wing Chord Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then ConvertAircraftEdit(edtcref, AircraftLengthFactor(record), AircraftLengthFactor(idx))
 	indcrefUnit = idx
 	crefUnit
 End Sub
@@ -1137,6 +1183,16 @@ Sub btnWeightUnit_Click
 	Dim record As Int = indWeightUnit
 	Wait For (AeroSheet.Show(Activity, items, "Aircraft Mass Unit", record)) Complete (idx As Int)
 	If idx < 0 Then Return
+	If idx <> record Then
+		Dim oldFactor As Double = AircraftWeightFactor(record)
+		Dim newFactor As Double = AircraftWeightFactor(idx)
+		ConvertAircraftEdit(edtWeight1, oldFactor, newFactor)
+		ConvertAircraftEdit(edtWeight2, oldFactor, newFactor)
+		ConvertAircraftEdit(edtWeight3, oldFactor, newFactor)
+		ConvertAircraftEdit(edtWeight4, oldFactor, newFactor)
+		ConvertAircraftEdit(edtWeight5, oldFactor, newFactor)
+		ConvertAircraftEdit(edtWeight6, oldFactor, newFactor)
+	End If
 	indWeightUnit = idx
 	WeightUnit
 End Sub

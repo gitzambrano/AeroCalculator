@@ -491,6 +491,107 @@ test("selecting an airplane starts from its first weight and flap", async ({ pag
   await expect(page.locator("#clmax-value")).toHaveValue("1.7");
 });
 
+test("airplane editor fills the viewport and unit changes preserve geometry and all six weights", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Add airplane" }).click();
+  const editor = page.locator("#profile-editor");
+  await expect(editor).toBeVisible();
+  const fullSize = await editor.evaluate((el) => {
+    const bounds = el.getBoundingClientRect();
+    return {
+      x: bounds.x, y: bounds.y,
+      width: bounds.width, height: bounds.height,
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+    };
+  });
+  expect(Math.abs(fullSize.x)).toBeLessThan(1.5);
+  expect(Math.abs(fullSize.y)).toBeLessThan(1.5);
+  expect(Math.abs(fullSize.width - fullSize.viewportWidth)).toBeLessThan(1.5);
+  expect(Math.abs(fullSize.height - fullSize.viewportHeight)).toBeLessThan(1.5);
+
+  await fill(page, "profile-sref", "10");
+  await fill(page, "profile-cref", "2");
+  await fill(page, "profile-weight-MTOW", "10000");
+  await fill(page, "profile-weight-MLW", "9000");
+  await fill(page, "profile-weight-MZFW", "8000");
+  await fill(page, "profile-weight-BOW", "7000");
+  await fill(page, "profile-weight-Heavy", "6000");
+  // Light intentionally blank and must remain blank when the unit changes.
+
+  await page.locator("#profile-sref-unit").selectOption("ft²");
+  expect(Number(await page.locator("#profile-sref").inputValue())).toBeCloseTo(107.639104167, 7);
+  await page.locator("#profile-cref-unit").selectOption("ft");
+  expect(Number(await page.locator("#profile-cref").inputValue())).toBeCloseTo(6.56167979003, 7);
+  await page.locator("#profile-weight-unit").selectOption("lb");
+  for (const [key, value] of [
+    ["MTOW", 10000], ["MLW", 9000], ["MZFW", 8000], ["BOW", 7000], ["Heavy", 6000],
+  ] as const) {
+    expect(Number(await page.locator(`#profile-weight-${key}`).inputValue()))
+      .toBeCloseTo(value / 0.45359237, 6);
+  }
+  await expect(page.locator("#profile-weight-Light")).toHaveValue("");
+
+  // A round trip should preserve the physical value without cumulative rounding.
+  await page.locator("#profile-sref-unit").selectOption("m²");
+  await page.locator("#profile-cref-unit").selectOption("m");
+  await page.locator("#profile-weight-unit").selectOption("kg");
+  expect(Number(await page.locator("#profile-sref").inputValue())).toBeCloseTo(10, 8);
+  expect(Number(await page.locator("#profile-cref").inputValue())).toBeCloseTo(2, 8);
+  expect(Number(await page.locator("#profile-weight-MTOW").inputValue())).toBeCloseTo(10000, 7);
+});
+
+test.describe("mobile airplane editor and input swipes", () => {
+  test.use({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
+
+  test("airplane editor is truly full-screen on a phone with working unit conversions", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Add airplane" }).tap();
+    const box = await page.locator("#profile-editor").boundingBox();
+    expect(box).not.toBeNull();
+    expect(Math.abs(box!.x)).toBeLessThan(1.5);
+    expect(Math.abs(box!.y)).toBeLessThan(1.5);
+    expect(Math.abs(box!.width - 375)).toBeLessThan(1.5);
+    expect(Math.abs(box!.height - 812)).toBeLessThan(1.5);
+
+    await fill(page, "profile-sref", "1");
+    await page.locator("#profile-sref-unit").selectOption("in²");
+    expect(Number(await page.locator("#profile-sref").inputValue())).toBeCloseTo(1550.003100006, 6);
+    await expect(page.locator("#profile-save")).toBeVisible();
+  });
+
+  test("horizontal swipe across a unit button switches tabs without activating its dropdown", async ({ page }) => {
+    await page.goto("/");
+    const outcome = await page.evaluate(() => {
+      const trigger = document.querySelector<HTMLElement>("#alt-unit-trigger");
+      if (!trigger) throw new Error("Unit trigger missing");
+      const send = (type: string, x: number, y: number) =>
+        trigger.dispatchEvent(new PointerEvent(type, {
+          bubbles: true, cancelable: true, pointerType: "touch",
+          pointerId: 42, isPrimary: true, clientX: x, clientY: y,
+        }));
+      send("pointerdown", 300, 350);
+      send("pointermove", 238, 350);
+      send("pointermove", 184, 350);
+      send("pointerup", 184, 350);
+      trigger.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      return {
+        currentPage: document.querySelector<HTMLButtonElement>('.tab[aria-selected="true"]')?.dataset.page,
+        unitModalOpen: document.querySelector("#modal-options-selector")?.classList.contains("open"),
+        helpOpen: document.querySelector("#modal-result-tooltip")?.classList.contains("open"),
+      };
+    });
+    expect(outcome.currentPage).toBe("airplanes");
+    expect(outcome.unitModalOpen).toBe(false);
+    expect(outcome.helpOpen).toBe(false);
+
+    // The next intentional tap must work immediately, not be swallowed by swipe filtering.
+    await page.getByRole("button", { name: "INPUTS", exact: true }).tap();
+    await page.locator("#alt-unit-trigger").tap();
+    await expect(page.locator("#modal-options-selector")).toHaveClass(/open/);
+  });
+});
+
 test("editor cancel asks before discarding only when something changed", async ({ page }) => {
   await page.goto("/");
   let dialogs = 0;

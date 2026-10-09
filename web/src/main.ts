@@ -555,6 +555,8 @@ document.addEventListener("keydown", (e) => {
 function installTechnicalHold(target: HTMLElement, keyProvider: () => string): void {
   let timer: number | undefined;
   let fired = false;
+  let downX = 0;
+  let downY = 0;
 
   const clearTimer = (): void => {
     if (timer !== undefined) window.clearTimeout(timer);
@@ -564,6 +566,8 @@ function installTechnicalHold(target: HTMLElement, keyProvider: () => string): v
   target.addEventListener("pointerdown", (event) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
     fired = false;
+    downX = event.clientX;
+    downY = event.clientY;
     clearTimer();
     timer = window.setTimeout(() => {
       fired = true;
@@ -578,6 +582,9 @@ function installTechnicalHold(target: HTMLElement, keyProvider: () => string): v
       event.preventDefault();
       event.stopPropagation();
     }
+  });
+  target.addEventListener("pointermove", (event) => {
+    if (Math.hypot(event.clientX - downX, event.clientY - downY) > 10) clearTimer();
   });
   target.addEventListener("pointercancel", clearTimer);
   target.addEventListener("pointerleave", clearTimer);
@@ -1353,12 +1360,19 @@ function createInputRow(field: Field): HTMLElement {
 
   let timer: number | undefined;
   let held = false;
-  wrap.addEventListener("pointerdown", () => {
+  let downX = 0;
+  let downY = 0;
+  wrap.addEventListener("pointerdown", (event) => {
     held = false;
+    downX = event.clientX;
+    downY = event.clientY;
     timer = window.setTimeout(() => {
       held = true;
       showContextualHelp(type.value);
     }, 550);
+  });
+  wrap.addEventListener("pointermove", (event) => {
+    if (Math.hypot(event.clientX - downX, event.clientY - downY) > 10) window.clearTimeout(timer);
   });
   ["pointerup", "pointercancel", "pointerleave"].forEach((evt) =>
     wrap.addEventListener(evt, () => window.clearTimeout(timer))
@@ -1475,13 +1489,18 @@ function initializeSwipeNavigation(): void {
   let startY = 0;
   let startTime = 0;
   let tracking = false;
+  let movedHorizontally = false;
+  let suppressClickUntil = 0;
 
   shell.addEventListener("pointerdown", (event) => {
     if (event.pointerType !== "touch" || document.querySelector("dialog[open], .modal-overlay.open")) return;
+    // Each new gesture may be a genuine tap, even immediately after a swipe.
+    suppressClickUntil = 0;
     pointerId = event.pointerId;
     startX = event.clientX;
     startY = event.clientY;
     startTime = performance.now();
+    movedHorizontally = false;
     tracking = true;
   });
 
@@ -1489,8 +1508,21 @@ function initializeSwipeNavigation(): void {
     if (!tracking || event.pointerId !== pointerId) return;
     const dx = event.clientX - startX;
     const dy = event.clientY - startY;
+    if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      movedHorizontally = true;
+      suppressClickUntil = performance.now() + 550;
+    }
     if (Math.abs(dx) > 24 && Math.abs(dx) > Math.abs(dy) * 1.2) event.preventDefault();
   }, { passive: false });
+
+  // Some mobile browsers dispatch a click after pointerup, even if a swipe
+  // navigated to another tab. Intercept it before input/select handlers.
+  shell.addEventListener("click", (event) => {
+    if (performance.now() > suppressClickUntil) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    suppressClickUntil = 0;
+  }, true);
 
   const finish = (event: PointerEvent): void => {
     if (!tracking || event.pointerId !== pointerId) return;
@@ -1500,6 +1532,7 @@ function initializeSwipeNavigation(): void {
     const dx = event.clientX - startX;
     const dy = event.clientY - startY;
     const elapsed = performance.now() - startTime;
+    if (movedHorizontally) suppressClickUntil = performance.now() + 550;
     if (elapsed > 900 || Math.abs(dx) < 55 || Math.abs(dx) <= Math.abs(dy) * 1.25) return;
 
     const current = currentPageName();
@@ -1999,7 +2032,42 @@ function openProfileEditor(id?: string): void {
   byId("profile-delete-wrap").hidden = !profile;
   (byId("profile-editor") as HTMLDialogElement).showModal();
   fitEditorChordLabel();
+  for (const id of ["sref", "cref", "weight"]) {
+    const selector = byId(`profile-${id}-unit`) as HTMLSelectElement;
+    selector.dataset.previousValue = selector.value;
+  }
   editorSnapshot = editorState();
+}
+
+// Convert only populated numeric fields and preserve the underlying physical
+// quantity when an editor unit is changed. Empty fields stay empty.
+function convertProfileEditorUnit(
+  selectorId: string,
+  fieldsToConvert: string[],
+  factorToBase: (value: number, unit: string) => number
+): void {
+  const unit = byId(selectorId) as HTMLSelectElement;
+  const oldUnit = unit.dataset.previousValue ?? unit.value;
+  const newUnit = unit.value;
+  unit.dataset.previousValue = newUnit;
+  if (oldUnit === newUnit) return;
+  const ratio = factorToBase(1, oldUnit) / factorToBase(1, newUnit);
+  for (const id of fieldsToConvert) {
+    const field = byId(id) as HTMLInputElement;
+    const raw = field.value.trim();
+    if (!raw) continue;
+    const original = Number(raw.replace(",", "."));
+    if (!Number.isFinite(original)) continue;
+    const converted = original * ratio;
+    if (Number.isFinite(converted)) field.value = String(Number(converted.toPrecision(12)));
+  }
+}
+for (const [unitId, values, conversion] of [
+  ["profile-sref-unit", ["profile-sref"], units.areaToM2],
+  ["profile-cref-unit", ["profile-cref"], lengthAnyToM],
+  ["profile-weight-unit", WEIGHT_KEYS.map((key) => `profile-weight-${key}`), units.massToKg],
+] as const) {
+  byId(unitId).addEventListener("change", () => convertProfileEditorUnit(unitId, [...values], conversion));
 }
 
 // Values of every editor field; Cancel asks before discarding only when this changed.
