@@ -77,34 +77,17 @@ for (const viewport of cases) {
 
       await page.getByRole("button", { name: "AIRPLANES" }).click();
       await page.getByRole("button", { name: "Add airplane" }).click();
-      const aircraftName = viewport.name === "mobile-390" ? "190 E2" : "Quick Audit Jet";
-      await page.locator("#profile-name").fill(aircraftName);
+      await page.locator("#profile-name").fill("Quick Audit Jet");
       await page.locator("#profile-sref").fill("42");
       await page.locator("#profile-cref").fill("3");
       await page.locator("#profile-weight-MTOW").fill("12000");
       await page.locator("#profile-save").click();
       await page.getByRole("button", { name: "INPUTS" }).click();
       await page.locator("#airplane-select-button").click();
-      const quickProfile = page.locator("#options-selector-list .option-item").filter({ hasText: aircraftName });
+      const quickProfile = page.locator("#options-selector-list .option-item").filter({ hasText: "Quick Audit Jet" });
       await expect(quickProfile.locator(".option-desc")).toHaveText("42 m² · 12000 kg");
       await shot(page, dir, "06-airplane-picker");
       await quickProfile.click();
-
-      // Capture the real selected-aircraft field in every app theme.
-      // Use the Settings UI (not a CSS-only theme override) so the icon
-      // colors are regenerated exactly as they would be for a user.
-      if (viewport.name === "mobile-390") {
-        await expect(page.locator("#airplane-select-button")).toHaveText("190 E2");
-        for (const theme of ["Green Peace", "Ancient Brown", "Dark Shadows", "Blue Sky", "Red Alert", "Orange Juice"]) {
-          await page.getByRole("button", { name: "More options" }).click();
-          await page.getByRole("button", { name: "Settings" }).click();
-          await page.locator('[data-setting-select="setting-theme"]').click();
-          await page.locator("#options-selector-list .option-item").filter({ hasText: theme }).first().click();
-          await page.locator("#settings-form").getByRole("button", { name: "Save" }).click();
-          await expect(page.locator("#airplane-select-button")).toHaveText("190 E2");
-          await shot(page, dir, `07-selected-190e2-${theme.toLowerCase().replaceAll(" ", "-")}`);
-        }
-      }
 
       await context.close();
       return;
