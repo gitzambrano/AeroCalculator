@@ -101,5 +101,6 @@ class TestSourceCharacterization(unittest.TestCase):
         # Small bold help headers need 4.5:1 contrast: dark tones on light
         # theme backgrounds, bright tones on the dark themes.
         self.assertIn("Private Sub SectionHeaderColor(onLight As Int, onDark As Int) As Int", text)
-        self.assertIn("lblModelHdr.TextColor = SectionHeaderColor(Colors.RGB(0, 102, 74), Colors.RGB(0, 180, 120))", text)
+        self.assertNotIn("lblModelHdr", text)
+        self.assertNotIn("MODEL PHYSICS", text)
         self.assertIn("lblUnitHdr.TextColor = SectionHeaderColor(Colors.RGB(143, 66, 0), Colors.RGB(230, 130, 0))", text)
