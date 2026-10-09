@@ -123,6 +123,50 @@ class HelpConventionTests(unittest.TestCase):
         self.assertIn('showContextualHelp(name === "Vs Factor" ? "Vs Factor Output" : name)', WEB_MAIN)
         self.assertIn('If k = "Vs Factor" Then k = "Vs Factor Output"', MAIN_B4A)
 
+    def test_release_337_precision_and_unit_wording(self):
+        """Only targeted clarifications; rejected physics commentary stays absent."""
+        self.assertEqual(
+            "Basic Operating Weight as defined by the aircraft manufacturer, expressed as mass in the selected units.",
+            CAT["editor"]["mass.BOW"]["definition"],
+        )
+        self.assertIn("specified in knots", CAT["inputs"]["Vs Factor"]["definition"])
+        self.assertIn("subsonic isentropic Pitot relation", CAT["inputs"]["CAS"]["definition"])
+        self.assertEqual(
+            CAT["inputs"]["CAS"]["definition"],
+            CAT["results"]["Calibrated Airspeed"]["definition"],
+        )
+        self.assertIn("unit lift coefficient (CL = 1)", CAT["results"]["DynPressure * S / g"]["definition"])
+        self.assertIn("kilogram-force (kgf)", CAT["results"]["Weight/Delta W/δ"]["definition"])
+        self.assertIn("without probe recovery corrections", CAT["results"]["Total Temperature"]["definition"])
+        for section, key in (
+            ("inputs", "Hp"), ("results", "Pressure Altitude"),
+            ("results", "Vs Factor"), ("results", "Geopotential Altitude"),
+            ("results", "Total Pressure"), ("results", "Turn Radius"),
+        ):
+            with self.subTest(section=section, key=key):
+                definition = CAT[section][key]["definition"]
+                for unwanted in (
+                    "height above the ground",
+                    "This is not a maneuver load factor",
+                    "distinct from geometric altitude",
+                    "shock losses are not included",
+                    "normalization does not change aircraft mass",
+                    "Wind modifies the ground trajectory",
+                ):
+                    self.assertNotIn(unwanted, definition)
+
+    def test_release_337_versions_match_across_clients(self):
+        self.assertEqual(
+            json.loads((ROOT / "web/package.json").read_text(encoding="utf-8"))["version"],
+            "3.37.0",
+        )
+        lock = json.loads((ROOT / "web/package-lock.json").read_text(encoding="utf-8"))
+        self.assertEqual(lock["version"], "3.37.0")
+        self.assertEqual(lock["packages"][""]["version"], "3.37.0")
+        self.assertIn("#VersionName: 3.37", MAIN_B4A)
+        self.assertIn("#VersionCode: 42", MAIN_B4A)
+        self.assertIn(" / version 3.37</p>", WEB_MAIN)
+
     def test_chevron_inset_preserves_android_text_width(self):
         for name, source in (("Main", MAIN_B4A), ("Airplanes", AIRP_B4A)):
             with self.subTest(client=name):

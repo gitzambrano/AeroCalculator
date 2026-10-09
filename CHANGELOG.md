@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.37] - 2026-10-08
+
+### Changed
+
+- Revised ten parameter-help entries (nine distinct definitions) in the shared quantity catalog, Android help and web help, keeping the other 69 definitions unchanged.
+- Clarified the optional Vs Factor CAS increment in knots, BOW mass units, data-source qualification for flap CLmax, the subsonic CAS assumption, total-temperature recovery limitations, and the physical meaning and units of qS/g and W/δ.
+- Kept each parameter's help limited to the definition, equation and reference unit, without any separate Model Physics section.
+- Synchronized the release number across web (3.37.0) and Android (VersionName 3.37, VersionCode 42), including the web About screen.
+
 ## [3.36] - 2026-10-08
 
 ### Changed

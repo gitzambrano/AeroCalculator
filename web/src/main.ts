@@ -84,11 +84,11 @@ const FIELD_HELPERS: Record<string, string> = {
   "Δ ISA": "Difference between actual static air temperature and ISA temperature at the same pressure altitude. Positive: warmer than ISA.",
   "OAT": "Static temperature of the surrounding air.",
   "TAS": "Magnitude of aircraft velocity relative to the surrounding air. Nonnegative.",
-  "CAS": "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition. Nonnegative.",
+  "CAS": "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition, using the subsonic isentropic Pitot relation. Nonnegative.",
   "EAS": "Airspeed at ISA sea-level conditions producing the same dynamic pressure as the actual flight condition. Nonnegative.",
   "Mach": "Ratio of true airspeed to local speed of sound. Nonnegative.",
   "CL": "Aerodynamic lift divided by the product of dynamic pressure and wing reference area. Positive: lift toward the aircraft upper side.",
-  "Vs Factor": "Input multiplier applied to reference 1-g stall speed in CAS, with an optional additive CAS increment. Nonnegative multiplier.",
+  "Vs Factor": "Input multiplier applied to reference 1-g stall speed in CAS, with an optional additive CAS increment specified in knots. Nonnegative multiplier.",
   "Ground Speed": "Magnitude of aircraft horizontal velocity relative to the ground. Nonnegative.",
   "Qdyn": "Kinetic energy per unit volume of the air-relative flow. Nonnegative.",
   "Qc": "Difference between stagnation pressure and static pressure. Nonnegative in the adopted subsonic model.",
@@ -222,11 +222,11 @@ const RESULT_HELPERS: Record<string, string> = {
   "Density": "Mass of air per unit volume, calculated from static pressure and absolute temperature using the ideal gas law. Positive scalar.",
   "Temperature": "Static temperature of the surrounding air.",
   "Delta ISA": "Difference between actual static air temperature and ISA temperature at the same pressure altitude. Positive: warmer than ISA.",
-  "Total Temperature": "Stagnation temperature obtained by adiabatically bringing the air-relative flow to rest.",
+  "Total Temperature": "Ideal stagnation temperature obtained by adiabatically bringing the air-relative flow to rest, without probe recovery corrections.",
   "Viscosity": "Dynamic viscosity of air relates shear stress to velocity gradient; its temperature dependence is modeled by Sutherland's law. Positive scalar.",
   "Sound Speed": "Speed of propagation of small pressure disturbances in the surrounding air. Positive scalar.",
   "True Airspeed": "Magnitude of aircraft velocity relative to the surrounding air. Nonnegative.",
-  "Calibrated Airspeed": "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition. Nonnegative.",
+  "Calibrated Airspeed": "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition, using the subsonic isentropic Pitot relation. Nonnegative.",
   "Equivalent Airspeed": "Airspeed at ISA sea-level conditions producing the same dynamic pressure as the actual flight condition. Nonnegative.",
   "Ground Speed": "Magnitude of aircraft horizontal velocity relative to the ground. Nonnegative.",
   "Stall Speed Vs": "Reference 1-g calibrated airspeed at which the required lift coefficient equals CLmax for the selected aircraft mass and configuration. Nonnegative.",
@@ -240,9 +240,9 @@ const RESULT_HELPERS: Record<string, string> = {
   "Dynamic Pressure": "Kinetic energy per unit volume of the air-relative flow. Nonnegative.",
   "Impact Pressure": "Difference between stagnation pressure and static pressure. Nonnegative in the adopted subsonic model.",
   "Total Pressure": "Stagnation pressure of the air-relative flow under isentropic conditions.",
-  "DynPressure * S / g": "Aerodynamic reference force qS expressed numerically in kilogram-force (kgf). Nonnegative.",
+  "DynPressure * S / g": "Aerodynamic reference force qS for a unit lift coefficient (CL = 1), expressed in kilogram-force (kgf). Nonnegative.",
   "Lift Force": "Aerodynamic lift force required by the selected load factor. Positive: lift toward the aircraft upper side.",
-  "Weight/Delta W/δ": "Aircraft weight divided by atmospheric pressure ratio δ. Positive for positive aircraft weight.",
+  "Weight/Delta W/δ": "Aircraft weight divided by atmospheric pressure ratio δ, expressed in kilogram-force (kgf). Positive for positive aircraft weight.",
   "Load Factor Nz": "Ratio of aerodynamic lift to aircraft weight. Positive: lift toward the aircraft upper side.",
   "Bank Angle φ": "Aircraft bank angle in a coordinated level turn. Positive: right wing down.",
   "Turn Radius": "Signed radius of a coordinated level turn relative to the air mass. Positive: right turn. Negative: left turn.",
@@ -361,7 +361,7 @@ app.innerHTML = `
       <div class="about-content">
         <img src="${aboutIconUrl}" alt="" />
         <h2>Aero Calculator</h2>
-        <p id="about-version">${new Date().getFullYear()} / version 3.36</p>
+        <p id="about-version">${new Date().getFullYear()} / version 3.37</p>
         <p>Gustavo José Zambrano</p>
         <p><a href="mailto:flightdyn@gmail.com">flightdyn@gmail.com</a></p>
         <button type="button" class="about-ok" data-close-dialog="about-dialog">OK</button>

@@ -46,7 +46,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Calibrated Airspeed": {
     title: "Calibrated airspeed \u2022 CAS",
-    desc: "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition. Nonnegative.",
+    desc: "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition, using the subsonic isentropic Pitot relation. Nonnegative.",
     eq: "CAS = a0 \u221a[2/(\u03b3\u22121) ((qc/p0 + 1)^((\u03b3\u22121)/\u03b3) \u2212 1)]",
     unit: "m/s",
   },
@@ -112,7 +112,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Vs Factor": {
     title: "Stall speed factor \u2022 V<sub>S</sub> Factor",
-    desc: "Input multiplier applied to reference 1-g stall speed in CAS, with an optional additive CAS increment. Nonnegative multiplier.",
+    desc: "Input multiplier applied to reference 1-g stall speed in CAS, with an optional additive CAS increment specified in knots. Nonnegative multiplier.",
     eq: "CAS = factor \u00d7 V_S,CAS + \u0394CAS",
     unit: "\u2014",
   },
@@ -160,7 +160,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Total Temperature": {
     title: "Total air temperature \u2022 TAT",
-    desc: "Stagnation temperature obtained by adiabatically bringing the air-relative flow to rest.",
+    desc: "Ideal stagnation temperature obtained by adiabatically bringing the air-relative flow to rest, without probe recovery corrections.",
     eq: "Tt = T (1 + (\u03b3\u22121) M\u00b2/2)",
     unit: "K",
   },
@@ -214,7 +214,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "DynPressure * S / g": {
     title: "Dynamic pressure force equivalent \u2022 qS/g0",
-    desc: "Aerodynamic reference force qS expressed numerically in kilogram-force (kgf). Nonnegative.",
+    desc: "Aerodynamic reference force qS for a unit lift coefficient (CL = 1), expressed in kilogram-force (kgf). Nonnegative.",
     eq: "q S / g0 (displayed as kgf)",
     unit: "kgf",
   },
@@ -226,7 +226,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "Weight/Delta W/\u03b4": {
     title: "Weight divided by pressure ratio \u2022 W/\u03b4",
-    desc: "Aircraft weight divided by atmospheric pressure ratio δ. Positive for positive aircraft weight.",
+    desc: "Aircraft weight divided by atmospheric pressure ratio δ, expressed in kilogram-force (kgf). Positive for positive aircraft weight.",
     eq: "W / (\u03b4 g0) (displayed as kgf)",
     unit: "kgf",
   },
@@ -310,7 +310,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "CAS": {
     title: "Calibrated airspeed \u2022 CAS",
-    desc: "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition. Nonnegative.",
+    desc: "Airspeed at ISA sea-level conditions producing the same impact pressure as the actual flight condition, using the subsonic isentropic Pitot relation. Nonnegative.",
     eq: "CAS = a0 \u221a[2/(\u03b3\u22121) ((qc/p0 + 1)^((\u03b3\u22121)/\u03b3) \u2212 1)]",
     unit: "m/s",
   },
@@ -448,25 +448,25 @@ export const CATALOG: Record<string, CatalogItem> = {
   },
   "mass.BOW": {
     title: "Basic operating weight • BOW",
-    desc: "Basic Operating Weight as defined by the aircraft manufacturer.",
+    desc: "Basic Operating Weight as defined by the aircraft manufacturer, expressed as mass in the selected units.",
     eq: "",
     unit: "kg",
   },
   "mass.Heavy": {
     title: "Heavy reference weight • Heavy",
-    desc: "User-defined heavy reference weight, expressed as mass in the selected units.",
+    desc: "User-defined heavy reference weight, expressed as mass in the selected units. Not a certified weight limit.",
     eq: "",
     unit: "kg",
   },
   "mass.Light": {
     title: "Light reference weight • Light",
-    desc: "User-defined light reference weight, expressed as mass in the selected units.",
+    desc: "User-defined light reference weight, expressed as mass in the selected units. Not a certified weight limit.",
     eq: "",
     unit: "kg",
   },
   "CLmaxFlap": {
     title: "Maximum lift coefficient • C<sub>L,MAX</sub>",
-    desc: "Maximum lift coefficient for the specified flap configuration. Positive coefficient.",
+    desc: "Maximum lift coefficient for the specified flap configuration, supplied from aircraft aerodynamic data. Positive coefficient.",
     eq: "Vs = √(2 m g₀ / (ρ S C_{L,MAX}))",
     unit: "—",
   },

@@ -101,7 +101,7 @@ test("custom airplane and About follow the current theme and APK version", async
   await page.locator("#more-menu").click();
   await page.locator('[data-menu="about"]').click();
   await expect(page.locator("#about-dialog")).toBeVisible();
-  await expect(page.locator("#about-version")).toHaveText(/\d{4} \/ version 3\.36/);
+  await expect(page.locator("#about-version")).toHaveText(/\d{4} \/ version 3\.37/);
   await expect(page.locator("#about-dialog")).toContainText("Gustavo José Zambrano");
   await expect(page.locator("#about-dialog")).toContainText("flightdyn@gmail.com");
 });
@@ -133,6 +133,27 @@ test.describe("mobile input unit tap vs horizontal swipe", () => {
     expect(state.tab).toBe("airplanes");
     expect(state.modal).toBe(false);
   });
+});
+
+test("3.37 technical help keeps the concise definition, equation and unit only", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "CALCULATE" }).click();
+
+  await page.locator('.result-row[data-name="DynPressure * S / g"]').click();
+  await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/);
+  await expect(page.locator("#result-tooltip-desc")).toHaveText(
+    "Aerodynamic reference force qS for a unit lift coefficient (CL = 1), expressed in kilogram-force (kgf). Nonnegative."
+  );
+  await expect(page.locator("#result-tooltip-eq-box")).toBeVisible();
+  await expect(page.locator("#result-tooltip-unit-text")).toHaveText("kgf");
+  await expect(page.locator("#modal-result-tooltip")).not.toContainText("Model Physics");
+  await page.locator("#btn-result-tooltip-ok").click();
+
+  await page.locator('.result-row[data-name="Weight/Delta W/δ"]').click();
+  await expect(page.locator("#result-tooltip-desc")).toHaveText(
+    "Aircraft weight divided by atmospheric pressure ratio δ, expressed in kilogram-force (kgf). Positive for positive aircraft weight."
+  );
+  await expect(page.locator("#modal-result-tooltip")).not.toContainText("Model Physics");
 });
 
 test("unit dropdown opens by real click and converts the represented value", async ({ page }) => {
