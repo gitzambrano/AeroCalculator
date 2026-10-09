@@ -153,7 +153,7 @@ for (const viewport of viewports) {
       await expect(page.locator("#modal-options-selector")).toContainText("Wind Speed / Wind Direction");
       await page.locator("#options-selector-cancel").click();
 
-      await page.locator("#alt-unit").click();
+      await page.locator("#alt-unit-trigger").click();
       await expect(page.locator("#modal-options-selector")).toBeVisible();
       await expect(page.locator("#options-selector-title")).toHaveText("Altitude Unit");
       await expect(page.locator("#modal-options-selector .option-item")).toHaveCount(6);

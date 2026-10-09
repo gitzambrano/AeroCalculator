@@ -452,6 +452,13 @@ sub.hp-sub {
 .profile-select option {
   text-align: center;
 }
+/* The active aircraft selector uses the primary color of the chosen theme. */
+.airplane-select-button {
+  color: white;
+  border-color: var(--title);
+  background: var(--selector-chevron) right 4px center / var(--chevron-w) var(--chevron-h) no-repeat, var(--title);
+}
+.airplane-select-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .field-tooltip {
   position: fixed;
@@ -750,7 +757,7 @@ sub.hp-sub {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgb(0 0 0 / 0.18);
 }
-.profile-dialog {
+.profile-dialog, #profile-editor:modal {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -765,6 +772,8 @@ sub.hp-sub {
 }
 .profile-dialog::backdrop, .simple-dialog::backdrop { background: rgb(0 0 0 / 0.38); }
 .profile-dialog form { height: 100%; max-height: none; display: flex; flex-direction: column; }
+#profile-editor:modal { top: 0; right: 0; bottom: 0; left: 0; margin: 0; max-width: none; max-height: none; border-radius: 0; }
+#profile-editor .modal-overlay { z-index: 10; }
 .editor-toolbar {
   height: calc(50px + env(safe-area-inset-top));
   flex: 0 0 calc(50px + env(safe-area-inset-top));
@@ -804,7 +813,7 @@ sub.hp-sub {
 }
 .editor-row > label { grid-column: 1 / 3; font-size: 15px; font-weight: 700; color: var(--button-text, inherit); white-space: nowrap; line-height: 1.2; }
 .editor-row > input { grid-column: 3; }
-.editor-row > select { grid-column: 5; }
+.editor-row > select, .editor-row > .editor-unit-choice { grid-column: 5; }
 .editor-name-row > input { grid-column: 3 / 6; }
 .editor-row input, .editor-row select,
 .weight-grid input, .flap-grid input, .editor-section-head select {
@@ -832,6 +841,17 @@ sub.hp-sub {
 }
 .editor-section-head strong { grid-column: 1 / 4; font-size: 15px; font-weight: 700; color: var(--button-text); }
 .editor-section-head > select, .editor-section-head > button { grid-column: 5; }
+.editor-native-unit { display: none !important; }
+.editor-unit-choice {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  text-align: center;
+  text-align-last: center;
+  padding: 0 16px 0 6px;
+  font-size: 14px;
+  border-radius: 4px;
+}
 .weight-grid, .flap-grid {
   display: grid;
   grid-template-columns: minmax(0, 48fr) minmax(0, 48fr);
@@ -851,16 +871,19 @@ sub.hp-sub {
 .weight-grid input, .flap-grid input { grid-column: 3; }
 .editor-row input, .weight-grid input, .flap-grid input { padding: 0 4px; font-size: 13px; }
 .add-flap {
-  justify-self: end;
-  width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
   height: 34px;
+  min-width: 34px;
+  padding: 0;
   border: 0;
-  border-radius: 8px;
-  background: var(--title);
-  color: white;
-  font-size: 24px;
+  border-radius: 0;
+  background: transparent;
   cursor: pointer;
 }
+.add-flap img { display: block; width: 34px; height: 34px; object-fit: contain; pointer-events: none; }
 .add-flap:disabled { opacity: .35; }
 .editor-actions { padding: 16px; }
 .danger-button { border: 1px solid #a40019; background: white; color: #a40019; padding: 10px 14px; }
@@ -898,6 +921,9 @@ sub.hp-sub {
 }
 .about-content h2 { margin: 10px 0 4px; }
 .about-content p { margin: 6px 0; }
+.about-content a { color: var(--field-text); text-decoration: none; }
+.about-content a:hover { text-decoration: underline; }
+.about-content img { background: transparent; }
 .about-content .about-ok {
   margin-top: 14px;
   min-width: 110px;
@@ -1434,8 +1460,8 @@ sub.hp-sub {
   .editor-row > label, .editor-section-head strong { font-size: 11.5px; }
 }
 
-.flap-actions { grid-column: 5; display: flex; justify-content: space-between; gap: 4%; }
-.flap-actions .add-flap { width: 48%; height: 44px; }
+.flap-actions { grid-column: 5; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.flap-actions .add-flap { flex: 0 0 34px; width: 34px; height: 34px; }
 
 .editor-row > select, .editor-section-head > select {
   appearance: none;

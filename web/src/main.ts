@@ -2,6 +2,9 @@ import "./style.css";
 import { CATALOG } from "./catalog";
 import { renderEquationLaTeX } from "./math-renderer";
 import iconUrl from "./assets/icon-bezel-transp-white.png";
+import aboutIconUrl from "./assets/icon-bezel-transp-green.png";
+import plusIconUrl from "./assets/icon-plus.png";
+import minusIconUrl from "./assets/icon-minus.png";
 import {
   WEIGHT_KEYS,
   deleteProfile,
@@ -333,14 +336,14 @@ app.innerHTML = `
         </div>
         <div class="editor-scroll">
           <div class="editor-row editor-name-row"><label for="profile-name">Name</label><input id="profile-name" type="text" /></div>
-          <div class="editor-row"><label for="profile-sref">Area S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" /><select id="profile-sref-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select></div>
-          <div class="editor-row"><label for="profile-cref">Chord c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" /><select id="profile-cref-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select></div>
+          <div class="editor-row"><label for="profile-sref">Area S<sub>REF</sub></label><input id="profile-sref" inputmode="decimal" /><select id="profile-sref-unit" class="editor-native-unit" aria-label="Reference area unit"><option>m²</option><option>ft²</option><option>in²</option><option>cm²</option><option>mm²</option></select><button type="button" class="editor-unit-choice setting-choice" data-profile-unit="profile-sref-unit" aria-label="Reference area unit" aria-haspopup="dialog" aria-controls="modal-options-selector"></button></div>
+          <div class="editor-row"><label for="profile-cref">Chord c<sub>REF</sub></label><input id="profile-cref" inputmode="decimal" /><select id="profile-cref-unit" class="editor-native-unit" aria-label="Reference chord unit"><option>m</option><option>ft</option><option>in</option><option>cm</option><option>mm</option></select><button type="button" class="editor-unit-choice setting-choice" data-profile-unit="profile-cref-unit" aria-label="Reference chord unit" aria-haspopup="dialog" aria-controls="modal-options-selector"></button></div>
           <section class="editor-section">
-            <div class="editor-section-head"><strong>Weight</strong><select id="profile-weight-unit" aria-label="Aircraft weight unit"><option>kg</option><option>lb</option><option>ton</option><option>slug</option><option>oz</option></select></div>
+            <div class="editor-section-head"><strong>Weight</strong><select id="profile-weight-unit" class="editor-native-unit" aria-label="Aircraft weight unit"><option>kg</option><option>lb</option><option>ton</option><option>slug</option><option>oz</option></select><button type="button" class="editor-unit-choice setting-choice" data-profile-unit="profile-weight-unit" aria-label="Aircraft weight unit" aria-haspopup="dialog" aria-controls="modal-options-selector"></button></div>
             <div class="weight-grid"><label>MTOW<input id="profile-weight-MTOW" inputmode="decimal" /></label><label>MLW<input id="profile-weight-MLW" inputmode="decimal" /></label><label>MZFW<input id="profile-weight-MZFW" inputmode="decimal" /></label><label>BOW<input id="profile-weight-BOW" inputmode="decimal" /></label><label>Heavy<input id="profile-weight-Heavy" inputmode="decimal" /></label><label>Light<input id="profile-weight-Light" inputmode="decimal" /></label></div>
           </section>
           <section class="editor-section">
-            <div class="editor-section-head"><strong>C<sub>L,MAX</sub></strong><div class="flap-actions"><button type="button" id="add-flap" class="add-flap" aria-label="Add flap maximum lift coefficient">＋</button><button type="button" id="remove-flap" class="add-flap" aria-label="Remove last flap maximum lift coefficient">−</button></div></div>
+            <div class="editor-section-head"><strong>C<sub>L,MAX</sub></strong><div class="flap-actions"><button type="button" id="add-flap" class="add-flap" aria-label="Add flap maximum lift coefficient"><img src="${plusIconUrl}" alt="" /></button><button type="button" id="remove-flap" class="add-flap" aria-label="Remove last flap maximum lift coefficient"><img src="${minusIconUrl}" alt="" /></button></div></div>
             <div class="flap-grid" id="flap-grid"><label data-flap-row="0" hidden>Flap 0<input id="profile-flap-0" inputmode="decimal" /></label><label data-flap-row="1" hidden>Flap 1<input id="profile-flap-1" inputmode="decimal" /></label><label data-flap-row="2" hidden>Flap 2<input id="profile-flap-2" inputmode="decimal" /></label><label data-flap-row="3" hidden>Flap 3<input id="profile-flap-3" inputmode="decimal" /></label><label data-flap-row="4" hidden>Flap 4<input id="profile-flap-4" inputmode="decimal" /></label><label data-flap-row="5" hidden>Flap 5<input id="profile-flap-5" inputmode="decimal" /></label><label data-flap-row="6" hidden>Flap 6<input id="profile-flap-6" inputmode="decimal" /></label><label data-flap-row="7" hidden>Flap 7<input id="profile-flap-7" inputmode="decimal" /></label><label data-flap-row="8" hidden>Flap 8<input id="profile-flap-8" inputmode="decimal" /></label><label data-flap-row="9" hidden>Flap 9<input id="profile-flap-9" inputmode="decimal" /></label><label data-flap-row="10" hidden>Flap 10<input id="profile-flap-10" inputmode="decimal" /></label><label data-flap-row="11" hidden>Flap 11<input id="profile-flap-11" inputmode="decimal" /></label><label data-flap-row="12" hidden>Flap 12<input id="profile-flap-12" inputmode="decimal" /></label><label data-flap-row="13" hidden>Flap 13<input id="profile-flap-13" inputmode="decimal" /></label></div>
           </section>
           <div class="editor-actions" id="profile-delete-wrap" hidden>
@@ -356,10 +359,11 @@ app.innerHTML = `
 
       </div>
       <div class="about-content">
-        <img src="${iconUrl}" alt="" />
+        <img src="${aboutIconUrl}" alt="" />
         <h2>Aero Calculator</h2>
-        <p>Browser edition</p>
+        <p id="about-version">${new Date().getFullYear()} / version 3.36</p>
         <p>Gustavo José Zambrano</p>
+        <p><a href="mailto:flightdyn@gmail.com">flightdyn@gmail.com</a></p>
         <button type="button" class="about-ok" data-close-dialog="about-dialog">OK</button>
       </div>
     </dialog>
@@ -709,8 +713,11 @@ const FIELD_OPTION_DESCRIPTIONS: Record<string, string> = {
   CrossWind: "Runway crosswind component directly",
 };
 
+const optionsModalHome = byId("modal-options-selector").parentElement!;
 const closeOptionsModal = () => {
+  const modal = byId("modal-options-selector");
   setOverlayOpen("modal-options-selector", false);
+  if (modal.parentElement !== optionsModalHome) optionsModalHome.appendChild(modal);
 };
 
 function installOptionsSwipeDismiss(): void {
@@ -931,14 +938,14 @@ function inputUnitPickerTitle(fieldId: string): string {
   return "Angle Unit";
 }
 
-function openInputUnitPicker(fieldId: string): void {
-  const selectEl = document.getElementById(`${fieldId}-unit`) as HTMLSelectElement | null;
+function openUnitPicker(selectId: string, title: string, fieldId = ""): void {
+  const selectEl = document.getElementById(selectId) as HTMLSelectElement | null;
   const modal = byId("modal-options-selector");
   const titleEl = byId("options-selector-title");
   const listEl = byId("options-selector-list");
   if (!selectEl || selectEl.disabled || !modal || !titleEl || !listEl) return;
 
-  titleEl.textContent = inputUnitPickerTitle(fieldId);
+  titleEl.textContent = title;
   listEl.innerHTML = "";
 
   Array.from(selectEl.options).forEach((opt) => {
@@ -989,7 +996,16 @@ function openInputUnitPicker(fieldId: string): void {
     listEl.appendChild(itemEl);
   });
 
+  // A native showModal() dialog is in the browser's top layer; moving the
+  // shared picker inside it makes the same themed sheet visible above the editor.
+  if ((byId("profile-editor") as HTMLDialogElement).open && selectId.startsWith("profile-")) {
+    byId("profile-editor").appendChild(modal);
+  }
   setOverlayOpen("modal-options-selector", true);
+}
+
+function openInputUnitPicker(fieldId: string): void {
+  openUnitPicker(`${fieldId}-unit`, inputUnitPickerTitle(fieldId), fieldId);
 }
 
 const SETTING_OPTION_DESCRIPTIONS: Record<string, Record<string, string>> = {
@@ -1412,11 +1428,70 @@ function createInputRow(field: Field): HTMLElement {
   unitTrigger.setAttribute("aria-haspopup", "dialog");
   unitTrigger.setAttribute("aria-controls", "modal-options-selector");
   setHelper(unitTrigger, "Select a unit for this input. Press and hold for technical help.");
-  unitTrigger.addEventListener("click", () => {
+  let downX = 0;
+  let downY = 0;
+  let pointerMoved = false;
+  let longPressed = false;
+  let touchPointerId: number | null = null;
+  let ignoreSyntheticClickUntil = 0;
+  let holdTimer: number | undefined;
+  const clearUnitHold = (): void => {
+    if (holdTimer !== undefined) window.clearTimeout(holdTimer);
+    holdTimer = undefined;
+  };
+  const openUnit = (): void => {
     vibrateTap();
     openInputUnitPicker(field.id);
+  };
+  unitTrigger.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    touchPointerId = event.pointerType === "touch" ? event.pointerId : null;
+    downX = event.clientX;
+    downY = event.clientY;
+    pointerMoved = false;
+    longPressed = false;
+    ignoreSyntheticClickUntil = 0;
+    clearUnitHold();
+    holdTimer = window.setTimeout(() => {
+      if (pointerMoved) return;
+      longPressed = true;
+      showContextualHelp(type.value);
+    }, 550);
   });
-  installTechnicalHold(unitTrigger, () => type.value);
+  unitTrigger.addEventListener("pointermove", (event) => {
+    if (Math.hypot(event.clientX - downX, event.clientY - downY) > 10) {
+      pointerMoved = true;
+      clearUnitHold();
+    }
+  });
+  unitTrigger.addEventListener("pointerup", (event) => {
+    clearUnitHold();
+    if (event.pointerType === "touch" && touchPointerId === event.pointerId && !pointerMoved && !longPressed) {
+      ignoreSyntheticClickUntil = performance.now() + 650;
+      event.preventDefault();
+      openUnit();
+    }
+    touchPointerId = null;
+  });
+  unitTrigger.addEventListener("pointercancel", () => {
+    pointerMoved = true;
+    clearUnitHold();
+    touchPointerId = null;
+  });
+  unitTrigger.addEventListener("pointerleave", clearUnitHold);
+  unitTrigger.addEventListener("click", (event) => {
+    if (pointerMoved || longPressed || performance.now() < ignoreSyntheticClickUntil) {
+      event.preventDefault();
+      return;
+    }
+    openUnit();
+  });
+  unitTrigger.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    clearUnitHold();
+    longPressed = true;
+    showContextualHelp(type.value);
+  });
 
   const tail = document.createElement("div");
   tail.className = "input-tail";
@@ -2031,6 +2106,7 @@ function openProfileEditor(id?: string): void {
   renderFlapRows();
   byId("profile-delete-wrap").hidden = !profile;
   (byId("profile-editor") as HTMLDialogElement).showModal();
+  syncProfileUnitButtons();
   fitEditorChordLabel();
   for (const id of ["sref", "cref", "weight"]) {
     const selector = byId(`profile-${id}-unit`) as HTMLSelectElement;
@@ -2062,12 +2138,24 @@ function convertProfileEditorUnit(
     if (Number.isFinite(converted)) field.value = String(Number(converted.toPrecision(12)));
   }
 }
-for (const [unitId, values, conversion] of [
-  ["profile-sref-unit", ["profile-sref"], units.areaToM2],
-  ["profile-cref-unit", ["profile-cref"], lengthAnyToM],
-  ["profile-weight-unit", WEIGHT_KEYS.map((key) => `profile-weight-${key}`), units.massToKg],
+function syncProfileUnitButtons(): void {
+  document.querySelectorAll<HTMLButtonElement>("[data-profile-unit]").forEach((button) => {
+    const source = select(button.dataset.profileUnit ?? "");
+    button.textContent = source.selectedOptions[0]?.textContent ?? source.value;
+  });
+}
+for (const [unitId, values, conversion, title] of [
+  ["profile-sref-unit", ["profile-sref"], units.areaToM2, "Wing Area Unit"],
+  ["profile-cref-unit", ["profile-cref"], lengthAnyToM, "Chord Unit"],
+  ["profile-weight-unit", WEIGHT_KEYS.map((key) => `profile-weight-${key}`), units.massToKg, "Mass Unit"],
 ] as const) {
-  byId(unitId).addEventListener("change", () => convertProfileEditorUnit(unitId, [...values], conversion));
+  byId(unitId).addEventListener("change", () => {
+    convertProfileEditorUnit(unitId, [...values], conversion);
+    syncProfileUnitButtons();
+  });
+  const button = document.querySelector<HTMLButtonElement>(`[data-profile-unit="${unitId}"]`);
+  if (!button) throw new Error(`Missing editor unit button for ${unitId}`);
+  button.addEventListener("click", () => openUnitPicker(unitId, title));
 }
 
 // Values of every editor field; Cancel asks before discarding only when this changed.
@@ -2090,6 +2178,7 @@ function fitEditorChordLabel(): void {
 }
 
 function closeProfileEditor(): void {
+  closeOptionsModal();
   (byId("profile-editor") as HTMLDialogElement).close();
   editingProfileId = null;
 }

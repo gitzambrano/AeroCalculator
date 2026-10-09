@@ -20,6 +20,11 @@
 - Converted aircraft editor wing area, chord, and all six reference weights when a unit changes; retained empty fields and physical values on round trips.
 - Prevented horizontal swipe navigation from activating input controls or long-press help inadvertently.
 - Added desktop and mobile end-to-end coverage for editor layout, unit conversion, and swipe suppression.
+- Fixed missed mobile taps on input unit selectors and retained horizontal swipe-to-tab navigation.
+- Standardized airplane editor unit pickers with the same themed radio-sheet used by Inputs, including correct layering over the editor.
+- Reused the exact Android plus/minus image assets at 34 px instead of oversized filled buttons.
+- Forced full-viewport Edit Airplane layout, aligned the Custom Airplane button with each theme's primary color, and reproduced APK About fields (current year, version 3.36, author, email).
+- Repaired responsive browser tests that were blocking deployment by attempting to click the hidden native unit select.
 
 ### Fixed (Android)
 

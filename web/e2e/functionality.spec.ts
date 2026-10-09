@@ -41,6 +41,100 @@ async function selectSetting(page: Page, id: string, value: string): Promise<voi
   await expect(selectEl).toHaveValue(value);
 }
 
+test("aircraft editor unit modal uses the standard themed picker above fullscreen dialog", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Add airplane" }).click();
+  await page.locator("#profile-sref").fill("10");
+
+  const dialog = page.locator("#profile-editor");
+  const bounds = await dialog.boundingBox();
+  expect(bounds).not.toBeNull();
+  const viewport = page.viewportSize()!;
+  expect(Math.abs(bounds!.x)).toBeLessThan(1.5);
+  expect(Math.abs(bounds!.y)).toBeLessThan(1.5);
+  expect(Math.abs(bounds!.width - viewport.width)).toBeLessThan(1.5);
+  expect(Math.abs(bounds!.height - viewport.height)).toBeLessThan(1.5);
+
+  await page.locator('[data-profile-unit="profile-sref-unit"]').click();
+  const selector = page.locator("#modal-options-selector");
+  await expect(selector).toHaveClass(/open/);
+  await expect(page.locator("#options-selector-title")).toHaveText("Wing Area Unit");
+  await expect(dialog.locator("#modal-options-selector")).toHaveCount(1);
+  await page.locator("#options-selector-list .option-item").filter({ hasText: "Square feet" }).click();
+  await expect(page.locator("#profile-sref-unit")).toHaveValue("ft²");
+  expect(Number(await page.locator("#profile-sref").inputValue())).toBeCloseTo(107.639104167, 7);
+  await expect(page.locator('[data-profile-unit="profile-sref-unit"]')).toHaveText("ft²");
+
+  await page.locator('[data-profile-unit="profile-cref-unit"]').click();
+  await expect(page.locator("#options-selector-title")).toHaveText("Chord Unit");
+  await page.locator("#options-selector-cancel").click();
+
+  await page.locator('[data-profile-unit="profile-weight-unit"]').click();
+  await expect(page.locator("#options-selector-title")).toHaveText("Mass Unit");
+  await page.locator("#options-selector-list .option-item").filter({ hasText: "Pound — US aviation" }).click();
+  await expect(page.locator("#profile-weight-unit")).toHaveValue("lb");
+
+  const icons = await page.locator("#add-flap img, #remove-flap img").evaluateAll((list) =>
+    list.map((img) => ({
+      ready: (img as HTMLImageElement).complete && (img as HTMLImageElement).naturalWidth > 0,
+      width: img.getBoundingClientRect().width,
+      height: img.getBoundingClientRect().height,
+    }))
+  );
+  expect(icons).toHaveLength(2);
+  for (const icon of icons) {
+    expect(icon.ready).toBe(true);
+    expect(icon.width).toBe(34);
+    expect(icon.height).toBe(34);
+  }
+});
+
+test("custom airplane and About follow the current theme and APK version", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#airplane-select-button")).toContainText("Custom Airplane");
+  const colors = await page.locator("#airplane-select-button").evaluate((el) => ({
+    actual: getComputedStyle(el).backgroundColor,
+    expected: getComputedStyle(document.documentElement).getPropertyValue("--title").trim(),
+  }));
+  // The airplane button uses a background declaration with the theme's --title.
+  expect(colors.expected).toBeTruthy();
+  await page.locator("#more-menu").click();
+  await page.locator('[data-menu="about"]').click();
+  await expect(page.locator("#about-dialog")).toBeVisible();
+  await expect(page.locator("#about-version")).toHaveText(/d{4} \/ version 3\.36/);
+  await expect(page.locator("#about-dialog")).toContainText("Gustavo José Zambrano");
+  await expect(page.locator("#about-dialog")).toContainText("flightdyn@gmail.com");
+});
+
+test.describe("mobile input unit tap vs horizontal swipe", () => {
+  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  test("tap alone opens a modal, drag alone switches tab", async ({ page }) => {
+    await page.goto("/");
+    const trigger = page.locator("#alt-unit-trigger");
+    await trigger.tap();
+    await expect(page.locator("#modal-options-selector")).toHaveClass(/open/);
+    await page.locator("#options-selector-cancel").tap();
+
+    const state = await page.evaluate(() => {
+      const btn = document.querySelector<HTMLButtonElement>("#alt-unit-trigger")!;
+      const pointer = (type: string, x: number, y: number) => btn.dispatchEvent(
+        new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 900, isPrimary: true, pointerType: "touch", clientX: x, clientY: y })
+      );
+      pointer("pointerdown", 340, 380);
+      pointer("pointermove", 270, 380);
+      pointer("pointermove", 160, 380);
+      pointer("pointerup", 160, 380);
+      btn.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      return {
+        tab: document.querySelector<HTMLButtonElement>('.tab[aria-selected="true"]')?.dataset.page,
+        modal: document.querySelector("#modal-options-selector")?.classList.contains("open"),
+      };
+    });
+    expect(state.tab).toBe("airplanes");
+    expect(state.modal).toBe(false);
+  });
+});
+
 test("unit dropdown opens by real click and converts the represented value", async ({ page }) => {
   await page.goto("/");
   await fill(page, "alt-value", "1000");
