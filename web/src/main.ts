@@ -1221,9 +1221,21 @@ syncSelectPreviousValues();
 recalculate();
 
 if ("serviceWorker" in navigator) {
+  // When a new worker replaces one controlling this tab, refresh once to load
+  // the newly published single-file app. Fresh installations do not reload.
+  const hadController = navigator.serviceWorker.controller !== null;
+  let reloadedForUpdate = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController || reloadedForUpdate) return;
+    reloadedForUpdate = true;
+    window.location.reload();
+  });
   window.addEventListener("load", () => {
     void navigator.serviceWorker.register(new URL("./sw.js", document.baseURI).toString())
-      .then(() => navigator.serviceWorker.ready)
+      .then((registration) => {
+        void registration.update().catch(() => undefined);
+        return navigator.serviceWorker.ready;
+      })
       .then(() => {
         document.documentElement.dataset.offlineReady = "true";
       })

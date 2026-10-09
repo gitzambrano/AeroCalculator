@@ -14,6 +14,8 @@
 - Restored reliable unit dropdown opening on touch and mouse with an accessible button over the native unit select.
 - Preserved long-press help, keyboard access, physical-value conversion, and dimensionless input state.
 - Added browser-level click, touch, keyboard, and long-press regression tests.
+- Fixed stale PWA pages by fetching navigation documents from the network first, while retaining offline fallback.
+- Reloads previously controlled tabs on service-worker upgrades; preserves unrelated caches on the same origin.
 
 
 ## [3.35] - 2026-10-08

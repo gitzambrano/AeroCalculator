@@ -41,7 +41,10 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(
+        keys.filter((key) => key.startsWith("aerocalculator-web-") && key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -51,16 +54,30 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
+  if (event.request.mode === "navigate") {
+    // HTML is network-first: a previously installed PWA must not pin old
+    // application code indefinitely. Retain the most recent page for offline use.
+    event.respondWith(
+      fetch(event.request, { cache: "no-store" })
+        .then((response) => {
+          if (response.ok) {
+            const freshPage = response.clone();
+            event.waitUntil(caches.open(CACHE_NAME).then((cache) =>
+              cache.put("./index.html", freshPage)
+            ));
+          }
+          return response;
+        })
+        .catch(async () => (await caches.match("./index.html")) ?? Response.error())
+    );
+    return;
+  }
+
+  // Other assets remain cache-first so the calculator works offline.
   event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).catch(async () => {
-        if (event.request.mode === "navigate") {
-          return (await caches.match("./index.html")) ?? Response.error();
-        }
-        return Response.error();
-      });
-    })
+    caches.match(event.request, { ignoreSearch: true }).then((cached) =>
+      cached ?? fetch(event.request)
+    )
   );
 });
 `;

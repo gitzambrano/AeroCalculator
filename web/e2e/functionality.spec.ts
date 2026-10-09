@@ -102,6 +102,29 @@ test.describe("mobile unit selector", () => {
   });
 });
 
+test("offline PWA reload preserves the latest cached calculator shell", async ({ page, context }) => {
+  await page.goto("/");
+  await page.evaluate(async () => {
+    if (!("serviceWorker" in navigator)) throw new Error("Service workers unavailable");
+    await navigator.serviceWorker.ready;
+    // Wait for the worker to take control before testing an offline navigation.
+    if (!navigator.serviceWorker.controller) {
+      await new Promise<void>((resolve) =>
+        navigator.serviceWorker.addEventListener("controllerchange", () => resolve(), { once: true })
+      );
+    }
+  });
+  await context.setOffline(true);
+  try {
+    await page.reload();
+    await expect(page.locator("#alt-unit-trigger")).toBeVisible();
+    await page.locator("#alt-unit-trigger").click();
+    await expect(page.locator("#modal-options-selector")).toHaveClass(/open/);
+  } finally {
+    await context.setOffline(false);
+  }
+});
+
 test("changing input units preserves the represented physical state", async ({ page }) => {
   await page.goto("/");
 
