@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.36.1] - 2026-10-08
+
+### Fixed (web only)
+
+- Made input unit dropdowns reliably open the themed choice sheet on mouse clicks and touch taps, using an accessible button above the native select.
+- Preserved long-press contextual help, keyboard access, and physical-value conversion when units change.
+- Kept dimensionless inputs disabled and re-enabled the unit control when the input quantity changes back.
+- Added real browser click, touch, keyboard, and long-press regression tests.
+
+
 ## [3.36] - 2026-10-08
 
 ### Changed

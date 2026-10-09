@@ -313,6 +313,27 @@ sub.hp-sub {
   width: 100%;
   height: 100%;
 }
+/* Interact with a button instead of a native select, preserving the same
+   visual geometry and physical width of every unit field. */
+.input-tail > .unit-select { pointer-events: none; }
+.unit-select-trigger {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.unit-select-trigger:focus-visible {
+  outline: 2px solid var(--accent, #009183);
+  outline-offset: -2px;
+}
+.unit-select-trigger:disabled { cursor: default; }
 
 .value-input {
   min-width: 0;

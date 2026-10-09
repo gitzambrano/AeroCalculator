@@ -41,6 +41,67 @@ async function selectSetting(page: Page, id: string, value: string): Promise<voi
   await expect(selectEl).toHaveValue(value);
 }
 
+test("unit dropdown opens by real click and converts the represented value", async ({ page }) => {
+  await page.goto("/");
+  await fill(page, "alt-value", "1000");
+
+  await page.locator("#alt-unit-trigger").click();
+  await expect(page.locator("#modal-options-selector")).toHaveClass(/open/);
+  await expect(page.locator("#options-selector-title")).toHaveText("Altitude Unit");
+  await page.locator("#options-selector-list .option-item").filter({ hasText: "Meters — SI unit" }).click();
+  await expect(page.locator("#alt-unit")).toHaveValue("m");
+  expect(Number(await page.locator("#alt-value").inputValue())).toBeCloseTo(304.8, 6);
+  await expect(page.locator("#modal-options-selector")).not.toHaveClass(/open/);
+
+  await fill(page, "spd-value", "100");
+  await page.locator("#spd-unit-trigger").click();
+  await expect(page.locator("#options-selector-title")).toHaveText("Speed Unit");
+  await page.locator("#options-selector-list .option-item").filter({ hasText: "Meters per second" }).click();
+  await expect(page.locator("#spd-unit")).toHaveValue("m/s");
+  expect(Number(await page.locator("#spd-value").inputValue())).toBeCloseTo(51.444444444, 6);
+
+  // The unit picker must update when the quantity changes to one without units.
+  await page.locator("#spd-type").selectOption("Mach");
+  await expect(page.locator("#spd-unit-trigger")).toBeDisabled();
+  await page.locator("#spd-type").selectOption("TAS");
+  await expect(page.locator("#spd-unit-trigger")).toBeEnabled();
+  await page.locator("#spd-unit-trigger").click();
+  await expect(page.locator("#options-selector-title")).toHaveText("Speed Unit");
+});
+
+test("keyboard activates the unit picker and long press opens help without the picker", async ({ page }) => {
+  await page.goto("/");
+  const trigger = page.locator("#alt-unit-trigger");
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#modal-options-selector")).toHaveClass(/open/);
+  await page.locator("#options-selector-list .option-item").filter({ hasText: "Meters — SI unit" }).click();
+
+  const bounds = await trigger.boundingBox();
+  if (!bounds) throw new Error("Unit trigger is not visible");
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await page.mouse.down();
+  await expect(page.locator("#modal-result-tooltip")).toHaveClass(/open/, { timeout: 2000 });
+  await page.mouse.up();
+  await expect(page.locator("#modal-options-selector")).not.toHaveClass(/open/);
+});
+
+test.describe("mobile unit selector", () => {
+  test.use({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
+
+  test("tap opens the themed unit sheet and changes the temperature unit", async ({ page }) => {
+    await page.goto("/");
+    await fill(page, "temp-value", "15");
+    await page.locator("#temp-unit-trigger").tap();
+    await expect(page.locator("#modal-options-selector")).toHaveClass(/open/);
+    await expect(page.locator("#options-selector-title")).toHaveText("Temperature Unit");
+    await page.locator("#options-selector-list .option-item").filter({ hasText: "Degrees Fahrenheit" }).tap();
+    await expect(page.locator("#temp-unit")).toHaveValue("°F");
+    expect(Number(await page.locator("#temp-value").inputValue())).toBeCloseTo(59, 5);
+    await expect(page.locator("#modal-options-selector")).not.toHaveClass(/open/);
+  });
+});
+
 test("changing input units preserves the represented physical state", async ({ page }) => {
   await page.goto("/");
 

@@ -1373,54 +1373,28 @@ function createInputRow(field: Field): HTMLElement {
   unit.setAttribute("aria-label", `${field.id} unit`);
   fillSelect(unit, field.unitOptions, field.defaultUnit);
   setHelper(unit, "Unit used for this input value. Changing the unit converts the current numeric value when applicable.");
-  let unitHoldTimer: number | undefined;
-  let unitHeld = false;
-  unit.addEventListener("pointerdown", (event) => {
-    if (unit.disabled) return;
-    event.preventDefault();
-    event.stopPropagation();
-    unitHeld = false;
-    unitHoldTimer = window.setTimeout(() => {
-      unitHeld = true;
-      showContextualHelp(type.value);
-    }, 550);
+  // The select remains the source of truth for calculations and unit conversion.
+  // A real button receives clicks/taps instead: native <select> pointer events
+  // can suppress pointerup/click when their default popup behavior is prevented.
+  unit.tabIndex = -1;
+  unit.setAttribute("aria-hidden", "true");
+  const unitTrigger = document.createElement("button");
+  unitTrigger.type = "button";
+  unitTrigger.id = `${field.id}-unit-trigger`;
+  unitTrigger.className = "unit-select-trigger";
+  unitTrigger.setAttribute("aria-label", `${field.id} unit options`);
+  unitTrigger.setAttribute("aria-haspopup", "dialog");
+  unitTrigger.setAttribute("aria-controls", "modal-options-selector");
+  setHelper(unitTrigger, "Select a unit for this input. Press and hold for technical help.");
+  unitTrigger.addEventListener("click", () => {
+    vibrateTap();
+    openInputUnitPicker(field.id);
   });
-  unit.addEventListener("pointerup", (event) => {
-    if (unit.disabled) return;
-    event.preventDefault();
-    window.clearTimeout(unitHoldTimer);
-    if (!unitHeld) {
-      vibrateTap();
-      openInputUnitPicker(field.id);
-    }
-  });
-  ["pointercancel", "pointerleave"].forEach((evt) =>
-    unit.addEventListener(evt, () => window.clearTimeout(unitHoldTimer))
-  );
-  unit.addEventListener("click", (event) => event.preventDefault());
-  unit.addEventListener("contextmenu", (event) => {
-    event.preventDefault();
-    showContextualHelp(type.value);
-  });
-  unit.addEventListener("keydown", (event) => {
-    if (unit.disabled) return;
-    if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
-      event.preventDefault();
-      vibrateTap();
-      openInputUnitPicker(field.id);
-    }
-  });
-  unit.addEventListener("change", () => vibrateTap());
-
-  if (field.unitOptions.length === 1 && field.unitOptions[0].value === "-") {
-    unit.disabled = true;
-    unit.style.cursor = "default";
-    unit.style.opacity = "0.7";
-  }
+  installTechnicalHold(unitTrigger, () => type.value);
 
   const tail = document.createElement("div");
   tail.className = "input-tail";
-  tail.append(unit);
+  tail.append(unit, unitTrigger);
 
   if (field.id === "spd") {
     const deltaLabel = document.createElement("button");
@@ -2417,6 +2391,17 @@ function normalizeDependentUnits(): void {
     preserveSelect(windRefType, ["Runway Angle"], "Runway Angle");
   }
 
+  // Match the clickable proxy to the actual unit options after every
+  // quantity change (e.g. Mach/CL are dimensionless; TAS has selectable units).
+  for (const field of fields) {
+    const unitSelect = select(`${field.id}-unit`);
+    const trigger = byId(`${field.id}-unit-trigger`) as HTMLButtonElement;
+    const dimensionless = unitSelect.options.length === 1
+      && ["—", "-"].includes(unitSelect.options[0].value);
+    unitSelect.disabled = dimensionless;
+    trigger.disabled = dimensionless;
+    unitSelect.style.opacity = dimensionless ? "0.7" : "";
+  }
   for (const field of fields) updateInputHelpers(field.id);
 }
 
