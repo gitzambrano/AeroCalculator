@@ -5,6 +5,7 @@
 ### Changed
 
 - Fixed the selected-aircraft button to use exactly the numeric-input column's background, text and border colors across all six themes; added desktop and mobile Playwright regression coverage.
+- Added six actual-theme Playwright screenshots of a selected 190 E2 on a 390 px mobile viewport; kept the dropdown chevron in the numeric field's text color.
 - Revised ten parameter-help entries (nine distinct definitions) in the shared quantity catalog, Android help and web help, keeping the other 69 definitions unchanged.
 - Clarified the optional Vs Factor CAS increment in knots, BOW mass units, data-source qualification for flap CLmax, the subsonic CAS assumption, total-temperature recovery limitations, and the physical meaning and units of qS/g and W/δ.
 - Kept each parameter's help limited to the definition, equation and reference unit, without any separate Model Physics section.

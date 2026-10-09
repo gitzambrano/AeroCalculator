@@ -457,7 +457,7 @@ sub.hp-sub {
 .airplane-select-button {
   color: var(--field-text, #111);
   border-color: var(--field-border, var(--button-border, #d5dce6));
-  background: var(--selector-chevron) right 4px center / var(--chevron-w) var(--chevron-h) no-repeat;
+  background: var(--profile-chevron) right 4px center / var(--chevron-w) var(--chevron-h) no-repeat;
   background-color: var(--field-bg);
   box-shadow: none;
 }
