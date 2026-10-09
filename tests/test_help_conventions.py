@@ -164,7 +164,7 @@ class HelpConventionTests(unittest.TestCase):
         self.assertEqual(lock["version"], "3.37.0")
         self.assertEqual(lock["packages"][""]["version"], "3.37.0")
         self.assertIn("#VersionName: 3.37", MAIN_B4A)
-        self.assertIn("#VersionCode: 42", MAIN_B4A)
+        self.assertIn("#VersionCode: 43", MAIN_B4A)
         self.assertIn(" / version 3.37</p>", WEB_MAIN)
 
     def test_chevron_inset_preserves_android_text_width(self):

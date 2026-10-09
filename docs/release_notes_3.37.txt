@@ -1,0 +1,10 @@
+<en-US>
+Matches aircraft selector colors and chevron with numeric inputs across all themes.
+Clarifies aircraft parameter definitions, reference units and notes in technical help.
+Retains concise parameter definitions without extra commentary.
+</en-US>
+<pt-BR>
+Ajusta as cores e seta do seletor de aeronave aos campos numéricos em todos os temas.
+Esclarece definições, unidades de referência e notas dos parâmetros de aeronaves.
+Mantém a ajuda técnica concisa, com foco em definições e equações.
+</pt-BR>
