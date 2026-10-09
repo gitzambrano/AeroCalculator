@@ -1428,8 +1428,8 @@ function createInputRow(field: Field): HTMLElement {
   unitTrigger.setAttribute("aria-haspopup", "dialog");
   unitTrigger.setAttribute("aria-controls", "modal-options-selector");
   setHelper(unitTrigger, "Select a unit for this input. Press and hold for technical help.");
-  let downX = 0;
-  let downY = 0;
+  let unitDownX = 0;
+  let unitDownY = 0;
   let pointerMoved = false;
   let longPressed = false;
   let touchPointerId: number | null = null;
@@ -1446,8 +1446,8 @@ function createInputRow(field: Field): HTMLElement {
   unitTrigger.addEventListener("pointerdown", (event) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
     touchPointerId = event.pointerType === "touch" ? event.pointerId : null;
-    downX = event.clientX;
-    downY = event.clientY;
+    unitDownX = event.clientX;
+    unitDownY = event.clientY;
     pointerMoved = false;
     longPressed = false;
     ignoreSyntheticClickUntil = 0;
@@ -1459,7 +1459,7 @@ function createInputRow(field: Field): HTMLElement {
     }, 550);
   });
   unitTrigger.addEventListener("pointermove", (event) => {
-    if (Math.hypot(event.clientX - downX, event.clientY - downY) > 10) {
+    if (Math.hypot(event.clientX - unitDownX, event.clientY - unitDownY) > 10) {
       pointerMoved = true;
       clearUnitHold();
     }

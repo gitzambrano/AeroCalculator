@@ -26,8 +26,8 @@ class EditorUnitsParityTests(unittest.TestCase):
     def test_web_editor_converts_all_six_weight_fields(self):
         self.assertIn("function convertProfileEditorUnit(", WEB)
         self.assertIn("WEIGHT_KEYS.map((key) => `profile-weight-${key}`)", WEB)
-        self.assertIn('["profile-sref-unit", ["profile-sref"], units.areaToM2]', WEB)
-        self.assertIn('["profile-cref-unit", ["profile-cref"], lengthAnyToM]', WEB)
+        self.assertIn('["profile-sref-unit", ["profile-sref"], units.areaToM2, "Wing Area Unit"]', WEB)
+        self.assertIn('["profile-cref-unit", ["profile-cref"], lengthAnyToM, "Chord Unit"]', WEB)
         self.assertIn("converted.toPrecision(12)", WEB)
 
     def test_swipe_blocks_synthetic_click_and_cancels_long_press(self):
