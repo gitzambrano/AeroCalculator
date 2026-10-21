@@ -12,17 +12,17 @@ The current B4A source still combines parts of this flow in the main Activity. T
 
 The repository uses these sea-level reference values:
 
-$$
+```math
 T_0=288.15\;\text{K},\quad
 p_0=101325\;\text{Pa},\quad
 \rho_0=1.225\;\text{kg/m}^3,
-$$
+```
 
 and standard gravity:
 
-$$
+```math
 g_0=9.80665\;\text{m/s}^2.
-$$
+```
 
 The independent Python reference model in `tools/reference_physics.py` implements the 1976 standard-atmosphere layer equations through 84.852 km geopotential altitude. The production B4A atmosphere path uses the same layer boundaries, base states, and lapse-rate signs.
 
@@ -30,43 +30,43 @@ The independent Python reference model in `tools/reference_physics.py` implement
 
 For a layer with base temperature $T_b$, base pressure $p_b$, base altitude $H_b$, and lapse rate $L_b\neq0$:
 
-$$
+```math
 T=T_b+L_b(H-H_b),
-$$
+```
 
-$$
+```math
 p=p_b\left(\frac{T_b}{T}\right)^{g_0/(R L_b)}.
-$$
+```
 
 For an isothermal layer:
 
-$$
+```math
 p=p_b\exp\left[-\frac{g_0(H-H_b)}{R T_b}\right].
-$$
+```
 
 Density follows the perfect-gas relation:
 
-$$
+```math
 \rho=\frac{p}{RT}.
-$$
+```
 
 ### 2.3 Geometric and geopotential altitude
 
 For effective Earth radius $r_e$:
 
-$$
+```math
 H=\frac{r_e h}{r_e+h},
 \qquad
 h=\frac{r_e H}{r_e-H}.
-$$
+```
 
 ### 2.4 Delta ISA
 
 For temperature offset $\Delta T$:
 
-$$
+```math
 T_{actual}=T_{standard}+\Delta T.
-$$
+```
 
 The current application keeps pressure tied to pressure altitude and applies the actual temperature to density.
 
@@ -74,22 +74,22 @@ The current application keeps pressure tied to pressure altitude and applies the
 
 For the local absolute static temperature $T$, with $\gamma=1.4$ and $R=287.05287$ J/(kg K),
 
-$$
+```math
 a=\sqrt{\gamma RT}.
-$$
+```
 
 Both implementations use direct Sutherland-type viscosity formulas. They are similar but not identical. Web uses
 
-$$
+```math
 \mu_{\mathrm{web}}=\frac{1.458\times10^{-6}\,T^{3/2}}{T+110.4}\quad\mathrm{Pa\,s}.
-$$
+```
 
 The existing Android implementation uses
 
-$$
+```math
 \mu_{\mathrm{Android}}=1.7894\times10^{-5}
 \frac{T^{3/2}}{11.984(T+120)}\quad\mathrm{Pa\,s}.
-$$
+```
 
 Here $T$ is in kelvins. Do not replace one formula with the other without documenting and testing a numerical change.
 
@@ -107,18 +107,18 @@ Pressure altitude $H_P$ is the geopotential altitude in the adopted ISA model fo
 
 To invert the standard-atmosphere pressure analytically, first identify the layer whose pressure interval contains $p$. For a non-isothermal layer,
 
-$$
-T^*=T_b\left(\frac{p}{p_b}\right)^{-RL_b/g_0},\qquad
-H_P=H_b+\frac{T^*-T_b}{L_b}.
-\tag{3.1}
-$$
+```math
+T^{\ast}=T_b\left(\frac{p}{p_b}\right)^{-RL_b/g_0},\qquad
+H_P=H_b+\frac{T^{\ast}-T_b}{L_b}.
+\qquad \text{(3.1)}
+```
 
 For an isothermal layer,
 
-$$
+```math
 H_P=H_b-\frac{RT_b}{g_0}\ln\left(\frac{p}{p_b}\right).
-\tag{3.2}
-$$
+\qquad \text{(3.2)}
+```
 
 These equations are closed-form inversions and require **no numerical root finder**. The Web implementation bounds-checks the input pressure. Android evaluates the layer equations directly and warns for altitudes above its stated upper limit.
 
@@ -126,12 +126,12 @@ These equations are closed-form inversions and require **no numerical root finde
 
 Both applications use the following relation to connect geopotential altitude, pressure altitude, and a local temperature deviation:
 
-$$
+```math
 H=H_P-C\Delta T_{\mathrm{ISA}}
 \ln\left(\frac{p_{\mathrm{ISA}}(H_P)}{p_0}\right),
 \qquad C=29.271247\ \mathrm{m/K}.
-\tag{3.3}
-$$
+\qquad \text{(3.3)}
+```
 
 The constant is close to $R/g_0$. Equation (3.3) is the **adopted calculator correction**, not a general reconstruction of a nonstandard vertical temperature profile. For a specified $H_P$ and temperature, evaluate the right-hand side directly and then convert $H$ to geometric altitude. For a specified geometric altitude, however, $H_P$ is unknown and occurs inside the ISA pressure function. It is also inside the ISA-temperature function when the user supplies OAT.
 
@@ -139,22 +139,22 @@ The constant is close to $R/g_0$. Equation (3.3) is the **adopted calculator cor
 
 Given input $H$ define a pressure-altitude candidate $x$ and the scalar residual (in meters)
 
-$$
+```math
 f(x)=x-H-C\,\Delta T(x)
 \ln\left(\frac{p_{\mathrm{ISA}}(x)}{p_0}\right),
-\tag{3.4}
-$$
+\qquad \text{(3.4)}
+```
 
 where
 
-$$
+```math
 \Delta T(x)=
 \begin{cases}
 \Delta T_{\mathrm{input}},&\text{Delta ISA selected},\\
 T_{\mathrm{OAT}}-T_{\mathrm{ISA}}(x),&\text{OAT selected}.
 \end{cases}
-\tag{3.5}
-$$
+\qquad \text{(3.5)}
+```
 
 The production method is **Newton-Raphson with a bracketing and bisection safeguard**:
 
@@ -165,14 +165,14 @@ The production method is **Newton-Raphson with a bracketing and bisection safegu
 5. Retain the half of the bracket that contains a sign change: replace $b$ by $x$ if $f(a)f(x)\le0$; otherwise replace $a$ by $x$.
 6. Estimate the derivative from nearby points, clipped to the updated bracket:
 
-   $$
+   ```math
    x_-=\max(a,x-1\ \mathrm m),\qquad x_+=\min(b,x+1\ \mathrm m),
-   $$
+   ```
 
-   $$
+   ```math
    f'(x)\approx\frac{f(x_+)-f(x_-)}{x_+-x_-}.
-   \tag{3.6}
-   $$
+   \qquad \text{(3.6)}
+   ```
 
    If $x_+=x_-$, set the derivative estimate to zero.
 7. If $|f'(x)|>10^{-9}$, propose a Newton step $x_N=x-f(x)/f'(x)$. Otherwise propose $(a+b)/2$.
@@ -186,11 +186,11 @@ Android source: **CalcError** and **PressureAltitudeFromGeometricAltitude**, Aer
 
 Density altitude $H_\rho$ is defined by
 
-$$
+```math
 \rho_{\mathrm{ISA}}(H_\rho)=\rho_{\mathrm{actual}},\qquad
 \rho_{\mathrm{actual}}=\frac{p_{\mathrm{ISA}}(H_P)}{RT}.
-\tag{3.7}
-$$
+\qquad \text{(3.7)}
+```
 
 The ISA density profile is monotone decreasing over the implemented search range. Both applications use **bisection**:
 
@@ -208,25 +208,25 @@ Android source: **DensityAltitudeFromDensity** and **StandardDensityAtPressureAl
 
 An iteration is **not mathematically necessary** for density altitude. Let $\rho_b=p_b/(RT_b)$ for the ISA layer containing the target density. For a non-isothermal layer,
 
-$$
+```math
 \frac{\rho}{\rho_b}=
 \left(\frac{T_b}{T}\right)^{1+g_0/(RL_b)}.
-$$
+```
 
 Define $k=1+g_0/(RL_b)$. Then
 
-$$
+```math
 T=T_b\left(\frac{\rho_b}{\rho}\right)^{1/k},
 \qquad H_\rho=H_b+\frac{T-T_b}{L_b}.
-\tag{3.8}
-$$
+\qquad \text{(3.8)}
+```
 
 For an isothermal layer,
 
-$$
+```math
 H_\rho=H_b-\frac{RT_b}{g_0}\ln\left(\frac{\rho}{\rho_b}\right).
-\tag{3.9}
-$$
+\qquad \text{(3.9)}
+```
 
 Equations (3.8) and (3.9) describe an alternative direct implementation. **The current Android and Web code still use bisection.** Any replacement must preserve interval handling and pass layer-boundary, density round-trip, and Android/Web parity tests.
 
@@ -234,14 +234,14 @@ Equations (3.8) and (3.9) describe an alternative direct implementation. **The c
 
 The displayed temperature altitude is a tropospheric temperature-equivalent altitude, not a general inverse of the full ISA temperature profile:
 
-$$
+```math
 H_T=
 \begin{cases}
 11000(288.15-T)/71.5\ \mathrm m,&T>216.65\ \mathrm K,\\
 11000\ \mathrm m,&T\le216.65\ \mathrm K.
 \end{cases}
-\tag{3.10}
-$$
+\qquad \text{(3.10)}
+```
 
 This calculation is direct and clamps the result at 11 km for temperatures at or below 216.65 K.
 
@@ -249,43 +249,43 @@ This calculation is direct and clamps the result at 11 km for temperatures at or
 
 Mach number and equivalent airspeed are
 
-$$
+```math
 M=\frac{V_T}{a},\qquad
 V_E=V_T\sqrt{\frac{\rho}{\rho_0}},\qquad
 V_T=V_E\sqrt{\frac{\rho_0}{\rho}}.
-\tag{4.1}
-$$
+\qquad \text{(4.1)}
+```
 
 For subsonic, isentropic compressible flow,
 
-$$
+```math
 q_c=p\left[\left(1+\frac{\gamma-1}{2}M^2\right)^{\gamma/(\gamma-1)}-1\right],
-\tag{4.2}
-$$
+\qquad \text{(4.2)}
+```
 
-$$
+```math
 M=\sqrt{\frac{2}{\gamma-1}
 \left[\left(1+\frac{q_c}{p}\right)^{(\gamma-1)/\gamma}-1\right]}.
-\tag{4.3}
-$$
+\qquad \text{(4.3)}
+```
 
 Calibrated airspeed is the ISA sea-level speed that yields the same impact pressure:
 
-$$
+```math
 a_0=\sqrt{\gamma RT_0},\qquad
 V_C=a_0\sqrt{\frac{2}{\gamma-1}
 \left[\left(1+\frac{q_c}{p_0}\right)^{(\gamma-1)/\gamma}-1\right]}.
-\tag{4.4}
-$$
+\qquad \text{(4.4)}
+```
 
 For CAS input, first calculate the sea-level equivalent impact pressure,
 
-$$
+```math
 q_c=p_0\left[
 \left(1+\frac{\gamma-1}{2}(V_C/a_0)^2\right)^{\gamma/(\gamma-1)}-1
 \right].
-\tag{4.5}
-$$
+\qquad \text{(4.5)}
+```
 
 Use Equation (4.3) at **local** pressure $p$ and then calculate $V_T=Ma$. For TAS input, calculate local Mach and impact pressure, then use Equation (4.4). Both directions are algebraic; neither uses iteration.
 
@@ -311,16 +311,16 @@ The current documented model supports $0\le M<1$ for impact-pressure conversion.
 
 Dynamic pressure is kinetic energy per unit volume and is not the Pitot impact pressure:
 
-$$
+```math
 q=\frac12\rho V_T^2=\frac12\rho_0V_E^2.
-$$
+```
 
 For the adopted isentropic perfect-gas model,
 
-$$
+```math
 T_t=T\left(1+\frac{\gamma-1}{2}M^2\right),\qquad
 p_t=p\left(1+\frac{\gamma-1}{2}M^2\right)^{\gamma/(\gamma-1)}.
-$$
+```
 
 Therefore $q_c=p_t-p$, whereas $q$ is computed from density and TAS. Total temperature is stagnation temperature; no separate recovery-factor model is applied.
 
@@ -328,9 +328,9 @@ Therefore $q_c=p_t-p$, whereas $q$ is computed from density and TAS. Total tempe
 
 For normal load factor $n$:
 
-$$
+```math
 C_L=\frac{nW}{qS}.
-$$
+```
 
 The application uses mass as an input and converts it to weight with standard gravity.
 
@@ -338,27 +338,27 @@ The application uses mass as an input and converts it to weight with standard gr
 
 The selected aircraft mass $m$, reference area $S_{\mathrm{REF}}$, and flap-dependent maximum lift coefficient $C_{L,\mathrm{MAX}}$ define the **1-g reference stall TAS**:
 
-$$
+```math
 V_{S,T,1g}=\sqrt{\frac{2mg_0}{\rho S_{\mathrm{REF}}C_{L,\mathrm{MAX}}}}.
-$$
+```
 
 The displayed stall speed is the corresponding **CAS**, obtained through the same compressibility equations used for ordinary TAS-to-CAS conversion:
 
-$$
+```math
 V_{S,C}=\mathrm{CAS}(V_{S,T,1g},p,T).
-$$
+```
 
 The current flight-state VS Factor is
 
-$$
+```math
 F_V=\frac{V_C}{V_{S,C}}.
-$$
+```
 
 When VS Factor is the input, the target CAS is
 
-$$
+```math
 V_{C,\mathrm{target}}=F_{V,\mathrm{input}}V_{S,C}+\Delta V_C.
-$$
+```
 
 The current stall-speed output is independent of the selected maneuver load factor. The theoretical accelerated-stall TAS is $V_{S,T,1g}\sqrt{N_Z}$ for positive $N_Z$, but this is **not** the value shown as Stall Speed VS.
 
@@ -366,9 +366,9 @@ The current stall-speed output is independent of the selected maneuver load fact
 
 The reference relation is:
 
-$$
+```math
 Re=\frac{\rho V c}{\mu}.
-$$
+```
 
 The reference chord and viscosity must use consistent SI units.
 
@@ -376,11 +376,11 @@ The reference chord and viscosity must use consistent SI units.
 
 For a coordinated level turn:
 
-$$
+```math
 n=\frac{1}{\cos\phi},
 \qquad
 \phi=\cos^{-1}\left(\frac1n\right).
-$$
+```
 
 The inverse requires $n\ge1$ for the conventional level-turn interpretation.
 
@@ -388,59 +388,59 @@ The inverse requires $n\ge1$ for the conventional level-turn interpretation.
 
 All calculations use the velocity-vector identity
 
-$$
+```math
 \mathbf V_g=\mathbf V_a+\mathbf V_w.
-\tag{10.1}
-$$
+\qquad \text{(10.1)}
+```
 
 Let $\psi$ be heading, $\chi$ ground track, $\alpha$ air-velocity direction, and $\beta$ sideslip. Angles are clockwise from true north in the application's horizontal coordinate convention. The implemented definitions are
 
-$$
+```math
 \beta=\alpha-\psi,\qquad \mathrm{drift}=\psi-\chi.
-\tag{10.2}
-$$
+\qquad \text{(10.2)}
+```
 
 The air and ground vectors use the unit direction $\mathbf e(\theta)=(\cos\theta,\sin\theta)$. Positive headwind $HW$ is from ahead, and positive crosswind $CW$ is from the right. The wind reference direction is $\chi_{\mathrm{ref}}$. The implementation first constructs
 
-$$
+```math
 u_w=-HW\cos\chi_{\mathrm{ref}}+CW\sin\chi_{\mathrm{ref}},
-$$
+```
 
-$$
+```math
 v_w=-CW\cos\chi_{\mathrm{ref}}-HW\sin\chi_{\mathrm{ref}},\qquad
 W_s=\sqrt{HW^2+CW^2}.
-\tag{10.3}
-$$
+\qquad \text{(10.3)}
+```
 
 The meteorological wind-from direction is
 
-$$
+```math
 \psi_w=\mathrm{atan2}(v_w,u_w)+\pi.
-\tag{10.4}
-$$
+\qquad \text{(10.4)}
+```
 
 The final along-track components are
 
-$$
+```math
 HW_{\mathrm{track}}=W_s\cos(\psi_w-\chi),\qquad
 CW_{\mathrm{track}}=W_s\sin(\psi_w-\chi).
-\tag{10.5}
-$$
+\qquad \text{(10.5)}
+```
 
 **Ground speed known, track specified:** Calculate $\mathbf V_g=GS\,\mathbf e(\chi)$, $\mathbf V_a=\mathbf V_g-\mathbf V_w$, $V_T=\|\mathbf V_a\|$, and $\alpha=\mathrm{atan2}(V_{a,y},V_{a,x})$. If heading and drift are supplied, first obtain $\chi=\psi-\mathrm{drift}$. Use the supplied sideslip or drift to recover the remaining angle.
 
 **Ground speed known, heading and sideslip specified:** Set $\alpha=\psi+\beta$ and solve the quadratic magnitude equation
 
-$$
+```math
 \left\|V_T\mathbf e(\alpha)+\mathbf V_w\right\|^2=GS^2.
-$$
+```
 
 With $w_\parallel=\mathbf V_w\cdot\mathbf e(\alpha)$, the chosen algebraic root is
 
-$$
+```math
 V_T=-w_\parallel+\sqrt{w_\parallel^2+GS^2-W_s^2}.
-\tag{10.6}
-$$
+\qquad \text{(10.6)}
+```
 
 The code rejects a negative discriminant or a negative selected TAS. No iterative search is used.
 
@@ -448,16 +448,16 @@ The code rejects a negative discriminant or a negative selected TAS. No iterativ
 
 **TAS known, track specified:** The air-velocity cross-track component must cancel the wind cross-track component. With
 
-$$
+```math
 w_\perp=-u_w\sin\chi+v_w\cos\chi,
-$$
+```
 
 the implemented principal-branch solution is
 
-$$
+```math
 \alpha=\chi+\arcsin(-w_\perp/V_T).
-\tag{10.7}
-$$
+\qquad \text{(10.7)}
+```
 
 The geometry requires $|w_\perp/V_T|\le1$. The program then reconstructs the missing heading or sideslip and the ground-velocity vector. It uses the principal inverse-trigonometric branch rather than enumerating alternative geometry branches.
 
@@ -478,11 +478,11 @@ With zero wind speed, meteorological wind direction is undefined and the UI disp
 
 For a coordinated constant-bank turn relative to the air mass, the radius and heading rate use true airspeed:
 
-$$
+```math
 R_{air}=\frac{V_T^2}{g\tan\phi},
 \qquad
 \dot\psi=\frac{g\tan\phi}{V_T}.
-$$
+```
 
 A steady wind translates the air-relative circular trajectory; the ground track is generally not a circle. Therefore ground speed shall not be substituted into these coordinated-turn equations.
 
