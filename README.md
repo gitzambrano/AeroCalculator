@@ -18,7 +18,7 @@ Developed by Gustavo José Zambrano.
 - Load-factor and bank-angle calculations.
 - Heading, track, sideslip, drift, ground-speed, headwind, and crosswind calculations.
 - Aircraft profiles with reference geometry, masses, and flap CLmax values.
-- Optional GPS, pressure-sensor, and temperature-sensor inputs on Android.
+- Optional GPS, pressure-sensor, and temperature-sensor inputs on Android. GPS geometric altitude requires MSL data (native Android API 34+ or validated receiver NMEA GGA); WGS-84 ellipsoidal height is not silently substituted.
 - Responsive, offline-capable browser/PWA version with Android-compatible aircraft-profile import/export.
 
 ## Repository quality model
