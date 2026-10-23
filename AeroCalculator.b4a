@@ -68,8 +68,8 @@ Version=13
  #Region  Project Attributes 
 	#ApplicationLabel: Aero Calculator
 	'remembre to set 'Package Name' into 'Project menu'!!!
-	#VersionCode: 43
-	#VersionName: 3.37
+	#VersionCode: 44
+	#VersionName: 3.38
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: True
@@ -290,6 +290,9 @@ Sub Globals
 	Dim tmp As PhoneSensors
 	Dim GPSspeed As Double
 	Dim GPSalt As Double
+	Dim GPSaltValid, GPSfixValid, GPSnmeaValid, GPSnativeMSL As Boolean
+	Dim GPSfixLat, GPSfixLon, GPSnmeaLat, GPSnmeaLon, GPSnmeaAlt As Double
+	Dim GPSfixTick, GPSnmeaTick As Long
 	
 	'Variaveis
 	Dim weight, Sref, cref, CLmax, AltValue, TempValue, SpdValue, SpdDelta, NzValue, Nz, Bank As Double
@@ -1537,6 +1540,9 @@ Sub Activity_Pause (UserClosed As Boolean)
 	tmp.StopListening
 	Gps1.Stop
 	Ready = False
+	GPSfixValid = False
+	GPSaltValid = False
+	GPSnmeaValid = False
 	
 	' Escreve variaveis no arquivo interno lastmod.txt
 	Dim m As Map
@@ -2303,7 +2309,7 @@ Sub btnAltType_Click
 	items.Initialize
 	items.Add("Pressure Altitude|Barometric altitude (H_p), ISA")
 	items.Add("Geometric Altitude|True height above MSL")
-	items.Add("Altitude from GPS|Geometric height from GPS")
+	items.Add("Altitude from GPS|MSL altitude from the GPS receiver")
 	items.Add("Pressure|Direct static pressure input")
 	items.Add("Pressure from Sensor|Device barometric sensor")
 	Dim record As Int = indAltType
@@ -2705,6 +2711,9 @@ Sub AltType_Click
 	If indAltType<>2 And indSpdType<>7 Then
 		Gps1.Stop
 		Ready = False
+		GPSfixValid = False
+		GPSaltValid = False
+		GPSnmeaValid = False
 		GpsCheck = 1
 	Else If indAltType=2 Then
 		If GpsCheck2 = 1 Then
@@ -2769,7 +2778,7 @@ Sub AltType_Click
 			kAlt = 0.0254
 		End If
 		If indAltType = 2 Then
-			edtAlt.Text = NumberFormat2(GPSalt / kAlt,1,1,1,False)
+			RefreshGPSAltitudeDisplay
 		End If	
 	Else If indAltType = 3 Then
 		If UsePressureFullLabels Then
@@ -3517,6 +3526,12 @@ Sub btnCalc_Click
     phoneV.Vibrate(30)
 	HideK.HideKeyboard
 	
+	' Never calculate from a missing or stale GPS MSL altitude.
+	If indAltType = 2 And Not(GPSAltitudeReady) Then
+		RefreshGPSAltitudeDisplay
+		ToastMessageShow("GPS MSL altitude unavailable. Wait for a fix or select Geometric Altitude.", True)
+		Return
+	End If
 	' Ir para pagina de Outputs e fazer Calculos
 	pager.GotoPage(2,True)
 	Calculate
@@ -3547,6 +3562,11 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the ev
 End Sub
 
 Sub Calculate
+	If indAltType = 2 And Not(GPSAltitudeReady) Then
+		RefreshGPSAltitudeDisplay
+		ToastMessageShow("GPS MSL altitude unavailable. Wait for a fix or select Geometric Altitude.", True)
+		Return
+	End If
 	
 	'Set default units and inputs
 	DefaultInputs
@@ -4616,15 +4636,114 @@ Sub Sensor2_SensorChanged(Values() As Float)
 	End If
 End Sub
 
+Private Sub GPSAltitudeReady As Boolean
+    ' A missing or stale MSL fix must never be replaced with ellipsoidal height.
+    Return GPSaltValid And GPSfixValid And (DateTime.Now - GPSfixTick <= 8000)
+End Sub
+
+Private Sub RefreshGPSAltitudeDisplay
+    If indAltType <> 2 Then Return
+    If GPSAltitudeReady Then
+        edtAlt.Hint = ""
+        edtAlt.Text = NumberFormat2(GPSalt / kAlt,1,1,1,False)
+    Else
+        edtAlt.Text = ""
+        edtAlt.Hint = "Waiting for GPS MSL"
+    End If
+End Sub
+
+Private Sub NmeaCoordinate(Value As String, Hemisphere As String, IsLatitude As Boolean) As Double
+    If Not(IsNumber(Value)) Then Return 999
+    Dim raw As Double = Value
+    If raw < 0 Then Return 999
+    Dim degrees As Int = Floor(raw / 100)
+    Dim minutes As Double = raw - 100 * degrees
+    If minutes < 0 Or minutes >= 60 Then Return 999
+    If IsLatitude Then
+        If Hemisphere <> "N" And Hemisphere <> "S" Then Return 999
+        If degrees > 90 Or (degrees = 90 And minutes > 0) Then Return 999
+    Else
+        If Hemisphere <> "E" And Hemisphere <> "W" Then Return 999
+        If degrees > 180 Or (degrees = 180 And minutes > 0) Then Return 999
+    End If
+    Dim result As Double = degrees + minutes / 60
+    If Hemisphere = "S" Or Hemisphere = "W" Then result = -result
+    Return result
+End Sub
+
+Private Sub NmeaMatchesLastGpsFix As Boolean
+    If Not(GPSfixValid) Or Not(GPSnmeaValid) Then Return False
+    If DateTime.Now - GPSfixTick > 8000 Or DateTime.Now - GPSnmeaTick > 8000 Then Return False
+    If Abs(GPSfixLat - GPSnmeaLat) > 0.001 Then Return False
+    Dim lonDiff As Double = Abs(GPSfixLon - GPSnmeaLon)
+    If lonDiff > 180 Then lonDiff = 360 - lonDiff
+    Return lonDiff <= 0.001
+End Sub
+
+Sub GPS_NMEA (TimeStamp As Long, Sentence As String)
+    ' GGA field 9 is MSL altitude in metres; field 11 is geoid separation.
+    ' GGA can supply MSL on Android releases without a platform MSL getter.
+    If Sentence.Length < 7 Or Not(Sentence.StartsWith("$")) Then Return
+    If Sentence.SubString2(3, 6) <> "GGA" Then Return    ' GP/GN/GA/GL/GB GGA
+    Dim fields() As String = Regex.Split(",", Sentence)
+    If fields.Length < 12 Then Return
+    If Not(IsNumber(fields(6))) Or Not(IsNumber(fields(9))) Then Return
+    If fields(6) = "0" Or fields(10) <> "M" Then
+        GPSnmeaValid = False
+        Return
+    End If
+    Dim lat As Double = NmeaCoordinate(fields(2), fields(3), True)
+    Dim lon As Double = NmeaCoordinate(fields(4), fields(5), False)
+    If lat = 999 Or lon = 999 Then Return
+    GPSnmeaLat = lat
+    GPSnmeaLon = lon
+    GPSnmeaAlt = fields(9)
+    GPSnmeaTick = DateTime.Now
+    GPSnmeaValid = True
+    If Not(GPSnativeMSL) And NmeaMatchesLastGpsFix Then
+        GPSalt = GPSnmeaAlt
+        GPSaltValid = True
+        RefreshGPSAltitudeDisplay
+    End If
+End Sub
+
 Sub GPS_LocationChanged (Location1 As Location)
-    GPSspeed =  Location1.Speed
-	GPSalt = Location1.Altitude
-	If indSpdType = 7 Then
-		edtSpd.Text = NumberFormat2(GPSspeed / kSpd,1,1,1,False)
-	End If
-	If indAltType = 2 Then
-		edtAlt.Text = NumberFormat2(GPSalt / kAlt,1,1,1,False)
-	End If
+    GPSspeed = Location1.Speed
+    GPSfixLat = Location1.Latitude
+    GPSfixLon = Location1.Longitude
+    GPSfixTick = DateTime.Now
+    GPSfixValid = True
+    GPSaltValid = False
+    GPSnativeMSL = False
+
+    ' Android Location.getAltitude is WGS-84 ELLIPSOIDAL, not geometric MSL.
+    ' Use the native MSL altitude on API 34+ only when explicitly present.
+    Dim ph As Phone
+    If ph.SdkVersion >= 34 Then
+        Try
+            Dim nativeLocation As JavaObject
+            nativeLocation.InitializeFromObject(Location1)
+            If nativeLocation.RunMethod("hasMslAltitude", Null) Then
+                GPSalt = nativeLocation.RunMethod("getMslAltitudeMeters", Null)
+                GPSaltValid = True
+                GPSnativeMSL = True
+            End If
+        Catch
+            Log("GPS native MSL unavailable: " & LastException)
+        End Try
+    End If
+
+    ' If native MSL is unavailable, use only a recent nearby GGA MSL fix.
+    ' Never substitute Location1.Altitude (WGS-84 ellipsoidal height).
+    If Not(GPSaltValid) And NmeaMatchesLastGpsFix Then
+        GPSalt = GPSnmeaAlt
+        GPSaltValid = True
+    End If
+
+    If indSpdType = 7 Then
+        edtSpd.Text = NumberFormat2(GPSspeed / kSpd,1,1,1,False)
+    End If
+    RefreshGPSAltitudeDisplay
 End Sub
 
 Sub GPS_UserEnabled (Enabled As Boolean)
