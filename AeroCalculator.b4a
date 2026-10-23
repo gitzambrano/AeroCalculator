@@ -2731,7 +2731,7 @@ Sub AltType_Click
 		    	ToastMessageShow("GPS not enabled.", True)
 	        End If
 		    If Not(Ready) Then
-		    	Gps1.Start(100,1)
+		    	Gps1.Start(100,0)
 		    	Ready = True
 		    End If
 		Else
@@ -3000,7 +3000,7 @@ Sub SpdType_Click
 		    	ToastMessageShow("GPS not enabled.", True)
 	        End If
 		    If Not(Ready) Then
-		    	Gps1.Start(100,1)
+		    	Gps1.Start(100,0)
 		    	Ready = True
 		    End If
 		Else
@@ -4686,15 +4686,25 @@ Sub GPS_NMEA (TimeStamp As Long, Sentence As String)
     If Sentence.Length < 7 Or Not(Sentence.StartsWith("$")) Then Return
     If Sentence.SubString2(3, 6) <> "GGA" Then Return    ' GP/GN/GA/GL/GB GGA
     Dim fields() As String = Regex.Split(",", Sentence)
-    If fields.Length < 12 Then Return
-    If Not(IsNumber(fields(6))) Or Not(IsNumber(fields(9))) Then Return
-    If fields(6) = "0" Or fields(10) <> "M" Then
+    If fields.Length < 12 Then
+        GPSnmeaValid = False
+        Return
+    End If
+    If Not(IsNumber(fields(6))) Then
+        GPSnmeaValid = False
+        Return
+    End If
+    Dim fixQuality As Int = fields(6)
+    If fixQuality <= 0 Or fields(10) <> "M" Or Not(IsNumber(fields(9))) Then
         GPSnmeaValid = False
         Return
     End If
     Dim lat As Double = NmeaCoordinate(fields(2), fields(3), True)
     Dim lon As Double = NmeaCoordinate(fields(4), fields(5), False)
-    If lat = 999 Or lon = 999 Then Return
+    If lat = 999 Or lon = 999 Then
+        GPSnmeaValid = False
+        Return
+    End If
     GPSnmeaLat = lat
     GPSnmeaLon = lon
     GPSnmeaAlt = fields(9)
