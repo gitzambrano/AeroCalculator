@@ -361,7 +361,7 @@ app.innerHTML = `
       <div class="about-content">
         <img src="${aboutIconUrl}" alt="" />
         <h2>Aero Calculator</h2>
-        <p id="about-version">${new Date().getFullYear()} / version 3.37</p>
+        <p id="about-version">${new Date().getFullYear()} / version 3.38</p>
         <p>Gustavo José Zambrano</p>
         <p><a href="mailto:flightdyn@gmail.com">flightdyn@gmail.com</a></p>
         <button type="button" class="about-ok" data-close-dialog="about-dialog">OK</button>
