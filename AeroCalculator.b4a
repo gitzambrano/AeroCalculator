@@ -4721,8 +4721,7 @@ Sub GPS_LocationChanged (Location1 As Location)
     Dim ph As Phone
     If ph.SdkVersion >= 34 Then
         Try
-            Dim nativeLocation As JavaObject
-            nativeLocation.InitializeFromObject(Location1)
+            Dim nativeLocation As JavaObject = Location1
             If nativeLocation.RunMethod("hasMslAltitude", Null) Then
                 GPSalt = nativeLocation.RunMethod("getMslAltitudeMeters", Null)
                 GPSaltValid = True
