@@ -1,0 +1,6 @@
+<en-US>
+Corrected GPS geometric altitude to use mean sea level (MSL) rather than the WGS-84 ellipsoid. Supports Android native MSL fixes and GPS NMEA data. Displays an unavailable state instead of misleading altitude when MSL data is missing.
+</en-US>
+<pt-BR>
+Corrige a altitude geométrica do GPS para nível médio do mar (MSL), em vez do elipsoide WGS-84. Usa dados MSL do Android ou NMEA. Sem dados confiáveis, indica indisponibilidade.
+</pt-BR>
