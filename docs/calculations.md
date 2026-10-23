@@ -161,6 +161,16 @@ h=\frac{r_eH}{r_e-H}.
 
 Pressure altitude $H_P$ is the ISA geopotential altitude at the measured static pressure, which generally differs from $h$ and $H$.
 
+**Android GPS vertical datum (v3.38).** The B4A GPS `Location.Altitude` is WGS-84 **ellipsoidal** height, not geometric height relative to mean sea level. *Altitude from GPS* now uses: (1) the platform MSL height from `Location.hasMslAltitude()` / `getMslAltitudeMeters()` if present (Android API 34+), or (2) a valid receiver NMEA GGA sentence containing MSL altitude (field 9, metres) and a valid fix quality, paired to a nearby recent Android location fix. Both callback observations must be at most 8 seconds old; the latitude and longitude of the GGA fix must each agree within 0.001° (longitude differences are compared across the antimeridian). GGA supplies MSL on older Android devices without a local geoid grid. If neither source is available, the GPS altitude field remains empty and the GPS-altitude calculation is blocked. The web application does not have GPS input.
+
+The underlying vertical datum transformation is:
+
+```math
+h_{\mathrm{MSL}}=h_{\mathrm{WGS84}}-N(\varphi,\lambda),
+```
+
+where geoid undulation $N$ is positive when the geoid is above the reference ellipsoid. For instance, 145 m ellipsoidal height and +35 m geoid undulation imply 110 m MSL. **The implementation uses MSL returned by the platform or GNSS receiver, not an internally computed geoid model.** Reference-datum realizations and receiver accuracy vary. As before, pressure altitude estimated from GPS and the atmospheric model is not a substitute for measured static pressure or an air-data system.
+
 ### 3.2 Static pressure to pressure altitude: direct inversion
 
 Identify the ISA layer containing the input pressure, then invert its pressure equation. For a non-isothermal layer:

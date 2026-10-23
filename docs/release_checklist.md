@@ -55,6 +55,10 @@ Before a Play release:
 - [ ] Run an impact-pressure-input calculation.
 - [ ] Run a wind calculation.
 - [ ] Test a sensor-unavailable path.
+- [ ] Test GPS MSL on API 34+ with a native MSL fix and verify ellipsoidal height is never substituted.
+- [ ] Test GPS on API 28/33 with valid GP/GN GGA data matched to a recent nearby location fix, including reversed callback order.
+- [ ] Test missing NMEA, invalid GGA quality/units, stale data, mismatched coordinates, pause/resume, and altitude unit switching.
+- [ ] Confirm GPS-altitude calculations are blocked with no MSL fix; verify manual geometric altitude and GPS ground speed still work.
 - [ ] Rotate or resize the device if the release supports that behavior.
 - [ ] Confirm no calculation requires network access.
 

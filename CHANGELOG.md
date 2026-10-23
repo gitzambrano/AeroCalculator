@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.38] - 2026-10-23
+
+### Fixed (Android)
+
+- Corrected GPS vertical-datum handling: geometric-altitude calculations use MSL altitude, not raw WGS-84 ellipsoidal height.
+- Use native MSL locations where available (API 34+) or validated recent NMEA GGA fixes on older Android phones. A missing MSL fix leaves GPS altitude blank and blocks GPS-altitude calculations.
+- Invalidate GPS altitude on pause or sensor stop, preserve altitude unit conversion, and leave GPS ground-speed behavior unchanged.
+
+### Release
+
+- Updated Android VersionName to 3.38 (VersionCode 44), synchronized the web app to 3.38.0 (no changes to web calculations), and documented the GPS accuracy and datum limitations.
+
+
+
 ## [3.37] - 2026-10-08
 
 ### Changed

@@ -155,17 +155,17 @@ class HelpConventionTests(unittest.TestCase):
                 ):
                     self.assertNotIn(unwanted, definition)
 
-    def test_release_337_versions_match_across_clients(self):
+    def test_release_338_versions_match_across_clients(self):
         self.assertEqual(
             json.loads((ROOT / "web/package.json").read_text(encoding="utf-8"))["version"],
-            "3.37.0",
+            "3.38.0",
         )
         lock = json.loads((ROOT / "web/package-lock.json").read_text(encoding="utf-8"))
-        self.assertEqual(lock["version"], "3.37.0")
-        self.assertEqual(lock["packages"][""]["version"], "3.37.0")
-        self.assertIn("#VersionName: 3.37", MAIN_B4A)
-        self.assertIn("#VersionCode: 43", MAIN_B4A)
-        self.assertIn(" / version 3.37</p>", WEB_MAIN)
+        self.assertEqual(lock["version"], "3.38.0")
+        self.assertEqual(lock["packages"][""]["version"], "3.38.0")
+        self.assertIn("#VersionName: 3.38", MAIN_B4A)
+        self.assertIn("#VersionCode: 44", MAIN_B4A)
+        self.assertIn(" / version 3.38</p>", WEB_MAIN)
 
     def test_chevron_inset_preserves_android_text_width(self):
         for name, source in (("Main", MAIN_B4A), ("Airplanes", AIRP_B4A)):

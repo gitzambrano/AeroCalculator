@@ -118,7 +118,7 @@ test("custom airplane and About follow the current theme and APK version", async
   await page.locator("#more-menu").click();
   await page.locator('[data-menu="about"]').click();
   await expect(page.locator("#about-dialog")).toBeVisible();
-  await expect(page.locator("#about-version")).toHaveText(/\d{4} \/ version 3\.37/);
+  await expect(page.locator("#about-version")).toHaveText(/\d{4} \/ version 3\.38/);
   await expect(page.locator("#about-dialog")).toContainText("Gustavo José Zambrano");
   await expect(page.locator("#about-dialog")).toContainText("flightdyn@gmail.com");
 });
@@ -170,7 +170,7 @@ test.describe("mobile input unit tap vs horizontal swipe", () => {
   });
 });
 
-test("3.37 technical help keeps the concise definition, equation and unit only", async ({ page }) => {
+test("technical help keeps the concise definition, equation and unit only", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "CALCULATE" }).click();
 

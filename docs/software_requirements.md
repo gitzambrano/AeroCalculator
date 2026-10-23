@@ -49,6 +49,7 @@ This document states behavior that AeroCalculator must preserve. Requirement ide
 ## 6. Sensors
 
 - **SE-1** — GPS altitude and speed shall be used only when the corresponding sensor input type is selected.
+- **SE-4** — GPS geometric-altitude input shall use only a valid, recent mean-sea-level altitude (native Android MSL fix or matching NMEA GGA fix). WGS-84 ellipsoidal altitude shall not be silently treated as MSL. When MSL is unavailable, calculation using GPS altitude shall be blocked; manual geometric altitude shall remain available.
 - **SE-2** — Pressure-sensor and temperature-sensor data shall be converted to the same internal units as manually entered values.
 - **SE-3** — Lack of sensor permission or hardware shall degrade only sensor-dependent input modes.
 
