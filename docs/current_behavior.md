@@ -42,7 +42,7 @@ The application handles heading, track, sideslip, drift, wind speed, wind direct
 
 ### Sensors
 
-GPS, pressure, and temperature sensors can provide selected inputs.
+GPS, pressure, and temperature sensors can provide selected inputs. On Android, GPS geometric altitude requires a valid mean-sea-level fix (via platform MSL on API 34+ or receiver NMEA GGA) to prevent using raw ellipsoidal WGS-84 heights; if MSL is unavailable, GPS altitude calculation is blocked.
 
 ## Supporting modules
 

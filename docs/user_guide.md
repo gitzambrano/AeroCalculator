@@ -34,7 +34,7 @@ Select one altitude-family input:
 
 Then select the corresponding unit.
 
-Pressure altitude and geometric altitude are different physical quantities. See `calculations.md` for the definitions.
+Pressure altitude and geometric altitude are different physical quantities. On Android, GPS altitude provides geometric altitude referenced to mean sea level (MSL) via native platform fixes (Android 14+) or receiver NMEA GGA data; raw WGS-84 ellipsoidal height is never used as MSL. If a valid MSL fix is unavailable, GPS altitude calculation is suspended. See `calculations.md` for definitions.
 
 ## 4. Temperature input
 
