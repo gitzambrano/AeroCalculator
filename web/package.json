@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build && node scripts/inline-dist.mjs && node scripts/generate-sw.mjs",
     "test": "vitest run",
     "preview": "vite preview",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "capture:store": "node scripts/capture_store_screenshots.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
